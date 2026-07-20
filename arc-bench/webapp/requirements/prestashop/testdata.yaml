@@ -1,0 +1,603 @@
+version: 1
+baseline:
+  description: Shared PrestaShop storefront data needed for homepage, header navigation, product discovery,
+    and shopping flows.
+  fixtures:
+  - public_homepage
+  - category_catalog
+  - product_detail_product
+fixtures:
+  public_homepage:
+    description: Anonymous storefront homepage with header navigation, hero carousel, product display
+      area, newsletter section, and footer visible.
+    scope: global
+    mutable: false
+    providedState:
+      auth: anonymous
+    entities:
+      pages:
+      - key: home
+        title: PrestaShop home
+        sections:
+        - header
+        - carousel
+        - popular-products
+        - newsletter
+        - footer
+  category_catalog:
+    description: Top-level categories and subcategories visible in the main navigation, including Clothes,
+      Accessories, and Art with nested entries.
+    scope: global
+    mutable: false
+    providedState:
+      catalog: navigable
+    entities:
+      categories:
+      - key: clothes
+        name: CLOTHES
+        subcategories:
+        - Men
+        - Women
+      - key: accessories
+        name: ACCESSORIES
+        subcategories:
+        - Stationery
+        - Home Accessories
+      - key: art
+        name: ART
+        subcategories:
+        - Posters
+  searchable_catalog:
+    description: Searchable catalog containing products that match the keyword shirt and can appear in
+      search suggestions and search results.
+    scope: global
+    mutable: false
+    providedState:
+      search: ready
+    entities:
+      products:
+      - key: shirt_a
+        name: Hummingbird printed t-shirt
+        keywords:
+        - shirt
+        - t-shirt
+      - key: shirt_b
+        name: Brown bear printed sweater
+        keywords:
+        - shirt
+        - sweater
+  cart_header_state:
+    description: Header cart state with at least one visible item count and a reachable cart page.
+    scope: global
+    mutable: false
+    providedState:
+      cart: present
+    entities:
+      carts:
+      - key: cart_header
+        itemsCount: 2
+  popular_products:
+    description: Popular products section on the homepage with clickable product cards that open product
+      detail pages.
+    scope: global
+    mutable: false
+    providedState:
+      popularProducts: present
+    entities:
+      products:
+      - key: popular_tshirt
+        name: Hummingbird printed t-shirt
+  category_listing:
+    description: Category page with breadcrumb, subcategory links, description area, product grid, and
+      at least two pages of products.
+    scope: global
+    mutable: false
+    providedState:
+      listing: present
+    entities:
+      categories:
+      - key: men
+        name: Men
+        description: Products for men
+        productCount: 18
+  filterable_catalog:
+    description: Category listing data that supports filtering by stock, color, and price with visible
+      result changes.
+    scope: global
+    mutable: false
+    providedState:
+      filters: available
+    entities:
+      products:
+      - key: white_shirt
+        name: White t-shirt
+        inStock: true
+        color: White
+        price: €18.90
+      - key: black_mug
+        name: Black mug
+        inStock: false
+        color: Black
+        price: €9.90
+  sortable_catalog:
+    description: Category listing data with multiple products and pages so sorting, product counts, and
+      pagination can be observed.
+    scope: global
+    mutable: false
+    providedState:
+      sorting: available
+    entities:
+      products:
+      - key: low_price
+        name: The best is yet to come notebook
+        price: €11.90
+      - key: high_price
+        name: Hummingbird printed t-shirt
+        price: €23.90
+  product_detail_product:
+    description: A product detail page with images, description, details tab, reviews, recently viewed
+      products, and related products.
+    scope: global
+    mutable: false
+    providedState:
+      productDetail: available
+    entities:
+      products:
+      - key: hummingbird_tshirt
+        name: Hummingbird printed t-shirt
+        description: Regular fit t-shirt with hummingbird print
+        regularPrice: €28.68
+        salePrice: €23.90
+        discount: 20%
+        sizes:
+        - S
+        - M
+        - L
+        colors:
+        - White
+        - Black
+  cart_ready_product:
+    description: Purchasable product with configurable quantity and stock rules that can be added to cart
+      and used through checkout.
+    scope: per_test
+    mutable: true
+    providedState:
+      cartAction: available
+    entities:
+      products:
+      - key: cart_product
+        name: Hummingbird printed t-shirt
+        stock: 10
+  reviewed_product:
+    description: Product that already has at least one review and an average rating displayed on its detail
+      page.
+    scope: global
+    mutable: false
+    providedState:
+      reviews: present
+    entities:
+      reviews:
+      - key: review_1
+        product: Hummingbird printed t-shirt
+        rating: 4
+        title: Nice shirt
+  registered_user:
+    description: Standard registered storefront user who can sign in, access My Account, and use account-related
+      features.
+    scope: per_test
+    mutable: true
+    providedState:
+      auth: authenticated
+    entities:
+      users:
+      - key: prestashop_user
+        firstName: Store
+        lastName: User
+        email: prestashop_user@example.com
+        password: ShopPass123!
+  registration_candidate:
+    description: Fresh customer identity that can register a new account with profile, password, birthday,
+      marketing preferences, and terms agreement.
+    scope: per_test
+    mutable: true
+    providedState:
+      registration: available
+    entities:
+      users:
+      - key: new_customer
+        firstName: New
+        lastName: Customer
+        email: new_customer@example.com
+        password: ShopPass123!
+        birthdate: '1995-08-21'
+  checkout_customer:
+    description: Registered customer with an active cart and at least one reusable shipping address for
+      the full checkout flow.
+    scope: per_test
+    mutable: true
+    providedState:
+      checkout: ready
+    entities:
+      users:
+      - key: checkout_user
+        email: checkout_user@example.com
+        password: ShopPass123!
+      addresses:
+      - key: home_address
+        alias: Home
+        city: Shanghai
+        country: China
+  address_book:
+    description: Customer address book with at least one existing address that can be viewed, edited,
+      and deleted, plus space to add a new one.
+    scope: per_test
+    mutable: true
+    providedState:
+      addresses: managed
+    entities:
+      addresses:
+      - key: addr_primary
+        alias: Home
+        firstName: Store
+        lastName: User
+        address1: 1 Commerce Road
+        postalCode: '200000'
+        city: Shanghai
+        country: China
+        phone: '13800000020'
+  order_history:
+    description: Customer order history with at least one order, its details, reorder entry, and downloadable
+      invoice PDF.
+    scope: per_test
+    mutable: true
+    providedState:
+      orders: present
+    entities:
+      orders:
+      - key: order_1
+        reference: PS2026-0001
+        status: Delivered
+        total: €47.80
+  wishlist_state:
+    description: Customer wishlist area with at least one wishlist and one product that can be added,
+      renamed, removed, or moved to cart.
+    scope: per_test
+    mutable: true
+    providedState:
+      wishlist: available
+    entities:
+      wishlists:
+      - key: wishlist_default
+        name: Favorites
+      products:
+      - key: wishlist_product
+        name: Hummingbird printed t-shirt
+requirementBindings:
+  REQ-0:
+    needs:
+    - public_homepage
+  REQ-1.1:
+    needs:
+    - public_homepage
+  REQ-1.2:
+    needs:
+    - public_homepage
+  REQ-1.3.1:
+    needs:
+    - public_homepage
+    - category_catalog
+  REQ-1.3.2:
+    needs:
+    - public_homepage
+    - category_catalog
+  REQ-1.4:
+    needs:
+    - public_homepage
+    - searchable_catalog
+  REQ-1.5:
+    needs:
+    - public_homepage
+  REQ-1.6.1:
+    needs:
+    - public_homepage
+    - cart_header_state
+  REQ-1.6.2:
+    needs:
+    - public_homepage
+    - cart_header_state
+  REQ-2.1:
+    needs:
+    - public_homepage
+  REQ-2.2.1:
+    needs:
+    - public_homepage
+  REQ-2.2.2:
+    needs:
+    - public_homepage
+  REQ-2.2.3:
+    needs:
+    - public_homepage
+  REQ-2.3:
+    needs:
+    - public_homepage
+    - popular_products
+  REQ-3.1:
+    needs:
+    - public_homepage
+    - category_catalog
+  REQ-3.2.1:
+    needs:
+    - category_listing
+  REQ-3.2.2:
+    needs:
+    - category_listing
+  REQ-3.3:
+    needs:
+    - category_listing
+  REQ-3.4:
+    needs:
+    - category_listing
+  REQ-3.5.1:
+    needs:
+    - category_listing
+  REQ-3.5.2:
+    needs:
+    - category_listing
+  REQ-3.5.3:
+    needs:
+    - category_listing
+  REQ-3.6.1:
+    needs:
+    - category_listing
+    - filterable_catalog
+  REQ-3.6.2:
+    needs:
+    - category_listing
+    - filterable_catalog
+  REQ-3.6.3:
+    needs:
+    - category_listing
+    - filterable_catalog
+  REQ-3.6.4:
+    needs:
+    - category_listing
+    - filterable_catalog
+  REQ-3.7:
+    needs:
+    - category_listing
+    - sortable_catalog
+  REQ-3.8:
+    needs:
+    - category_listing
+    - sortable_catalog
+  REQ-3.9:
+    needs:
+    - category_listing
+    - sortable_catalog
+  REQ-4.1:
+    needs:
+    - product_detail_product
+  REQ-4.2:
+    needs:
+    - product_detail_product
+  REQ-4.3:
+    needs:
+    - product_detail_product
+  REQ-4.4:
+    needs:
+    - product_detail_product
+  REQ-4.5.1:
+    needs:
+    - product_detail_product
+  REQ-4.5.2:
+    needs:
+    - product_detail_product
+  REQ-4.5.3:
+    needs:
+    - product_detail_product
+  REQ-4.5.4:
+    needs:
+    - product_detail_product
+  REQ-4.6.1:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-4.6.2:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-4.6.3:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-4.7:
+    needs:
+    - product_detail_product
+    - registered_user
+    - wishlist_state
+  REQ-4.8.1:
+    needs:
+    - product_detail_product
+  REQ-4.8.2:
+    needs:
+    - product_detail_product
+  REQ-4.9.1:
+    needs:
+    - product_detail_product
+    - reviewed_product
+  REQ-4.9.2:
+    needs:
+    - product_detail_product
+    - registered_user
+    - wishlist_state
+  REQ-4.10:
+    needs:
+    - product_detail_product
+  REQ-4.11:
+    needs:
+    - product_detail_product
+  REQ-5.1:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-5.2:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-5.3:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-5.4:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-5.5:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-5.6:
+    needs:
+    - public_homepage
+  REQ-5.7:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-6.1:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-6.2:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-6.3.1:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-6.3.2:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-6.3.3:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-6.4:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-6.5:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-6.6:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-6.7:
+    needs:
+    - product_detail_product
+    - cart_ready_product
+    - checkout_customer
+  REQ-7.1:
+    needs:
+    - public_homepage
+  REQ-7.2:
+    needs:
+    - registered_user
+  REQ-7.3:
+    needs:
+    - registration_candidate
+  REQ-7.4:
+    needs:
+    - registered_user
+  REQ-8.1:
+    needs:
+    - registered_user
+  REQ-8.2:
+    needs:
+    - registered_user
+  REQ-8.3:
+    needs:
+    - registered_user
+  REQ-8.4.1:
+    needs:
+    - registered_user
+    - address_book
+  REQ-8.4.2:
+    needs:
+    - registered_user
+    - address_book
+  REQ-8.4.3:
+    needs:
+    - registered_user
+    - address_book
+  REQ-8.4.4:
+    needs:
+    - registered_user
+    - address_book
+  REQ-8.5.1:
+    needs:
+    - registered_user
+    - order_history
+  REQ-8.5.2:
+    needs:
+    - registered_user
+    - order_history
+  REQ-8.5.3:
+    needs:
+    - registered_user
+    - order_history
+  REQ-8.5.4:
+    needs:
+    - registered_user
+    - order_history
+  REQ-8.6.1:
+    needs:
+    - registered_user
+    - wishlist_state
+  REQ-8.6.2:
+    needs:
+    - registered_user
+    - wishlist_state
+  REQ-8.6.3:
+    needs:
+    - registered_user
+    - wishlist_state
+  REQ-8.6.4:
+    needs:
+    - registered_user
+    - wishlist_state
+  REQ-8.6.5:
+    needs:
+    - registered_user
+    - wishlist_state
+  REQ-8.6.6:
+    needs:
+    - registered_user
+    - wishlist_state
+  REQ-8.6.7:
+    needs:
+    - registered_user
+    - wishlist_state
+  REQ-8.7:
+    needs:
+    - registered_user

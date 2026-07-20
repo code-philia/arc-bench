@@ -1,0 +1,329 @@
+version: 1
+baseline:
+  description: Shared Keep homepage, navigation, note composer, and sidebar data required for core note-management
+    flows.
+  fixtures:
+  - public_homepage
+  - notes_overview
+  - label_catalog
+fixtures:
+  public_homepage:
+    description: Anonymous Keep homepage with the search bar, settings entry, sidebar, and Take a note
+      composer visible.
+    scope: global
+    mutable: false
+    providedState:
+      auth: anonymous
+    entities:
+      pages:
+      - key: keep_home
+        title: Keep home
+        sections:
+        - header
+        - search
+        - sidebar
+        - notes
+        - composer
+  notes_overview:
+    description: At least one pinned note and one regular note rendered on the home page so list separation
+      and view toggles can be observed.
+    scope: global
+    mutable: false
+    providedState:
+      notes: mixed
+    entities:
+      notes:
+      - key: note_pinned
+        title: Sprint goals
+        content: Pinned planning note
+        pinned: true
+      - key: note_regular
+        title: Groceries
+        content: Regular shopping note
+        pinned: false
+  deletable_note:
+    description: A visible note that can be deleted from the more-options menu and later restored from
+      Undo or viewed in Trash.
+    scope: per_test
+    mutable: true
+    providedState:
+      note: deletable
+    entities:
+      notes:
+      - key: note_delete
+        title: Delete me
+        content: Temporary note for deletion flow
+  editable_note:
+    description: A visible note whose body text can be edited and saved by closing the editor.
+    scope: per_test
+    mutable: true
+    providedState:
+      note: editable
+    entities:
+      notes:
+      - key: note_edit
+        title: Project ideas
+        content: Initial editable content
+  archivable_note:
+    description: A visible note that can be archived, restored through Undo, and unarchived from the Archived
+      view.
+    scope: per_test
+    mutable: true
+    providedState:
+      note: archivable
+    entities:
+      notes:
+      - key: note_archive
+        title: Travel plans
+        content: Archive workflow note
+  colorable_note:
+    description: A note whose background color can be changed after creation or during creation, including
+      a visible light-green color option.
+    scope: per_test
+    mutable: true
+    providedState:
+      note: colorable
+    entities:
+      notes:
+      - key: note_color
+        title: Garden tasks
+        content: Color me later
+  label_catalog:
+    description: Label list containing the default Reminders label plus a user-defined Work label that
+      can be assigned to notes.
+    scope: global
+    mutable: false
+    providedState:
+      labels: available
+    entities:
+      labels:
+      - key: label_reminders
+        name: Reminders
+        default: true
+      - key: label_work
+        name: Work
+        default: false
+  labeled_note:
+    description: A note that already has the Work label assigned so it can be removed or used for label-filtered
+      views.
+    scope: per_test
+    mutable: true
+    providedState:
+      note: labeled
+    entities:
+      notes:
+      - key: note_labeled
+        title: Team retro
+        content: Agenda for team retro
+        labels:
+        - Work
+  editable_label_catalog:
+    description: Mutable label list that supports rename operations from the Edit Labels dialog.
+    scope: per_test
+    mutable: true
+    providedState:
+      labels: editable
+    entities:
+      labels:
+      - key: label_work_editable
+        name: Work
+  label_filtered_notes:
+    description: Multiple notes spanning different labels so selecting a label filters the visible notes
+      list meaningfully.
+    scope: global
+    mutable: false
+    providedState:
+      noteFilters: ready
+    entities:
+      notes:
+      - key: note_work
+        title: Design review
+        content: Work note
+        labels:
+        - Work
+      - key: note_reminder
+        title: Call dentist
+        content: Reminder note
+        labels:
+        - Reminders
+      - key: note_other
+        title: Movie list
+        content: Unlabeled note
+        labels: []
+  pinnable_note:
+    description: A regular note that can be pinned after creation or toggled back to the regular notes
+      section.
+    scope: per_test
+    mutable: true
+    providedState:
+      note: pinnable
+    entities:
+      notes:
+      - key: note_pin
+        title: Meeting agenda
+        content: Pin this note
+        pinned: false
+  searchable_notes:
+    description: Notes containing searchable keywords and filterable properties so the search bar can
+      return filtered results and highlighted matches.
+    scope: global
+    mutable: false
+    providedState:
+      search: ready
+    entities:
+      notes:
+      - key: note_study
+        title: Study schedule
+        content: Start statistics revision tonight
+      - key: note_steps
+        title: Steps challenge
+        content: Stretch after strength training
+      - key: note_grocery
+        title: Groceries
+        content: Milk and bread
+  settings_state:
+    description: Application settings menu and detailed settings page with configurable options plus Save
+      and Cancel actions.
+    scope: global
+    mutable: false
+    providedState:
+      settings: available
+    entities:
+      settingsOptions:
+      - key: settings_main
+        name: Settings
+      - key: move_new_notes
+        name: Add new items to bottom
+      - key: move_checked_items
+        name: Move checked items to bottom
+requirementBindings:
+  REQ-1.1:
+    needs:
+    - public_homepage
+  REQ-2.1:
+    needs:
+    - public_homepage
+    - notes_overview
+  REQ-2.2:
+    needs:
+    - public_homepage
+  REQ-2.3.1:
+    needs:
+    - public_homepage
+    - deletable_note
+  REQ-2.3.2:
+    needs:
+    - public_homepage
+    - deletable_note
+  REQ-2.3.3:
+    needs:
+    - public_homepage
+    - deletable_note
+  REQ-2.4:
+    needs:
+    - public_homepage
+    - editable_note
+  REQ-2.5.1:
+    needs:
+    - public_homepage
+    - archivable_note
+  REQ-2.5.2:
+    needs:
+    - public_homepage
+    - archivable_note
+  REQ-2.5.3:
+    needs:
+    - public_homepage
+    - archivable_note
+  REQ-2.5.4:
+    needs:
+    - public_homepage
+    - archivable_note
+  REQ-2.6.1:
+    needs:
+    - public_homepage
+    - colorable_note
+  REQ-2.6.2:
+    needs:
+    - public_homepage
+    - colorable_note
+  REQ-2.7.1:
+    needs:
+    - public_homepage
+    - label_catalog
+    - labeled_note
+  REQ-2.7.2:
+    needs:
+    - public_homepage
+    - label_catalog
+    - labeled_note
+  REQ-2.7.3:
+    needs:
+    - label_catalog
+  REQ-2.7.4:
+    needs:
+    - public_homepage
+    - label_catalog
+  REQ-2.7.5:
+    needs:
+    - public_homepage
+    - editable_label_catalog
+  REQ-2.7.6.1:
+    needs:
+    - public_homepage
+    - label_catalog
+    - label_filtered_notes
+  REQ-2.7.6.2:
+    needs:
+    - public_homepage
+    - label_catalog
+    - label_filtered_notes
+  REQ-2.7.6.3:
+    needs:
+    - public_homepage
+    - label_catalog
+    - label_filtered_notes
+  REQ-2.8.1:
+    needs:
+    - public_homepage
+    - pinnable_note
+  REQ-2.8.2:
+    needs:
+    - public_homepage
+    - pinnable_note
+  REQ-2.8.3:
+    needs:
+    - public_homepage
+    - pinnable_note
+  REQ-3.1:
+    needs:
+    - public_homepage
+    - searchable_notes
+  REQ-3.2:
+    needs:
+    - public_homepage
+    - searchable_notes
+  REQ-4.1:
+    needs:
+    - public_homepage
+    - settings_state
+  REQ-4.2:
+    needs:
+    - public_homepage
+    - settings_state
+  REQ-5.1:
+    needs:
+    - public_homepage
+    - notes_overview
+  REQ-5.2:
+    needs:
+    - public_homepage
+    - notes_overview
+  REQ-6.1:
+    needs:
+    - public_homepage
+    - notes_overview
+  REQ-6.2:
+    needs:
+    - public_homepage
+    - notes_overview

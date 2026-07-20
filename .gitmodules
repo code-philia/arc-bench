@@ -1,0 +1,4 @@
+[submodule "agentic-requirement-compiler"]
+	path = agentic-requirement-compiler
+	url = https://github.com/code-philia/agentic-requirement-compiler.git
+	branch = main

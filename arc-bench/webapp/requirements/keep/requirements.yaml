@@ -1,0 +1,567 @@
+id: ROOT
+name: Keep
+type: FOLDER
+description: Note management system for creating, organizing, searching, and configuring personal notes.
+dependencies: []
+children:
+  - id: REQ-1
+    name: Google Keep Home Page
+    type: FOLDER
+    description: 'Main workspace of the application. It shows the notes area, pinned notes section, header actions, search entry, settings entry, sidebar navigation, and quick label access. Reference image: ![image](./reference/home_page.png)'
+    dependencies: []
+    children:
+      - id: REQ-1.1
+        name: Enter Website
+        type: ATOMIC
+        description: Open the application and display the home page.
+        dependencies: []
+        scenarios:
+          - name: Enter Website
+            steps:
+              - keyword: GIVEN
+                content: User has a browser or app with network access.
+              - keyword: WHEN
+                content: Open the application entry URL.
+              - keyword: THEN
+                content: The home page is displayed.
+  - id: REQ-2
+    name: Notes Management
+    type: FOLDER
+    description: 'Core note management capability for listing, creating, updating, deleting, archiving, coloring, labeling, and pinning notes. Reference image: ![image](./reference/home_page.png)'
+    dependencies:
+      - REQ-1
+    children:
+      - id: REQ-2.1
+        name: Note Listing
+        type: ATOMIC
+        description: Display the notes list on the home page with pinned notes shown separately from unpinned notes.
+        dependencies:
+          - REQ-1.1
+        scenarios:
+          - name: Note Listing
+            steps:
+              - keyword: GIVEN
+                content: User has opened the application and the system is accessible.
+              - keyword: WHEN
+                content: View the home page.
+              - keyword: THEN
+                content: The page displays the available notes list, with pinned notes separated from regular notes.
+      - id: REQ-2.2
+        name: Create Note
+        type: ATOMIC
+        description: 'Create a note from the Take a note form, expand the editor for title and content, and autosave the note when the editor is closed. Take a note form from homepage image: ![image](./reference/create_note_home_page.png) Note form image: ![image](./reference/create_note_form.png)'
+        dependencies:
+          - REQ-2.1
+        scenarios:
+          - name: Create Note
+            steps:
+              - keyword: GIVEN
+                content: User is on the home page.
+              - keyword: WHEN
+                content: Click the "Take a note" form, enter a title and content, and close the editor.
+              - keyword: THEN
+                content: The note is autosaved, the editor closes, and the note appears in the notes list.
+      - id: REQ-2.3
+        name: Delete Note
+        type: FOLDER
+        description: Delete notes from the note actions menu and manage the deleted-note recovery flow.
+        dependencies:
+          - REQ-2.2
+        children:
+          - id: REQ-2.3.1
+            name: Delete
+            type: ATOMIC
+            description: 'Delete a note from the note actions menu without an extra confirmation dialog. Dropdown image: ![image](./reference/note_more_options_dropdown.png)'
+            dependencies:
+              - REQ-2.2
+            scenarios:
+              - name: Delete
+                steps:
+                  - keyword: GIVEN
+                    content: User is on the home page and can see at least one note.
+                  - keyword: WHEN
+                    content: Hover over a note, open More options, and choose "Delete Note".
+                  - keyword: THEN
+                    content: The note is removed from the main notes list and a delete notification is shown.
+          - id: REQ-2.3.2
+            name: Notification and Undo
+            type: ATOMIC
+            description: 'Show a delete notification with an Undo action after a note is deleted, allow recovery through Undo, and allow the notification to dismiss automatically or be closed manually. Reference image for notification: ![image](./reference/note_delete_notification.png)'
+            dependencies:
+              - REQ-2.3.1
+            scenarios:
+              - name: Notification and Undo
+                steps:
+                  - keyword: GIVEN
+                    content: User has just deleted a note from the home page.
+                  - keyword: WHEN
+                    content: Click the Undo button in the visible delete notification.
+                  - keyword: THEN
+                    content: The note is restored and the page shows an "Action undone" notification.
+          - id: REQ-2.3.3
+            name: Trash list
+            type: ATOMIC
+            description: 'Open the Trash view from the sidebar and display deleted notes, with support for emptying trash and automatic deletion after seven days. Reference image: ![image](./reference/trash_list.png)'
+            dependencies:
+              - REQ-2.3.1
+            scenarios:
+              - name: Trash list
+                steps:
+                  - keyword: GIVEN
+                    content: User can see the sidebar.
+                  - keyword: WHEN
+                    content: Click the Trash item in the sidebar.
+                  - keyword: THEN
+                    content: The page displays the list of deleted notes.
+      - id: REQ-2.4
+        name: Update Note
+        type: ATOMIC
+        description: 'Edit the content of an existing note and persist the updated note after the editor is closed. Reference image: ![image](./reference/note_editing.png)'
+        dependencies:
+          - REQ-2.2
+        scenarios:
+          - name: Update Note
+            steps:
+              - keyword: GIVEN
+                content: User is on the home page and can see a note.
+              - keyword: WHEN
+                content: Open the note, edit its content, and close the note editor.
+              - keyword: THEN
+                content: The note editor closes and the updated content is saved.
+      - id: REQ-2.5
+        name: Archive Note
+        type: FOLDER
+        description: Archive and unarchive notes, and show the archived notes list separately from active notes.
+        dependencies:
+          - REQ-2.2
+        children:
+          - id: REQ-2.5.1
+            name: Archive
+            type: ATOMIC
+            description: 'Archive a note from the note actions area and show an Undo notification. Reference image: ![image](./reference/archive_button.png)'
+            dependencies:
+              - REQ-2.2
+            scenarios:
+              - name: Archive
+                steps:
+                  - keyword: GIVEN
+                    content: User is on the home page and can see a note.
+                  - keyword: WHEN
+                    content: Click the archive button on the note.
+                  - keyword: THEN
+                    content: The note moves to the archive list and the page shows a notification with an Undo action.
+          - id: REQ-2.5.2
+            name: Archive Undo
+            type: ATOMIC
+            description: Restore an archived note by using the Undo action from the archive notification.
+            dependencies:
+              - REQ-2.5.1
+            scenarios:
+              - name: Archive Undo
+                steps:
+                  - keyword: GIVEN
+                    content: The archive notification is visible after archiving a note.
+                  - keyword: WHEN
+                    content: Click the Undo action in the notification.
+                  - keyword: THEN
+                    content: The note returns to the main notes list.
+          - id: REQ-2.5.3
+            name: Show archived notes
+            type: ATOMIC
+            description: 'Open the Archived view from the sidebar and display all archived notes. Reference image: ![image](./reference/archived_notes_page.png)'
+            dependencies:
+              - REQ-2.5.1
+            scenarios:
+              - name: Show archived notes
+                steps:
+                  - keyword: GIVEN
+                    content: User can see the sidebar.
+                  - keyword: WHEN
+                    content: Click Archived in the sidebar.
+                  - keyword: THEN
+                    content: The page displays the archived notes list.
+          - id: REQ-2.5.4
+            name: Unarchive
+            type: ATOMIC
+            description: 'Restore an archived note from the archived notes list. Reference image: ![image](./reference/unarchive_button.png)'
+            dependencies:
+              - REQ-2.5.3
+            scenarios:
+              - name: Unarchive
+                steps:
+                  - keyword: GIVEN
+                    content: User is viewing the archived notes list.
+                  - keyword: WHEN
+                    content: Click Unarchive on an archived note.
+                  - keyword: THEN
+                    content: The note is removed from the archived list and returned to the main notes list.
+      - id: REQ-2.6
+        name: Note Coloring
+        type: FOLDER
+        description: 'Allow users to apply different background colors to notes during creation and after a note already exists. Reference image: ![image](./reference/note_coloring.png)'
+        dependencies:
+          - REQ-2.2
+        children:
+          - id: REQ-2.6.1
+            name: Change note color
+            type: ATOMIC
+            description: Change the color of an existing note.
+            dependencies:
+              - REQ-2.2
+            scenarios:
+              - name: Change note color
+                steps:
+                  - keyword: GIVEN
+                    content: User is on the home page and can see a note.
+                  - keyword: WHEN
+                    content: Open the color palette for the note and choose the light green color.
+                  - keyword: THEN
+                    content: The note background changes to light green.
+          - id: REQ-2.6.2
+            name: Choose note color when created
+            type: ATOMIC
+            description: Set the color of a note during note creation.
+            dependencies:
+              - REQ-2.2
+            scenarios:
+              - name: Choose note color when created
+                steps:
+                  - keyword: GIVEN
+                    content: User has opened the "Take a note" editor.
+                  - keyword: WHEN
+                    content: Open the color palette, choose a color, enter a title and content, and close the editor.
+                  - keyword: THEN
+                    content: The created note is saved with the selected color.
+      - id: REQ-2.7
+        name: Labels Management
+        type: FOLDER
+        description: Allow users to assign labels to notes, manage labels, and filter notes by label.
+        dependencies:
+          - REQ-2.2
+        children:
+          - id: REQ-2.7.1
+            name: Assign label to a note
+            type: ATOMIC
+            description: 'Assign one or more labels to an existing note. Reference image: ![image](./reference/assign_label_to_note.png)'
+            dependencies:
+              - REQ-2.2
+            scenarios:
+              - name: Assign label to a note
+                steps:
+                  - keyword: GIVEN
+                    content: User is on the home page and can see a note.
+                  - keyword: WHEN
+                    content: Open More options, choose "Change labels", and select a label.
+                  - keyword: THEN
+                    content: The selected label is assigned to the note and displayed on the note.
+          - id: REQ-2.7.2
+            name: Remove label from a note
+            type: ATOMIC
+            description: Remove an assigned label from a note.
+            dependencies:
+              - REQ-2.7.1
+            scenarios:
+              - name: Remove label from a note
+                steps:
+                  - keyword: GIVEN
+                    content: User is on the home page and can see a note that already has a label.
+                  - keyword: WHEN
+                    content: Open More options, choose "Change labels", and clear the selected label.
+                  - keyword: THEN
+                    content: The label is removed from the note.
+          - id: REQ-2.7.3
+            name: Default label
+            type: ATOMIC
+            description: Provide "Reminders" as a default label in the label list.
+            dependencies: []
+            scenarios:
+              - name: Default label
+                steps:
+                  - keyword: GIVEN
+                    content: The system has been initialized.
+                  - keyword: WHEN
+                    content: View the labels list.
+                  - keyword: THEN
+                    content: The labels list includes "Reminders" as a default label with its own icon.
+          - id: REQ-2.7.4
+            name: Assign default label when creating note
+            type: ATOMIC
+            description: Assign the default "Reminders" label during note creation.
+            dependencies:
+              - REQ-2.7.3
+            scenarios:
+              - name: Assign default label when creating note
+                steps:
+                  - keyword: GIVEN
+                    content: User is on the home page and the "Take a note" editor is open.
+                  - keyword: WHEN
+                    content: Choose the "Reminders" label, enter a title and content, and close the editor.
+                  - keyword: THEN
+                    content: The created note is saved with the "Reminders" label.
+          - id: REQ-2.7.5
+            name: Edit labels
+            type: ATOMIC
+            description: 'Create, rename, and delete labels from the label management list. Reference image: ![image](./reference/manage_labels.png)'
+            dependencies:
+              - REQ-2.7.1
+            scenarios:
+              - name: Edit labels
+                steps:
+                  - keyword: GIVEN
+                    content: User can see the sidebar.
+                  - keyword: WHEN
+                    content: Click "Edit Labels", change a label name, and save the update.
+                  - keyword: THEN
+                    content: The label list reflects the saved changes.
+          - id: REQ-2.7.6
+            name: View by labels
+            type: FOLDER
+            description: 'Show all labels in the sidebar and allow users to filter the notes list by the selected label. Reference image: ![image](./reference/label_filtered_list.png)'
+            dependencies:
+              - REQ-2.7.1
+            children:
+              - id: REQ-2.7.6.1
+                name: View list filtered by label
+                type: ATOMIC
+                description: Filter the notes list by a selected label.
+                dependencies:
+                  - REQ-2.7.1
+                scenarios:
+                  - name: View list filtered by label
+                    steps:
+                      - keyword: GIVEN
+                        content: User can see the sidebar.
+                      - keyword: WHEN
+                        content: Click a specific label in the sidebar.
+                      - keyword: THEN
+                        content: The notes list shows only notes that have the selected label.
+              - id: REQ-2.7.6.2
+                name: View all notes
+                type: ATOMIC
+                description: Return from a label-filtered view to the full notes list.
+                dependencies:
+                  - REQ-2.7.6.1
+                scenarios:
+                  - name: View all notes
+                    steps:
+                      - keyword: GIVEN
+                        content: User can see the sidebar.
+                      - keyword: WHEN
+                        content: Click "Notes" in the sidebar.
+                      - keyword: THEN
+                        content: The notes list shows all notes.
+              - id: REQ-2.7.6.3
+                name: View Reminders
+                type: ATOMIC
+                description: Filter the notes list by the default "Reminders" label.
+                dependencies:
+                  - REQ-2.7.3
+                scenarios:
+                  - name: View Reminders
+                    steps:
+                      - keyword: GIVEN
+                        content: User can see the sidebar.
+                      - keyword: WHEN
+                        content: Click "Reminders" in the sidebar.
+                      - keyword: THEN
+                        content: The notes list shows only notes with the "Reminders" label.
+      - id: REQ-2.8
+        name: Pinned Notes
+        type: FOLDER
+        description: Allow users to pin frequently used notes to the top of the notes list and unpin them later.
+        dependencies:
+          - REQ-2.2
+        children:
+          - id: REQ-2.8.1
+            name: Pin note
+            type: ATOMIC
+            description: 'Pin an existing note from the note card. Reference image: ![image](./reference/pin_button.png)'
+            dependencies:
+              - REQ-2.2
+            scenarios:
+              - name: Pin note
+                steps:
+                  - keyword: GIVEN
+                    content: User is on the home page and can see a note.
+                  - keyword: WHEN
+                    content: Click the pin button on the note.
+                  - keyword: THEN
+                    content: The pin state is shown and the note appears in the pinned section at the top of the page.
+          - id: REQ-2.8.2
+            name: Unpin note
+            type: ATOMIC
+            description: Remove the pinned state from a pinned note.
+            dependencies:
+              - REQ-2.8.1
+            scenarios:
+              - name: Unpin note
+                steps:
+                  - keyword: GIVEN
+                    content: User is on the home page and the note is pinned.
+                  - keyword: WHEN
+                    content: Click the unpin button on the pinned note.
+                  - keyword: THEN
+                    content: The note is removed from the pinned section and returned to the regular notes list.
+          - id: REQ-2.8.3
+            name: Pin note when creating it
+            type: ATOMIC
+            description: Create a note in the pinned state.
+            dependencies:
+              - REQ-2.2
+            scenarios:
+              - name: Pin note when creating it
+                steps:
+                  - keyword: GIVEN
+                    content: User is on the home page and the "Take a note" editor is open.
+                  - keyword: WHEN
+                    content: Enter a title and content, click the pin button, and close the editor.
+                  - keyword: THEN
+                    content: The note is created and displayed in the pinned section.
+  - id: REQ-3
+    name: Search
+    type: FOLDER
+    description: Allow users to search notes by keywords and supported filters.
+    dependencies:
+      - REQ-2
+    children:
+      - id: REQ-3.1
+        name: Initial suggested filters
+        type: ATOMIC
+        description: 'Show suggested search filters after the search bar is focused and filter the notes list when one is selected. Image reference: ![image](./reference/search_suggested_filters.png)'
+        dependencies:
+          - REQ-1.1
+        scenarios:
+          - name: Initial suggested filters
+            steps:
+              - keyword: GIVEN
+                content: User is on the home page.
+              - keyword: WHEN
+                content: Click the search bar at the top and choose a suggested filter.
+              - keyword: THEN
+                content: The notes list shows only notes that match the selected filter.
+      - id: REQ-3.2
+        name: Search by keyword
+        type: ATOMIC
+        description: 'Search notes by keyword and highlight matching text in the results. Image reference: ![image](./reference/search_keyword.png)'
+        dependencies:
+          - REQ-3.1
+        scenarios:
+          - name: Search by keyword
+            steps:
+              - keyword: GIVEN
+                content: User is on the home page.
+              - keyword: WHEN
+                content: Click the search bar and enter the keyword "st".
+              - keyword: THEN
+                content: The notes list shows matching notes with the matching text highlighted.
+  - id: REQ-4
+    name: Settings
+    type: FOLDER
+    description: Allow users to manage common application settings.
+    dependencies:
+      - REQ-2
+    children:
+      - id: REQ-4.1
+        name: Setting options list
+        type: ATOMIC
+        description: 'Display the settings options menu from the settings icon. Reference image: ![image](./reference/settings_dropdown.png)'
+        dependencies:
+          - REQ-1.1
+        scenarios:
+          - name: Setting options list
+            steps:
+              - keyword: GIVEN
+                content: User is on the home page.
+              - keyword: WHEN
+                content: Click the settings icon.
+              - keyword: THEN
+                content: The page displays the list of settings options.
+      - id: REQ-4.2
+        name: Detailed settings
+        type: ATOMIC
+        description: Open the detailed settings page and display configurable application options such as moving new notes or checked items to the bottom. ![image](./reference/settings_settings.png)
+        dependencies:
+          - REQ-4.1
+        scenarios:
+          - name: Detailed settings
+            steps:
+              - keyword: GIVEN
+                content: User is on the home page and the settings options list is visible.
+              - keyword: WHEN
+                content: Click "Settings".
+              - keyword: THEN
+                content: The page focuses on a list of configurable options with save and cancel actions.
+  - id: REQ-5
+    name: List View & Grid View
+    type: FOLDER
+    description: 'Allow users to switch between grid view and list view for notes. Reference image for list view: ![image](./reference/list_view.png)'
+    dependencies:
+      - REQ-2
+    children:
+      - id: REQ-5.1
+        name: Toggle between list and grid views
+        type: ATOMIC
+        description: Switch between list view and grid view from the home page toolbar.
+        dependencies:
+          - REQ-1.1
+        scenarios:
+          - name: Toggle between list and grid views
+            steps:
+              - keyword: GIVEN
+                content: User is on the home page.
+              - keyword: WHEN
+                content: Click the list-view icon and then click the grid-view icon.
+              - keyword: THEN
+                content: The page switches to list view and then switches back to grid view.
+      - id: REQ-5.2
+        name: Grid View by default
+        type: ATOMIC
+        description: Display notes in grid view by default when the home page first loads.
+        dependencies:
+          - REQ-1.1
+        scenarios:
+          - name: Grid View by default
+            steps:
+              - keyword: GIVEN
+                content: User has a browser or app with network access.
+              - keyword: WHEN
+                content: Open the application entry URL.
+              - keyword: THEN
+                content: The notes page opens in grid view and the toolbar shows the list-view toggle.
+  - id: REQ-6
+    name: Sidebar
+    type: FOLDER
+    description: Sidebar for common navigation actions such as notes, labels, archive, and trash.
+    dependencies:
+      - REQ-2
+    children:
+      - id: REQ-6.1
+        name: Items and styling
+        type: ATOMIC
+        description: 'Display sidebar items with consistent icons, alignment, hover state, and selected-item highlighting. Reference image: ![image](./reference/sidebar.png)'
+        dependencies:
+          - REQ-1.1
+        scenarios:
+          - name: Items and styling
+            steps:
+              - keyword: GIVEN
+                content: User has opened the application.
+              - keyword: WHEN
+                content: View the page after the home page loads.
+              - keyword: THEN
+                content: The page shows an open sidebar with consistent styling and clearly identifiable navigation items.
+      - id: REQ-6.2
+        name: Collapsible Sidebar
+        type: ATOMIC
+        description: 'Collapse the sidebar to an icon-only view and expand it again from the same control. Reference image: ![image](./reference/sidebar_collapsed.png)'
+        dependencies:
+          - REQ-6.1
+        scenarios:
+          - name: Collapsible Sidebar
+            steps:
+              - keyword: GIVEN
+                content: The sidebar is expanded.
+              - keyword: WHEN
+                content: Click the sidebar collapse control and then click it again.
+              - keyword: THEN
+                content: The sidebar first collapses to an icon-only view and then expands to show both icons and labels again.

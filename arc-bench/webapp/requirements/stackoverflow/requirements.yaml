@@ -1,0 +1,1369 @@
+id: ROOT
+name: Stack Overflow Platform
+type: FOLDER
+description: Web-based question and answer platform for developers that supports community knowledge sharing
+  through asking, answering, searching, tagging, and reputation-driven participation.
+dependencies: []
+children:
+- id: REQ-0
+  name: Open Homepage
+  description: Opening the platform root URL loads the homepage shell with the global header, left navigation,
+    right sidebar widgets, and central question feed.
+  dependencies: []
+  type: ATOMIC
+  scenarios:
+  - name: Enter Platform
+    steps:
+    - keyword: GIVEN
+      content: User is in a web browser.
+    - keyword: WHEN
+      content: Open the Stack Overflow platform root URL (/)
+    - keyword: THEN
+      content: Display the homepage with header, sidebar navigation, and main question feed
+- id: REQ-1
+  name: Homepage
+  type: FOLDER
+  description: '![image](./reference/homepage.jpeg) The homepage is the default landing surface for question
+    discovery and community navigation. It assembles the global header, left navigation, main question
+    feed, and right sidebar widgets.'
+  dependencies: []
+  children:
+  - id: REQ-1.1
+    name: View Homepage Total Layout
+    description: Displays the multi-column homepage layout including header, sidebar, and main feed.
+    dependencies:
+    - REQ-0
+    type: ATOMIC
+    scenarios:
+    - name: View Homepage Layout
+      steps:
+      - keyword: GIVEN
+        content: User is on the homepage.
+      - keyword: WHEN
+        content: View the page layout
+      - keyword: THEN
+        content: Display the multi-column homepage layout including header, sidebar, and main feed.
+  - id: REQ-1.2
+    name: Global Navigation Header
+    description: Fixed top bar for global navigation and utility. Includes the platform logo, search input
+      with suggestions, product links, and authentication status (Login/Sign up buttons or User Avatar/Stats).
+    dependencies: []
+    type: ATOMIC
+    scenarios:
+    - name: Global Navigation Header
+      steps:
+      - keyword: GIVEN
+        content: User can see the global navigation header.
+      - keyword: WHEN
+        content: View the top bar
+      - keyword: THEN
+        content: The header shows the platform logo, search box, product links, and authentication or
+          user-status controls.
+  - id: REQ-1.3
+    name: Sidebar Navigation
+    description: 'Left-hand navigation menu providing vertical access to major modules: Home, Questions,
+      Tags, Users.'
+    dependencies: []
+    type: ATOMIC
+    scenarios:
+    - name: Sidebar Navigation
+      steps:
+      - keyword: GIVEN
+        content: User can see the left sidebar navigation.
+      - keyword: WHEN
+        content: Click on navigation items
+      - keyword: THEN
+        content: Highlight active section and navigate to corresponding page without full reload if applicable.
+  - id: REQ-1.4
+    name: Main Question Feed
+    description: The core content area displaying a list of recent or trending questions. Includes the
+      "Ask Question" action, list filtering/sorting tabs (Newest, Active, and other supported sorts),
+      and individual question summaries with engagement metrics (votes, answers, views).
+    dependencies: []
+    type: ATOMIC
+    scenarios:
+    - name: Main Question Feed
+      steps:
+      - keyword: GIVEN
+        content: User can see the main question feed.
+      - keyword: WHEN
+        content: Scroll through the central feed
+      - keyword: THEN
+        content: Display questions with titles, tags, and summary stats consistent with the design.
+  - id: REQ-1.5
+    name: Right Sidebar Widgets
+    description: Auxiliary information panel on the right side. Contains "The Overflow Blog", "meta items",
+      "Hot Network Questions", and custom filters/tag watchlists.
+    dependencies: []
+    type: ATOMIC
+    scenarios:
+    - name: Right Sidebar Widgets
+      steps:
+      - keyword: GIVEN
+        content: User can see the right sidebar area on the homepage.
+      - keyword: WHEN
+        content: Check right-side content
+      - keyword: THEN
+        content: Display featured blog posts and community-wide trending questions.
+- id: REQ-2
+  name: User Authentication Module
+  type: FOLDER
+  description: Covers account creation, credential-based sign-in, session state, profile access, and privilege-gated
+    interactions for authenticated features. Social and SSO login remain out of scope.
+  dependencies:
+  - REQ-1
+  children:
+  - id: REQ-2.1
+    name: Anonymous Session
+    description: Shows "Log in" and "Sign up" entry points.
+    dependencies:
+    - REQ-0
+    type: ATOMIC
+    scenarios:
+    - name: Anonymous Session
+      steps:
+      - keyword: GIVEN
+        content: User is not logged in.
+      - keyword: WHEN
+        content: View the global navigation header
+      - keyword: THEN
+        content: Show "Log in" and "Sign up" entry points
+  - id: REQ-2.2
+    name: Authenticated Session
+    description: Shows user avatar/profile entry and authenticated navigation options.
+    dependencies: []
+    type: ATOMIC
+    scenarios:
+    - name: Authenticated Session
+      steps:
+      - keyword: GIVEN
+        content: User is logged in.
+      - keyword: WHEN
+        content: View the global navigation header
+      - keyword: THEN
+        content: Show user avatar/profile entry and authenticated navigation options
+  - id: REQ-2.3
+    name: Elevated Privileges
+    description: Grants the additional actions and protected views that are available only to authorized
+      users such as profile owners or moderators.
+    dependencies:
+    - REQ-2.2
+    type: ATOMIC
+    scenarios:
+    - name: Elevated Privileges
+      steps:
+      - keyword: GIVEN
+        content: User has elevated privileges (e.g., moderator or profile owner).
+      - keyword: WHEN
+        content: Access privilege-gated pages or sections
+      - keyword: THEN
+        content: Restricted information and actions are available
+  - id: REQ-2.4
+    name: User Login
+    type: FOLDER
+    description: 'Traditional email and password login interface.  ![image](./reference/login.jpeg) Components:
+      Stack Overflow Logo, Email Input, Password Input (with toggle/visibility and "Forgot password?"
+      link), "Log in" submit button, and "Sign up" redirect link.'
+    dependencies: []
+    children:
+    - id: REQ-2.4.1
+      name: Happy Path - Successful Login
+      description: Authenticates the user with a registered email and password, then returns the user
+        to the homepage in a signed-in state.
+      dependencies:
+      - REQ-1.1
+      type: ATOMIC
+      scenarios:
+      - name: Successful Login
+        steps:
+        - keyword: GIVEN
+          content: User is on the homepage and is not logged in.
+        - keyword: WHEN
+          content: Click "Log in" in the navigation bar
+        - keyword: THEN
+          content: Display login form with email/password fields
+        - keyword: GIVEN
+          content: Login form is visible.
+        - keyword: WHEN
+          content: Enter registered email and correct password, click "Log in"
+        - keyword: THEN
+          content: Authenticate user and redirect to homepage with logged-in status
+    - id: REQ-2.4.2
+      name: Error - Empty Credentials
+      description: Displays validation errors "Email cannot be empty" and "Password cannot be empty".
+      dependencies:
+      - REQ-1.1
+      type: ATOMIC
+      scenarios:
+      - name: Empty Credentials
+        steps:
+        - keyword: GIVEN
+          content: Login form is visible.
+        - keyword: WHEN
+          content: Click "Log in", leave email and password empty, click "Log in" button
+        - keyword: THEN
+          content: Display validation errors "Email cannot be empty" and "Password cannot be empty"
+    - id: REQ-2.4.3
+      name: Error - Invalid Email Format
+      description: Shows error message "The email is not a valid email address".
+      dependencies:
+      - REQ-1.1
+      type: ATOMIC
+      scenarios:
+      - name: Invalid Email Format
+        steps:
+        - keyword: GIVEN
+          content: Login form is visible.
+        - keyword: WHEN
+          content: Enter "invalid-email-format", click "Log in"
+        - keyword: THEN
+          content: Show error message "The email is not a valid email address"
+    - id: REQ-2.4.4
+      name: Error - Unregistered Email
+      description: Shows error message "No account found with this email".
+      dependencies:
+      - REQ-1.1
+      type: ATOMIC
+      scenarios:
+      - name: Unregistered Email
+        steps:
+        - keyword: GIVEN
+          content: Login form is visible.
+        - keyword: WHEN
+          content: Enter an email not in the database, click "Log in"
+        - keyword: THEN
+          content: Show error message "No account found with this email"
+    - id: REQ-2.4.5
+      name: Error - Incorrect Password
+      description: Shows error message "The email or password does not match any account".
+      dependencies:
+      - REQ-1.1
+      type: ATOMIC
+      scenarios:
+      - name: Incorrect Password
+        steps:
+        - keyword: GIVEN
+          content: Login form is visible.
+        - keyword: WHEN
+          content: Enter valid email but wrong password, click "Log in"
+        - keyword: THEN
+          content: Show error message "The email or password does not match any account"
+  - id: REQ-2.5
+    name: User Registration
+    type: FOLDER
+    description: 'Allows new users to create an account using email and password. ![image](./reference/sign-up.jpeg)
+      Components: "Join Stack Overflow" header, Email Input, Password Input, Help text for password complexity,
+      "Sign up" button, TOS/Privacy consent text, and "Log in" redirect link.'
+    dependencies: []
+    children:
+    - id: REQ-2.5.1
+      name: Happy Path - Successful Sign up
+      description: Creates a new account with a unique email and valid password, signs the user in automatically,
+        and returns the user to the homepage.
+      dependencies:
+      - REQ-1.1
+      type: ATOMIC
+      scenarios:
+      - name: Successful Sign Up
+        steps:
+        - keyword: GIVEN
+          content: User is on the homepage or login page and is not logged in.
+        - keyword: WHEN
+          content: Click "Sign up" in the navigation bar or "Sign up" link on login page
+        - keyword: THEN
+          content: Display registration modal/page
+        - keyword: GIVEN
+          content: Registration form is visible.
+        - keyword: WHEN
+          content: Enter a unique email and valid password, click "Sign up"
+        - keyword: THEN
+          content: Create user record, automatically log in, and redirect to homepage
+    - id: REQ-2.5.2
+      name: Error - Email Already Registered
+      description: Shows error "Email is already in use".
+      dependencies:
+      - REQ-1.1
+      type: ATOMIC
+      scenarios:
+      - name: Email Already Registered
+        steps:
+        - keyword: GIVEN
+          content: Registration form is visible.
+        - keyword: WHEN
+          content: Enter an already registered email address, click "Sign up"
+        - keyword: THEN
+          content: Show error "Email is already in use"
+    - id: REQ-2.5.3
+      name: Error - Weak Password
+      description: Shows validation error explaining password requirements (e.g. minimum 8 characters).
+      dependencies:
+      - REQ-1.1
+      type: ATOMIC
+      scenarios:
+      - name: Weak Password
+        steps:
+        - keyword: GIVEN
+          content: Registration form is visible.
+        - keyword: WHEN
+          content: Enter email and a password that doesn't meet safety criteria (e.g. too short)
+        - keyword: THEN
+          content: Show validation error explaining password requirements (e.g. minimum 8 characters)
+  - id: REQ-2.6
+    name: View User Profile
+    description: 'Displays a comprehensive summary of a user''s activity, reputation, and achievements.
+      ![image](./reference/profile-page.jpeg) '
+    dependencies:
+    - REQ-2.2
+    type: ATOMIC
+    scenarios:
+    - name: View User Profile
+      steps:
+      - keyword: GIVEN
+        content: User is logged in and can see the avatar or username in the header.
+      - keyword: WHEN
+        content: Click user avatar or username in the top navigation bar header.
+      - keyword: THEN
+        content: Redirect to the profile page, defaulting to the Activity -> Summary view  showing user
+          stats and recent activity modules.
+  - id: REQ-2.7
+    name: Edit Profile Management
+    description: Allows users to customize their public identity and manage private details. ![image](./reference/edit-profile.jpeg)
+    dependencies:
+    - REQ-2.6
+    type: ATOMIC
+    scenarios:
+    - name: Edit Profile Management
+      steps:
+      - keyword: GIVEN
+        content: User is on their profile page.
+      - keyword: WHEN
+        content: Click "Edit profile" button on the profile page
+      - keyword: THEN
+        content: Display the "Edit your profile" form with all current information pre-filled.
+      - keyword: GIVEN
+        content: The 'Edit your profile' form is visible.
+      - keyword: WHEN
+        content: Modify Display name, Location, Title or "About me" (using Markdown editor)
+      - keyword: THEN
+        content: Input fields reflect changes; editor provides real-time preview if applicable.
+      - keyword: WHEN
+        content: Update social links (Website, X, GitHub) and Full name
+      - keyword: THEN
+        content: Data validation for URL formats and length.
+      - keyword: WHEN
+        content: Click "Save and copy changes to all public communities"
+      - keyword: THEN
+        content: Profile is updated across the platform and a success message is displayed.
+- id: REQ-3
+  name: Question Module
+  type: FOLDER
+  description: Core functionality for posting, viewing, editing, and managing questions. Questions include
+    title, body, tags, vote count, view count, and answer count. ![image](./reference/questions-page.jpeg)
+  dependencies:
+  - REQ-2
+  children:
+  - id: REQ-3.1
+    name: View Question List
+    description: Displays paginated list of questions with metadata (votes, answers, views, tags).
+    dependencies:
+    - REQ-1.1
+    type: ATOMIC
+    scenarios:
+    - name: View Question List
+      steps:
+      - keyword: GIVEN
+        content: User is on the homepage and can see the sidebar navigation.
+      - keyword: WHEN
+        content: Navigate to Questions tab
+      - keyword: THEN
+        content: Display paginated list of questions with metadata (votes, answers, views, tags)
+  - id: REQ-3.2
+    name: Ask Question
+    type: FOLDER
+    description: Authenticated users can post new questions with title, body (markdown/rich text editor),
+      and tags. ![image](./reference/ask-question-page.jpeg)
+    dependencies:
+    - REQ-2
+    children:
+    - id: REQ-3.2.1
+      name: Create New Question
+      description: Lets an authenticated user compose a question with a title, markdown body, and tags,
+        then publishes it to a new question detail page.
+      dependencies:
+      - REQ-2.2
+      type: ATOMIC
+      scenarios:
+      - name: Create New Question
+        steps:
+        - keyword: GIVEN
+          content: User is logged in.
+        - keyword: WHEN
+          content: Click "Ask Question" button in navigation or homepage
+        - keyword: THEN
+          content: Display question creation form
+        - keyword: GIVEN
+          content: Question creation form is visible.
+        - keyword: WHEN
+          content: Enter question title (minimum 15 characters)
+        - keyword: THEN
+          content: Validate title length and show character count
+        - keyword: WHEN
+          content: Enter question body using markdown editor (minimum 220 characters)
+        - keyword: THEN
+          content: Display live markdown preview
+        - keyword: WHEN
+          content: Add up to 5 relevant tags
+        - keyword: THEN
+          content: Show tag suggestions based on input, validate tag count
+        - keyword: WHEN
+          content: Click "Post Your Question"
+        - keyword: THEN
+          content: Create question, redirect to question detail page, and show question in profile page
+            under "Questions" tab
+    - id: REQ-3.2.2
+      name: Validation for Required Fields
+      description: Blocks question submission until the title, body, and at least one tag satisfy the
+        required-field rules.
+      dependencies:
+      - REQ-2.2
+      type: ATOMIC
+      scenarios:
+      - name: Required Field Validation
+        steps:
+        - keyword: GIVEN
+          content: User is logged in.
+        - keyword: WHEN
+          content: Click "Ask Question" button
+        - keyword: THEN
+          content: Display question creation form
+        - keyword: GIVEN
+          content: Question creation form is visible.
+        - keyword: WHEN
+          content: Leave title field empty and click "Post Your Question"
+        - keyword: THEN
+          content: Show error message "Title is required (minimum 15 characters)", prevent submission
+        - keyword: WHEN
+          content: Enter title but leave body empty and click "Post Your Question"
+        - keyword: THEN
+          content: Show error message "Question body is required (minimum 220 characters)", prevent submission
+        - keyword: WHEN
+          content: Enter title and body but add no tags and click "Post Your Question"
+        - keyword: THEN
+          content: Show error message "Please add at least one tag", prevent submission
+  - id: REQ-3.3
+    name: Question Detail Page
+    type: FOLDER
+    description: A multi-faceted page that serves as the primary view for a specific question, its answers,
+      and associated community interactions. ![image](./reference/question-page.jpeg)
+    dependencies:
+    - REQ-3
+    children:
+    - id: REQ-3.3.1
+      name: Default Question View
+      description: Displays the full hierarchical layout including header, sidebar, body, and interaction
+        sections.
+      dependencies:
+      - REQ-3.1
+      type: ATOMIC
+      scenarios:
+      - name: Default Question View
+        steps:
+        - keyword: GIVEN
+          content: A target question exists.
+        - keyword: WHEN
+          content: Navigate to a specific question detail page
+        - keyword: THEN
+          content: Display the full hierarchical layout including header, sidebar, body, and interaction
+            sections.
+    - id: REQ-3.3.2
+      name: Question Header and Metadata
+      description: Displays the question title prominently at the top, followed by metadata rows including
+        "Asked" (date), "Modified" (last activity), and "Viewed" (count). Includes the "Ask Question"
+        primary action button.
+      dependencies:
+      - REQ-3.3.1
+      type: ATOMIC
+      scenarios:
+      - name: Question Header and Metadata
+        steps:
+        - keyword: GIVEN
+          content: User is on a question detail page.
+        - keyword: WHEN
+          content: Look at the top section of the page
+        - keyword: THEN
+          content: Title is clear; metadata shows accurate timestamps and view counts.
+    - id: REQ-3.3.3
+      name: Post Voting and Interaction Sidebar
+      description: A vertical sidebar to the left of the question body. Contains upvote/downvote arrows,
+        the current score, a bookmark/favorite icon, and a timeline/history icon.
+      dependencies:
+      - REQ-2.2
+      - REQ-3.3.1
+      type: ATOMIC
+      scenarios:
+      - name: Post Voting and Interaction Sidebar
+        steps:
+        - keyword: GIVEN
+          content: User is on a question detail page.
+        - keyword: WHEN
+          content: View the left margin of the question
+        - keyword: THEN
+          content: Voting arrows and score are visible. Bookmark icon reflects saved status.
+    - id: REQ-3.3.4
+      name: Main Post Content and Tags
+      description: The primary area for the question's body text (rendered Markdown). Followed by a list
+        of associated tags (clickable buttons) and a menu of post actions (Share, Edit, Follow).
+      dependencies:
+      - REQ-3.3.1
+      type: ATOMIC
+      scenarios:
+      - name: Main Post Content and Tags
+        steps:
+        - keyword: GIVEN
+          content: User is on a question detail page.
+        - keyword: WHEN
+          content: Read the central content area
+        - keyword: THEN
+          content: Body is formatted correctly; tags are displayed as distinct, navigable links.
+    - id: REQ-3.3.5
+      name: Post Author and Ownership Card
+      description: A floating card at the bottom right of the question body showing the author's avatar,
+        username, reputation, and badges. Displays the original posting timestamp.
+      dependencies:
+      - REQ-3.3.1
+      type: ATOMIC
+      scenarios:
+      - name: Post Author and Ownership Card
+        steps:
+        - keyword: GIVEN
+          content: User is on a question detail page.
+        - keyword: WHEN
+          content: Scroll to the bottom of the question body
+        - keyword: THEN
+          content: Author's information is clearly attributed with current site stats.
+    - id: REQ-3.3.6
+      name: Question Comments and Inline Interaction
+      description: A list of threaded comments located directly below the question and its tags. Includes
+        functionality to "Add a comment" and expand hidden comments.
+      dependencies:
+      - REQ-3.3.1
+      type: ATOMIC
+      scenarios:
+      - name: Question Comments and Inline Interaction
+        steps:
+        - keyword: GIVEN
+          content: User is on a question detail page.
+        - keyword: WHEN
+          content: Look below the post-action menu
+        - keyword: THEN
+          content: Comments are listed chronologically; "Add a comment" link is present for authenticated
+            users.
+  - id: REQ-3.4
+    name: Edit Question
+    type: FOLDER
+    description: Allows authors and high-reputation users to refine questions. The edit interface mimics
+      the Ask Question structure but includes revision history and modification tracking. ![image](./reference/edit-question.jpeg)
+    dependencies:
+    - REQ-3.3
+    children:
+    - id: REQ-3.4.1
+      name: Enter Edit Mode
+      description: Displays the Edit Question page with all current content pre-populated in the respective
+        fields.
+      dependencies:
+      - REQ-3.3.1
+      type: ATOMIC
+      scenarios:
+      - name: Enter Edit Mode
+        steps:
+        - keyword: GIVEN
+          content: User is on a question detail page and has permission to edit.
+        - keyword: WHEN
+          content: Click "Edit" link below a question
+        - keyword: THEN
+          content: Display the Edit Question page with all current content pre-populated in the respective
+            fields.
+    - id: REQ-3.4.2
+      name: Title and Tags Editor
+      description: Section for modifying the question's headline and categorization.
+      dependencies:
+      - REQ-3.4.1
+      type: ATOMIC
+      scenarios:
+      - name: Title and Tags Editor
+        steps:
+        - keyword: GIVEN
+          content: User is on the Edit Question page.
+        - keyword: WHEN
+          content: Change text in "Title" field and update "Tags"
+        - keyword: THEN
+          content: Input fields reflect the new content.
+    - id: REQ-3.4.3
+      name: Markdown Body Editor with Preview
+      description: The main rich-text workspace. Includes a toolbar for Markdown formatting (Bold, Italic,
+        Code, and other supported markdown tools) and a real-time preview rendered below the editor.
+      dependencies:
+      - REQ-3.4.1
+      type: ATOMIC
+      scenarios:
+      - name: Markdown Body Editor with Preview
+        steps:
+        - keyword: GIVEN
+          content: User is on the Edit Question page.
+        - keyword: WHEN
+          content: Modify Markdown text in the "Body" textarea using the toolbar
+        - keyword: THEN
+          content: The preview area below automatically updates to show the rendered HTML.
+    - id: REQ-3.4.4
+      name: Edit Summary and Revision History
+      description: Components for documenting and viewing changes. Includes a "Rev" dropdown to view previous
+        versions and an "Edit Summary" field to describe the reason for the update.
+      dependencies:
+      - REQ-3.4.1
+      type: ATOMIC
+      scenarios:
+      - name: Edit Summary and Revision History
+        steps:
+        - keyword: GIVEN
+          content: User is on the Edit Question page.
+        - keyword: WHEN
+          content: Enter "Fixed a typo in the second paragraph" into the Edit Summary field
+        - keyword: THEN
+          content: The summary is captured for the revision history.
+    - id: REQ-3.4.5
+      name: Guidance Sidebar (How to Edit)
+      description: A supplemental widget on the right providing community guidelines on how to effectively
+        edit posts.
+      dependencies:
+      - REQ-3.4.1
+      type: ATOMIC
+      scenarios:
+      - name: Guidance Sidebar (How to Edit)
+        steps:
+        - keyword: GIVEN
+          content: User is on the Edit Question page.
+        - keyword: WHEN
+          content: Scan the "How to Edit" section on the right
+        - keyword: THEN
+          content: Users see a checklist of best practices for editing.
+  - id: REQ-3.5
+    name: Delete Question
+    description: Question author can delete their own question if it has no answers or minimal engagement.
+    dependencies:
+    - REQ-3.3
+    - REQ-3.3.1
+    type: ATOMIC
+    scenarios:
+    - name: Delete Question
+      steps:
+      - keyword: GIVEN
+        content: User is on a question detail page and has permission to delete.
+      - keyword: WHEN
+        content: Click "Delete" button below question
+      - keyword: THEN
+        content: Show confirmation dialog explaining deletion implications
+      - keyword: GIVEN
+        content: Deletion confirmation dialog is visible.
+      - keyword: WHEN
+        content: Click "Confirm deletion"
+      - keyword: THEN
+        content: Soft delete question (mark as deleted, preserve in database), redirect to homepage
+  - id: REQ-3.6
+    name: Vote on Question
+    type: FOLDER
+    description: Users can upvote or downvote questions to indicate quality and usefulness. Voting affects
+      question author's reputation.
+    dependencies:
+    - REQ-3.3
+    children:
+    - id: REQ-3.6.1
+      name: Upvote Question
+      description: Lets a signed-in user upvote a question, updates the vote state immediately, and removes
+        the vote when the same control is clicked again.
+      dependencies:
+      - REQ-2.2
+      - REQ-3.3.1
+      type: ATOMIC
+      scenarios:
+      - name: Upvote Question
+        steps:
+        - keyword: GIVEN
+          content: User is logged in and viewing a question detail page.
+        - keyword: WHEN
+          content: Click upvote arrow on question
+        - keyword: THEN
+          content: Increment vote count by 1, highlight upvote arrow, add 10 reputation to question author
+        - keyword: GIVEN
+          content: The question is currently upvoted by the user.
+        - keyword: WHEN
+          content: Click upvote arrow again
+        - keyword: THEN
+          content: Remove upvote, decrement vote count, remove reputation bonus
+    - id: REQ-3.6.2
+      name: Downvote Question
+      description: Lets a signed-in user downvote a question and applies the visible vote-state change
+        and reputation impact defined for the action.
+      dependencies:
+      - REQ-2.2
+      - REQ-3.3.1
+      type: ATOMIC
+      scenarios:
+      - name: Downvote Question
+        steps:
+        - keyword: GIVEN
+          content: User is logged in and viewing a question detail page.
+        - keyword: WHEN
+          content: Click downvote arrow on question
+        - keyword: THEN
+          content: Decrement vote count by 1, highlight downvote arrow, subtract 2 reputation from question
+            author
+- id: REQ-4
+  name: Answer Module
+  type: FOLDER
+  description: '![image](./reference/question-page.jpeg) The answer module lives within the question detail
+    page and covers composing answers, evaluating them, selecting an accepted answer, and maintaining
+    answer revisions.'
+  dependencies:
+  - REQ-3
+  - REQ-3.3
+  children:
+  - id: REQ-4.1
+    name: Answer Submission (Your Answer)
+    description: A dedicated section at the bottom of the Question Detail Page for authenticated users
+      to provide solutions. Features a Markdown editor consistent with the question creation interface.
+    dependencies:
+    - REQ-2.2
+    - REQ-3.3.1
+    type: ATOMIC
+    scenarios:
+    - name: Answer Submission (Your Answer)
+      steps:
+      - keyword: GIVEN
+        content: User is logged in and viewing a question detail page.
+      - keyword: WHEN
+        content: Scroll to the "Your Answer" editor below the question and existing answers
+      - keyword: THEN
+        content: The rich-text editor is visible and ready for input.
+      - keyword: GIVEN
+        content: The 'Your Answer' editor is visible.
+      - keyword: WHEN
+        content: Compose a response and click "Post Your Answer"
+      - keyword: THEN
+        content: The new answer is appended to the list; the user is redirected or scrolled to their newly
+          posted content. The answer appears in the profile page under "Answers" tab.
+  - id: REQ-4.2
+    name: Answer Evaluation (Voting)
+    description: Individual voting sidebars for each answer in the list, allowing the community to rank
+      solutions by quality.
+    dependencies:
+    - REQ-2.2
+    - REQ-3.3.1
+    type: ATOMIC
+    scenarios:
+    - name: Answer Evaluation (Voting)
+      steps:
+      - keyword: GIVEN
+        content: User is logged in and viewing a question detail page.
+      - keyword: WHEN
+        content: Click the upvote/downvote arrows on an answer card
+      - keyword: THEN
+        content: The answer's score updates; reputation is awarded/deducted from the answer author.
+  - id: REQ-4.3
+    name: Accepted Answer Selection
+    description: Special privilege for the question author to mark a single answer as the definitive solution,
+      distinguished by a green checkmark.
+    dependencies:
+    - REQ-2.2
+    - REQ-3.3.1
+    type: ATOMIC
+    scenarios:
+    - name: Accepted Answer Selection
+      steps:
+      - keyword: GIVEN
+        content: User is the question owner and is viewing the question detail page.
+      - keyword: WHEN
+        content: Click the checkmark outline next to an answer
+      - keyword: THEN
+        content: The answer is highlighted as accepted; the icon turns solid green.
+  - id: REQ-4.4
+    name: Answer List Controls & Sorting
+    description: Shows the answer count and lets the user reorder answers with the supported sort options.
+    dependencies:
+    - REQ-3.3.1
+    type: ATOMIC
+    scenarios:
+    - name: Answer List Controls & Sorting
+      steps:
+      - keyword: GIVEN
+        content: User is viewing the answers list on a question detail page.
+      - keyword: WHEN
+        content: Click the "Sorted by" dropdown menu
+      - keyword: THEN
+        content: Shows options like "Highest score", "Trending", and "Date modified".
+      - keyword: GIVEN
+        content: The sort options list is visible.
+      - keyword: WHEN
+        content: Select a different sorting method
+      - keyword: THEN
+        content: The list of answers reorders immediately according to the selection.
+  - id: REQ-4.5
+    name: Edit Answer
+    type: FOLDER
+    description: Answer author can edit their answers to improve clarity or add information.
+    dependencies:
+    - REQ-4.1
+    children:
+    - id: REQ-4.5.1
+      name: Happy Path - Successfully Edit Answer
+      description: Updates answer content, append to revision history, and display "edited" timestamp
+        on the post.
+      dependencies:
+      - REQ-4.1
+      type: ATOMIC
+      scenarios:
+      - name: Successfully Edit Answer
+        steps:
+        - keyword: GIVEN
+          content: User is viewing their own answer.
+        - keyword: WHEN
+          content: Click "Edit" link below your answer
+        - keyword: THEN
+          content: Display answer editor with current content pre-filled.
+        - keyword: GIVEN
+          content: Answer editor is visible.
+        - keyword: WHEN
+          content: Modify the answer body and provide an "Edit Summary" describing the change.
+        - keyword: THEN
+          content: Input fields reflect changes.
+        - keyword: WHEN
+          content: Click "Save edits"
+        - keyword: THEN
+          content: Update answer content, append to revision history, and display "edited" timestamp on
+            the post.
+    - id: REQ-4.5.2
+      name: Error - Empty Answer Body
+      description: Shows validation error "Body cannot be empty" and prevent submission.
+      dependencies:
+      - REQ-4.1
+      type: ATOMIC
+      scenarios:
+      - name: Empty Answer Body
+        steps:
+        - keyword: GIVEN
+          content: Answer editor is visible.
+        - keyword: WHEN
+          content: Clear all text in the body and click "Save edits"
+        - keyword: THEN
+          content: Show validation error "Body cannot be empty" and prevent submission.
+    - id: REQ-4.5.3
+      name: Cancel Answer Editing
+      description: Closes editor and return to the original answer view without saving changes.
+      dependencies:
+      - REQ-4.1
+      type: ATOMIC
+      scenarios:
+      - name: Cancel Answer Editing
+        steps:
+        - keyword: GIVEN
+          content: Answer editor is visible.
+        - keyword: WHEN
+          content: Modify text and then click "Cancel"
+        - keyword: THEN
+          content: Close editor and return to the original answer view without saving changes.
+  - id: REQ-4.6
+    name: Delete Answer
+    description: Answer author can delete their own answer if not accepted.
+    dependencies:
+    - REQ-4.1
+    type: ATOMIC
+    scenarios:
+    - name: Delete Answer
+      steps:
+      - keyword: GIVEN
+        content: User is viewing their own answer.
+      - keyword: WHEN
+        content: Click "Delete" link below answer
+      - keyword: THEN
+        content: Show confirmation dialog explaining the consequences.
+      - keyword: GIVEN
+        content: Deletion confirmation dialog is visible.
+      - keyword: WHEN
+        content: Click "Confirm deletion"
+      - keyword: THEN
+        content: Soft delete answer, remove from public display, and reverse any reputation changes associated
+          with it.
+- id: REQ-5
+  name: Comments Module
+  type: FOLDER
+  description: Supports short-form discussion on questions and answers, including posting, expanding,
+    editing, deleting, voting on, and replying to comments.
+  dependencies:
+  - REQ-3
+  - REQ-4
+  children:
+  - id: REQ-5.1
+    name: Question Comments
+    type: FOLDER
+    description: Groups the interactions for creating and expanding comments that belong directly to a
+      question post.
+    dependencies:
+    - REQ-3.3.6
+    children:
+    - id: REQ-5.1.1
+      name: Post Comment on Question
+      description: Lets an authenticated user add a comment directly below a question and immediately
+        see it in the thread with author and timestamp metadata.
+      dependencies:
+      - REQ-2.2
+      - REQ-3.3.1
+      type: ATOMIC
+      scenarios:
+      - name: Post Comment
+        steps:
+        - keyword: GIVEN
+          content: User is logged in and viewing a question detail page.
+        - keyword: WHEN
+          content: Click "Add a comment" below the question post
+        - keyword: THEN
+          content: Display an inline comment input field for the question
+        - keyword: GIVEN
+          content: The inline comment input field for the question is visible.
+        - keyword: WHEN
+          content: Type a comment with at most 600 characters and submit it
+        - keyword: THEN
+          content: Add the comment below the question and show the commenter name and timestamp.
+    - id: REQ-5.1.2
+      name: View All Comments
+      description: Expands to show all comments for that post.
+      dependencies:
+      - REQ-5.1.1
+      type: ATOMIC
+      scenarios:
+      - name: View All Comments
+        steps:
+        - keyword: GIVEN
+          content: A post has more than 5 comments and is showing a collapsed comment list.
+        - keyword: WHEN
+          content: Click "Show X more comments"
+        - keyword: THEN
+          content: Expand to show all comments for that post
+  - id: REQ-5.2
+    name: Edit and Delete Comments
+    type: FOLDER
+    description: Comment authors can edit or delete their own comments within a time window.
+    dependencies:
+    - REQ-5.1.1
+    children:
+    - id: REQ-5.2.1
+      name: Edit Comment
+      description: Updates comment, show "edited" indicator.
+      dependencies:
+      - REQ-5.1.1
+      type: ATOMIC
+      scenarios:
+      - name: Edit Comment
+        steps:
+        - keyword: GIVEN
+          content: User can see their own comment within the editable time window.
+        - keyword: WHEN
+          content: Click "Edit" link next to own comment (within 5 minutes of posting)
+        - keyword: THEN
+          content: Convert comment to editable text field
+        - keyword: GIVEN
+          content: Comment is in edit mode.
+        - keyword: WHEN
+          content: Modify text and press Enter
+        - keyword: THEN
+          content: Update comment, show "edited" indicator
+    - id: REQ-5.2.2
+      name: Delete Comment
+      description: Removes comment immediately without confirmation.
+      dependencies:
+      - REQ-5.1.1
+      type: ATOMIC
+      scenarios:
+      - name: Delete Comment
+        steps:
+        - keyword: GIVEN
+          content: User can see their own comment.
+        - keyword: WHEN
+          content: Click "Delete" icon next to own comment
+        - keyword: THEN
+          content: Remove comment immediately without confirmation
+  - id: REQ-5.3
+    name: Upvote Comment
+    description: Users can upvote comments to indicate they are helpful or relevant. Comments cannot be
+      downvoted.
+    dependencies:
+    - REQ-5.1
+    - REQ-5.1.2
+    type: ATOMIC
+    scenarios:
+    - name: Upvote Comment
+      steps:
+      - keyword: GIVEN
+        content: User can see a comment with an upvote control.
+      - keyword: WHEN
+        content: Click upvote icon next to a comment
+      - keyword: THEN
+        content: Increment comment upvote count by 1, highlight upvote icon
+      - keyword: GIVEN
+        content: The comment is currently upvoted by the user.
+      - keyword: WHEN
+        content: Click upvote icon again on same comment
+      - keyword: THEN
+        content: Remove upvote, decrement count by 1, unhighlight icon
+  - id: REQ-5.4
+    name: Add Comment on Answer
+    description: Lets an authenticated user add a comment directly below an answer and immediately see
+      it in the answer thread with author and timestamp metadata.
+    dependencies:
+    - REQ-2.2
+    - REQ-3.3.1
+    type: ATOMIC
+    scenarios:
+    - name: Add Comment on Answer
+      steps:
+      - keyword: GIVEN
+        content: User is logged in and viewing a question detail page.
+      - keyword: WHEN
+        content: Click "Add a comment" below an answer
+      - keyword: THEN
+        content: Display an inline comment input field for that answer
+      - keyword: GIVEN
+        content: The inline comment input field for the answer is visible.
+      - keyword: WHEN
+        content: Type a comment with at most 600 characters and submit it
+      - keyword: THEN
+        content: Add the comment below the answer and show the commenter name and timestamp.
+  - id: REQ-5.5
+    name: Reply to Comments
+    description: Lets an authenticated user reply to an existing comment and displays the reply as a nested
+      child item under the parent comment.
+    dependencies:
+    - REQ-5.1.1
+    type: ATOMIC
+    scenarios:
+    - name: Reply to Comments
+      steps:
+      - keyword: GIVEN
+        content: User is logged in and can see a comment thread.
+      - keyword: WHEN
+        content: Click "Reply" link next to a comment
+      - keyword: THEN
+        content: Display inline reply input field below the parent comment
+      - keyword: GIVEN
+        content: Inline reply input field is visible.
+      - keyword: WHEN
+        content: Type reply text and press Enter or click "Add Reply"
+      - keyword: THEN
+        content: Add reply as child comment, indented below parent, showing "@username" mention of parent
+          commenter
+- id: REQ-6
+  name: Tags Module
+  type: FOLDER
+  description: '![image](./reference/tags-page.jpeg) Tags categorize questions and enable filtering. Each
+    tag has a name, description, question count, and can be followed by users.'
+  dependencies:
+  - REQ-3
+  children:
+  - id: REQ-6.1
+    name: View All Tags
+    description: Displays paginated list of all tags with names, descriptions, and question counts, sorted
+      by popularity.
+    dependencies:
+    - REQ-1.1
+    type: ATOMIC
+    scenarios:
+    - name: View All Tags
+      steps:
+      - keyword: GIVEN
+        content: User is on a question list page and can access site navigation.
+      - keyword: WHEN
+        content: Click "Tags" in main navigation
+      - keyword: THEN
+        content: Display paginated list of all tags with names, descriptions, and question counts, sorted
+          by popularity
+  - id: REQ-6.2
+    name: Tag Detail Page
+    description: Displays all questions with a specific tag, tag description, and related tags.
+    dependencies:
+    - REQ-6.1
+    type: ATOMIC
+    scenarios:
+    - name: Tag Detail Page
+      steps:
+      - keyword: GIVEN
+        content: User can see a tag link.
+      - keyword: WHEN
+        content: Click on a tag from tag list, question, or tag search
+      - keyword: THEN
+        content: Display filtered question list showing only questions with that tag, with tag info header
+  - id: REQ-6.3
+    name: Follow Tags
+    description: Lets an authenticated user watch or unwatch a tag so the preference is reflected on the
+      tag page and in question lists.
+    dependencies:
+    - REQ-2.2
+    - REQ-6.2
+    type: ATOMIC
+    scenarios:
+    - name: Follow Tags
+      steps:
+      - keyword: GIVEN
+        content: User is logged in and viewing a tag detail page.
+      - keyword: WHEN
+        content: Click the "Watch tag" button
+      - keyword: THEN
+        content: Add the tag to the user's watched tags and reflect the watched state on relevant question
+          lists.
+      - keyword: GIVEN
+        content: The tag is already being watched.
+      - keyword: WHEN
+        content: Open the watched-state control
+      - keyword: THEN
+        content: Show an "Unwatch tag" action.
+      - keyword: WHEN
+        content: Click "Unwatch tag"
+      - keyword: THEN
+        content: Return the control to the "Watch tag" state.
+- id: REQ-7
+  name: Search and Filter Module
+  type: FOLDER
+  description: '![image](./reference/search-and-filter.jpeg) Comprehensive search functionality allowing
+    users to find questions by keywords, tags, user, date range, and other criteria.'
+  dependencies:
+  - REQ-1
+  children:
+  - id: REQ-7.1
+    name: Basic Search
+    description: Displays search results page with matching questions, ranked by relevance.
+    dependencies:
+    - REQ-1.1
+    type: ATOMIC
+    scenarios:
+    - name: Basic Search
+      steps:
+      - keyword: GIVEN
+        content: User can see the header search box.
+      - keyword: WHEN
+        content: Enter keywords in search box in header
+      - keyword: THEN
+        content: Display real-time search suggestions
+      - keyword: WHEN
+        content: Press Enter or click search icon
+      - keyword: THEN
+        content: Display search results page with matching questions, ranked by relevance
+  - id: REQ-7.2
+    name: Filter Questions by Tab
+    description: Updates question list based on selected filter criteria.
+    dependencies:
+    - REQ-1.1
+    type: ATOMIC
+    scenarios:
+    - name: Filter Questions by Tab
+      steps:
+      - keyword: GIVEN
+        content: User can see filter tabs on a question list page.
+      - keyword: WHEN
+        content: Click filter tabs (Newest, Active, Bountied, Unanswered, Frequent)
+      - keyword: THEN
+        content: Update question list based on selected filter criteria
+  - id: REQ-7.3
+    name: Create Custom Filter
+    description: Lets the user combine predefined filters, sorting choices, and tag criteria, then save
+      the configuration as a reusable custom filter.
+    dependencies:
+    - REQ-1.1
+    type: ATOMIC
+    scenarios:
+    - name: Create Custom Filter
+      steps:
+      - keyword: GIVEN
+        content: User is on a question list page.
+      - keyword: WHEN
+        content: Click the "Filter" button
+      - keyword: THEN
+        content: Display a filter panel with additional criteria.
+      - keyword: GIVEN
+        content: The filter panel is visible.
+      - keyword: WHEN
+        content: Select filter checkboxes, choose a sort option, and enter tag criteria
+      - keyword: THEN
+        content: Keep the selected filter values visible in the panel.
+      - keyword: WHEN
+        content: Click "Save custom filter"
+      - keyword: THEN
+        content: Open the custom filter save dialog.
+      - keyword: GIVEN
+        content: The custom filter save dialog is visible.
+      - keyword: WHEN
+        content: Enter a filter title and click "Save filter"
+      - keyword: THEN
+        content: Save the filter and show the filtered question list.
+- id: REQ-8
+  name: Reputation and Badges System
+  type: FOLDER
+  description: Gamification system tracking user contributions through reputation points and achievement
+    badges. Reputation unlocks privileges at various thresholds.
+  dependencies:
+  - REQ-2
+  children:
+  - id: REQ-8.1
+    name: View Reputation History
+    description: Displays chronological list of reputation changes with reasons and linked posts.
+    dependencies:
+    - REQ-2.3
+    type: ATOMIC
+    scenarios:
+    - name: View Reputation History
+      steps:
+      - keyword: GIVEN
+        content: User has permission to view reputation history on the profile.
+      - keyword: WHEN
+        content: Click "Reputation" tab on user profile
+      - keyword: THEN
+        content: Display chronological list of reputation changes with reasons and linked posts
+  - id: REQ-8.2
+    name: Earn Badges
+    type: FOLDER
+    description: Groups the badge-awarding behaviors that recognize qualifying user activity and expose
+      badges through notifications and badge listings.
+    dependencies:
+    - REQ-2.2
+    children:
+    - id: REQ-8.2.1
+      name: Badge Award Notification
+      description: Awards a badge when the user meets a badge rule, shows a notification, and records
+        the badge on the user profile.
+      dependencies:
+      - REQ-2.2
+      type: ATOMIC
+      scenarios:
+      - name: Badge Award Notification
+        steps:
+        - keyword: GIVEN
+          content: User performs actions that meet a badge's criteria.
+        - keyword: WHEN
+          content: Trigger badge criteria (e.g., receive 10 upvotes on answer)
+        - keyword: THEN
+          content: Award badge to user, show notification popup, display on profile
+    - id: REQ-8.2.2
+      name: View All Badges
+      description: Displays categorized list of all available badges with descriptions and earn counts.
+      dependencies:
+      - REQ-1.1
+      type: ATOMIC
+      scenarios:
+      - name: View All Badges
+        steps:
+        - keyword: GIVEN
+          content: User can access site navigation.
+        - keyword: WHEN
+          content: Click "Badges" in navigation or profile
+        - keyword: THEN
+          content: Display categorized list of all available badges with descriptions and earn counts
+- id: REQ-9
+  name: User Activity Feed
+  type: FOLDER
+  description: '![image](./reference/user-feed.jpeg) The activity area of a user profile consolidates
+    the user''s posts, reputation history, badges, votes, and responses into navigable views.'
+  dependencies:
+  - REQ-2
+  children:
+  - id: REQ-9.1
+    name: View Activity Tab
+    description: Displays the activity layout with a vertical navigation sidebar and content area.
+    dependencies:
+    - REQ-2.3
+    type: ATOMIC
+    scenarios:
+    - name: View Activity Tab
+      steps:
+      - keyword: GIVEN
+        content: User has permission to view the target user's activity.
+      - keyword: WHEN
+        content: Navigate to user profile and click the "Activity" tab
+      - keyword: THEN
+        content: Display the activity layout with a vertical navigation sidebar and content area.
+  - id: REQ-9.2
+    name: Activity Sidebar Navigation
+    description: 'Vertical menu in the Activity tab providing access to various content types: Summary,
+      Answers, Questions, Tags, Articles, Badges, Following, Bounties, Reputation, All actions, Responses,
+      and Votes.'
+    dependencies:
+    - REQ-9.1
+    type: ATOMIC
+    scenarios:
+    - name: Activity Sidebar Navigation
+      steps:
+      - keyword: GIVEN
+        content: User is on the Activity tab and can see the activity sidebar.
+      - keyword: WHEN
+        content: Click on different items in the activity sidebar
+      - keyword: THEN
+        content: The right-side content area updates to reflect the selected category without full page
+          reload.
+  - id: REQ-9.3
+    name: User Answers History
+    description: Displays a list of all answers provided by the user. Includes sorting by score, activity,
+      or newest. Shows question titles and answer status (e.g., accepted).
+    dependencies:
+    - REQ-9.1
+    type: ATOMIC
+    scenarios:
+    - name: User Answers History
+      steps:
+      - keyword: GIVEN
+        content: User is on the Activity tab.
+      - keyword: WHEN
+        content: Click "Answers" in the activity sidebar
+      - keyword: THEN
+        content: Display paginated list of answers with sorting controls (Score, Activity, Newest).
+  - id: REQ-9.4
+    name: User Questions History
+    description: Lists all questions posted by the user. Includes metadata like votes, answers, and view
+      counts for each question.
+    dependencies:
+    - REQ-9.1
+    type: ATOMIC
+    scenarios:
+    - name: User Questions History
+      steps:
+      - keyword: GIVEN
+        content: User is on the Activity tab.
+      - keyword: WHEN
+        content: Click "Questions" in the activity sidebar
+      - keyword: THEN
+        content: Display list of user questions with engagement metrics.
+  - id: REQ-9.5
+    name: Reputation and Engagement Tracking
+    description: Detailed view of reputation changes, badge earnings, and voting history. Provides a chronological
+      log of how the user's standing has evolved.
+    dependencies:
+    - REQ-9.1
+    type: ATOMIC
+    scenarios:
+    - name: Reputation and Engagement Tracking
+      steps:
+      - keyword: GIVEN
+        content: User is on the Activity tab.
+      - keyword: WHEN
+        content: Click "Reputation" or "Votes" in the sidebar
+      - keyword: THEN
+        content: Show detailed logs of reputation points or voting actions (privately for votes).
+  - id: REQ-9.6
+    name: User Responses and Comments
+    description: Consolidated view of all comments and replies made by the user across questions and answers.
+    dependencies:
+    - REQ-9.1
+    type: ATOMIC
+    scenarios:
+    - name: User Responses and Comments
+      steps:
+      - keyword: GIVEN
+        content: User is on the Activity tab.
+      - keyword: WHEN
+        content: Click "Responses" in the activity sidebar
+      - keyword: THEN
+        content: Display a list of comments/replies linked to their respective parent posts.

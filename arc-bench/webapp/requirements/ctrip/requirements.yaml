@@ -1,0 +1,2708 @@
+id: ROOT
+name: Ctrip Travel System
+type: FOLDER
+description: 'A one-stop travel service platform that provides booking services for hotels, flights, tour packages, and related travel services. This requirement set focuses on user authentication and account management. Reference: Homepage ![image](./reference/index.jpg)'
+dependencies: []
+children:
+- id: REQ-0
+  name: Open System
+  type: ATOMIC
+  description: Open the application and display the homepage.
+  dependencies: []
+  scenarios:
+  - name: Open System
+    steps:
+    - keyword: GIVEN
+      content: System is accessible.
+    - keyword: WHEN
+      content: Open the system
+    - keyword: THEN
+      content: The homepage opens by default.
+- id: REQ-1
+  name: Ctrip Homepage Navigation and Entry
+  type: FOLDER
+  description: The system’s default entry. The top navigation bar includes login/registration entry points, a search box, and a flight quick-search form. Reference:Homepage ![image](./reference/index.png)
+  dependencies: []
+  children:
+  - id: REQ-1.1
+    name: Open Homepage
+    type: ATOMIC
+    description: Open the homepage from the application URL.
+    dependencies: []
+    scenarios:
+    - name: Open Homepage
+      steps:
+      - keyword: GIVEN
+        content: User has a browser with network access.
+      - keyword: WHEN
+        content: Enter the website URL in the browser
+      - keyword: THEN
+        content: The homepage opens by default.
+- id: REQ-2
+  name: User Authentication Module
+  type: FOLDER
+  description: Includes multiple submodules such as account/password login, verification-code login, and the registration flow.
+  dependencies:
+  - REQ-1
+  children:
+  - id: REQ-2.1
+    name: Open Registration Entry
+    type: ATOMIC
+    description: Open the registration page from the homepage.
+    dependencies:
+    - REQ-1.1
+    scenarios:
+    - name: Open Registration Entry
+      steps:
+      - keyword: GIVEN
+        content: User is on the homepage.
+      - keyword: WHEN
+        content: Click “注册” in the top-right corner of the homepage
+      - keyword: THEN
+        content: Navigate to the registration page.
+  - id: REQ-2.2
+    name: Open Login Entry
+    type: ATOMIC
+    description: Open the login page from the homepage.
+    dependencies:
+    - REQ-1.1
+    scenarios:
+    - name: Open Login Entry
+      steps:
+      - keyword: GIVEN
+        content: User is on the homepage.
+      - keyword: WHEN
+        content: Click “登录” in the top-right corner of the homepage
+      - keyword: THEN
+        content: Navigate to the login page.
+  - id: REQ-2.3
+    name: Login Page Entry and Switching
+    type: FOLDER
+    description: 'Provide entry points to freely switch between account/password login and SMS verification-code login.
+
+      Reference: Password login ![image](./reference/login1.png)
+
+      Reference: Verification-code login ![image](./reference/login2.png)'
+    dependencies: []
+    children:
+    - id: REQ-2.3.1
+      name: Enter Login Page
+      type: ATOMIC
+      description: Open the account/password login page from the homepage.
+      dependencies:
+      - REQ-1.1
+      scenarios:
+      - name: Enter Login Page
+        steps:
+        - keyword: GIVEN
+          content: User is on the homepage.
+        - keyword: WHEN
+          content: Click the “登录” icon in the top-right corner of the homepage
+        - keyword: THEN
+          content: Navigate to the account/password login page.
+    - id: REQ-2.3.2
+      name: Switch to Verification-Code Login
+      type: ATOMIC
+      description: Switch from account/password login to verification-code login.
+      dependencies:
+      - REQ-2.3.1
+      scenarios:
+      - name: Switch to Verification-Code Login
+        steps:
+        - keyword: GIVEN
+          content: User is on the password login page.
+        - keyword: WHEN
+          content: Click the “验证码登录” link
+        - keyword: THEN
+          content: Switch to the verification-code login form.
+    - id: REQ-2.3.3
+      name: Switch to Password Login
+      type: ATOMIC
+      description: Switch from verification-code login to account/password login.
+      dependencies:
+      - REQ-2.3.2
+      scenarios:
+      - name: Switch to Password Login
+        steps:
+        - keyword: GIVEN
+          content: User is on the verification-code login page.
+        - keyword: WHEN
+          content: Click the “账号登录” link
+        - keyword: THEN
+          content: Switch to the account/password login form.
+  - id: REQ-2.4
+    name: Account/Password Login
+    type: FOLDER
+    description: Users authenticate using a mobile number, username, or email together with a password.
+    dependencies:
+    - REQ-2.3
+    children:
+    - id: REQ-2.4.1
+      name: Password Login Flow
+      type: ATOMIC
+      description: Log in with a valid mobile number, username, or email and a password.
+      dependencies:
+      - REQ-2.3.1
+      scenarios:
+      - name: Password Login Flow
+        steps:
+        - keyword: GIVEN
+          content: User is on the password login page.
+        - keyword: WHEN
+          content: Enter a mainland China mobile number / username / email
+        - keyword: WHEN
+          content: Enter the login password
+        - keyword: WHEN
+          content: Check “阅读并同意服务协议和个人信息保护政策”
+        - keyword: GIVEN
+          content: Account identifier and password have been entered, and the agreement has been accepted.
+        - keyword: WHEN
+          content: Click the “登录” button
+        - keyword: THEN
+          content: After verification, redirect to the homepage and update the status to logged in.
+    - id: REQ-2.4.2
+      name: 'Exception: Username Missing'
+      type: ATOMIC
+      description: Reject password login when the account identifier is missing.
+      dependencies:
+      - REQ-2.3.1
+      scenarios:
+      - name: 'Exception: Username Missing'
+        steps:
+        - keyword: GIVEN
+          content: User is on the password login page.
+        - keyword: WHEN
+          content: Do not enter a username
+        - keyword: WHEN
+          content: Enter the login password
+        - keyword: WHEN
+          content: Check “阅读并同意服务协议和个人信息保护政策”
+        - keyword: GIVEN
+          content: Username is empty.
+        - keyword: WHEN
+          content: Click the “登录” button
+        - keyword: THEN
+          content: 'Show a message: “请输入用户名”.'
+    - id: REQ-2.4.3
+      name: 'Exception: Password Missing'
+      type: ATOMIC
+      description: Reject password login when the password is missing.
+      dependencies:
+      - REQ-2.3.1
+      scenarios:
+      - name: 'Exception: Password Missing'
+        steps:
+        - keyword: GIVEN
+          content: User is on the password login page.
+        - keyword: WHEN
+          content: Enter a mainland China mobile number / username / email
+        - keyword: WHEN
+          content: Do not enter the login password
+        - keyword: WHEN
+          content: Check “阅读并同意服务协议和个人信息保护政策”
+        - keyword: GIVEN
+          content: Password is empty.
+        - keyword: WHEN
+          content: Click the “登录” button
+        - keyword: THEN
+          content: 'Show a message: “请输入登录密码”.'
+    - id: REQ-2.4.4
+      name: 'Exception: Incorrect Username or Password'
+      type: ATOMIC
+      description: Reject password login when the account identifier or password is incorrect.
+      dependencies:
+      - REQ-2.3.1
+      scenarios:
+      - name: 'Exception: Incorrect Username or Password'
+        steps:
+        - keyword: GIVEN
+          content: User is on the password login page.
+        - keyword: WHEN
+          content: Enter an incorrect username/password combination
+        - keyword: WHEN
+          content: Check “阅读并同意服务协议和个人信息保护政策”
+        - keyword: GIVEN
+          content: Entered credentials are incorrect.
+        - keyword: WHEN
+          content: Click the “登录” button
+        - keyword: THEN
+          content: 'Show a message: “用户名或密码错误”.'
+    - id: REQ-2.4.5
+      name: 'Exception: Agreement Not Accepted'
+      type: ATOMIC
+      description: Reject submission when the required agreement is not accepted.
+      dependencies:
+      - REQ-2.3.1
+      scenarios:
+      - name: 'Exception: Agreement Not Accepted'
+        steps:
+        - keyword: GIVEN
+          content: User is on the password login page.
+        - keyword: WHEN
+          content: Enter a mainland China mobile number / username / email
+        - keyword: WHEN
+          content: Enter the login password
+        - keyword: WHEN
+          content: Do not accept the agreement
+        - keyword: GIVEN
+          content: Agreement is not accepted.
+        - keyword: WHEN
+          content: Click the “登录” button
+        - keyword: THEN
+          content: 'Show a message: “请先阅读并勾选协议”.'
+  - id: REQ-2.5
+    name: Verification-Code Login
+    type: FOLDER
+    description: Log in via an SMS verification code after a six-digit code is sent to the entered mobile number.
+    dependencies:
+    - REQ-2.3
+    children:
+    - id: REQ-2.5.1
+      name: Verification-Code Login Flow
+      type: ATOMIC
+      description: Log in with a valid mobile number and verification code.
+      dependencies:
+      - REQ-2.3.2
+      scenarios:
+      - name: Verification-Code Login Flow
+        steps:
+        - keyword: GIVEN
+          content: User is on the verification-code login page.
+        - keyword: WHEN
+          content: 'Select the country/region code (default: mainland China +86) and enter the mobile number'
+        - keyword: WHEN
+          content: Click “发送验证码”
+        - keyword: THEN
+          content: The system sends an SMS, and the button enters a countdown state.
+        - keyword: GIVEN
+          content: Verification code has been sent.
+        - keyword: WHEN
+          content: Enter the 6-digit SMS verification code and accept the agreement
+        - keyword: GIVEN
+          content: Valid verification code has been entered, and the agreement has been accepted.
+        - keyword: WHEN
+          content: Click the “登录” button
+        - keyword: THEN
+          content: After verification, redirect to the homepage.
+    - id: REQ-2.5.2
+      name: 'Exception: Mobile Number Missing'
+      type: ATOMIC
+      description: Reject verification-code login when the mobile number is missing.
+      dependencies:
+      - REQ-2.3.2
+      scenarios:
+      - name: 'Exception: Mobile Number Missing'
+        steps:
+        - keyword: GIVEN
+          content: User is on the verification-code login page.
+        - keyword: WHEN
+          content: Do not enter a mobile number
+        - keyword: GIVEN
+          content: Mobile number is empty.
+        - keyword: WHEN
+          content: Click “发送验证码” or “登录”
+        - keyword: THEN
+          content: 'Show a message: “请输入手机号”.'
+    - id: REQ-2.5.3
+      name: 'Exception: Verification Code Missing'
+      type: ATOMIC
+      description: Reject verification-code login when the verification code is missing.
+      dependencies:
+      - REQ-2.3.2
+      scenarios:
+      - name: 'Exception: Verification Code Missing'
+        steps:
+        - keyword: GIVEN
+          content: User is on the verification-code login page.
+        - keyword: WHEN
+          content: Enter the mobile number and send the verification code
+        - keyword: WHEN
+          content: Do not enter the verification code
+        - keyword: WHEN
+          content: Accept the agreement
+        - keyword: GIVEN
+          content: Verification code is empty.
+        - keyword: WHEN
+          content: Click the “登录” button
+        - keyword: THEN
+          content: 'Show a message: “请输入验证码”.'
+    - id: REQ-2.5.4
+      name: 'Exception: Incorrect Verification Code'
+      type: ATOMIC
+      description: Reject verification-code login when the verification code is incorrect.
+      dependencies:
+      - REQ-2.3.2
+      scenarios:
+      - name: 'Exception: Incorrect Verification Code'
+        steps:
+        - keyword: GIVEN
+          content: User is on the verification-code login page.
+        - keyword: WHEN
+          content: Enter the mobile number and send the verification code
+        - keyword: WHEN
+          content: Enter an incorrect verification code
+        - keyword: WHEN
+          content: Accept the agreement
+        - keyword: GIVEN
+          content: Entered verification code is incorrect.
+        - keyword: WHEN
+          content: Click the “登录” button
+        - keyword: THEN
+          content: 'Show a message: “验证码错误”.'
+    - id: REQ-2.5.5
+      name: 'Exception: Agreement Not Accepted'
+      type: ATOMIC
+      description: Reject submission when the required agreement is not accepted.
+      dependencies:
+      - REQ-2.3.2
+      scenarios:
+      - name: 'Exception: Agreement Not Accepted'
+        steps:
+        - keyword: GIVEN
+          content: User is on the verification-code login page.
+        - keyword: WHEN
+          content: Enter the mobile number and send the verification code
+        - keyword: WHEN
+          content: Enter the correct verification code
+        - keyword: WHEN
+          content: Do not accept the agreement
+        - keyword: GIVEN
+          content: Agreement is not accepted.
+        - keyword: WHEN
+          content: Click the “登录” button
+        - keyword: THEN
+          content: 'Show a message: “请先阅读并勾选协议”.'
+  - id: REQ-2.6
+    name: User Registration Flow
+    type: FOLDER
+    description: Guide new users to complete mobile-number verification and password setup. Users must accept the legal agreements before registration. Includes registration agreement confirmation and mobile-number verification (see sub-requirements).
+    dependencies:
+    - REQ-2.3
+    - REQ-1
+    children:
+    - id: REQ-2.6.1
+      name: Enter Registration Page
+      type: ATOMIC
+      description: Enter Registration Page
+      dependencies:
+      - REQ-1.1
+      scenarios:
+      - name: Enter Registration Page
+        steps:
+        - keyword: GIVEN
+          content: User is on the homepage.
+        - keyword: WHEN
+          content: Click “注册” in the top-right corner of the homepage
+    - id: REQ-2.6.2
+      name: Registration Agreement Confirmation
+      type: FOLDER
+      description: 'Show an agreement modal that requires the user to read it. Reference: ![image](./reference/register1.png)'
+      dependencies:
+      - REQ-1
+      - REQ-2
+      children:
+      - id: REQ-2.6.2.1
+        name: Trigger Registration Agreement
+        type: ATOMIC
+        description: Trigger Registration Agreement
+        dependencies:
+        - REQ-2.3.1
+        scenarios:
+        - name: Trigger Registration Agreement
+          steps:
+          - keyword: GIVEN
+            content: User is on the login page.
+          - keyword: WHEN
+            content: Click “免费注册”
+          - keyword: THEN
+            content: A dialog titled “携程用户注册协议和隐私政策” appears.
+          - keyword: GIVEN
+            content: The registration agreement dialog is visible.
+          - keyword: WHEN
+            content: Click “同意并继续”
+          - keyword: THEN
+            content: Enter the mobile-number verification page.
+      - id: REQ-2.6.2.2
+        name: Decline Registration Agreement
+        type: ATOMIC
+        description: Decline Registration Agreement
+        dependencies:
+        - REQ-1.1
+        - REQ-2.6.2.1
+        scenarios:
+        - name: Decline Registration Agreement
+          steps:
+          - keyword: GIVEN
+            content: The registration agreement dialog is visible.
+          - keyword: WHEN
+            content: Click “不同意”
+          - keyword: THEN
+            content: Return to the Ctrip homepage.
+    - id: REQ-2.6.3
+      name: Mobile Number Verification
+      type: FOLDER
+      description: 'The first step of registration, to verify that the phone number is real. Reference: ![image](./reference/register2.png)'
+      dependencies:
+      - REQ-2.6.2
+      children:
+      - id: REQ-2.6.3.1
+        name: Enter Verification Information
+        type: ATOMIC
+        description: Enter Verification Information
+        dependencies:
+        - REQ-2.6.2.1
+        scenarios:
+        - name: Enter Verification Information
+          steps:
+          - keyword: GIVEN
+            content: User is on the mobile-number verification page.
+          - keyword: WHEN
+            content: Enter a valid mobile number and click “发送验证码”
+          - keyword: THEN
+            content: Receive an SMS verification code.
+          - keyword: GIVEN
+            content: SMS verification code has been received.
+          - keyword: WHEN
+            content: Enter the verification code and click “下一步，设置密码”
+          - keyword: THEN
+            content: 'Move to the second stage of the progress bar: “设置密码”.'
+    - id: REQ-2.6.4
+      name: Set Password and Complete Registration
+      type: FOLDER
+      description: 'The second step of registration: set the login password and complete registration.'
+      dependencies:
+      - REQ-2.6.3
+      children:
+      - id: REQ-2.6.4.1
+        name: Set Password and Complete Registration
+        type: ATOMIC
+        description: Set Password and Complete Registration
+        dependencies:
+        - REQ-2.6.3.1
+        scenarios:
+        - name: Set Password and Complete Registration
+          steps:
+          - keyword: GIVEN
+            content: User is on the set-password step.
+          - keyword: WHEN
+            content: Enter the login password
+          - keyword: WHEN
+            content: Re-enter the password to confirm
+          - keyword: GIVEN
+            content: Password and confirmation password match.
+          - keyword: WHEN
+            content: Click “完成注册”
+          - keyword: THEN
+            content: Registration succeeds, show “注册成功”, and navigate to the account/password login page.
+      - id: REQ-2.6.4.2
+        name: 'Exception: Passwords Do Not Match'
+        type: ATOMIC
+        description: Exception Passwords Do Not Match
+        dependencies:
+        - REQ-2.6.3.1
+        scenarios:
+        - name: 'Exception: Passwords Do Not Match'
+          steps:
+          - keyword: GIVEN
+            content: User is on the set-password step.
+          - keyword: WHEN
+            content: Enter the login password
+          - keyword: WHEN
+            content: Enter a different confirmation password
+          - keyword: GIVEN
+            content: Password and confirmation password do not match.
+          - keyword: WHEN
+            content: Click “完成注册”
+          - keyword: THEN
+            content: 'Show a message: “两次输入的密码不一致”.'
+      - id: REQ-2.6.4.3
+        name: 'Exception: Password Too Weak'
+        type: ATOMIC
+        description: Exception Password Too Weak
+        dependencies:
+        - REQ-2.6.3.1
+        scenarios:
+        - name: 'Exception: Password Too Weak'
+          steps:
+          - keyword: GIVEN
+            content: User is on the set-password step.
+          - keyword: WHEN
+            content: Enter an overly simple password
+          - keyword: GIVEN
+            content: Password strength requirements are not met.
+          - keyword: WHEN
+            content: Click “完成注册”
+          - keyword: THEN
+            content: 'Show a message: “密码需包含字母和数字，且长度不小于8位”.'
+  - id: REQ-2.7
+    name: Log Out
+    type: FOLDER
+    description: 'Log out and remove the current login state from the session.
+
+      Logout entry: ![image](./reference/enter_self.png)'
+    children:
+    - id: REQ-2.7.1
+      name: Log Out
+      type: ATOMIC
+      description: Log Out
+      dependencies: []
+      scenarios:
+      - name: Log Out
+        steps:
+        - keyword: GIVEN
+          content: User is logged in and is on the homepage.
+        - keyword: WHEN
+          content: Hover the mouse over “尊敬的...” in the top-right corner of the homepage
+        - keyword: WHEN
+          content: Click “退出登录”
+        - keyword: THEN
+          content: Clear the login state; on the homepage, “尊敬的...” changes to the “登录” button.
+    dependencies: []
+- id: REQ-3
+  name: Flight Search Module
+  type: FOLDER
+  description: Provide search for domestic and international routes. Support multiple trip types, parameter configuration, and result display.
+  dependencies:
+  - REQ-1
+  children:
+  - id: REQ-3.1
+    name: Homepage Quick Flight Search
+    type: FOLDER
+    description: 'The homepage shows a quick flight search form by default. Reference: ![image](./reference/search.png)'
+    dependencies: []
+    children: []
+  - id: REQ-3.2
+    name: Basic Trip Parameter Configuration
+    type: FOLDER
+    description: The core search input area, including trip type, origin/destination, dates, and passenger types.
+    dependencies: []
+    children:
+    - id: REQ-3.2.1
+      name: Trip Type Selection
+      type: ATOMIC
+      description: Trip Type Selection
+      dependencies:
+      - REQ-1.1
+      scenarios:
+      - name: Trip Type Selection
+        steps:
+        - keyword: GIVEN
+          content: User can see the flight search form on the homepage.
+        - keyword: WHEN
+          content: Switch the radio button among “单程”, “往返”, and “多程”
+        - keyword: THEN
+          content: The “出发日期” area dynamically adds or removes the “返回日期” input.
+    - id: REQ-3.2.2
+      name: Swap Origin and Destination
+      type: ATOMIC
+      description: Swap Origin and Destination
+      dependencies:
+      - REQ-1.1
+      scenarios:
+      - name: Swap Origin and Destination
+        steps:
+        - keyword: GIVEN
+          content: User can see the flight search form on the homepage.
+        - keyword: WHEN
+          content: Click the “双向箭头” icon between the origin and destination
+        - keyword: THEN
+          content: The text values of origin and destination are swapped immediately.
+    - id: REQ-3.2.3
+      name: 'Exception: Same-City Validation'
+      type: ATOMIC
+      description: Exception Same-City Validation
+      dependencies:
+      - REQ-1.1
+      scenarios:
+      - name: 'Exception: Same-City Validation'
+        steps:
+        - keyword: GIVEN
+          content: User can see the flight search form on the homepage.
+        - keyword: WHEN
+          content: In the destination input, enter the same city as the origin (e.g., 成都)
+        - keyword: GIVEN
+          content: Origin and destination are the same.
+        - keyword: WHEN
+          content: Click “搜索”
+        - keyword: THEN
+          content: 'The system shows a message: “出发城市和到达城市不能相同”, and navigation is blocked.'
+    - id: REQ-3.2.4
+      name: 'Exception: Past-Date Validation'
+      type: ATOMIC
+      description: Exception Past-Date Validation
+      dependencies:
+      - REQ-1.1
+      scenarios:
+      - name: 'Exception: Past-Date Validation'
+        steps:
+        - keyword: GIVEN
+          content: User can see the date picker in the flight search form.
+        - keyword: WHEN
+          content: Manually try selecting a date earlier than today
+        - keyword: THEN
+          content: Past dates are disabled in the calendar and cannot be selected.
+    - id: REQ-3.2.5
+      name: City Selector
+      type: FOLDER
+      description: 'Provide a city selection panel for origin and destination. Support hot-city recommendations and pinyin-initial search. Reference: ![image](./reference/city_selection.png)'
+      dependencies: []
+      children:
+      - id: REQ-3.2.5.1
+        name: Select a Hot City
+        type: ATOMIC
+        description: Select a Hot City
+        dependencies:
+        - REQ-3.2.1
+        scenarios:
+        - name: Select a Hot City
+          steps:
+          - keyword: GIVEN
+            content: User can see the origin input in the flight search form.
+          - keyword: WHEN
+            content: Click the origin input field
+          - keyword: THEN
+            content: The city selection panel pops up, with the “热门” tab shown by default.
+          - keyword: GIVEN
+            content: The city selection panel is open.
+          - keyword: WHEN
+            content: Click “成都”
+          - keyword: THEN
+            content: The origin input is filled with “成都(CTU)”, and the panel closes automatically.
+      - id: REQ-3.2.5.2
+        name: Find Cities by Pinyin Group
+        type: ATOMIC
+        description: Find Cities by Pinyin Group
+        dependencies:
+        - REQ-3.2.1
+        scenarios:
+        - name: Find Cities by Pinyin Group
+          steps:
+          - keyword: GIVEN
+            content: User can see the destination input in the flight search form.
+          - keyword: WHEN
+            content: Click the destination input field
+          - keyword: THEN
+            content: The city selection panel pops up.
+          - keyword: GIVEN
+            content: The city selection panel is open.
+          - keyword: WHEN
+            content: Click the “GHIJ” tab
+          - keyword: THEN
+            content: The list switches to the city section starting with G/H/I/J.
+          - keyword: WHEN
+            content: Select “广州”
+          - keyword: THEN
+            content: The destination input is filled with “广州(CAN)”, and the panel closes automatically.
+    - id: REQ-3.2.6
+      name: Date Picker
+      type: FOLDER
+      description: Provide a calendar control for users to select departure and return dates. ![image](./reference/date_selection.png)
+      dependencies: []
+      children:
+      - id: REQ-3.2.6.1
+        name: Select Departure Date
+        type: ATOMIC
+        description: Select Departure Date
+        dependencies:
+        - REQ-3.2.5.1
+        scenarios:
+        - name: Select Departure Date
+          steps:
+          - keyword: GIVEN
+            content: User can see the departure date input in the flight search form.
+          - keyword: WHEN
+            content: Click the departure date input field
+          - keyword: THEN
+            content: The calendar opens, showing the current month and daily flight prices (e.g., ￥460).
+          - keyword: GIVEN
+            content: The calendar is open.
+          - keyword: WHEN
+            content: Click a future date (e.g., 2026-01-08)
+          - keyword: THEN
+            content: The input shows “2026-01-08 明天”, and the calendar closes.
+      - id: REQ-3.2.6.2
+        name: Select a Past Date
+        type: ATOMIC
+        description: Select a Past Date
+        dependencies: []
+        scenarios:
+        - name: Select a Past Date
+          steps:
+          - keyword: GIVEN
+            content: User can see the departure date input in the flight search form.
+          - keyword: WHEN
+            content: Click the departure date input field
+          - keyword: GIVEN
+            content: The calendar is open.
+          - keyword: WHEN
+            content: Click a past date
+          - keyword: THEN
+            content: It cannot be clicked; past dates are disabled.
+    - id: REQ-3.2.7
+      name: Add Return Trip
+      type: FOLDER
+      description: In one-way search mode, use the “添加返程” entry to quickly switch to round-trip mode and set a return date. ![image](./reference/date_selection_2.png)
+      dependencies:
+      - REQ-3.2.6
+      children:
+      - id: REQ-3.2.7.1
+        name: Enable Return Trip
+        type: ATOMIC
+        description: Enable Return Trip
+        dependencies:
+        - REQ-3.2.6.1
+        scenarios:
+        - name: Enable Return Trip
+          steps:
+          - keyword: GIVEN
+            content: User is in one-way mode and can see the date inputs.
+          - keyword: WHEN
+            content: Click the “+ 添加返程” button to the right of the date input
+          - keyword: THEN
+            content: The trip type automatically switches to “往返”, and the calendar opens to select a return date.
+          - keyword: GIVEN
+            content: The return-date calendar is open.
+          - keyword: WHEN
+            content: Select a date later than the departure date (e.g., 2026-01-11)
+          - keyword: THEN
+            content: The selected return date is shown, the input displays “4天”, and the round-trip configuration is completed.
+      - id: REQ-3.2.7.2
+        name: 'Exception: Return Date Earlier Than Departure'
+        type: ATOMIC
+        description: Exception Return Date Earlier Than Departure
+        dependencies:
+        - REQ-3.2.7.1
+        scenarios:
+        - name: 'Exception: Return Date Earlier Than Departure'
+          steps:
+          - keyword: GIVEN
+            content: The return-date calendar is open and a departure date is selected.
+          - keyword: WHEN
+            content: In the return-date calendar, try selecting a date earlier than the departure date
+          - keyword: THEN
+            content: Dates earlier than the departure date are disabled and cannot be selected.
+  - id: REQ-3.3
+    name: Passenger and Cabin Preferences
+    type: FOLDER
+    description: Configure traveler types and cabin class preferences.
+    dependencies: []
+    children:
+    - id: REQ-3.3.1
+      name: Configure Special Passengers
+      type: ATOMIC
+      description: Configure Special Passengers
+      dependencies:
+      - REQ-1.1
+      scenarios:
+      - name: Configure Special Passengers
+        steps:
+        - keyword: GIVEN
+          content: User can see passenger type options in the flight search form.
+        - keyword: WHEN
+          content: Check “带儿童” or “带婴儿”
+        - keyword: THEN
+          content: Search results are filtered to flights that support the selected special ticket types.
+    - id: REQ-3.3.2
+      name: Filter by Cabin Class
+      type: ATOMIC
+      description: Filter by Cabin Class
+      dependencies:
+      - REQ-1.1
+      scenarios:
+      - name: Filter by Cabin Class
+        steps:
+        - keyword: GIVEN
+          content: User can see the cabin class selector in the flight search form.
+        - keyword: WHEN
+          content: In the “不限舱等” dropdown, select a specific cabin class (e.g., economy, business/first)
+        - keyword: THEN
+          content: The selected cabin class is updated in the UI.
+  - id: REQ-3.4
+    name: Search Execution and History
+    type: FOLDER
+    description: Execute searches and manage the user’s search history.
+    dependencies:
+    - REQ-3.2
+    children:
+    - id: REQ-3.4.1
+      name: Run a Standard Search
+      type: ATOMIC
+      description: Run a Standard Search
+      dependencies:
+      - REQ-3.2.1
+      scenarios:
+      - name: Run a Standard Search
+        steps:
+        - keyword: GIVEN
+          content: Origin, destination, and dates have been filled in.
+        - keyword: WHEN
+          content: Click the orange “搜索” button
+        - keyword: THEN
+          content: Navigate to the flight search results page (Flight Result Page).
+    - id: REQ-3.4.2
+      name: Quickly Reuse Search History
+      type: ATOMIC
+      description: Quickly Reuse Search History
+      dependencies:
+      - REQ-1.1
+      scenarios:
+      - name: Quickly Reuse Search History
+        steps:
+        - keyword: GIVEN
+          content: The search box shows history items.
+        - keyword: WHEN
+          content: Click a history item below the search box (e.g., 成都 - 广州)
+        - keyword: THEN
+          content: The system auto-fills the corresponding locations and the latest dates, then runs the search.
+  - id: REQ-3.5
+    name: Results Display and Advanced Filtering
+    type: FOLDER
+    description: 'The results page shows a flight list, with a low-price calendar and multi-dimensional filters. Reference: ![image](./reference/search_results.png)'
+    dependencies:
+    - REQ-3.4
+    children:
+    - id: REQ-3.5.1
+      name: Top Search Criteria Bar
+      type: FOLDER
+      description: Allow users to modify search criteria (origin, destination, dates, cabin class) directly on the results page and re-run the search. ![image](./reference/search_panel.png)
+      dependencies: []
+      children:
+      - id: REQ-3.5.1.1
+        name: Modify Search Criteria
+        type: ATOMIC
+        description: Modify Search Criteria
+        dependencies:
+        - REQ-3.4.1
+        scenarios:
+        - name: Modify Search Criteria
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight search results page.
+          - keyword: WHEN
+            content: In the top search bar, modify the dates or cabin class
+          - keyword: THEN
+            content: The page does not navigate; the flight list below refreshes directly.
+    - id: REQ-3.5.2
+      name: Low-Price Calendar and Date Switching
+      type: FOLDER
+      description: Located above the list, showing the minimum fares for nearby dates and supporting quick date switching. ![image](./reference/more_date.png)
+      dependencies: []
+      children:
+      - id: REQ-3.5.2.1
+        name: Switch to a Nearby Date
+        type: ATOMIC
+        description: Switch to a Nearby Date
+        dependencies:
+        - REQ-3.4.1
+        scenarios:
+        - name: Switch to a Nearby Date
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight search results page and can see the date bar.
+          - keyword: WHEN
+            content: Click a date in the date bar that has the low-price label “¥320”
+          - keyword: THEN
+            content: The list refreshes to show flights for that date, and the displayed prices update.
+      - id: REQ-3.5.2.2
+        name: View More Dates
+        type: ATOMIC
+        description: View More Dates
+        dependencies: []
+        scenarios:
+        - name: View More Dates
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight search results page and can see the date bar.
+          - keyword: WHEN
+            content: Click the “更多日期” calendar icon
+          - keyword: THEN
+            content: Expand the calendar view, showing price trends for the whole month.
+      - id: REQ-3.5.2.3
+        name: Switch to Next Week
+        type: ATOMIC
+        description: Switch to Next Week
+        dependencies: []
+        scenarios:
+        - name: Switch to Next Week
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight search results page and can see the date bar.
+          - keyword: WHEN
+            content: Click the ">" button
+          - keyword: THEN
+            content: Switch to dates in the next week.
+    - id: REQ-3.5.3
+      name: Filter and Sort Toolbar
+      type: FOLDER
+      description: Provide multi-dimensional flight filtering (nonstop/stopover, airline, time, airport) and sorting.
+      dependencies: []
+      children:
+      - id: REQ-3.5.3.1
+        name: Combined Filters
+        type: ATOMIC
+        description: Combined Filters
+        dependencies: []
+        scenarios:
+        - name: Combined Filters
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight search results page and can see the filter toolbar.
+          - keyword: WHEN
+            content: Under “直飞/经停”, select “直飞”
+          - keyword: THEN
+            content: The list hides all transfer/stopover flights.
+          - keyword: WHEN
+            content: In the “航空公司” dropdown, select “南方航空”
+          - keyword: THEN
+            content: The list shows only nonstop flights by “南方航空”.
+      - id: REQ-3.5.3.2
+        name: Sort by Price
+        type: ATOMIC
+        description: Sort by Price
+        dependencies: []
+        scenarios:
+        - name: Sort by Price
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight search results page and can see sorting options.
+          - keyword: WHEN
+            content: Click “低价优先”
+          - keyword: THEN
+            content: The flight list is re-ordered by price from low to high.
+      - id: REQ-3.5.3.3
+        name: Sort by On-Time Performance
+        type: ATOMIC
+        description: Sort by On-Time Performance
+        dependencies: []
+        scenarios:
+        - name: Sort by On-Time Performance
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight search results page and can see sorting options.
+          - keyword: WHEN
+            content: Click “准点率高-低”
+          - keyword: THEN
+            content: The flight list is re-ordered by on-time performance from high to low; the on-time rate is randomly generated for flights.
+      - id: REQ-3.5.3.4
+        name: Sort by Departure Time
+        type: ATOMIC
+        description: Sort by Departure Time
+        dependencies: []
+        scenarios:
+        - name: Sort by Departure Time
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight search results page and can see sorting options.
+          - keyword: WHEN
+            content: Click “起飞时间早-晚”
+          - keyword: THEN
+            content: The flight list is re-ordered by departure time from early to late.
+    - id: REQ-3.5.4
+      name: Flight List and Booking
+      type: FOLDER
+      description: Show flight detail cards, support expanding to view different fares and refund/change rules, and allow booking.
+      dependencies: []
+      children:
+      - id: REQ-3.5.4.1
+        name: Expand/Collapse Flight Details
+        type: ATOMIC
+        description: Expand/Collapse Flight Details
+        dependencies:
+        - REQ-3.4.1
+        scenarios:
+        - name: Expand/Collapse Flight Details
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight search results page and can see a flight card.
+          - keyword: WHEN
+            content: Click the “收起/展开” button on the right side of a flight card (or the price area)
+          - keyword: THEN
+            content: Expand to show all cabin fare options for the flight (e.g., economy 2.3折, premium economy) and refund/change rules.
+          - keyword: GIVEN
+            content: Flight details are expanded.
+          - keyword: WHEN
+            content: Click again
+          - keyword: THEN
+            content: Collapse the details list.
+      - id: REQ-3.5.4.2
+        name: Select a Fare and Book
+        type: ATOMIC
+        description: Select a Fare and Book
+        dependencies:
+        - REQ-3.5.4.1
+        scenarios:
+        - name: Select a Fare and Book
+          steps:
+          - keyword: GIVEN
+            content: Flight details are expanded and fare options are visible.
+          - keyword: WHEN
+            content: Click the orange “预订” button at the end of a fare row
+          - keyword: THEN
+            content: Enter the order booking page (Order Booking Page).
+      - id: REQ-3.5.4.3
+        name: 'Exception: No Search Results'
+        type: ATOMIC
+        description: Exception No Search Results
+        dependencies:
+        - REQ-3.4.1
+        scenarios:
+        - name: 'Exception: No Search Results'
+          steps:
+          - keyword: GIVEN
+            content: No flights match the search criteria.
+          - keyword: WHEN
+            content: View the flight list area
+          - keyword: THEN
+            content: The list area shows “未找到相关航班” and suggests “修改搜索条件”.
+- id: REQ-4
+  name: Order and Booking Module
+  type: FOLDER
+  description: Drive the flight booking flow, payment settlement, and order lifecycle management.
+  dependencies:
+  - REQ-3
+  children:
+  - id: REQ-4.1
+    name: Booking Page Information Entry and Display
+    type: FOLDER
+    description: Integrate the booking page’s core features, including travel reminders, passenger management, contact information, and the order summary. ![image](./reference/book2.png)
+    dependencies:
+    - REQ-3.5
+    children:
+    - id: REQ-4.1.1
+      name: Top Travel Reminders
+      type: FOLDER
+      description: Show airline restrictions and important notices at the top (e.g., rules for carrying power banks). ![image](./reference/book1_mention.png)
+      dependencies: []
+      children:
+      - id: REQ-4.1.1.1
+        name: View Reminder Details
+        type: ATOMIC
+        description: View Reminder Details
+        dependencies: []
+        scenarios:
+        - name: View Reminder Details
+          steps:
+          - keyword: GIVEN
+            content: User is on the order booking page and can see the travel reminders notice bar.
+          - keyword: WHEN
+            content: Click the expand arrow on the right side of the notice bar
+          - keyword: THEN
+            content: Expand downward to show detailed text-and-image regulations from the Civil Aviation Administration of China about power banks and baggage allowance.
+    - id: REQ-4.1.2
+      name: Select Frequent Passengers
+      type: FOLDER
+      description: Show a multi-select list of frequent passengers under the current account, supporting quick fill.
+      dependencies: []
+      children:
+      - id: REQ-4.1.2.1
+        name: Quickly Select Passengers
+        type: ATOMIC
+        description: Quickly Select Passengers
+        dependencies:
+        - REQ-4.1.1.1
+        scenarios:
+        - name: Quickly Select Passengers
+          steps:
+          - keyword: GIVEN
+            content: User can see the frequent passenger list.
+          - keyword: WHEN
+            content: Select the checkboxes such as “张三” and “李四”
+          - keyword: THEN
+            content: Passenger info cards are automatically generated below and filled with the corresponding identity information.
+    - id: REQ-4.1.3
+      name: Manual Passenger Entry
+      type: FOLDER
+      description: Provide a blank form for entering ad hoc passenger information that is not saved, with validation for name and ID consistency.
+      dependencies: []
+      children:
+      - id: REQ-4.1.3.1
+        name: Enter ID Information (Normal Flow)
+        type: ATOMIC
+        description: Enter ID Information (Normal Flow)
+        dependencies: []
+        scenarios:
+        - name: Enter ID Information (Normal Flow)
+          steps:
+          - keyword: GIVEN
+            content: User is on the order booking page and can see the manual passenger entry form.
+          - keyword: WHEN
+            content: Enter the name and a valid ID number
+          - keyword: GIVEN
+            content: Name and ID number have been entered.
+          - keyword: WHEN
+            content: Move focus out of the input
+          - keyword: THEN
+            content: Validation passes with no error messages.
+      - id: REQ-4.1.3.2
+        name: 'Exception: Invalid ID Number Format'
+        type: ATOMIC
+        description: Exception Invalid ID Number Format
+        dependencies: []
+        scenarios:
+        - name: 'Exception: Invalid ID Number Format'
+          steps:
+          - keyword: GIVEN
+            content: User is on the order booking page and can see the manual passenger entry form.
+          - keyword: WHEN
+            content: Enter the name and an invalid ID number (e.g., incorrect length or checksum digit)
+          - keyword: GIVEN
+            content: An invalid ID number has been entered.
+          - keyword: WHEN
+            content: Move focus out of the input
+          - keyword: THEN
+            content: 'Show a message: “请输入正确的证件号码”.'
+    - id: REQ-4.1.4
+      name: Add a New Passenger
+      type: FOLDER
+      description: Provide an entry to add a new frequent passenger to the account.
+      dependencies: []
+      children:
+      - id: REQ-4.1.4.1
+        name: Trigger Add Passenger
+        type: ATOMIC
+        description: Trigger Add Passenger
+        dependencies: []
+        scenarios:
+        - name: Trigger Add Passenger
+          steps:
+          - keyword: GIVEN
+            content: User can see the passenger list area on the order booking page.
+          - keyword: WHEN
+            content: Click the “+ 新增乘机人” button below the list
+          - keyword: THEN
+            content: A modal appears to edit the new passenger.
+    - id: REQ-4.1.5
+      name: Contact Information
+      type: FOLDER
+      description: Confirm the contact mobile number used to receive ticketing SMS messages; default to the currently logged-in user.
+      dependencies: []
+      children:
+      - id: REQ-4.1.5.1
+        name: Modify Contact Mobile Number
+        type: ATOMIC
+        description: Modify Contact Mobile Number
+        dependencies: []
+        scenarios:
+        - name: Modify Contact Mobile Number
+          steps:
+          - keyword: GIVEN
+            content: User can see the contact information section on the order booking page.
+          - keyword: WHEN
+            content: Modify the default mobile number
+          - keyword: THEN
+            content: Validate that the input matches a valid mainland China mobile number format.
+    - id: REQ-4.1.6
+      name: Right-Side Flight Information
+      type: FOLDER
+      description: The floating sidebar shows flight schedule, airports, aircraft type, and real-time fee breakdown (adult fare, airport construction fee and fuel surcharge).
+      dependencies: []
+      children:
+      - id: REQ-4.1.6.1
+        name: Real-Time Fee Calculation
+        type: ATOMIC
+        description: Real-Time Fee Calculation
+        dependencies:
+        - REQ-4.1.2.1
+        scenarios:
+        - name: Real-Time Fee Calculation
+          steps:
+          - keyword: GIVEN
+            content: User can see the fee breakdown sidebar on the order booking page.
+          - keyword: WHEN
+            content: Increase or decrease the number of passengers
+          - keyword: THEN
+            content: The large “订单总价” amount in the sidebar and the “x 1” quantity in the breakdown update accordingly.
+  - id: REQ-4.2
+    name: Value-Added Services and Trip Protection
+    type: FOLDER
+    description: 'In step 2 of booking, provide optional items such as insurance, baggage allowance, airport transfer, and airport services. Reference: ![image](./reference/book3.png)'
+    dependencies:
+    - REQ-4.1
+    children:
+    - id: REQ-4.2.1
+      name: Trip Protection (Insurance Services)
+      type: FOLDER
+      description: Provide multiple protection plans such as flight delay combo insurance, aviation accident insurance, and domestic travel insurance.
+      dependencies: []
+      children:
+      - id: REQ-4.2.1.1
+        name: Add Combo Insurance
+        type: ATOMIC
+        description: Add Combo Insurance
+        dependencies: []
+        scenarios:
+        - name: Add Combo Insurance
+          steps:
+          - keyword: GIVEN
+            content: User is on booking step 2 and can see the insurance section.
+          - keyword: WHEN
+            content: Click the add button or price button to the right of “航意航延组合险”
+          - keyword: THEN
+            content: The button state changes to “已选”, and the fee breakdown on the right increases immediately (e.g., ¥40/person).
+      - id: REQ-4.2.1.2
+        name: View Insurance Terms
+        type: ATOMIC
+        description: View Insurance Terms
+        dependencies: []
+        scenarios:
+        - name: View Insurance Terms
+          steps:
+          - keyword: GIVEN
+            content: User is on booking step 2 and can see the insurance section.
+          - keyword: WHEN
+            content: Click the “查看详情” or “保险条款” link next to the insurance name
+          - keyword: THEN
+            content: A modal shows the coverage scope, limits, and claim process.
+    - id: REQ-4.2.2
+      name: Baggage Allowance Service
+      type: FOLDER
+      description: Show the free baggage allowance for the current flight and provide options to purchase extra allowance.
+      dependencies: []
+      children:
+      - id: REQ-4.2.2.1
+        name: View Free Baggage Allowance
+        type: ATOMIC
+        description: View Free Baggage Allowance
+        dependencies: []
+        scenarios:
+        - name: View Free Baggage Allowance
+          steps:
+          - keyword: GIVEN
+            content: User is on booking step 2 and can see the “行李额” section.
+          - keyword: WHEN
+            content: View the description in the “行李额” section
+          - keyword: THEN
+            content: Show “已为你订单免费携带XXKG行李” or a similar message.
+      - id: REQ-4.2.2.2
+        name: Purchase Extra Baggage Allowance
+        type: ATOMIC
+        description: Purchase Extra Baggage Allowance
+        dependencies: []
+        scenarios:
+        - name: Purchase Extra Baggage Allowance
+          steps:
+          - keyword: GIVEN
+            content: User is on booking step 2 and can see extra baggage options.
+          - keyword: WHEN
+            content: Select the extra weight to purchase (e.g., +10KG)
+          - keyword: THEN
+            content: The cost is added to the total, and the updated total allowance is shown.
+    - id: REQ-4.2.3
+      name: Airport Transfer and Transportation Services
+      type: FOLDER
+      description: Provide transfer reservation options for origin/destination cities, including drop-off, pick-up, and taxi services.
+      dependencies: []
+      children:
+      - id: REQ-4.2.3.1
+        name: Reserve an Airport Drop-Off Service
+        type: ATOMIC
+        description: Reserve an Airport Drop-Off Service
+        dependencies: []
+        scenarios:
+        - name: Reserve an Airport Drop-Off Service
+          steps:
+          - keyword: GIVEN
+            content: User is on booking step 2 and can see transfer/transportation options.
+          - keyword: WHEN
+            content: Select “送我去” or “接送机”
+          - keyword: GIVEN
+            content: A transfer service option is selected.
+          - keyword: WHEN
+            content: Enter or confirm the pickup address
+          - keyword: THEN
+            content: The system calculates the estimated cost (e.g., from ¥42); after selection, the fee is added to the total.
+    - id: REQ-4.2.4
+      name: Airport Value-Added Services (Lounge/Security Check)
+      type: FOLDER
+      description: Support purchasing airport VIP lounge services (e.g., Tianfu Airport T2 lounge) and fast-track security check services.
+      dependencies: []
+      children:
+      - id: REQ-4.2.4.1
+        name: Purchase Lounge Service
+        type: ATOMIC
+        description: Purchase Lounge Service
+        dependencies: []
+        scenarios:
+        - name: Purchase Lounge Service
+          steps:
+          - keyword: GIVEN
+            content: User is on booking step 2 and can see airport value-added service cards.
+          - keyword: WHEN
+            content: Click the lounge benefit card to place the order
+          - keyword: THEN
+            content: The lounge service is added to the order and the amount on the right updates.
+    - id: REQ-4.2.5
+      name: Real-Time Fee Breakdown Calculation
+      type: FOLDER
+      description: The floating panel on the right summarizes all fees in real time, including flight fares, airport construction fee and fuel surcharge, and all value-added services listed above.
+      dependencies:
+      - REQ-4.1
+      - REQ-4.2.1
+      - REQ-4.2.2
+      - REQ-4.2.3
+      - REQ-4.2.4
+      children:
+      - id: REQ-4.2.5.1
+        name: Linked Pricing for Value-Added Services
+        type: ATOMIC
+        description: Linked Pricing for Value-Added Services
+        dependencies:
+        - REQ-4.1.2.1
+        scenarios:
+        - name: Linked Pricing for Value-Added Services
+          steps:
+          - keyword: GIVEN
+            content: User is on a booking page with the fee breakdown panel visible.
+          - keyword: WHEN
+            content: On the left, select any insurance or transfer service
+          - keyword: THEN
+            content: The “订单总价” number on the right updates, and clicking the “明细” dropdown arrow shows the new fee items.
+      - id: REQ-4.2.5.2
+        name: Auto Deduction When Removing Services
+        type: ATOMIC
+        description: Auto Deduction When Removing Services
+        dependencies:
+        - REQ-4.2.5.1
+        scenarios:
+        - name: Auto Deduction When Removing Services
+          steps:
+          - keyword: GIVEN
+            content: At least one value-added service is selected.
+          - keyword: WHEN
+            content: Deselect a selected value-added service
+          - keyword: THEN
+            content: The total deducts the corresponding amount, and the item is removed from the breakdown.
+  - id: REQ-4.3
+    name: Secure Payment Flow
+    type: FOLDER
+    description: 'The cashier page after order submission. Support multiple payment methods and time-limited payment. Reference: ![image](./reference/book4.png)'
+    dependencies:
+    - REQ-4.2
+    children:
+    - id: REQ-4.3.1
+      name: Payment Countdown Reminder
+      type: ATOMIC
+      description: Payment Countdown Reminder
+      dependencies: []
+      scenarios:
+      - name: Payment Countdown Reminder
+        steps:
+        - keyword: GIVEN
+          content: An order has been submitted and is awaiting payment.
+        - keyword: WHEN
+          content: Enter the payment page
+        - keyword: THEN
+          content: The top shows “剩余时间:00:09:27”, indicating that the order will be cancelled if it times out.
+    - id: REQ-4.3.2
+      name: Select Payment Method
+      type: ATOMIC
+      description: Select Payment Method
+      dependencies: []
+      scenarios:
+      - name: Select Payment Method
+        steps:
+        - keyword: GIVEN
+          content: User is on the payment page.
+        - keyword: WHEN
+          content: Click “使用新卡支付” or “支付宝”
+        - keyword: THEN
+          content: Simulate a successful payment.
+  - id: REQ-4.4
+    name: Order Management Center (Order List)
+    type: FOLDER
+    description: 'Show the user’s historical and current order list, with multi-status filtering and entry points for core actions.
+
+      Order entry: ![image](./reference/enter_order.png)
+
+      Reference: ![image](./reference/order1.png)'
+    dependencies: []
+    children:
+    - id: REQ-4.4.1
+      name: Enter Order Center
+      type: ATOMIC
+      description: Enter Order Center
+      dependencies: []
+      scenarios:
+      - name: Enter Order Center
+        steps:
+        - keyword: GIVEN
+          content: User is on the homepage.
+        - keyword: WHEN
+          content: Hover the mouse over “订单” in the top-right corner of the homepage
+        - keyword: THEN
+          content: A dropdown menu appears.
+        - keyword: GIVEN
+          content: The orders dropdown menu is visible.
+        - keyword: WHEN
+          content: Click “机票+相关订单”
+        - keyword: THEN
+          content: Navigate to the orders page.
+    - id: REQ-4.4.2
+      name: Order Status Tabs
+      type: FOLDER
+      description: 'Provide quick switching among four core statuses: “全部订单”, “未出行”, “待支付”, and “待点评”.'
+      dependencies: []
+      children:
+      - id: REQ-4.4.2.1
+        name: Switch to Pending Payment
+        type: ATOMIC
+        description: Switch to Pending Payment
+        dependencies: []
+        scenarios:
+        - name: Switch to Pending Payment
+          steps:
+          - keyword: GIVEN
+            content: User is on the orders page and can see the status tabs.
+          - keyword: WHEN
+            content: Click the “待支付” tab
+          - keyword: THEN
+            content: The list shows only orders in “待支付” status, and each order shows a “去支付” button.
+      - id: REQ-4.4.2.2
+        name: Switch to Not Traveled
+        type: ATOMIC
+        description: Switch to Not Traveled
+        dependencies: []
+        scenarios:
+        - name: Switch to Not Traveled
+          steps:
+          - keyword: GIVEN
+            content: User is on the orders page and can see the status tabs.
+          - keyword: WHEN
+            content: Click the “未出行” tab
+          - keyword: THEN
+            content: 'The list shows only valid orders that have not been used for travel. If there are no orders, show an empty state: “暂时没有相关订单”.'
+      - id: REQ-4.4.2.3
+        name: Switch to Pending Review
+        type: ATOMIC
+        description: Switch to Pending Review
+        dependencies: []
+        scenarios:
+        - name: Switch to Pending Review
+          steps:
+          - keyword: GIVEN
+            content: User is on the orders page and can see the status tabs.
+          - keyword: WHEN
+            content: Click the “待点评” tab
+          - keyword: THEN
+            content: The list shows orders with completed trips but no written reviews.
+      - id: REQ-4.4.2.4
+        name: Switch to All Orders
+        type: ATOMIC
+        description: Switch to All Orders
+        dependencies: []
+        scenarios:
+        - name: Switch to All Orders
+          steps:
+          - keyword: GIVEN
+            content: User is on the orders page and can see the status tabs.
+          - keyword: WHEN
+            content: Click the “全部订单” tab
+          - keyword: THEN
+            content: The list shows all historical and current orders.
+    - id: REQ-4.4.3
+      name: List Filter Toolbar
+      type: FOLDER
+      description: Support filtering by order type (such as flights and hotels), booking date range, and searching via a keyword input.
+      dependencies: []
+      children:
+      - id: REQ-4.4.3.1
+        name: Search Historical Orders
+        type: ATOMIC
+        description: Search Historical Orders
+        dependencies: []
+        scenarios:
+        - name: Search Historical Orders
+          steps:
+          - keyword: GIVEN
+            content: User is on the orders page and can see the filter toolbar.
+          - keyword: WHEN
+            content: Select the “订单号” search field and enter an order number
+          - keyword: GIVEN
+            content: An order number has been entered.
+          - keyword: WHEN
+            content: Click the search icon
+          - keyword: THEN
+            content: Precisely show the matching order record.
+    - id: REQ-4.4.4
+      name: Order List Card
+      type: FOLDER
+      description: 'Each list item shows summary info: order number, booking date, itinerary (e.g., 成都-广州), flight number, total price, and current status.'
+      dependencies: []
+      children:
+      - id: REQ-4.4.4.1
+        name: View Order Details
+        type: ATOMIC
+        description: View Order Details
+        dependencies: []
+        scenarios:
+        - name: View Order Details
+          steps:
+          - keyword: GIVEN
+            content: User is on the orders page and can see an order card.
+          - keyword: WHEN
+            content: Click the order area or the “待支付” status text
+          - keyword: THEN
+            content: Navigate to the order detail page.
+  - id: REQ-4.5
+    name: Order Details and Actions
+    type: FOLDER
+    description: 'Show the full fulfillment information for a specific order and entry points for subsequent actions. Reference: ![image](./reference/order2.png)'
+    dependencies:
+    - REQ-4.4
+    children:
+    - id: REQ-4.5.1
+      name: Order Status and Core Actions Area
+      type: FOLDER
+      description: The orange status bar at the top shows the current status (e.g., “待支付”), countdown reminder, and core action buttons (“去支付”, “取消订单”).
+      dependencies: []
+      children:
+      - id: REQ-4.5.1.1
+        name: Pending Payment Countdown
+        type: ATOMIC
+        description: Pending Payment Countdown
+        dependencies: []
+        scenarios:
+        - name: Pending Payment Countdown
+          steps:
+          - keyword: GIVEN
+            content: User is on an order detail page for a pending-payment order.
+          - keyword: WHEN
+            content: Review the top status bar
+          - keyword: THEN
+            content: Show “建议在...内完成支付”, and the countdown decreases dynamically.
+      - id: REQ-4.5.1.2
+        name: Cancel a Pending Payment Order
+        type: ATOMIC
+        description: Cancel a Pending Payment Order
+        dependencies: []
+        scenarios:
+        - name: Cancel a Pending Payment Order
+          steps:
+          - keyword: GIVEN
+            content: User is on an order detail page for a pending-payment order.
+          - keyword: WHEN
+            content: Click the “取消订单” link below the status bar
+          - keyword: THEN
+            content: A confirmation dialog appears; after confirmation, the order is closed.
+    - id: REQ-4.5.2
+      name: Flight Itinerary Details
+      type: FOLDER
+      description: Show detailed information such as departure/arrival times, terminals, airline, flight number, and operating carrier.
+      dependencies: []
+      children:
+      - id: REQ-4.5.2.1
+        name: View Refund/Change Rules
+        type: ATOMIC
+        description: View Refund/Change Rules
+        dependencies: []
+        scenarios:
+        - name: View Refund/Change Rules
+          steps:
+          - keyword: GIVEN
+            content: User is on an order detail page and can see the flight itinerary section.
+          - keyword: WHEN
+            content: Click the “退改规则” link
+          - keyword: THEN
+            content: Expand to show refund fee rates and change conditions for the cabin class.
+    - id: REQ-4.5.3
+      name: Purchased Value-Added Services
+      type: FOLDER
+      description: Show non-flight products associated with the order, such as “全程无忧包” and “优惠券”, and their service status.
+      dependencies: []
+      children: []
+    - id: REQ-4.5.4
+      name: Travelers and Contact Information
+      type: FOLDER
+      description: Show a list of all passengers’ names, masked ID numbers, and the contact mobile number.
+      dependencies: []
+      children: []
+    - id: REQ-4.5.5
+      name: Payment Breakdown Sidebar
+      type: FOLDER
+      description: Fixed on the right, showing the order total and a list breakdown of adult fare, taxes/fees, and insurance fees.
+      dependencies: []
+      children: []
+- id: REQ-5
+  name: Common Information Management
+  type: FOLDER
+  description: 'A core submodule of the user center, used to centrally manage frequently used traveler information, addresses, contacts, and reimbursement receipts during booking.
+
+    Enter personal center from the homepage: ![image](./reference/enter_self.png)
+
+    In Personal Info (currently includes order management), add common information items in the sidebar, which can be collapsed/expanded.'
+  dependencies:
+  - REQ-2
+  children:
+  - id: REQ-5.1
+    name: Enter Personal Center
+    type: ATOMIC
+    description: Enter Personal Center
+    dependencies: []
+    scenarios:
+    - name: Enter Personal Center
+      steps:
+      - keyword: GIVEN
+        content: User is logged in and is on the homepage.
+      - keyword: WHEN
+        content: Hover the mouse over “尊敬的...” on the homepage
+      - keyword: THEN
+        content: A dropdown menu appears, containing “尊敬的用户”.
+      - keyword: GIVEN
+        content: The user menu dropdown is visible.
+      - keyword: WHEN
+        content: Click “尊敬的用户”
+      - keyword: THEN
+        content: Navigate to the personal center, showing the orders page by default.
+  - id: REQ-5.2
+    name: Expand/Collapse Common Information
+    type: ATOMIC
+    description: Expand/Collapse Common Information
+    dependencies: []
+    scenarios:
+    - name: Expand/Collapse Common Information
+      steps:
+      - keyword: GIVEN
+        content: User is in the personal center and can see the sidebar.
+      - keyword: WHEN
+        content: Click “常用信息” in the sidebar
+      - keyword: THEN
+        content: Collapse or expand “常用信息”, including “常用旅客信息”, “常用联系人”, “常用报销凭证”, and “常用地址”.
+  - id: REQ-5.3
+    name: Frequent Traveler Information Management
+    type: FOLDER
+    description: Support CRUD operations for passengers/travelers’ identity information.
+    dependencies: []
+    children:
+    - id: REQ-5.3.1
+      name: Traveler List Display and Search
+      type: FOLDER
+      description: 'Display saved traveler name, mobile number, document type, and masked document number in a table. Support fuzzy search by name.
+
+        Frequent traveler list page ![image](./reference/passenger.png)'
+      dependencies: []
+      children:
+      - id: REQ-5.3.1.1
+        name: Search for a Traveler
+        type: ATOMIC
+        description: Search for a Traveler
+        dependencies: []
+        scenarios:
+        - name: Search for a Traveler
+          steps:
+          - keyword: GIVEN
+            content: User is on the frequent traveler list page.
+          - keyword: WHEN
+            content: Enter a traveler name (e.g., “张”) in the search box and click query
+          - keyword: THEN
+            content: The list filters immediately and shows only matching traveler records.
+      - id: REQ-5.3.1.2
+        name: No Matching Traveler Found
+        type: ATOMIC
+        description: No Matching Traveler Found
+        dependencies: []
+        scenarios:
+        - name: No Matching Traveler Found
+          steps:
+          - keyword: GIVEN
+            content: User is on the frequent traveler list page.
+          - keyword: WHEN
+            content: Enter a traveler name (e.g., “aa”) in the search box and click query
+          - keyword: THEN
+            content: When no matching traveler is found, show a message.
+    - id: REQ-5.3.2
+      name: Add and Edit Travelers
+      type: FOLDER
+      description: Capture traveler name (Chinese/English), nationality/region, gender, date of birth, mobile number, and document information. ![image](./reference/addpassenger.png)
+      dependencies: []
+      children:
+      - id: REQ-5.3.2.1
+        name: Create a New Traveler
+        type: ATOMIC
+        description: Create a New Traveler
+        dependencies:
+        - REQ-5.3.1.1
+        scenarios:
+        - name: Create a New Traveler
+          steps:
+          - keyword: GIVEN
+            content: User is on the frequent traveler list page.
+          - keyword: WHEN
+            content: Click “新增” and enter complete identity information
+          - keyword: THEN
+            content: Save after validations and required-field checks pass.
+      - id: REQ-5.3.2.2
+        name: 'Exception: Required-Field Validation'
+        type: ATOMIC
+        description: Exception Required-Field Validation
+        dependencies: []
+        scenarios:
+        - name: 'Exception: Required-Field Validation'
+          steps:
+          - keyword: GIVEN
+            content: User is on the traveler edit/create modal or page.
+          - keyword: WHEN
+            content: Click “保存” without entering a name
+          - keyword: THEN
+            content: 'Show a message: “中文名与英文名两者必填一项”.'
+    - id: REQ-5.3.3
+      name: Delete Travelers
+      type: FOLDER
+      description: Provide single-item and batch removal of traveler records.
+      dependencies: []
+      children:
+      - id: REQ-5.3.3.1
+        name: Delete a Traveler Record
+        type: ATOMIC
+        description: Delete a Traveler Record
+        dependencies: []
+        scenarios:
+        - name: Delete a Traveler Record
+          steps:
+          - keyword: GIVEN
+            content: User is on the frequent traveler list page and can see a traveler row.
+          - keyword: WHEN
+            content: Click the “删除” link at the end of a record row
+          - keyword: THEN
+            content: A confirmation dialog appears; after confirmation, the record is removed from the database.
+      - id: REQ-5.3.3.2
+        name: Batch Delete
+        type: ATOMIC
+        description: Batch Delete
+        dependencies: []
+        scenarios:
+        - name: Batch Delete
+          steps:
+          - keyword: GIVEN
+            content: User is on the frequent traveler list page.
+          - keyword: WHEN
+            content: Select multiple travelers
+          - keyword: GIVEN
+            content: At least one traveler is selected.
+          - keyword: WHEN
+            content: Click the "×删除" button at the bottom
+          - keyword: THEN
+            content: Batch delete the selected travelers.
+  - id: REQ-5.4
+    name: Frequent Address Management
+    type: FOLDER
+    description: Manage delivery addresses for mailing itineraries or invoices.
+    dependencies: []
+    children:
+    - id: REQ-5.4.1
+      name: Address List Display
+      type: FOLDER
+      description: Show recipient name, region, and detailed address information. ![image](./reference/address.png)
+      dependencies: []
+      children:
+      - id: REQ-5.4.1.1
+        name: View Address List
+        type: ATOMIC
+        description: View Address List
+        dependencies: []
+        scenarios:
+        - name: View Address List
+          steps: []
+    - id: REQ-5.4.2
+      name: Add and Edit Addresses
+      type: FOLDER
+      description: 'Capture recipient name, province/city/district (linked selection), detailed address, and mobile number. Reference: ![image](./reference/addaddress.png)'
+      dependencies: []
+      children:
+      - id: REQ-5.4.2.1
+        name: Save a New Address
+        type: ATOMIC
+        description: Save a New Address
+        dependencies: []
+        scenarios:
+        - name: Save a New Address
+          steps:
+          - keyword: GIVEN
+            content: User is on the address create/edit page or modal.
+          - keyword: WHEN
+            content: Fill in recipient information and save
+          - keyword: THEN
+            content: The new address is added to the list.
+    - id: REQ-5.4.3
+      name: Delete Addresses
+      type: FOLDER
+      description: Remove delivery addresses that are no longer used.
+      dependencies: []
+      children:
+      - id: REQ-5.4.3.1
+        name: Delete a Single Address
+        type: ATOMIC
+        description: Delete a Single Address
+        dependencies: []
+        scenarios:
+        - name: Delete a Single Address
+          steps:
+          - keyword: GIVEN
+            content: User is on the address list page and can see an address card.
+          - keyword: WHEN
+            content: Click the “删除” button next to an address card
+          - keyword: THEN
+            content: A confirmation dialog appears; after confirmation, the address is removed.
+      - id: REQ-5.4.3.2
+        name: Batch Delete Addresses
+        type: ATOMIC
+        description: Batch Delete Addresses
+        dependencies: []
+        scenarios:
+        - name: Batch Delete Addresses
+          steps:
+          - keyword: GIVEN
+            content: User is on the address list page.
+          - keyword: WHEN
+            content: Select the checkboxes in front of multiple addresses
+          - keyword: GIVEN
+            content: At least one address is selected.
+          - keyword: WHEN
+            content: Click “批量删除”
+          - keyword: THEN
+            content: A confirmation dialog appears; after confirmation, all selected addresses are removed.
+    - id: REQ-5.4.4
+      name: Address Details Page
+      type: FOLDER
+      description: Click an address in the address list page to open the address details page. ![image](./reference/addressShow.png)
+      children: []
+      dependencies: []
+  - id: REQ-5.5
+    name: Frequent Contact Management
+    type: FOLDER
+    description: Manage contact information used to receive order notifications.
+    dependencies: []
+    children:
+    - id: REQ-5.5.1
+      name: Contact List and Search
+      type: FOLDER
+      description: 'Show contact name, mobile number, and email. Support selecting items for batch operations and searching by name.
+
+        ![image](./reference/contact.png)'
+      dependencies: []
+      children:
+      - id: REQ-5.5.1.1
+        name: Search Contacts
+        type: ATOMIC
+        description: Search Contacts
+        dependencies: []
+        scenarios:
+        - name: Search Contacts
+          steps:
+          - keyword: GIVEN
+            content: User is on the contact list page.
+          - keyword: WHEN
+            content: Enter a contact name and click query
+          - keyword: THEN
+            content: The list shows matching results.
+      - id: REQ-5.5.1.2
+        name: Batch Delete
+        type: ATOMIC
+        description: Batch Delete
+        dependencies: []
+        scenarios:
+        - name: Batch Delete
+          steps:
+          - keyword: GIVEN
+            content: User is on the contact list page.
+          - keyword: WHEN
+            content: Select multiple contacts and click “删除”
+          - keyword: THEN
+            content: Remove the selected contacts in batch.
+    - id: REQ-5.5.2
+      name: Add and Edit Contacts
+      type: FOLDER
+      description: Enter real name, mobile number (supports international dialing codes), and email, and allow setting as the default contact. ![image](./reference/add_contact.png)
+      dependencies: []
+      children:
+      - id: REQ-5.5.2.1
+        name: Add a Default Contact
+        type: ATOMIC
+        description: Add a Default Contact
+        dependencies: []
+        scenarios:
+        - name: Add a Default Contact
+          steps:
+          - keyword: GIVEN
+            content: User is on the contact create/edit page or modal.
+          - keyword: WHEN
+            content: Fill in the information and check “设置为默认联系人”
+          - keyword: THEN
+            content: After saving, the contact has a default indicator.
+    - id: REQ-5.5.3
+      name: Delete Contacts
+      type: FOLDER
+      description: Remove contact records.
+      dependencies: []
+      children:
+      - id: REQ-5.5.3.1
+        name: Delete a Single Contact
+        type: ATOMIC
+        description: Delete a Single Contact
+        dependencies: []
+        scenarios:
+        - name: Delete a Single Contact
+          steps:
+          - keyword: GIVEN
+            content: User is on the contact list page and can see a contact item.
+          - keyword: WHEN
+            content: Click the “删除” button after a contact item
+          - keyword: THEN
+            content: Remove it after confirmation.
+      - id: REQ-5.5.3.2
+        name: Batch Delete Contacts
+        type: ATOMIC
+        description: Batch Delete Contacts
+        dependencies: []
+        scenarios:
+        - name: Batch Delete Contacts
+          steps:
+          - keyword: GIVEN
+            content: User is on the contact list page.
+          - keyword: WHEN
+            content: Select multiple contacts in the list
+          - keyword: GIVEN
+            content: At least one contact is selected.
+          - keyword: WHEN
+            content: Click “批量删除”
+          - keyword: THEN
+            content: After confirmation, remove all selected items.
+  - id: REQ-5.6
+    name: Frequent Reimbursement Receipt Management
+    type: FOLDER
+    description: Manage invoice title information, supporting company, government/public institution, and personal titles.
+    dependencies: []
+    children:
+    - id: REQ-5.6.1
+      name: Receipt List and Search
+      type: FOLDER
+      description: Show invoice title names, supporting keyword search and batch deletion. ![image](./reference/reimbursement.png)
+      dependencies: []
+      children:
+      - id: REQ-5.6.1.1
+        name: Search Invoice Titles
+        type: ATOMIC
+        description: Search Invoice Titles
+        dependencies: []
+        scenarios:
+        - name: Search Invoice Titles
+          steps:
+          - keyword: GIVEN
+            content: User is on the reimbursement receipt list page.
+          - keyword: WHEN
+            content: Enter invoice title keywords to search
+    - id: REQ-5.6.2
+      name: Add and Edit Receipts
+      type: FOLDER
+      description: Fill in invoice title name and tax ID (required for companies), and optionally configure VAT special invoice information. ![image](./reference/add_reimbursement.png)
+      dependencies: []
+      children:
+      - id: REQ-5.6.2.1
+        name: Add a Company Invoice Title
+        type: ATOMIC
+        description: Add a Company Invoice Title
+        dependencies: []
+        scenarios:
+        - name: Add a Company Invoice Title
+          steps:
+          - keyword: GIVEN
+            content: User is on the receipt create/edit page or modal.
+          - keyword: WHEN
+            content: Select “企业”, and enter the name and taxpayer identification number
+          - keyword: THEN
+            content: Validate the tax ID format.
+      - id: REQ-5.6.2.2
+        name: Configure Special VAT Invoice
+        type: ATOMIC
+        description: Configure Special VAT Invoice
+        dependencies: []
+        scenarios:
+        - name: Configure Special VAT Invoice
+          steps:
+          - keyword: GIVEN
+            content: User is on the receipt create/edit page or modal.
+          - keyword: WHEN
+            content: Set “增值税专用发票” to “需要”
+          - keyword: THEN
+            content: Expand input fields for registered address, phone number, and bank account details.
+    - id: REQ-5.6.3
+      name: Delete Receipts
+      type: FOLDER
+      description: Remove invoice titles that are no longer used.
+      dependencies: []
+      children:
+      - id: REQ-5.6.3.1
+        name: Delete a Single Receipt
+        type: ATOMIC
+        description: Delete a Single Receipt
+        dependencies: []
+        scenarios:
+        - name: Delete a Single Receipt
+          steps:
+          - keyword: GIVEN
+            content: User is on the reimbursement receipt list page and can see a receipt item.
+          - keyword: WHEN
+            content: Click the “删除” button after a receipt item
+          - keyword: THEN
+            content: Remove it after confirmation.
+      - id: REQ-5.6.3.2
+        name: Batch Delete Receipts
+        type: ATOMIC
+        description: Batch Delete Receipts
+        dependencies: []
+        scenarios:
+        - name: Batch Delete Receipts
+          steps:
+          - keyword: GIVEN
+            content: User is on the reimbursement receipt list page.
+          - keyword: WHEN
+            content: Select multiple invoice titles in the list
+          - keyword: GIVEN
+            content: At least one invoice title is selected.
+          - keyword: WHEN
+            content: Click “批量删除”
+          - keyword: THEN
+            content: After confirmation, remove all selected items.
+- id: REQ-6
+  name: Personal Center and Account Security
+  type: FOLDER
+  description: Provide user profile management, avatar settings, and multi-dimensional account security strengthening.
+  dependencies:
+  - REQ-2
+  children:
+  - id: REQ-6.1
+    name: Profile Information Display
+    type: FOLDER
+    description: 'Centrally display the user’s bound mobile number, email, nickname, name, gender, and date of birth. Reference: ![image](./reference/myinfo.png)'
+    dependencies: []
+    children:
+    - id: REQ-6.1.1
+      name: View Basic Profile Information
+      type: ATOMIC
+      description: View Basic Profile Information
+      dependencies:
+      - REQ-2.4.1
+      scenarios:
+      - name: View Basic Profile Information
+        steps:
+        - keyword: GIVEN
+          content: User is in the personal center and can see the sidebar.
+        - keyword: WHEN
+          content: Click “我的信息”
+        - keyword: THEN
+          content: The right area lists all profile fields the user has set; mobile number and email should be masked.
+  - id: REQ-6.2
+    name: Edit Profile
+    type: FOLDER
+    description: 'Allow users to update nickname, real name, gender, and date of birth. Reference: ![image](./reference/modifyinfo.png)'
+    dependencies:
+    - REQ-6.1
+    children:
+    - id: REQ-6.2.1
+      name: Update Profile and Save
+      type: ATOMIC
+      description: Update Profile and Save
+      dependencies:
+      - REQ-6.1.1
+      scenarios:
+      - name: Update Profile and Save
+        steps:
+        - keyword: GIVEN
+          content: User is on the “我的信息” page.
+        - keyword: WHEN
+          content: Click “编辑”
+        - keyword: THEN
+          content: Profile fields become editable or the page navigates to an edit page.
+        - keyword: GIVEN
+          content: Profile fields are editable.
+        - keyword: WHEN
+          content: Enter a new nickname and real name
+        - keyword: WHEN
+          content: Select gender (male/female) and date of birth
+        - keyword: GIVEN
+          content: Profile updates have been entered.
+        - keyword: WHEN
+          content: Click “保存”
+        - keyword: THEN
+          content: Show a success message and apply the updated information across the platform.
+  - id: REQ-6.3
+    name: Account Security Center Home
+    type: FOLDER
+    description: 'Overview the account security status, including entry points for login password, bound phone, and bound email settings. Reference: ![image](./reference/safecenter.png)'
+    dependencies: []
+    children:
+    - id: REQ-6.3.1
+      name: Enter Security Center
+      type: ATOMIC
+      description: Enter Security Center
+      dependencies:
+      - REQ-2.4.1
+      scenarios:
+      - name: Enter Security Center
+        steps:
+        - keyword: GIVEN
+          content: User is in the personal center and can see the sidebar.
+        - keyword: WHEN
+          content: Click “账户安全”
+        - keyword: THEN
+          content: The list shows security indicators and risk warnings such as “建议定期更换”.
+  - id: REQ-6.4
+    name: Change Login Password
+    type: FOLDER
+    description: 'Users set a new login password by verifying the current password. Reference: ![image](./reference/modifypassword.png)'
+    dependencies:
+    - REQ-6.3
+    children:
+    - id: REQ-6.4.1
+      name: Standard Password Change Flow
+      type: ATOMIC
+      description: Standard Password Change Flow
+      dependencies:
+      - REQ-6.3.1
+      scenarios:
+      - name: Standard Password Change Flow
+        steps:
+        - keyword: GIVEN
+          content: User is in the security center.
+        - keyword: WHEN
+          content: Click “修改” next to the login password
+        - keyword: THEN
+          content: Enter the change password page.
+        - keyword: GIVEN
+          content: User is on the change password page.
+        - keyword: WHEN
+          content: Enter the current password, new password, and confirm the new password
+        - keyword: THEN
+          content: The password strength meter updates in real time (weak/medium/strong).
+        - keyword: GIVEN
+          content: Password inputs are filled in.
+        - keyword: WHEN
+          content: Click “完成”
+        - keyword: THEN
+          content: After validation passes, the password is updated successfully and re-login is required.
+  - id: REQ-6.5
+    name: Change Bound Phone Number
+    type: FOLDER
+    description: 'Use a two-step verification flow to update the phone number bound to the account. Reference: ![image](./reference/modifyphone.png)'
+    dependencies:
+    - REQ-6.3
+    children:
+    - id: REQ-6.5.1
+      name: Verify Identity and Bind New Phone
+      type: ATOMIC
+      description: Verify Identity and Bind New Phone
+      dependencies:
+      - REQ-6.3.1
+      scenarios:
+      - name: Verify Identity and Bind New Phone
+        steps:
+        - keyword: GIVEN
+          content: User is in the security center.
+        - keyword: WHEN
+          content: Click “修改” next to the bound phone
+        - keyword: THEN
+          content: Enter the “验证身份” step.
+        - keyword: GIVEN
+          content: User is on the phone change flow and can see the identity verification step.
+        - keyword: WHEN
+          content: Enter the login password and the new phone number
+        - keyword: GIVEN
+          content: Login password and new phone number have been entered.
+        - keyword: WHEN
+          content: Click “下一步，验证新手机”
+        - keyword: THEN
+          content: The progress bar updates and a verification code is sent to the new phone.
+  - id: REQ-6.6
+    name: Change Bound Email
+    type: FOLDER
+    description: 'Verify identity by sending a verification code to the currently bound email, then change to a new email. Reference: ![image](./reference/modifyemail.png)'
+    dependencies:
+    - REQ-6.3
+    children:
+    - id: REQ-6.6.1
+      name: Email Verification Flow
+      type: ATOMIC
+      description: Email Verification Flow
+      dependencies:
+      - REQ-6.3.1
+      scenarios:
+      - name: Email Verification Flow
+        steps:
+        - keyword: GIVEN
+          content: User is in the security center.
+        - keyword: WHEN
+          content: Click “修改” next to the bound email
+        - keyword: THEN
+          content: Show the masked currently bound email address.
+        - keyword: GIVEN
+          content: User is on the email verification step and can see the verification code input.
+        - keyword: WHEN
+          content: Click “发送验证码” and enter the 6-digit code
+        - keyword: GIVEN
+          content: A 6-digit verification code has been entered.
+        - keyword: WHEN
+          content: Click “下一步，验证新邮箱”
+        - keyword: THEN
+          content: Enter the new email entry step.
+- id: REQ-7
+  name: Flight Status
+  type: FOLDER
+  description: Provide real-time flight status query services, supporting searches by flight number or by route (origin/destination).
+  dependencies:
+  - REQ-1
+  children:
+  - id: REQ-7.1
+    name: Enter Flight Status Page
+    type: ATOMIC
+    description: Enter Flight Status Page
+    dependencies: []
+    scenarios:
+    - name: Enter Flight Status Page
+      steps:
+      - keyword: GIVEN
+        content: User is on the homepage.
+      - keyword: WHEN
+        content: Click Homepage -> Flights -> “航班动态”
+      - keyword: THEN
+        content: Enter the flight status query page.
+  - id: REQ-7.2
+    name: Search Criteria Configuration
+    type: FOLDER
+    description: Include switching between flight-number search and route search, and entering parameters.
+    dependencies: []
+    children:
+    - id: REQ-7.2.1
+      name: Search by Flight Number
+      type: FOLDER
+      description: Users enter a specific flight number (e.g., MU1234) and departure date for an exact query. ![image](./reference/status1.png)
+      dependencies: []
+      children:
+      - id: REQ-7.2.1.1
+        name: Exact Flight Number Query
+        type: ATOMIC
+        description: Exact Flight Number Query
+        dependencies: []
+        scenarios:
+        - name: Exact Flight Number Query
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight status query page.
+          - keyword: WHEN
+            content: Select the “搜航班号” radio button
+          - keyword: THEN
+            content: Show the flight number input and date picker.
+          - keyword: WHEN
+            content: Enter “JD5162” and click search
+          - keyword: THEN
+            content: Navigate to the details page for this flight.
+    - id: REQ-7.2.2
+      name: Search by Route (Origin/Destination)
+      type: FOLDER
+      description: 'Similar to flight booking search: enter origin city, destination city, and date for a range query. ![image](./reference/status2.png)'
+      dependencies: []
+      children:
+      - id: REQ-7.2.2.1
+        name: Route Range Query
+        type: ATOMIC
+        description: Route Range Query
+        dependencies: []
+        scenarios:
+        - name: Route Range Query
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight status query page.
+          - keyword: WHEN
+            content: Select the “搜起降地” radio button
+          - keyword: THEN
+            content: Show origin/destination city inputs and a date picker.
+          - keyword: WHEN
+            content: Enter “上海” to “北京” and click search
+          - keyword: THEN
+            content: Navigate to the flight list page, showing all relevant flights for the day.
+      - id: REQ-7.2.2.2
+        name: Swap Origin and Destination
+        type: ATOMIC
+        description: Swap Origin and Destination
+        dependencies:
+        - REQ-7.2.2.1
+        scenarios:
+        - name: Swap Origin and Destination
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight status query page and the route inputs are visible.
+          - keyword: WHEN
+            content: Click the “双向箭头” swap icon in the middle
+          - keyword: THEN
+            content: Origin and destination values are swapped.
+    - id: REQ-7.2.3
+      name: Search History
+      type: FOLDER
+      description: Automatically record query history, supporting one-click reuse or clearing.
+      dependencies: []
+      children:
+      - id: REQ-7.2.3.1
+        name: Use History
+        type: ATOMIC
+        description: Use History
+        dependencies: []
+        scenarios:
+        - name: Use History
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight status query page and history items are visible.
+          - keyword: WHEN
+            content: Click a history item below the input (e.g., “JD5162”)
+          - keyword: THEN
+            content: Auto-fill the search criteria and run the query.
+      - id: REQ-7.2.3.2
+        name: Clear History
+        type: ATOMIC
+        description: Clear History
+        dependencies: []
+        scenarios:
+        - name: Clear History
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight status query page and history items are visible.
+          - keyword: WHEN
+            content: Click the “清除历史记录” link
+          - keyword: THEN
+            content: The history area is cleared.
+  - id: REQ-7.3
+    name: Results Display
+    type: FOLDER
+    description: Display a single flight details view or a flight list, depending on the search dimension.
+    dependencies:
+    - REQ-7.2
+    children:
+    - id: REQ-7.3.1
+      name: Flight List Page (Route Result)
+      type: FOLDER
+      description: 'Show all flights for a specific route on the selected day and their statuses. Reference: ![image](./reference/status3.png)'
+      dependencies: []
+      children:
+      - id: REQ-7.3.1.1
+        name: View Flight Status in List
+        type: ATOMIC
+        description: View Flight Status in List
+        dependencies:
+        - REQ-7.2.2.1
+        scenarios:
+        - name: View Flight Status in List
+          steps:
+          - keyword: GIVEN
+            content: User is on the flight status list page.
+          - keyword: WHEN
+            content: Browse list items
+          - keyword: THEN
+            content: Show airline, flight number, departure/arrival times, and real-time status (e.g., “航班到达”, “计划起飞”).
+    - id: REQ-7.3.2
+      name: Flight Details Page (Flight Detail)
+      type: FOLDER
+      description: 'Show full dynamic information for a specific flight, including check-in counters, gate, baggage carousel, and other ground service details. Reference: ![image](./reference/status4.png)'
+      dependencies: []
+      children:
+      - id: REQ-7.3.2.1
+        name: View Detailed Status
+        type: ATOMIC
+        description: View Detailed Status
+        dependencies: []
+        scenarios:
+        - name: View Detailed Status
+          steps:
+          - keyword: GIVEN
+            content: User has navigated to a flight details page.
+          - keyword: WHEN
+            content: View the flight details page
+          - keyword: THEN
+            content: The top shows origin/destination cities, time, and a progress bar; the right info panel shows check-in counters (e.g., H14-H25), check-in deadline, gate, and baggage carousel number.
+- id: REQ-8
+  name: Reimbursement Voucher Management
+  type: FOLDER
+  description: Provide self-service issuance of reimbursement vouchers such as itineraries and invoices, progress tracking, and history management.
+  dependencies:
+  - REQ-4
+  children:
+  - id: REQ-8.1
+    name: Voucher Entry and Home
+    type: FOLDER
+    description: 'Aggregate voucher operations into a unified service hub. Enter via the top navigation “更多服务” -> “报销凭证”. Reference: ![image](./reference/moreservice.png)'
+    dependencies: []
+    children:
+    - id: REQ-8.1.1
+      name: Status Category Navigation
+      type: FOLDER
+      description: 'On the home page, use tabs to separate voucher lifecycle states: “待开凭证”, “进行中”, and “已完成”. ![image](./reference/reimbursement2.png)'
+      dependencies: []
+      children:
+      - id: REQ-8.1.1.1
+        name: Switch to Completed
+        type: ATOMIC
+        description: Switch to Completed
+        dependencies: []
+        scenarios:
+        - name: Switch to Completed
+          steps:
+          - keyword: GIVEN
+            content: User is on the reimbursement voucher home page and can see the status tabs.
+          - keyword: WHEN
+            content: Click the “已完成” tab
+          - keyword: THEN
+            content: The list refreshes to show historical issued voucher records.
+    - id: REQ-8.1.2
+      name: Rule Tips and Guidance
+      type: FOLDER
+      description: The top notice bar shows issuance rules (e.g., “订单支持支付后365天内开具”).
+      dependencies: []
+      children: []
+  - id: REQ-8.2
+    name: Pending Voucher Management
+    type: FOLDER
+    description: Show valid orders under the current account that can apply for reimbursement vouchers.
+    dependencies: []
+    children:
+    - id: REQ-8.2.1
+      name: View Eligible Orders
+      type: ATOMIC
+      description: View Eligible Orders
+      dependencies: []
+      scenarios:
+      - name: View Eligible Orders
+        steps:
+        - keyword: GIVEN
+          content: User is on the reimbursement voucher home page.
+        - keyword: WHEN
+          content: Enter the “待开凭证” tab
+        - keyword: THEN
+          content: If there are no orders, show an empty state illustration and the text “您暂无报销凭证可开具”; if there are orders, show them in a list.
+    - id: REQ-8.2.2
+      name: Find More Historical Orders
+      type: ATOMIC
+      description: Find More Historical Orders
+      dependencies: []
+      scenarios:
+      - name: Find More Historical Orders
+        steps:
+        - keyword: GIVEN
+          content: User is on the reimbursement voucher home page and can see the eligible orders list.
+        - keyword: WHEN
+          content: Click the “查看更多一年内订单” link
+        - keyword: THEN
+          content: Load and display all orders within one year that support supplementary voucher issuance.
+  - id: REQ-8.3
+    name: Voucher Application and Progress
+    type: FOLDER
+    description: (Reserved) Define the specific application flow for invoices and itineraries and logistics tracking.
+    dependencies:
+    - REQ-8.2
+    children:
+    - id: REQ-8.3.1
+      name: In-Progress Vouchers
+      type: FOLDER
+      description: Show progress for vouchers that have been applied for but are not yet shipped or are being shipped.
+      dependencies: []
+      children: []
+    - id: REQ-8.3.2
+      name: Completed Vouchers
+      type: FOLDER
+      description: Show download entry points for successfully issued e-invoices or delivery receipt records for paper itineraries.
+      dependencies: []
+      children: []
+- id: REQ-9
+  name: Airport Guide
+  type: FOLDER
+  description: Provide detailed information for airports worldwide, including weather, transportation, facilities, and contact numbers. ![image](./reference/airport1.png)
+  dependencies:
+  - REQ-1
+  children:
+  - id: REQ-9.1
+    name: Enter Airport Guide
+    type: ATOMIC
+    description: Enter Airport Guide
+    dependencies: []
+    scenarios:
+    - name: Enter Airport Guide
+      steps:
+      - keyword: GIVEN
+        content: User is on the homepage.
+      - keyword: WHEN
+        content: Click Homepage -> Flights -> “更多服务” -> “机场攻略”
+      - keyword: THEN
+        content: The main page area switches to the airport guide home.
+  - id: REQ-9.2
+    name: Airport List and Overview
+    type: FOLDER
+    description: The airport information home page, providing airport indexes by region and a weather overview.
+    dependencies: []
+    children:
+    - id: REQ-9.2.1
+      name: Popular Airports and Category Index
+      type: FOLDER
+      description: 'Display airports in three sections: “热门机场”, “国内”, and “国际/中国港澳台地区”.'
+      dependencies: []
+      children:
+      - id: REQ-9.2.1.1
+        name: Browse Popular Airports
+        type: ATOMIC
+        description: Browse Popular Airports
+        dependencies: []
+        scenarios:
+        - name: Browse Popular Airports
+          steps:
+          - keyword: GIVEN
+            content: User is on the airport guide home page.
+          - keyword: WHEN
+            content: View the “热门机场” section
+          - keyword: THEN
+            content: Show quick entries for major hub airports such as Beijing Capital, Shanghai Pudong, and Guangzhou Baiyun.
+      - id: REQ-9.2.1.2
+        name: Find via Alphabet Index
+        type: ATOMIC
+        description: Find via Alphabet Index
+        dependencies: []
+        scenarios:
+        - name: Find via Alphabet Index
+          steps:
+          - keyword: GIVEN
+            content: User is on the airport guide home page.
+          - keyword: WHEN
+            content: In the “国内机场” section, click the letter “C”
+          - keyword: THEN
+            content: Quickly jump to the list of city airports starting with C, such as Chengdu, Chongqing, and Changchun.
+    - id: REQ-9.2.2
+      name: Destination Weather Card
+      type: FOLDER
+      description: The floating card on the right shows real-time weather and forecast for the current location or the selected city.
+      dependencies: []
+      children:
+      - id: REQ-9.2.2.1
+        name: View Travel Weather
+        type: ATOMIC
+        description: View Travel Weather
+        dependencies: []
+        scenarios:
+        - name: View Travel Weather
+          steps:
+          - keyword: GIVEN
+            content: User is on the airport guide home page and can see the weather card.
+          - keyword: WHEN
+            content: Review the “今日天气” card on the right
+          - keyword: THEN
+            content: Show today’s temperature for Beijing (or another selected city), e.g., -5°C to 3°C, and an entry point for “乘机流程”.
+  - id: REQ-9.3
+    name: Airport Detail Services
+    type: FOLDER
+    description: 'A deep information page for a specific airport, containing four core sub-sections.
+
+      Default to the airport overview. ![image](./reference/airport2.png)'
+    dependencies:
+    - REQ-9.2
+    children:
+    - id: REQ-9.3.1
+      name: Airport Overview
+      type: FOLDER
+      description: 'Display an airport overview.
+
+        Airport overview ![image](./reference/airport3.png)'
+      dependencies: []
+      children:
+      - id: REQ-9.3.1.1
+        name: View Airport Overview
+        type: ATOMIC
+        description: View Airport Overview
+        dependencies: []
+        scenarios:
+        - name: View Airport Overview
+          steps:
+          - keyword: GIVEN
+            content: User is on an airport detail page.
+          - keyword: WHEN
+            content: Click the “机场简介” tab
+          - keyword: THEN
+            content: Show detailed text introduction about Capital Airport, such as its location, number of runways, and “中国第一国门”.
+    - id: REQ-9.3.2
+      name: Airport Transportation Guide
+      type: FOLDER
+      description: List transportation options to/from the airport in detail, including buses, metro/express rail, airport shuttle buses, and taxis. ![image](./reference/airport4.png)
+      dependencies: []
+      children:
+      - id: REQ-9.3.2.1
+        name: Check Shuttle Bus Timetable
+        type: ATOMIC
+        description: Check Shuttle Bus Timetable
+        dependencies: []
+        scenarios:
+        - name: Check Shuttle Bus Timetable
+          steps:
+          - keyword: GIVEN
+            content: User is on an airport detail page.
+          - keyword: WHEN
+            content: Click the “机场交通” tab and view the “市内巴士” section
+          - keyword: THEN
+            content: Show each route’s stops, first/last departure times, and headway (e.g., Fangzhuang line, Xidan line).
+    - id: REQ-9.3.3
+      name: Airport Service Phone Numbers
+      type: FOLDER
+      description: Collect common service hotlines such as information desk, lost and found, first aid center, and baggage storage. ![image](./reference/airport5.png)
+      dependencies: []
+      children:
+      - id: REQ-9.3.3.1
+        name: Find First Aid Phone Number
+        type: ATOMIC
+        description: Find First Aid Phone Number
+        dependencies: []
+        scenarios:
+        - name: Find First Aid Phone Number
+          steps:
+          - keyword: GIVEN
+            content: User is on an airport detail page.
+          - keyword: WHEN
+            content: Click the “机场电话” tab
+          - keyword: THEN
+            content: The list shows the medical first aid center phone number (e.g., 010-6454xxxx).
+- id: REQ-10
+  name: Airport Directory
+  type: FOLDER
+  description: A quick navigation entry in “更多服务”, containing complete indexes of domestic and international airports. Clicking it navigates to the Airport Guide home.
+  dependencies:
+  - REQ-9
+  children:
+  - id: REQ-10.1
+    name: Domestic Airport Directory
+    type: FOLDER
+    description: Provide quick entry points for all domestic civil airports.
+    dependencies: []
+    children:
+    - id: REQ-10.1.1
+      name: Enter Domestic Airport Directory
+      type: ATOMIC
+      description: Enter Domestic Airport Directory
+      dependencies: []
+      scenarios:
+      - name: Enter Domestic Airport Directory
+        steps:
+        - keyword: GIVEN
+          content: User is in the “更多服务” menu.
+        - keyword: WHEN
+          content: Click “国内机场大全”
+        - keyword: THEN
+          content: Navigate to the Airport Guide home (REQ-9) and automatically focus on the “国内机场” category tab.
+  - id: REQ-10.2
+    name: International Airport Directory
+    type: FOLDER
+    description: Provide quick entry points for major international airports worldwide and airports in Hong Kong, Macau, and Taiwan.
+    dependencies: []
+    children:
+    - id: REQ-10.2.1
+      name: Enter International Airport Directory
+      type: ATOMIC
+      description: Enter International Airport Directory
+      dependencies: []
+      scenarios:
+      - name: Enter International Airport Directory
+        steps:
+        - keyword: GIVEN
+          content: User is in the “更多服务” menu.
+        - keyword: WHEN
+          content: Click “国际机场大全”
+        - keyword: THEN
+          content: Navigate to the Airport Guide home (REQ-9) and automatically focus on the “国际/中国港澳台地区” category tab.

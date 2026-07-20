@@ -1,0 +1,707 @@
+version: 1
+baseline:
+  description: Shared homepage and navigation data needed for core 12306 flows.
+  fixtures:
+  - public_homepage
+  - searchable_routes
+  - travel_guide_content
+fixtures:
+  public_homepage:
+    description: Anonymous homepage state with navigation, banner, quick guide, and search module visible.
+    scope: global
+    mutable: false
+    providedState:
+      auth: anonymous
+    entities:
+      pages:
+      - key: home
+        title: 12306 home
+        sections:
+        - header
+        - search
+        - quick-guide
+        - travel-guide-entry
+  registration_candidates:
+    description: Fresh identities that can be used for successful or invalid registration attempts.
+    scope: per_test
+    mutable: true
+    providedState:
+      auth: anonymous
+    entities:
+      users:
+      - key: new_user
+        name: Test Traveler
+        passportNumber: P20260001
+        username: traveler_new
+        email: traveler_new@example.com
+        password: Password123!
+  existing_passport_user:
+    description: Existing account whose passport number is already reserved.
+    scope: global
+    mutable: false
+    providedState:
+      auth: anonymous
+    entities:
+      users:
+      - key: passport_taken_user
+        name: Existing Passport
+        passportNumber: P20260002
+        username: passport_taken
+        email: passport_taken@example.com
+  existing_username_user:
+    description: Existing account whose username is already reserved.
+    scope: global
+    mutable: false
+    providedState:
+      auth: anonymous
+    entities:
+      users:
+      - key: username_taken_user
+        name: Existing Username
+        passportNumber: P20260003
+        username: username_taken
+        email: username_taken@example.com
+  registered_user:
+    description: Standard account that can sign in, sign out, and access logged-in features.
+    scope: per_test
+    mutable: true
+    providedState:
+      auth: authenticated
+      role: standard-user
+    entities:
+      users:
+      - key: registered_user
+        name: Registered User
+        passportNumber: P20260010
+        username: registered_user
+        email: registered_user@example.com
+        mobile: '13800000010'
+        password: Password123!
+  password_reset_user:
+    description: Registered account with a known email and ID number for password-reset flows.
+    scope: per_test
+    mutable: true
+    providedState:
+      auth: anonymous
+    entities:
+      users:
+      - key: password_reset_user
+        name: Reset User
+        passportNumber: P20260011
+        username: reset_user
+        email: reset_user@example.com
+        password: Password123!
+  searchable_routes:
+    description: Searchable direct routes for quick-search and result-list scenarios.
+    scope: global
+    mutable: false
+    providedState:
+      search: direct-results
+    entities:
+      routes:
+      - key: route_sh_bj
+        from: Shanghai
+        to: Beijing
+        date: '2026-07-21'
+  search_results_dataset:
+    description: Result rows with multiple train types, stations, and departure times for sorting and
+      filtering tests.
+    scope: global
+    mutable: false
+    providedState:
+      search: multiple-results
+    entities:
+      trains:
+      - key: G1001
+        type: G/C/D
+        fromStation: Shanghai Hongqiao
+        toStation: Beijing South
+        departureTime: 08:00
+        arrivalTime: '12:30'
+      - key: D2203
+        type: G/C/D
+        fromStation: Suzhou North
+        toStation: Beijing South
+        departureTime: 09:15
+        arrivalTime: '15:10'
+      - key: K45
+        type: Other
+        fromStation: Shanghai
+        toStation: Beijing
+        departureTime: '10:40'
+        arrivalTime: '22:10'
+  transfer_only_route:
+    description: A searched route with no direct train but with transfer plans available.
+    scope: global
+    mutable: false
+    providedState:
+      search: transfer-only
+    entities:
+      routes:
+      - key: route_no_direct
+        from: Yancheng
+        to: Lhasa
+        date: '2026-07-22'
+  personal_center_user:
+    description: Logged-in user with access to the personal center and dropdown navigation.
+    scope: per_test
+    mutable: true
+    providedState:
+      auth: authenticated
+      personalCenter: true
+    entities:
+      users:
+      - key: personal_center_user
+        username: personal_center_user
+        email: personal_center_user@example.com
+        mobile: '13800000020'
+        password: Password123!
+  orders_empty_user:
+    description: Logged-in user whose order center tabs start empty.
+    scope: per_test
+    mutable: true
+    providedState:
+      auth: authenticated
+      orders: empty
+    entities:
+      users:
+      - key: orders_empty_user
+        username: orders_empty_user
+        email: orders_empty_user@example.com
+        password: Password123!
+  orders_unpaid_user:
+    description: Logged-in user with at least one unpaid order available in the order center.
+    scope: per_test
+    mutable: true
+    providedState:
+      auth: authenticated
+      orders: unpaid
+    entities:
+      users:
+      - key: orders_unpaid_user
+        username: orders_unpaid_user
+        email: orders_unpaid_user@example.com
+        password: Password123!
+  orders_upcoming_user:
+    description: Logged-in user with at least one paid upcoming trip.
+    scope: per_test
+    mutable: true
+    providedState:
+      auth: authenticated
+      orders: upcoming
+    entities:
+      users:
+      - key: orders_upcoming_user
+        username: orders_upcoming_user
+        email: orders_upcoming_user@example.com
+        password: Password123!
+  orders_history_user:
+    description: Logged-in user with history orders that can be searched and filtered.
+    scope: per_test
+    mutable: true
+    providedState:
+      auth: authenticated
+      orders: history
+    entities:
+      users:
+      - key: orders_history_user
+        username: orders_history_user
+        email: orders_history_user@example.com
+        password: Password123!
+  orders_cancelled_user:
+    description: Logged-in user with at least one cancelled order visible in uncompleted orders.
+    scope: per_test
+    mutable: true
+    providedState:
+      auth: authenticated
+      orders: cancelled
+    entities:
+      users:
+      - key: orders_cancelled_user
+        username: orders_cancelled_user
+        email: orders_cancelled_user@example.com
+        password: Password123!
+  profile_user:
+    description: Logged-in user with editable profile, account security, mailbox, and mobile details.
+    scope: per_test
+    mutable: true
+    providedState:
+      auth: authenticated
+      profile: editable
+    entities:
+      users:
+      - key: profile_user
+        username: profile_user
+        email: profile_user@example.com
+        mobile: '13800000030'
+        password: Password123!
+  passenger_manager_user:
+    description: Logged-in user with frequent passengers available for add, search, and delete scenarios.
+    scope: per_test
+    mutable: true
+    providedState:
+      auth: authenticated
+      passengers: present
+    entities:
+      users:
+      - key: passenger_manager_user
+        username: passenger_manager_user
+        email: passenger_manager_user@example.com
+        password: Password123!
+  bookable_user:
+    description: Logged-in user who can book tickets and has passenger data available for booking.
+    scope: per_test
+    mutable: true
+    providedState:
+      auth: authenticated
+      booking: enabled
+    entities:
+      users:
+      - key: bookable_user
+        username: bookable_user
+        email: bookable_user@example.com
+        password: Password123!
+  bookable_route:
+    description: Search result data with at least one train row that can be booked and one sold-out ticket
+      class.
+    scope: global
+    mutable: false
+    providedState:
+      booking: mixed-availability
+    entities:
+      trains:
+      - key: G1001
+        bookable: true
+      - key: K45
+        bookable: false
+  travel_guide_content:
+    description: Travel guide categories, question anchors, and quick-guide links available from home
+      and navigation.
+    scope: global
+    mutable: false
+    providedState:
+      guide: loaded
+    entities:
+      guides:
+      - key: ticketing
+        questions:
+        - How to book tickets online?
+      - key: endorsement_refund
+        questions:
+        - How to change or refund tickets?
+      - key: miscellaneous
+        questions:
+        - How to use 12306 mobile app?
+requirementBindings:
+  REQ-1.1:
+    needs:
+    - public_homepage
+  REQ-1.2:
+    needs:
+    - public_homepage
+  REQ-2.1.1:
+    needs:
+    - public_homepage
+    - registration_candidates
+  REQ-2.1.2:
+    needs:
+    - public_homepage
+    - registration_candidates
+  REQ-2.1.3:
+    needs:
+    - public_homepage
+    - registration_candidates
+  REQ-2.1.4:
+    needs:
+    - public_homepage
+    - registration_candidates
+  REQ-2.1.5:
+    needs:
+    - public_homepage
+    - existing_passport_user
+  REQ-2.1.6:
+    needs:
+    - public_homepage
+    - existing_username_user
+  REQ-2.1.7:
+    needs:
+    - public_homepage
+    - registration_candidates
+  REQ-2.1.8:
+    needs:
+    - public_homepage
+    - registration_candidates
+  REQ-2.1.9:
+    needs:
+    - public_homepage
+    - registration_candidates
+  REQ-2.2.1:
+    needs:
+    - public_homepage
+    - registered_user
+  REQ-2.2.2:
+    needs:
+    - public_homepage
+    - registered_user
+  REQ-2.2.3:
+    needs:
+    - public_homepage
+    - registered_user
+  REQ-2.2.4:
+    needs:
+    - public_homepage
+    - registered_user
+  REQ-2.2.5:
+    needs:
+    - public_homepage
+  REQ-2.2.6:
+    needs:
+    - public_homepage
+    - registered_user
+  REQ-2.2.7:
+    needs:
+    - public_homepage
+    - registered_user
+  REQ-2.3.1:
+    needs:
+    - registered_user
+  REQ-2.4.1:
+    needs:
+    - password_reset_user
+  REQ-2.4.2:
+    needs:
+    - password_reset_user
+  REQ-2.4.3:
+    needs:
+    - password_reset_user
+  REQ-2.4.4:
+    needs:
+    - password_reset_user
+  REQ-2.4.5:
+    needs:
+    - password_reset_user
+  REQ-2.4.6:
+    needs:
+    - password_reset_user
+  REQ-2.5.1:
+    needs:
+    - public_homepage
+  REQ-2.5.2:
+    needs:
+    - public_homepage
+  REQ-3.1.1:
+    needs:
+    - public_homepage
+    - searchable_routes
+  REQ-3.1.2:
+    needs:
+    - public_homepage
+    - searchable_routes
+  REQ-3.1.3:
+    needs:
+    - public_homepage
+    - searchable_routes
+  REQ-3.1.4:
+    needs:
+    - public_homepage
+    - searchable_routes
+  REQ-3.1.5:
+    needs:
+    - public_homepage
+    - searchable_routes
+  REQ-3.1.6:
+    needs:
+    - public_homepage
+    - searchable_routes
+  REQ-3.1.7:
+    needs:
+    - public_homepage
+    - searchable_routes
+  REQ-3.2.1:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.2.2:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.2.3:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.2.4:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.2.5:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.2.6:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.2.7:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.2.8:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.2.9:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.2.10:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.2.11:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.2.12:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.2.13:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.2.14:
+    needs:
+    - searchable_routes
+    - search_results_dataset
+  REQ-3.3.1:
+    needs:
+    - transfer_only_route
+  REQ-3.3.2:
+    needs:
+    - transfer_only_route
+  REQ-3.3.3:
+    needs:
+    - transfer_only_route
+  REQ-3.3.4:
+    needs:
+    - transfer_only_route
+  REQ-3.3.5:
+    needs:
+    - transfer_only_route
+  REQ-4.1.1:
+    needs:
+    - registered_user
+    - personal_center_user
+  REQ-4.1.2:
+    needs:
+    - registered_user
+    - personal_center_user
+  REQ-4.1.3:
+    needs:
+    - registered_user
+    - personal_center_user
+  REQ-4.2.1:
+    needs:
+    - orders_unpaid_user
+  REQ-4.2.2:
+    needs:
+    - orders_empty_user
+  REQ-4.2.3:
+    needs:
+    - orders_empty_user
+  REQ-4.2.4:
+    needs:
+    - orders_unpaid_user
+  REQ-4.2.5:
+    needs:
+    - orders_unpaid_user
+  REQ-4.2.6:
+    needs:
+    - orders_empty_user
+  REQ-4.2.7:
+    needs:
+    - orders_empty_user
+  REQ-4.2.8:
+    needs:
+    - orders_upcoming_user
+  REQ-4.2.9:
+    needs:
+    - orders_upcoming_user
+  REQ-4.2.10:
+    needs:
+    - orders_upcoming_user
+  REQ-4.2.11:
+    needs:
+    - orders_upcoming_user
+  REQ-4.2.12:
+    needs:
+    - orders_upcoming_user
+  REQ-4.2.13:
+    needs:
+    - orders_empty_user
+  REQ-4.2.14:
+    needs:
+    - orders_empty_user
+  REQ-4.2.15:
+    needs:
+    - orders_history_user
+  REQ-4.2.16:
+    needs:
+    - orders_history_user
+  REQ-4.2.17:
+    needs:
+    - orders_history_user
+  REQ-4.3.1:
+    needs:
+    - profile_user
+  REQ-4.3.2:
+    needs:
+    - profile_user
+  REQ-4.3.3:
+    needs:
+    - profile_user
+  REQ-4.3.4:
+    needs:
+    - profile_user
+  REQ-4.3.5:
+    needs:
+    - profile_user
+  REQ-4.3.6:
+    needs:
+    - profile_user
+  REQ-4.3.7:
+    needs:
+    - profile_user
+  REQ-4.3.8:
+    needs:
+    - profile_user
+  REQ-4.4.1:
+    needs:
+    - passenger_manager_user
+  REQ-4.4.2:
+    needs:
+    - passenger_manager_user
+  REQ-4.4.3:
+    needs:
+    - passenger_manager_user
+  REQ-4.4.4:
+    needs:
+    - passenger_manager_user
+  REQ-4.4.5:
+    needs:
+    - passenger_manager_user
+  REQ-4.4.6:
+    needs:
+    - passenger_manager_user
+  REQ-4.4.7:
+    needs:
+    - passenger_manager_user
+  REQ-4.4.8:
+    needs:
+    - passenger_manager_user
+  REQ-4.4.9:
+    needs:
+    - passenger_manager_user
+  REQ-4.4.10:
+    needs:
+    - passenger_manager_user
+  REQ-4.4.11:
+    needs:
+    - passenger_manager_user
+  REQ-4.5.1:
+    needs:
+    - personal_center_user
+  REQ-5.1.1:
+    needs:
+    - searchable_routes
+  REQ-5.1.2:
+    needs:
+    - searchable_routes
+  REQ-5.1.3:
+    needs:
+    - searchable_routes
+  REQ-5.2.1:
+    needs:
+    - bookable_user
+    - bookable_route
+    - passenger_manager_user
+  REQ-5.2.2:
+    needs:
+    - bookable_user
+    - bookable_route
+    - passenger_manager_user
+  REQ-5.2.3:
+    needs:
+    - bookable_user
+    - bookable_route
+    - passenger_manager_user
+  REQ-5.2.4:
+    needs:
+    - bookable_user
+    - bookable_route
+    - passenger_manager_user
+  REQ-5.2.5:
+    needs:
+    - bookable_user
+    - bookable_route
+    - passenger_manager_user
+  REQ-5.2.6:
+    needs:
+    - bookable_user
+    - bookable_route
+    - passenger_manager_user
+  REQ-5.2.7:
+    needs:
+    - bookable_user
+    - bookable_route
+    - passenger_manager_user
+  REQ-5.3.1:
+    needs:
+    - bookable_user
+    - bookable_route
+    - passenger_manager_user
+  REQ-5.3.2:
+    needs:
+    - bookable_user
+    - bookable_route
+    - passenger_manager_user
+  REQ-5.3.3:
+    needs:
+    - bookable_user
+    - bookable_route
+    - passenger_manager_user
+  REQ-5.3.4:
+    needs:
+    - bookable_user
+    - bookable_route
+    - passenger_manager_user
+  REQ-5.3.5:
+    needs:
+    - orders_unpaid_user
+  REQ-5.3.6:
+    needs:
+    - orders_upcoming_user
+  REQ-5.3.7:
+    needs:
+    - orders_cancelled_user
+  REQ-5.3.8:
+    needs:
+    - orders_unpaid_user
+  REQ-5.3.9:
+    needs:
+    - orders_unpaid_user
+  REQ-6.1.1:
+    needs:
+    - travel_guide_content
+  REQ-6.2.1:
+    needs:
+    - travel_guide_content
+  REQ-6.2.2:
+    needs:
+    - travel_guide_content
+  REQ-6.3.1:
+    needs:
+    - travel_guide_content
+  REQ-6.3.2:
+    needs:
+    - travel_guide_content

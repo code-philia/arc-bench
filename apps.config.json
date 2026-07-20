@@ -1,0 +1,40 @@
+{
+  "apps": {
+    "12306": {
+      "requirementDir": "arc-bench/webapp/requirements/12306",
+      "testDir": "arc-bench/webapp/tests/12306",
+      "webPort": 3101,
+      "targetUrl": "http://127.0.0.1:3101"
+    },
+    "bookstack": {
+      "requirementDir": "arc-bench/webapp/requirements/bookstack",
+      "testDir": "arc-bench/webapp/tests/bookstack",
+      "webPort": 3102,
+      "targetUrl": "http://127.0.0.1:3102"
+    },
+    "ctrip": {
+      "requirementDir": "arc-bench/webapp/requirements/ctrip",
+      "testDir": "arc-bench/webapp/tests/ctrip",
+      "webPort": 3103,
+      "targetUrl": "http://127.0.0.1:3103"
+    },
+    "keep": {
+      "requirementDir": "arc-bench/webapp/requirements/keep",
+      "testDir": "arc-bench/webapp/tests/keep",
+      "webPort": 3104,
+      "targetUrl": "http://127.0.0.1:3104"
+    },
+    "prestashop": {
+      "requirementDir": "arc-bench/webapp/requirements/prestashop",
+      "testDir": "arc-bench/webapp/tests/prestashop",
+      "webPort": 3105,
+      "targetUrl": "http://127.0.0.1:3105"
+    },
+    "stackoverflow": {
+      "requirementDir": "arc-bench/webapp/requirements/stackoverflow",
+      "testDir": "arc-bench/webapp/tests/stackoverflow",
+      "webPort": 3106,
+      "targetUrl": "http://127.0.0.1:3106"
+    }
+  }
+}

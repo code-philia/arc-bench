@@ -1,0 +1,2088 @@
+id: ROOT
+name: Train Ticket Booking System
+type: FOLDER
+description: 'A train ticket booking system that provides user authentication, ticket search and booking, order management, and travel information services.'
+dependencies: []
+children:
+  - id: REQ-1
+    name: System Home
+    type: FOLDER
+    description: 'The default landing page after the system starts. The top area shows "assets/logo.png" on the left, and "Login", "Register", and a "My 12306" dropdown entry on the right. The navigation bar contains "Home", a "Booking" dropdown entry, and a "Travel guides" dropdown entry. The page also displays a banner carousel with "assets/banner1.jpg", "assets/banner2.jpg", and "assets/banner3.jpg", a ticket search area, and a "Quick Guide" section. ![image](./reference/homepage.png)'
+    dependencies: []
+    children:
+      - id: REQ-1.1
+        name: Open system home page
+        type: ATOMIC
+        description: 'Display the home page with the top logo, authentication links, navigation bar, three banner images, the search area, and the "Quick Guide" area.'
+        dependencies: []
+        scenarios:
+          - name: Display the default home page
+            steps:
+              - keyword: GIVEN
+                content: 'The system is accessible.'
+              - keyword: WHEN
+                content: 'Open the application entry URL.'
+              - keyword: THEN
+                content: 'The page shows "assets/logo.png" at the top-left, the "Login" link and the "Register" link at the top-right, the "My 12306" dropdown entry, the navigation items "Home", "Booking", and "Travel guides", the three banner images, the search area, and the "Quick Guide" area.'
+      - id: REQ-1.2
+        name: Show quick guide links
+        type: ATOMIC
+        description: 'Display the "Quick Guide" area on the home page as a dedicated section for quick links.'
+        dependencies:
+          - REQ-1.1
+        scenarios:
+          - name: Show the quick guide section on the home page
+            steps:
+              - keyword: GIVEN
+                content: 'The user is on the home page.'
+              - keyword: WHEN
+                content: 'Review the content below the banner area.'
+              - keyword: THEN
+                content: 'The page shows a visible "Quick Guide" section reserved for quick links.'
+  - id: REQ-2
+    name: User Authentication
+    type: FOLDER
+    description: 'Provide user registration, login, logout, password reset, and agreement browsing. User data is persisted after successful registration, login, and password reset.'
+    dependencies:
+      - REQ-1
+    children:
+      - id: REQ-2.1
+        name: User Registration
+        type: FOLDER
+        description: 'Allow a user to create an account by filling in identity and contact information, agreeing to the service terms, and submitting the registration form.'
+        dependencies:
+          - REQ-1.1
+        children:
+          - id: REQ-2.1.1
+            name: Open registration page
+            type: ATOMIC
+            description: 'Open the registration page from the "Register" link in the top-right area of the home page.'
+            dependencies:
+              - REQ-1.1
+            scenarios:
+              - name: Open the registration page from the home page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page and is not logged in.'
+                  - keyword: WHEN
+                    content: 'Click the "Register" link in the top-right area.'
+                  - keyword: THEN
+                    content: 'Navigate to the registration page.'
+          - id: REQ-2.1.2
+            name: View registration form
+            type: ATOMIC
+            description: 'Display the registration form with a dropdown labeled "Nationality" showing the default value "Please select" and country options, input fields labeled "Name", "Passport number", "Username", and "Email address", date pickers labeled "Passport expiration date" and "Date of birth", a radio group labeled "Gender" with "Male" and "Female", password fields labeled "Password" and "Confirm Password", a checkbox followed by "I have read and agree to abide by Terms of Service and Privacy Policy of 12306.cn.", and a "Register" button. ![image](./reference/register.png)'
+            dependencies:
+              - REQ-2.1.1
+            scenarios:
+              - name: Display the registration form layout
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the registration page.'
+                  - keyword: WHEN
+                    content: 'Review the registration form content.'
+                  - keyword: THEN
+                    content: 'The page shows the labeled fields "Nationality", "Name", "Passport number", "Passport expiration date", "Date of birth", "Gender", "Username", "Password", "Confirm Password", and "Email address", the agreement checkbox text, and the "Register" button.'
+          - id: REQ-2.1.3
+            name: Submit valid registration information
+            type: ATOMIC
+            description: 'Allow a new user to submit complete and valid registration information, persist the user data, and show a successful registration message.'
+            dependencies:
+              - REQ-2.1.2
+            scenarios:
+              - name: Submit a valid registration form
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the registration page with all required fields filled with valid values, a unique passport number, a unique username, matching passwords, and a valid email address, and the agreement checkbox is selected.'
+                  - keyword: WHEN
+                    content: 'Click the "Register" button.'
+                  - keyword: THEN
+                    content: 'The system persists the user information and shows a successful registration message.'
+          - id: REQ-2.1.4
+            name: Block registration with missing required fields
+            type: ATOMIC
+            description: 'Reject registration when any required field is missing and show the message "Please fill in all required fields.".'
+            dependencies:
+              - REQ-2.1.2
+            scenarios:
+              - name: Submit the form with missing required information
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the registration page with one or more required fields left empty.'
+                  - keyword: WHEN
+                    content: 'Click the "Register" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please fill in all required fields." and does not complete registration.'
+          - id: REQ-2.1.5
+            name: Block registration with duplicate passport number
+            type: ATOMIC
+            description: 'Reject registration when the passport number already exists and show the message "Passport number already exists.".'
+            dependencies:
+              - REQ-2.1.2
+            scenarios:
+              - name: Submit the form with an existing passport number
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the registration page with a passport number that already exists in the system and all other required fields are valid.'
+                  - keyword: WHEN
+                    content: 'Click the "Register" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Passport number already exists." and does not complete registration.'
+          - id: REQ-2.1.6
+            name: Block registration with duplicate username
+            type: ATOMIC
+            description: 'Reject registration when the username already exists and show the message "Username already exists.".'
+            dependencies:
+              - REQ-2.1.2
+            scenarios:
+              - name: Submit the form with an existing username
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the registration page with a username that already exists in the system and all other required fields are valid.'
+                  - keyword: WHEN
+                    content: 'Click the "Register" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Username already exists." and does not complete registration.'
+          - id: REQ-2.1.7
+            name: Block registration with mismatched passwords
+            type: ATOMIC
+            description: 'Reject registration when the values in "Password" and "Confirm Password" do not match and show the message "Passwords do not match.".'
+            dependencies:
+              - REQ-2.1.2
+            scenarios:
+              - name: Submit the form with mismatched passwords
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the registration page with different values entered in the "Password" and "Confirm Password" fields.'
+                  - keyword: WHEN
+                    content: 'Click the "Register" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Passwords do not match." and does not complete registration.'
+          - id: REQ-2.1.8
+            name: Block registration with invalid email format
+            type: ATOMIC
+            description: 'Reject registration when the email address format is invalid and show the message "Invalid email address format.".'
+            dependencies:
+              - REQ-2.1.2
+            scenarios:
+              - name: Submit the form with an invalid email address
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the registration page with an invalid value entered in the "Email address" field and all other required fields are valid.'
+                  - keyword: WHEN
+                    content: 'Click the "Register" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Invalid email address format." and does not complete registration.'
+          - id: REQ-2.1.9
+            name: Block registration without agreement acceptance
+            type: ATOMIC
+            description: 'Reject registration when the agreement checkbox is not selected and show the message "Please agree to the Terms of Service and Privacy Policy.".'
+            dependencies:
+              - REQ-2.1.2
+            scenarios:
+              - name: Submit the form without accepting the agreement
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the registration page with all required fields valid and the agreement checkbox not selected.'
+                  - keyword: WHEN
+                    content: 'Click the "Register" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please agree to the Terms of Service and Privacy Policy." and does not complete registration.'
+      - id: REQ-2.2
+        name: User Login
+        type: FOLDER
+        description: 'Allow a user to log in with a username, email address, or mobile number and a password.'
+        dependencies:
+          - REQ-1.1
+        children:
+          - id: REQ-2.2.1
+            name: Open login page
+            type: ATOMIC
+            description: 'Open the login page from the "Login" link in the top-right area of the home page.'
+            dependencies:
+              - REQ-1.1
+            scenarios:
+              - name: Open the login page from the home page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page and is not logged in.'
+                  - keyword: WHEN
+                    content: 'Click the "Login" link in the top-right area.'
+                  - keyword: THEN
+                    content: 'Navigate to the login page.'
+          - id: REQ-2.2.2
+            name: View login form
+            type: ATOMIC
+            description: 'Display the login form with an input field whose placeholder is "Email/Username/Mobile number", a password input whose placeholder is "Password", and a "LOGIN" button. ![image](./reference/login.png)'
+            dependencies:
+              - REQ-2.2.1
+            scenarios:
+              - name: Display the login form layout
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the login page.'
+                  - keyword: WHEN
+                    content: 'Review the login form.'
+                  - keyword: THEN
+                    content: 'The page shows the "Email/Username/Mobile number" input, the password input with the placeholder "Password", and the "LOGIN" button.'
+          - id: REQ-2.2.3
+            name: Submit valid login credentials
+            type: ATOMIC
+            description: 'Allow the user to log in with a valid username, email address, or mobile number and the correct password, persist the login state, and show a successful login message.'
+            dependencies:
+              - REQ-2.2.2
+            scenarios:
+              - name: Log in with valid credentials
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the login page with a valid username, email address, or mobile number entered and the correct password entered.'
+                  - keyword: WHEN
+                    content: 'Click the "LOGIN" button.'
+                  - keyword: THEN
+                    content: 'The system persists the login state and shows a successful login message.'
+          - id: REQ-2.2.4
+            name: Block login with missing credentials
+            type: ATOMIC
+            description: 'Reject login when the account field or password field is empty and show the message "Please enter your username/email/phone number and password.".'
+            dependencies:
+              - REQ-2.2.2
+            scenarios:
+              - name: Submit the login form with missing account information or password
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the login page with the account field empty, the password field empty, or both.'
+                  - keyword: WHEN
+                    content: 'Click the "LOGIN" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please enter your username/email/phone number and password." and does not complete login.'
+          - id: REQ-2.2.5
+            name: Block login for unknown account
+            type: ATOMIC
+            description: 'Reject login when the entered username, email address, or mobile number does not exist and show the message "User not found.".'
+            dependencies:
+              - REQ-2.2.2
+            scenarios:
+              - name: Submit the login form with an unknown account
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the login page with a username, email address, or mobile number that does not exist and a password entered.'
+                  - keyword: WHEN
+                    content: 'Click the "LOGIN" button.'
+                  - keyword: THEN
+                    content: 'The page shows "User not found." and does not complete login.'
+          - id: REQ-2.2.6
+            name: Block login with incorrect password
+            type: ATOMIC
+            description: 'Reject login when the password is incorrect and show the message "Incorrect password.".'
+            dependencies:
+              - REQ-2.2.2
+            scenarios:
+              - name: Submit the login form with an incorrect password
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the login page with an existing username, email address, or mobile number entered and an incorrect password entered.'
+                  - keyword: WHEN
+                    content: 'Click the "LOGIN" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Incorrect password." and does not complete login.'
+          - id: REQ-2.2.7
+            name: Open registration page from login page
+            type: ATOMIC
+            description: 'Provide a link with the text "No account yet? Register now." on the login page and navigate to the registration page after it is clicked.'
+            dependencies:
+              - REQ-2.2.2
+              - REQ-2.1.1
+            scenarios:
+              - name: Open the registration page from the login page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the login page.'
+                  - keyword: WHEN
+                    content: 'Click the link "No account yet? Register now.".'
+                  - keyword: THEN
+                    content: 'Navigate to the registration page.'
+      - id: REQ-2.3
+        name: User Logout
+        type: FOLDER
+        description: 'Allow a logged-in user to sign out from the home page and clear the persisted login state.'
+        dependencies:
+          - REQ-2.2.3
+        children:
+          - id: REQ-2.3.1
+            name: Sign out from home page
+            type: ATOMIC
+            description: 'After login, replace the top "Register" link with "Sign Out". When the user clicks "Sign Out", clear the login state, show a successful logout message, change "Sign Out" back to "Register", and show "Login" instead of the user name.'
+            dependencies:
+              - REQ-2.2.3
+            scenarios:
+              - name: Sign out from the home page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is logged in and is on the home page.'
+                  - keyword: WHEN
+                    content: 'Click the "Sign Out" link in the top-right area.'
+                  - keyword: THEN
+                    content: 'The system clears the login state, shows a successful logout message, changes the top-right link from "Sign Out" to "Register", and shows "Login" instead of the user name.'
+      - id: REQ-2.4
+        name: Forgot Password
+        type: FOLDER
+        description: 'Allow a user to reset the password by entering the registered email address and ID number, then entering a new password.'
+        dependencies:
+          - REQ-2.2.2
+        children:
+          - id: REQ-2.4.1
+            name: Open forgot password page
+            type: ATOMIC
+            description: 'Provide a link with the text "Forgot password?" on the login page and navigate to the forgot password page after it is clicked.'
+            dependencies:
+              - REQ-2.2.2
+            scenarios:
+              - name: Open the forgot password page from the login page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the login page.'
+                  - keyword: WHEN
+                    content: 'Click the link "Forgot password?".'
+                  - keyword: THEN
+                    content: 'Navigate to the forgot password page.'
+          - id: REQ-2.4.2
+            name: View forgot password flow
+            type: ATOMIC
+            description: 'Display a two-step forgot password flow. The first step shows a form with an input labeled "Email: ", an input labeled "ID number: ", and a "submit" button. The second step shows a form with password inputs labeled "New password: " and "Confirm new password: ", and a "submit" button. ![image](./reference/forgot-password.png)'
+            dependencies:
+              - REQ-2.4.1
+            scenarios:
+              - name: Display the forgot password forms
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the forgot password page.'
+                  - keyword: WHEN
+                    content: 'Review the first-step identity form and continue to the second step after the identity check.'
+                  - keyword: THEN
+                    content: 'The first step shows the "Email: " field, the "ID number: " field, and the "submit" button, and the second step shows the "New password: " field, the "Confirm new password: " field, and the "submit" button.'
+          - id: REQ-2.4.3
+            name: Submit valid password reset information
+            type: ATOMIC
+            description: 'Allow the user to reset the password when the email address and ID number match the registration record and the new passwords match, persist the new password, and show a successful password reset message.'
+            dependencies:
+              - REQ-2.4.2
+            scenarios:
+              - name: Complete a valid password reset
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the forgot password flow with a matching email address and ID number entered, and matching values entered in "New password: " and "Confirm new password: ".'
+                  - keyword: WHEN
+                    content: 'Click the "submit" button in the final step.'
+                  - keyword: THEN
+                    content: 'The system persists the new password and shows a successful password reset message.'
+          - id: REQ-2.4.4
+            name: Block password reset with missing identity fields
+            type: ATOMIC
+            description: 'Reject the identity verification step when the email address or ID number is missing and show the message "Please enter your email and ID number.".'
+            dependencies:
+              - REQ-2.4.2
+            scenarios:
+              - name: Submit the identity verification step with missing information
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the first step of the forgot password flow with the email field empty, the ID number field empty, or both.'
+                  - keyword: WHEN
+                    content: 'Click the "submit" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please enter your email and ID number." and does not continue to the next step.'
+          - id: REQ-2.4.5
+            name: Block password reset for unmatched email and ID number
+            type: ATOMIC
+            description: 'Reject the identity verification step when the email address and ID number do not match the registration record and show the message "Email and ID number do not match our records.".'
+            dependencies:
+              - REQ-2.4.2
+            scenarios:
+              - name: Submit the identity verification step with unmatched records
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the first step of the forgot password flow with an email address and ID number that do not match the registration record.'
+                  - keyword: WHEN
+                    content: 'Click the "submit" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Email and ID number do not match our records." and does not continue to the next step.'
+          - id: REQ-2.4.6
+            name: Block password reset with mismatched new passwords
+            type: ATOMIC
+            description: 'Reject the new password step when the values in "New password: " and "Confirm new password: " do not match and show the message "Passwords do not match.".'
+            dependencies:
+              - REQ-2.4.2
+            scenarios:
+              - name: Submit the new password step with mismatched passwords
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the new password step with different values entered in "New password: " and "Confirm new password: ".'
+                  - keyword: WHEN
+                    content: 'Click the "submit" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Passwords do not match." and does not reset the password.'
+      - id: REQ-2.5
+        name: Terms of Service and Privacy Policy
+        type: FOLDER
+        description: 'Provide access to the agreement content from the registration page and require acceptance before registration can be completed.'
+        dependencies:
+          - REQ-2.1.2
+        children:
+          - id: REQ-2.5.1
+            name: Open terms of service page
+            type: ATOMIC
+            description: 'Open the terms page from the "Terms of Service" link in the agreement text and display a page containing the title "Terms of Service". ![image](./reference/rule.png)'
+            dependencies:
+              - REQ-2.1.2
+            scenarios:
+              - name: Open the terms of service page from the registration page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the registration page.'
+                  - keyword: WHEN
+                    content: 'Click the "Terms of Service" link in the agreement text.'
+                  - keyword: THEN
+                    content: 'Navigate to the terms page and show the title "Terms of Service".'
+          - id: REQ-2.5.2
+            name: Open privacy policy page
+            type: ATOMIC
+            description: 'Open the privacy policy page from the "Privacy Policy" link in the agreement text and display a page containing the title "Privacy Policy". ![image](./reference/policy.png)'
+            dependencies:
+              - REQ-2.1.2
+            scenarios:
+              - name: Open the privacy policy page from the registration page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the registration page.'
+                  - keyword: WHEN
+                    content: 'Click the "Privacy Policy" link in the agreement text.'
+                  - keyword: THEN
+                    content: 'Navigate to the privacy policy page and show the title "Privacy Policy".'
+  - id: REQ-3
+    name: Ticket Search and Display
+    type: FOLDER
+    description: 'Provide train ticket search from the home page, display search results, support sorting and filtering, and provide entry points from both the search box and the navigation bar.'
+    dependencies:
+      - REQ-1
+    children:
+      - id: REQ-3.1
+        name: Home Quick Search
+        type: FOLDER
+        description: 'Provide a ticket search module on the home page with input placeholders "From", "To", and "Date", and a "Search" button.'
+        dependencies:
+          - REQ-1.1
+        children:
+          - id: REQ-3.1.1
+            name: View home quick search module
+            type: ATOMIC
+            description: 'Display a ticket search module on the home page with input placeholders "From", "To", and "Date", and a "Search" button.'
+            dependencies:
+              - REQ-1.1
+            scenarios:
+              - name: Display the quick search module on the home page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page.'
+                  - keyword: WHEN
+                    content: 'Review the search area.'
+                  - keyword: THEN
+                    content: 'The page shows inputs with the placeholders "From", "To", and "Date", and a "Search" button.'
+          - id: REQ-3.1.2
+            name: Choose location by typing
+            type: ATOMIC
+            description: 'Allow the user to type pinyin or Chinese characters in the departure or arrival field, show a fuzzy-matched list with the title "Top destinations" and matching cities and stations with both pinyin and Chinese names, and fill the input with the selected location after selection. ![image](./reference/location-selector-list.png)'
+            dependencies:
+              - REQ-3.1.1
+            scenarios:
+              - name: Select a location from the fuzzy-matched list
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page search module and the departure field or arrival field is focused.'
+                  - keyword: WHEN
+                    content: 'Type pinyin or Chinese characters in the input field and click one location in the matched list.'
+                  - keyword: THEN
+                    content: 'The page shows a matched list with the title "Top destinations" and matching city and station items with pinyin and Chinese names, and the input field is filled with the selected location name.'
+          - id: REQ-3.1.3
+            name: Choose location by tab list
+            type: ATOMIC
+            description: 'Allow the user to click the departure or arrival input field, open a tabbed location selector with the tabs "Popular", "ABCDE", "FGHIJ", "KLMNO", "PQRST", and "UVWXYZ", show city and station names with both pinyin and Chinese names, and fill the input with the selected location after selection. ![image](./reference/location-selector-form.png)'
+            dependencies:
+              - REQ-3.1.1
+            scenarios:
+              - name: Select a location from the tabbed selector
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page search module.'
+                  - keyword: WHEN
+                    content: 'Click the departure input field or arrival input field, switch to one tab in the location selector, and click one location item.'
+                  - keyword: THEN
+                    content: 'The page shows the tabs "Popular", "ABCDE", "FGHIJ", "KLMNO", "PQRST", and "UVWXYZ", shows matching city and station names with pinyin and Chinese names, and fills the input field with the selected location name.'
+          - id: REQ-3.1.4
+            name: Choose departure date
+            type: ATOMIC
+            description: 'Allow the user to click the departure date input, open a date picker, choose one departure date, and fill the input with the selected date. The date picker only allows dates from the current day through the next two weeks. Expired dates cannot be selected. ![image](./reference/date-selector.png)'
+            dependencies:
+              - REQ-3.1.1
+            scenarios:
+              - name: Select a valid departure date in the allowed range
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page search module.'
+                  - keyword: WHEN
+                    content: 'Click the date input field and click a valid date from the current day through the next two weeks.'
+                  - keyword: THEN
+                    content: 'The date picker opens, the selected date is accepted, and the date input field shows the selected date.'
+              - name: Prevent selection of an expired date
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page search module with the date picker open.'
+                  - keyword: WHEN
+                    content: 'Try to click a date earlier than the current day or outside the next two weeks.'
+                  - keyword: THEN
+                    content: 'The expired date cannot be selected.'
+          - id: REQ-3.1.5
+            name: Search tickets with valid quick search conditions
+            type: ATOMIC
+            description: 'Allow the user to search by departure place, arrival place, and departure date from the home page and navigate to the ticket search results page after clicking "Search".'
+            dependencies:
+              - REQ-3.1.2
+              - REQ-3.1.3
+              - REQ-3.1.4
+            scenarios:
+              - name: Search tickets from the home page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page with a valid departure place, arrival place, and departure date selected.'
+                  - keyword: WHEN
+                    content: 'Click the "Search" button.'
+                  - keyword: THEN
+                    content: 'Navigate to the ticket search results page and show results that match the search conditions.'
+          - id: REQ-3.1.6
+            name: Block search without valid departure place
+            type: ATOMIC
+            description: 'Reject ticket search when the departure place is not selected or the input is invalid and show the message "Please select the place of departure.".'
+            dependencies:
+              - REQ-3.1.1
+            scenarios:
+              - name: Search without a valid departure place
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page search module with the arrival place and departure date filled, and the departure place missing or invalid.'
+                  - keyword: WHEN
+                    content: 'Click the "Search" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please select the place of departure." and does not navigate to the search results page.'
+          - id: REQ-3.1.7
+            name: Block search without valid arrival place
+            type: ATOMIC
+            description: 'Reject ticket search when the arrival place is not selected or the input is invalid and show the message "Please select the place of arrival.".'
+            dependencies:
+              - REQ-3.1.1
+            scenarios:
+              - name: Search without a valid arrival place
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page search module with the departure place and departure date filled, and the arrival place missing or invalid.'
+                  - keyword: WHEN
+                    content: 'Click the "Search" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please select the place of arrival." and does not navigate to the search results page.'
+      - id: REQ-3.2
+        name: Ticket Search Results
+        type: FOLDER
+        description: 'Display the ticket search results page below the home page navigation bar, including the search condition inputs, the date-switching bar, the route summary, the result count, the ticket list table, the "Filter" sidebar, and ticket booking buttons. ![image](./reference/search-result.png)'
+        dependencies:
+          - REQ-3.1.5
+        children:
+          - id: REQ-3.2.1
+            name: View search results page layout
+            type: ATOMIC
+            description: 'Display the search results page with the user''s departure place, arrival place, and departure date in the search condition inputs, a "Search" button, a date-switching bar that shows dates such as "May 31 Sun", a route summary in the format of pinyin plus Chinese names, a result count in the format "xx results", a table with the headers "Train No.", "Departure Time", "Travel time", "Arrival Time", and "Price", and a left-side "Filter" area. ![image](./reference/search-result.png)'
+            dependencies:
+              - REQ-3.1.5
+            scenarios:
+              - name: Display the populated ticket search results page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user has completed a valid ticket search from the home page.'
+                  - keyword: WHEN
+                    content: 'The search results page finishes loading.'
+                  - keyword: THEN
+                    content: 'The page shows the search condition inputs, the "Search" button, the date-switching bar, the route summary, the result count, the table headers "Train No.", "Departure Time", "Travel time", "Arrival Time", and "Price", and the left-side "Filter" area.'
+          - id: REQ-3.2.2
+            name: Show seat prices and book buttons in results
+            type: ATOMIC
+            description: 'Display each train row with one or more price lines in the "Price" column, where each line represents one seat type and price and is followed by a "Book" button.'
+            dependencies:
+              - REQ-3.2.1
+            scenarios:
+              - name: Show ticket prices and booking actions in each result row
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on a populated ticket search results page.'
+                  - keyword: WHEN
+                    content: 'Review the train result rows.'
+                  - keyword: THEN
+                    content: 'Each result row shows one or more seat price lines in the "Price" column, and each price line is followed by a "Book" button.'
+          - id: REQ-3.2.3
+            name: Show empty search results gracefully
+            type: ATOMIC
+            description: 'Display an empty-state page when no train matches the search conditions. The page keeps the search condition inputs at the top and shows the icon "assets/empty.png" with the text "sorry, according to your inquiry condition, there is no train at present.".'
+            dependencies:
+              - REQ-3.1.5
+            scenarios:
+              - name: Show the empty result state when no train matches
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user has searched with valid conditions and there is no matching train.'
+                  - keyword: WHEN
+                    content: 'The search results page finishes loading.'
+                  - keyword: THEN
+                    content: 'The page keeps the search condition inputs visible at the top and shows "assets/empty.png" with the text "sorry, according to your inquiry condition, there is no train at present.".'
+          - id: REQ-3.2.4
+            name: Search again with updated conditions
+            type: ATOMIC
+            description: 'Allow the user to modify the search condition inputs on the search results page, click "Search", and refresh the page with the new results.'
+            dependencies:
+              - REQ-3.2.1
+            scenarios:
+              - name: Search again from the results page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the ticket search results page.'
+                  - keyword: WHEN
+                    content: 'Modify one or more search condition inputs and click the "Search" button.'
+                  - keyword: THEN
+                    content: 'The page reloads the ticket list and shows the new matching results.'
+          - id: REQ-3.2.5
+            name: Search by switching the date bar
+            type: ATOMIC
+            description: 'Allow the user to click one date in the date-switching bar and refresh the page with results for the new date.'
+            dependencies:
+              - REQ-3.2.1
+            scenarios:
+              - name: Search with another date from the date-switching bar
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the ticket search results page.'
+                  - keyword: WHEN
+                    content: 'Click one date item in the date-switching bar.'
+                  - keyword: THEN
+                    content: 'The page reloads the ticket list and shows results for the newly selected date.'
+          - id: REQ-3.2.6
+            name: Sort results by departure time
+            type: ATOMIC
+            description: 'Sort the ticket list by the "Departure Time" header. The first click sorts in ascending order and the second click sorts in descending order.'
+            dependencies:
+              - REQ-3.2.1
+            scenarios:
+              - name: Toggle sorting by departure time
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on a populated ticket search results page.'
+                  - keyword: WHEN
+                    content: 'Click the "Departure Time" table header once and then click it again.'
+                  - keyword: THEN
+                    content: 'The list is sorted in ascending order after the first click and in descending order after the second click.'
+          - id: REQ-3.2.7
+            name: Sort results by travel time
+            type: ATOMIC
+            description: 'Sort the ticket list by the "Travel time" header. The first click sorts in ascending order and the second click sorts in descending order.'
+            dependencies:
+              - REQ-3.2.1
+            scenarios:
+              - name: Toggle sorting by travel time
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on a populated ticket search results page.'
+                  - keyword: WHEN
+                    content: 'Click the "Travel time" table header once and then click it again.'
+                  - keyword: THEN
+                    content: 'The list is sorted in ascending order after the first click and in descending order after the second click.'
+          - id: REQ-3.2.8
+            name: Sort results by arrival time
+            type: ATOMIC
+            description: 'Sort the ticket list by the "Arrival Time" header. The first click sorts in ascending order and the second click sorts in descending order.'
+            dependencies:
+              - REQ-3.2.1
+            scenarios:
+              - name: Toggle sorting by arrival time
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on a populated ticket search results page.'
+                  - keyword: WHEN
+                    content: 'Click the "Arrival Time" table header once and then click it again.'
+                  - keyword: THEN
+                    content: 'The list is sorted in ascending order after the first click and in descending order after the second click.'
+          - id: REQ-3.2.9
+            name: Filter results by train type
+            type: ATOMIC
+            description: 'Provide the filter condition "Train type" in the "Filter" sidebar with the multi-select options "All", "G/C/D", and "Other", and filter the ticket list according to the selected options.'
+            dependencies:
+              - REQ-3.2.1
+            scenarios:
+              - name: Filter the result list by train type
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on a populated ticket search results page.'
+                  - keyword: WHEN
+                    content: 'Select one or more options under the "Train type" filter.'
+                  - keyword: THEN
+                    content: 'The ticket list updates to show only the trains that match the selected train type options.'
+          - id: REQ-3.2.10
+            name: Filter results by departure station
+            type: ATOMIC
+            description: 'Provide the filter condition "From Station" in the "Filter" sidebar with an "All" option and the departure-related station options, and filter the ticket list according to the selected station.'
+            dependencies:
+              - REQ-3.2.1
+            scenarios:
+              - name: Filter the result list by departure station
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on a populated ticket search results page.'
+                  - keyword: WHEN
+                    content: 'Select one option under the "From Station" filter.'
+                  - keyword: THEN
+                    content: 'The ticket list updates to show only the trains that match the selected departure station.'
+          - id: REQ-3.2.11
+            name: Filter results by arrival station
+            type: ATOMIC
+            description: 'Provide the filter condition "To Station" in the "Filter" sidebar with an "All" option and the arrival-related station options, and filter the ticket list according to the selected station.'
+            dependencies:
+              - REQ-3.2.1
+            scenarios:
+              - name: Filter the result list by arrival station
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on a populated ticket search results page.'
+                  - keyword: WHEN
+                    content: 'Select one option under the "To Station" filter.'
+                  - keyword: THEN
+                    content: 'The ticket list updates to show only the trains that match the selected arrival station.'
+          - id: REQ-3.2.12
+            name: Filter results by departure time range
+            type: ATOMIC
+            description: 'Provide the filter condition "Departure time" in the "Filter" sidebar with a dropdown containing "00:00-24:00", "00:00-06:00", "06:00-12:00", "12:00-18:00", and "18:00-24:00", and filter the ticket list according to the selected time range.'
+            dependencies:
+              - REQ-3.2.1
+            scenarios:
+              - name: Filter the result list by departure time range
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on a populated ticket search results page.'
+                  - keyword: WHEN
+                    content: 'Choose one option from the "Departure time" dropdown filter.'
+                  - keyword: THEN
+                    content: 'The ticket list updates to show only the trains whose departure times fall within the selected time range.'
+          - id: REQ-3.2.13
+            name: Open results page from home quick search
+            type: ATOMIC
+            description: 'Enter the ticket search results page from the home quick search module and show the corresponding search results.'
+            dependencies:
+              - REQ-3.1.5
+            scenarios:
+              - name: Enter the results page from the home quick search module
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page with valid quick search conditions selected.'
+                  - keyword: WHEN
+                    content: 'Click the "Search" button in the quick search module.'
+                  - keyword: THEN
+                    content: 'Navigate to the ticket search results page and show the corresponding results.'
+          - id: REQ-3.2.14
+            name: Open results page from home navigation
+            type: ATOMIC
+            description: 'Allow the user to hover over "Booking" in the home page navigation bar, open a dropdown containing the "Tickets" option, and navigate to the ticket search results page with the default search conditions of departure place Beijing, arrival place Shanghai, and the current date after clicking "Tickets".'
+            dependencies:
+              - REQ-1.1
+            scenarios:
+              - name: Enter the results page from the navigation dropdown
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page.'
+                  - keyword: WHEN
+                    content: 'Hover over "Booking" in the navigation bar and click the "Tickets" option in the dropdown.'
+                  - keyword: THEN
+                    content: 'Navigate to the ticket search results page and show the default results for departure place Beijing, arrival place Shanghai, and the current date.'
+      - id: REQ-3.3
+        name: Transfer Journey
+        type: FOLDER
+        description: 'Provide transfer plans when there is no direct train and allow the user to view, sort, and book transfer solutions.'
+        dependencies:
+          - REQ-3.2
+        children:
+          - id: REQ-3.3.1
+            name: Show transfer plans when no direct train exists
+            type: ATOMIC
+            description: 'When no direct train matches the search, calculate valid transfer plans that satisfy the connection-time requirement, sort the qualified plans by total travel time, and display the first 10 plans.'
+            dependencies:
+              - REQ-3.2.1
+            scenarios:
+              - name: Display transfer plans after a no-direct-train search
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the ticket search results page and there is no direct train for the current search.'
+                  - keyword: WHEN
+                    content: 'The page calculates available transfer plans.'
+                  - keyword: THEN
+                    content: 'The page lists up to 10 qualified transfer plans, sorted by total travel time.'
+          - id: REQ-3.3.2
+            name: View transfer plan details
+            type: ATOMIC
+            description: 'Display each transfer plan as two train segments, one from the departure place to the transfer station and one from the transfer station to the destination, with the train number, departure time, arrival time, travel time, price, transfer waiting time, and a "Book" button.'
+            dependencies:
+              - REQ-3.3.1
+            scenarios:
+              - name: Display detailed information for each transfer plan
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is viewing transfer plans on the ticket search results page.'
+                  - keyword: WHEN
+                    content: 'Review one transfer plan.'
+                  - keyword: THEN
+                    content: 'The plan shows the first train segment, the second train segment, the transfer waiting time, and a "Book" button.'
+          - id: REQ-3.3.3
+            name: Sort transfer plans by departure time
+            type: ATOMIC
+            description: 'Sort the transfer plan list by the first train segment''s "Departure Time" header. The first click sorts in ascending order and the second click sorts in descending order.'
+            dependencies:
+              - REQ-3.3.2
+            scenarios:
+              - name: Toggle transfer plan sorting by first-segment departure time
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is viewing a populated transfer plan list.'
+                  - keyword: WHEN
+                    content: 'Click the "Departure Time" header once and then click it again.'
+                  - keyword: THEN
+                    content: 'The transfer plan list is sorted in ascending order after the first click and in descending order after the second click.'
+          - id: REQ-3.3.4
+            name: Sort transfer plans by total travel time
+            type: ATOMIC
+            description: 'Sort the transfer plan list by the "Travel time" header based on the total travel time. The first click sorts in ascending order and the second click sorts in descending order.'
+            dependencies:
+              - REQ-3.3.2
+            scenarios:
+              - name: Toggle transfer plan sorting by total travel time
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is viewing a populated transfer plan list.'
+                  - keyword: WHEN
+                    content: 'Click the "Travel time" header once and then click it again.'
+                  - keyword: THEN
+                    content: 'The transfer plan list is sorted in ascending order after the first click and in descending order after the second click.'
+          - id: REQ-3.3.5
+            name: Sort transfer plans by arrival time
+            type: ATOMIC
+            description: 'Sort the transfer plan list by the second train segment''s "Arrival Time" header. The first click sorts in ascending order and the second click sorts in descending order.'
+            dependencies:
+              - REQ-3.3.2
+            scenarios:
+              - name: Toggle transfer plan sorting by second-segment arrival time
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is viewing a populated transfer plan list.'
+                  - keyword: WHEN
+                    content: 'Click the "Arrival Time" header once and then click it again.'
+                  - keyword: THEN
+                    content: 'The transfer plan list is sorted in ascending order after the first click and in descending order after the second click.'
+  - id: REQ-4
+    name: Personal Center and Frequent Information Management
+    type: FOLDER
+    description: 'Provide the personal center home page, order center, personal information pages, account security pages, mobile verification page, passenger management, and quick-entry dropdown navigation.'
+    dependencies:
+      - REQ-2.2.3
+    children:
+      - id: REQ-4.1
+        name: Personal Center Entry
+        type: FOLDER
+        description: 'Control access to the personal center from the top "My 12306" entry and route the user either to the login page or to the personal center home page.'
+        dependencies:
+          - REQ-1.1
+        children:
+          - id: REQ-4.1.1
+            name: Redirect unauthenticated user to login page
+            type: ATOMIC
+            description: 'When the user clicks the top "My 12306" entry without being logged in, check the login state and navigate to the login page.'
+            dependencies:
+              - REQ-1.1
+            scenarios:
+              - name: Block personal center access for an unauthenticated user
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is not logged in and is on the home page.'
+                  - keyword: WHEN
+                    content: 'Click the top "My 12306" entry.'
+                  - keyword: THEN
+                    content: 'Navigate to the login page.'
+          - id: REQ-4.1.2
+            name: Open personal center home page
+            type: ATOMIC
+            description: 'After login, open the personal center home page from the top "My 12306" entry. The page shows the left-side menu items "Personal Center", "Order center", "Personal", and "Information management", and a default notice panel containing the icon "assets/noticepic.png", the user name, and the notice text shown in the reference. ![image](./reference/user-center.png)'
+            dependencies:
+              - REQ-2.2.3
+            scenarios:
+              - name: Open the personal center home page after login
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is logged in and is on the home page.'
+                  - keyword: WHEN
+                    content: 'Click the top "My 12306" entry.'
+                  - keyword: THEN
+                    content: 'Navigate to the personal center home page and show the left menu items "Personal Center", "Order center", "Personal", and "Information management", the icon "assets/noticepic.png", the user name, and the notice box text.'
+          - id: REQ-4.1.3
+            name: Open default ticket search from personal center home page
+            type: ATOMIC
+            description: 'Provide a link with the text "ticket booking" on the personal center home page and navigate to the ticket search results page with the default search conditions of departure place Beijing, arrival place Shanghai, and the current date after it is clicked.'
+            dependencies:
+              - REQ-4.1.2
+              - REQ-3.2.14
+            scenarios:
+              - name: Open the default ticket search from the personal center notice link
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the personal center home page.'
+                  - keyword: WHEN
+                    content: 'Click the link "ticket booking" in the notice box.'
+                  - keyword: THEN
+                    content: 'Navigate to the ticket search results page and show the default results for departure place Beijing, arrival place Shanghai, and the current date.'
+      - id: REQ-4.2
+        name: Order Center
+        type: FOLDER
+        description: 'Provide a "Ticket orders" page under "Order center" with the tabs "Uncompleted orders", "Upcoming trips", and "History orders". ![image](./reference/ticket-orders.png)'
+        dependencies:
+          - REQ-4.1.2
+        children:
+          - id: REQ-4.2.1
+            name: Open ticket orders page
+            type: ATOMIC
+            description: 'Allow the user to click "Order center", expand the submenu, click "Ticket orders", and show the order page with the tabs "Uncompleted orders", "Upcoming trips", and "History orders". ![image](./reference/ticket-orders.png)'
+            dependencies:
+              - REQ-4.1.2
+            scenarios:
+              - name: Open the ticket orders page from the order center menu
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the personal center home page.'
+                  - keyword: WHEN
+                    content: 'Click "Order center" and then click "Ticket orders".'
+                  - keyword: THEN
+                    content: 'The page shows the ticket orders view with the tabs "Uncompleted orders", "Upcoming trips", and "History orders".'
+          - id: REQ-4.2.2
+            name: Show empty uncompleted orders state
+            type: ATOMIC
+            description: 'When the "Uncompleted orders" tab has no order, show "assets/empty.png" and the text "You don''t have uncompleted orders.". ![image](./reference/ticket-orders.png)'
+            dependencies:
+              - REQ-4.2.1
+            scenarios:
+              - name: Display the empty state in uncompleted orders
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Uncompleted orders" tab and there is no uncompleted order.'
+                  - keyword: WHEN
+                    content: 'Review the tab content.'
+                  - keyword: THEN
+                    content: 'The page shows "assets/empty.png" and the text "You don''t have uncompleted orders.".'
+          - id: REQ-4.2.3
+            name: Open default ticket search from empty uncompleted orders state
+            type: ATOMIC
+            description: 'When the "Uncompleted orders" tab is empty, provide the link "You can book your tickets and plan your trips." and navigate to the default ticket search results page after it is clicked.'
+            dependencies:
+              - REQ-4.2.2
+              - REQ-3.2.14
+            scenarios:
+              - name: Open the default ticket search from the empty uncompleted orders state
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the empty "Uncompleted orders" tab.'
+                  - keyword: WHEN
+                    content: 'Click the link "You can book your tickets and plan your trips.".'
+                  - keyword: THEN
+                    content: 'Navigate to the ticket search results page and show the default results for departure place Beijing, arrival place Shanghai, and the current date.'
+          - id: REQ-4.2.4
+            name: View uncompleted orders table
+            type: ATOMIC
+            description: 'Display a table in "Uncompleted orders" where each row represents one passenger order, and transfer tickets are grouped together. The table columns are "Train Information", "Passenger Information", "Seat Information", "Price", "Status", and "Total Price". Each order group is followed by a "Pay" button. ![image](./reference/uncompleted-orders.png)'
+            dependencies:
+              - REQ-4.2.1
+            scenarios:
+              - name: Display uncompleted orders in a table
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Uncompleted orders" tab and there is at least one uncompleted order.'
+                  - keyword: WHEN
+                    content: 'Review the order table.'
+                  - keyword: THEN
+                    content: 'The page shows the columns "Train Information", "Passenger Information", "Seat Information", "Price", "Status", and "Total Price", and each order group is followed by a "Pay" button.'
+          - id: REQ-4.2.5
+            name: Open payment page from uncompleted orders
+            type: ATOMIC
+            description: 'Allow the user to click the "Pay" button for one uncompleted order and enter the order payment page that shows the order information and payment information.'
+            dependencies:
+              - REQ-4.2.4
+              - REQ-5.3.5
+            scenarios:
+              - name: Continue payment from the uncompleted orders tab
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Uncompleted orders" tab with at least one displayed order group.'
+                  - keyword: WHEN
+                    content: 'Click the "Pay" button for one order group.'
+                  - keyword: THEN
+                    content: 'Navigate to the order payment page and show the order information and payment information.'
+          - id: REQ-4.2.6
+            name: Show empty upcoming trips state
+            type: ATOMIC
+            description: 'When the "Upcoming trips" tab has no order, show "assets/empty.png" and the text "You don''t have any bookings or we can''t access your bookings at this time.".'
+            dependencies:
+              - REQ-4.2.1
+            scenarios:
+              - name: Display the empty state in upcoming trips
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Upcoming trips" tab and there is no upcoming trip.'
+                  - keyword: WHEN
+                    content: 'Review the tab content.'
+                  - keyword: THEN
+                    content: 'The page shows "assets/empty.png" and the text "You don''t have any bookings or we can''t access your bookings at this time.".'
+          - id: REQ-4.2.7
+            name: Open default ticket search from empty upcoming trips state
+            type: ATOMIC
+            description: 'When the "Upcoming trips" tab is empty, provide the link "You can make travel plans through the ticket reservation function." and navigate to the default ticket search results page after it is clicked.'
+            dependencies:
+              - REQ-4.2.6
+              - REQ-3.2.14
+            scenarios:
+              - name: Open the default ticket search from the empty upcoming trips state
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the empty "Upcoming trips" tab.'
+                  - keyword: WHEN
+                    content: 'Click the link "You can make travel plans through the ticket reservation function.".'
+                  - keyword: THEN
+                    content: 'Navigate to the ticket search results page and show the default results for departure place Beijing, arrival place Shanghai, and the current date.'
+          - id: REQ-4.2.8
+            name: Filter upcoming trips by date range
+            type: ATOMIC
+            description: 'Provide a filter in the "Upcoming trips" tab with a dropdown containing "Search by booking date" and "Search by departure date", two date pickers for the range, and a "Search" button that shows the matching upcoming orders.'
+            dependencies:
+              - REQ-4.2.1
+            scenarios:
+              - name: Filter upcoming trips by a selected date type and range
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Upcoming trips" tab.'
+                  - keyword: WHEN
+                    content: 'Choose one option from the date type dropdown, choose a start date and end date, and click the "Search" button.'
+                  - keyword: THEN
+                    content: 'The page shows the upcoming orders that match the selected date type and date range.'
+          - id: REQ-4.2.9
+            name: Search upcoming trips by keyword
+            type: ATOMIC
+            description: 'Provide a search input in the "Upcoming trips" tab with the placeholder "Order number/train number/name" and a "Search" button. The search uses both the date filter and the fuzzy search keyword. If the input is invalid, show the message "Please enter a valid search condition.".'
+            dependencies:
+              - REQ-4.2.8
+            scenarios:
+              - name: Search upcoming trips with a valid keyword
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Upcoming trips" tab with valid date filter settings.'
+                  - keyword: WHEN
+                    content: 'Enter a valid value in the input with the placeholder "Order number/train number/name" and click the "Search" button.'
+                  - keyword: THEN
+                    content: 'The page shows the upcoming orders that match both the date filter and the keyword.'
+              - name: Reject an invalid upcoming trips search condition
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Upcoming trips" tab.'
+                  - keyword: WHEN
+                    content: 'Enter an invalid search condition and click the "Search" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please enter a valid search condition.".'
+          - id: REQ-4.2.10
+            name: View upcoming trips table
+            type: ATOMIC
+            description: 'Display the "Upcoming trips" orders in a table with the columns "Train Information", "Passenger Information", "Seat Information", "Price", "Status", and "Total Price". Transfer tickets are grouped together. ![image](./reference/uncompleted-orders.png)'
+            dependencies:
+              - REQ-4.2.1
+            scenarios:
+              - name: Display upcoming trips in a table
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Upcoming trips" tab and there is at least one upcoming order.'
+                  - keyword: WHEN
+                    content: 'Review the order table.'
+                  - keyword: THEN
+                    content: 'The page shows the columns "Train Information", "Passenger Information", "Seat Information", "Price", "Status", and "Total Price" for the upcoming trips.'
+          - id: REQ-4.2.11
+            name: Refund an upcoming trip
+            type: ATOMIC
+            description: 'Allow the user to click the "Refund" button for one upcoming order, submit a refund request before the refund deadline, open the refund page that shows the order and refund information, update the order status to "refunded", and add the refunded order to the history orders.'
+            dependencies:
+              - REQ-4.2.10
+            scenarios:
+              - name: Refund one eligible upcoming trip
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Upcoming trips" tab with at least one order that is still within the refund deadline.'
+                  - keyword: WHEN
+                    content: 'Click the "Refund" button for one order.'
+                  - keyword: THEN
+                    content: 'The page opens the refund flow, the refund succeeds, the order status becomes "refunded", and the order is added to "History orders".'
+          - id: REQ-4.2.12
+            name: Open upcoming trips from booking navigation dropdown
+            type: ATOMIC
+            description: 'Allow the user to open the personal center order center directly to the "Upcoming trips" page from the "Refund" option in the "Booking" dropdown in the home page navigation bar.'
+            dependencies:
+              - REQ-4.2.1
+            scenarios:
+              - name: Open upcoming trips from the booking dropdown
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page.'
+                  - keyword: WHEN
+                    content: 'Open the "Booking" dropdown in the navigation bar and click the "Refund" option.'
+                  - keyword: THEN
+                    content: 'Navigate directly to the personal center order center and show the "Upcoming trips" page.'
+          - id: REQ-4.2.13
+            name: Show empty history orders state
+            type: ATOMIC
+            description: 'When the "History orders" tab has no order, show "assets/empty.png" and the text "You don''t have any bookings or we can''t access your bookings at this time.".'
+            dependencies:
+              - REQ-4.2.1
+            scenarios:
+              - name: Display the empty state in history orders
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "History orders" tab and there is no historical order.'
+                  - keyword: WHEN
+                    content: 'Review the tab content.'
+                  - keyword: THEN
+                    content: 'The page shows "assets/empty.png" and the text "You don''t have any bookings or we can''t access your bookings at this time.".'
+          - id: REQ-4.2.14
+            name: Open default ticket search from empty history orders state
+            type: ATOMIC
+            description: 'When the "History orders" tab is empty, provide the link "You can make travel plans through the ticket reservation function." and navigate to the default ticket search results page after it is clicked.'
+            dependencies:
+              - REQ-4.2.13
+              - REQ-3.2.14
+            scenarios:
+              - name: Open the default ticket search from the empty history orders state
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the empty "History orders" tab.'
+                  - keyword: WHEN
+                    content: 'Click the link "You can make travel plans through the ticket reservation function.".'
+                  - keyword: THEN
+                    content: 'Navigate to the ticket search results page and show the default results for departure place Beijing, arrival place Shanghai, and the current date.'
+          - id: REQ-4.2.15
+            name: Filter history orders by date range
+            type: ATOMIC
+            description: 'Provide a filter in the "History orders" tab with the label "Date of ride", two date pickers for the range, and a "Search" button that shows the matching historical orders.'
+            dependencies:
+              - REQ-4.2.1
+            scenarios:
+              - name: Filter history orders by ride date range
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "History orders" tab.'
+                  - keyword: WHEN
+                    content: 'Choose a start date and end date under "Date of ride" and click the "Search" button.'
+                  - keyword: THEN
+                    content: 'The page shows the historical orders that match the selected ride date range.'
+          - id: REQ-4.2.16
+            name: Search history orders by keyword
+            type: ATOMIC
+            description: 'Provide a search input in the "History orders" tab with the placeholder "Order number/train number/name" and a "Search" button. The search uses both the date filter and the fuzzy search keyword. If the input is invalid, show the message "Please enter a valid search condition.".'
+            dependencies:
+              - REQ-4.2.15
+            scenarios:
+              - name: Search history orders with a valid keyword
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "History orders" tab with a valid date range selected.'
+                  - keyword: WHEN
+                    content: 'Enter a valid value in the input with the placeholder "Order number/train number/name" and click the "Search" button.'
+                  - keyword: THEN
+                    content: 'The page shows the history orders that match both the selected date range and the keyword.'
+              - name: Reject an invalid history orders search condition
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "History orders" tab.'
+                  - keyword: WHEN
+                    content: 'Enter an invalid search condition and click the "Search" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please enter a valid search condition.".'
+          - id: REQ-4.2.17
+            name: View history orders table
+            type: ATOMIC
+            description: 'Display the "History orders" table with the columns "Train Information", "Passenger Information", "Seat Information", "Price", "Status", and "Total Price". Transfer tickets are grouped together. ![image](./reference/uncompleted-orders.png)'
+            dependencies:
+              - REQ-4.2.1
+            scenarios:
+              - name: Display historical orders in a table
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "History orders" tab and there is at least one historical order.'
+                  - keyword: WHEN
+                    content: 'Review the order table.'
+                  - keyword: THEN
+                    content: 'The page shows the columns "Train Information", "Passenger Information", "Seat Information", "Price", "Status", and "Total Price" for the history orders.'
+      - id: REQ-4.3
+        name: Personal Information
+        type: FOLDER
+        description: 'Provide the "Personal" submenu with the entries "User information", "Account security", and "Verify mobile number".'
+        dependencies:
+          - REQ-4.1.2
+        children:
+          - id: REQ-4.3.1
+            name: View user information page
+            type: ATOMIC
+            description: 'Open the "User information" page and display the sections "Essential information", "Contact information", and "Additional information". The "Essential information" section shows "Account number", "Name", "Gender", "Nationality", "ID type", and "ID number". The default "ID type" is "Foreign passport". The "Contact information" section shows "Email". The "Additional information" section shows "Passenger type" with the default value "Adult". ![image](./reference/user-information.png)'
+            dependencies:
+              - REQ-4.1.2
+            scenarios:
+              - name: Open and view the user information page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the personal center.'
+                  - keyword: WHEN
+                    content: 'Click "Personal" and then click "User information".'
+                  - keyword: THEN
+                    content: 'The page shows the sections "Essential information", "Contact information", and "Additional information" with the corresponding fields.'
+          - id: REQ-4.3.2
+            name: Edit essential information
+            type: ATOMIC
+            description: 'Allow the user to click the "Edit" button in the "Essential information" section, switch the section to an editable state with the button text changed to "Save", edit "Gender" through the options "Male" and "Female", edit the password through a password input, reject an invalid new password with the message "Please enter a valid password.", and keep the other essential information fields read-only.'
+            dependencies:
+              - REQ-4.3.1
+            scenarios:
+              - name: Save valid edits in the essential information section
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "User information" page.'
+                  - keyword: WHEN
+                    content: 'Click the "Edit" button in the "Essential information" section, update the editable fields, and click the "Save" button.'
+                  - keyword: THEN
+                    content: 'The section returns to display mode and shows the saved values for the editable fields.'
+              - name: Reject an invalid password in the essential information section
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "User information" page with the "Essential information" section in edit mode.'
+                  - keyword: WHEN
+                    content: 'Enter an invalid new password and click the "Save" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please enter a valid password." and does not save the invalid password.'
+          - id: REQ-4.3.3
+            name: Edit contact information
+            type: ATOMIC
+            description: 'Allow the user to click the "Edit" button in the "Contact information" section, switch the section to an editable state with the button text changed to "Save", edit the "Email" field, and save the updated contact information.'
+            dependencies:
+              - REQ-4.3.1
+            scenarios:
+              - name: Save a new email address in the contact information section
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "User information" page.'
+                  - keyword: WHEN
+                    content: 'Click the "Edit" button in the "Contact information" section, enter a new email address, and click the "Save" button.'
+                  - keyword: THEN
+                    content: 'The section returns to display mode and shows the saved email address.'
+          - id: REQ-4.3.4
+            name: Edit additional information
+            type: ATOMIC
+            description: 'Allow the user to click the "Edit" button in the "Additional information" section, switch the section to an editable state with the button text changed to "Save", edit "Passenger type" through a dropdown with the options "Adult" and "Child", and save the updated value.'
+            dependencies:
+              - REQ-4.3.1
+            scenarios:
+              - name: Save a new passenger type in the additional information section
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "User information" page.'
+                  - keyword: WHEN
+                    content: 'Click the "Edit" button in the "Additional information" section, choose one option from the "Passenger type" dropdown, and click the "Save" button.'
+                  - keyword: THEN
+                    content: 'The section returns to display mode and shows the saved passenger type.'
+          - id: REQ-4.3.5
+            name: View account security page
+            type: ATOMIC
+            description: 'Open the "Account security" page and show the entries "Login password" and "Security mailbox". ![image](./reference/account-security.png)'
+            dependencies:
+              - REQ-4.1.2
+            scenarios:
+              - name: Open and view the account security page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the personal center.'
+                  - keyword: WHEN
+                    content: 'Click "Personal" and then click "Account security".'
+                  - keyword: THEN
+                    content: 'The page shows the entries "Login password" and "Security mailbox".'
+          - id: REQ-4.3.6
+            name: Edit login password from account security page
+            type: ATOMIC
+            description: 'Open the password change form from the "Login password" section with the fields "Current password: ", "New password: ", and "Confirm your password: ", and the buttons "Cancel" and "Determine". Reject missing fields with "Please fill in all password fields.", reject an incorrect current password with "Incorrect current password.", reject mismatched new passwords with "New passwords do not match.", and persist the new password and show a successful password change message after valid submission. ![image](./reference/edit-password.png)'
+            dependencies:
+              - REQ-4.3.5
+            scenarios:
+              - name: Save a valid password change from the account security page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the password change form with the correct current password entered and matching valid values entered in "New password: " and "Confirm your password: ".'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The system persists the new password and shows a successful password change message.'
+              - name: Reject a password change with missing fields
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the password change form with one or more password fields left empty.'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please fill in all password fields.".'
+              - name: Reject a password change with an incorrect current password
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the password change form with an incorrect value entered in "Current password: ".'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Incorrect current password.".'
+              - name: Reject a password change with mismatched new passwords
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the password change form with different values entered in "New password: " and "Confirm your password: ".'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The page shows "New passwords do not match.".'
+          - id: REQ-4.3.7
+            name: Edit security mailbox
+            type: ATOMIC
+            description: 'Open the security mailbox form from the "Security mailbox" section. The form shows "Current email address: ", a "New e-mail: " input with the placeholder "Please enter a new email address.", a "Confirm your password: " input with the placeholder "Correct password input to modify personal information.", and the buttons "Cancel" and "Determine". Reject missing fields with "Please fill in the new email and password.", reject an incorrect password with "Incorrect password.", reject an invalid email address with "Invalid email address format.", and persist the new email address and show a successful update message after valid submission. ![image](./reference/edit-email.png)'
+            dependencies:
+              - REQ-4.3.5
+            scenarios:
+              - name: Save a valid security mailbox update
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the security mailbox form with a valid new email address and the correct password entered.'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The system persists the new email address and shows a successful security mailbox update message.'
+              - name: Reject a security mailbox update with missing fields
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the security mailbox form with the new email field empty, the password field empty, or both.'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please fill in the new email and password.".'
+              - name: Reject a security mailbox update with an incorrect password
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the security mailbox form with an incorrect password entered.'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Incorrect password.".'
+              - name: Reject a security mailbox update with an invalid email address
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the security mailbox form with an invalid value entered in "New e-mail: ".'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Invalid email address format.".'
+          - id: REQ-4.3.8
+            name: Verify mobile number
+            type: ATOMIC
+            description: 'Open the "Verify mobile number" page. The page shows the current mobile number under "old mobile number: " with the area code in parentheses and the middle four digits hidden, a region-code dropdown and input under "new mobile number: " with the default region code "(+86)" and the placeholder "new mobile number.", an input under "Confirm your password: " with the placeholder "Please enter the login password.", and the buttons "Cancel" and "Determine". Reject missing fields with "Please fill in the new mobile number and password.", reject an incorrect password with "Incorrect password.", reject an invalid mobile number with "Invalid mobile number format.", and persist the new mobile number and show a successful update message after valid submission. ![image](./reference/verify-mobile.png)'
+            dependencies:
+              - REQ-4.1.2
+            scenarios:
+              - name: Save a valid mobile number update
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Verify mobile number" page with a valid new mobile number and the correct password entered.'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The system persists the new mobile number and shows a successful mobile number update message.'
+              - name: Reject a mobile number update with missing fields
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Verify mobile number" page with the new mobile number field empty, the password field empty, or both.'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please fill in the new mobile number and password.".'
+              - name: Reject a mobile number update with an incorrect password
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Verify mobile number" page with an incorrect password entered.'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Incorrect password.".'
+              - name: Reject a mobile number update with an invalid mobile number
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Verify mobile number" page with an invalid new mobile number entered.'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Invalid mobile number format.".'
+      - id: REQ-4.4
+        name: Information Management
+        type: FOLDER
+        description: 'Provide the "Information management" submenu with the "My Passengers" page and passenger maintenance actions.'
+        dependencies:
+          - REQ-4.1.2
+        children:
+          - id: REQ-4.4.1
+            name: View my passengers page
+            type: ATOMIC
+            description: 'Open the "My Passengers" page and display a table with the checkbox header "All" and the columns "Name", "ID type", "ID number", "Mobile number", and "Operation". The current user is shown in the table by default as a frequent passenger who cannot be deleted. ![image](./reference/my-passengers.png)'
+            dependencies:
+              - REQ-4.1.2
+            scenarios:
+              - name: Open and view the my passengers page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the personal center.'
+                  - keyword: WHEN
+                    content: 'Click "Information management" and then click "My Passengers".'
+                  - keyword: THEN
+                    content: 'The page shows a table with the checkbox header "All" and the columns "Name", "ID type", "ID number", "Mobile number", and "Operation", and the current user appears as a passenger entry that cannot be deleted.'
+          - id: REQ-4.4.2
+            name: Open add passenger form
+            type: ATOMIC
+            description: 'Allow the user to click the "Add new passengers" button below the table on the "My Passengers" page and open a passenger form with the fields "Nationality", "Name", "Passport number", "Passport expiration date", "Date of birth", "Gender", "Email address", "Mobile number", and "Passenger type", and the buttons "Cancel" and "Determine". The "Passenger type" dropdown contains "Adult" and "Child". ![image](./reference/add-passenger.png)'
+            dependencies:
+              - REQ-4.4.1
+            scenarios:
+              - name: Open the add passenger form from the passenger list page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "My Passengers" page.'
+                  - keyword: WHEN
+                    content: 'Click the "Add new passengers" button.'
+                  - keyword: THEN
+                    content: 'The page shows the passenger form with the required labeled fields and the buttons "Cancel" and "Determine".'
+          - id: REQ-4.4.3
+            name: Add a passenger with valid information
+            type: ATOMIC
+            description: 'Allow the user to add a frequent passenger with valid information, persist the passenger information, and show a successful add message.'
+            dependencies:
+              - REQ-4.4.2
+            scenarios:
+              - name: Add a frequent passenger successfully
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the add passenger form with all required fields filled with valid values, a unique passport number, a valid email address, and a valid mobile number.'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The system persists the passenger information and shows a successful add message.'
+          - id: REQ-4.4.4
+            name: Block passenger creation with missing required fields
+            type: ATOMIC
+            description: 'Reject adding a passenger when any required field is missing and show the message "Please fill in all required fields.".'
+            dependencies:
+              - REQ-4.4.2
+            scenarios:
+              - name: Submit the add passenger form with missing required information
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the add passenger form with one or more required fields left empty.'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please fill in all required fields." and does not add the passenger.'
+          - id: REQ-4.4.5
+            name: Block passenger creation with duplicate passport number
+            type: ATOMIC
+            description: 'Reject adding a passenger when the passport number already exists and show the message "Passport number already exists.".'
+            dependencies:
+              - REQ-4.4.2
+            scenarios:
+              - name: Submit the add passenger form with an existing passport number
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the add passenger form with a passport number that already exists and all other required fields are valid.'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Passport number already exists." and does not add the passenger.'
+          - id: REQ-4.4.6
+            name: Block passenger creation with invalid email format
+            type: ATOMIC
+            description: 'Reject adding a passenger when the email address format is invalid and show the message "Invalid email address format.".'
+            dependencies:
+              - REQ-4.4.2
+            scenarios:
+              - name: Submit the add passenger form with an invalid email address
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the add passenger form with an invalid value entered in the "Email address" field and all other required fields are valid.'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Invalid email address format." and does not add the passenger.'
+          - id: REQ-4.4.7
+            name: Block passenger creation with invalid mobile number format
+            type: ATOMIC
+            description: 'Reject adding a passenger when the mobile number format is invalid and show the message "Invalid mobile number format.".'
+            dependencies:
+              - REQ-4.4.2
+            scenarios:
+              - name: Submit the add passenger form with an invalid mobile number
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the add passenger form with an invalid mobile number entered and all other required fields are valid.'
+                  - keyword: WHEN
+                    content: 'Click the "Determine" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Invalid mobile number format." and does not add the passenger.'
+          - id: REQ-4.4.8
+            name: Delete one passenger
+            type: ATOMIC
+            description: 'Allow the user to click the "Delete" button in the "Operation" column for one passenger row other than the current account, open a confirmation dialog with the text "Are you sure you want to delete this passenger?" and the buttons "Cancel" and "Confirm", delete the passenger and show a successful delete message after clicking "Confirm", or cancel the operation after clicking "Cancel".'
+            dependencies:
+              - REQ-4.4.1
+            scenarios:
+              - name: Confirm deletion of one passenger
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "My Passengers" page and there is at least one deletable passenger row.'
+                  - keyword: WHEN
+                    content: 'Click the "Delete" button for one passenger row and then click the "Confirm" button in the dialog.'
+                  - keyword: THEN
+                    content: 'The passenger is deleted and the page shows a successful delete message.'
+              - name: Cancel deletion of one passenger
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "My Passengers" page with the delete confirmation dialog open.'
+                  - keyword: WHEN
+                    content: 'Click the "Cancel" button in the dialog.'
+                  - keyword: THEN
+                    content: 'The dialog closes and the passenger is not deleted.'
+          - id: REQ-4.4.9
+            name: Delete multiple passengers in batch
+            type: ATOMIC
+            description: 'Allow the user to select multiple passenger rows through row checkboxes and the header checkbox "All", click the "Batch deletion" button, open a confirmation dialog with the text "Are you sure you want to delete the selected passengers?" and the buttons "Cancel" and "Confirm", delete the selected passengers and show a successful delete message after clicking "Confirm", or cancel the operation after clicking "Cancel".'
+            dependencies:
+              - REQ-4.4.1
+            scenarios:
+              - name: Confirm batch deletion of selected passengers
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "My Passengers" page with at least two deletable passenger rows selected.'
+                  - keyword: WHEN
+                    content: 'Click the "Batch deletion" button and then click the "Confirm" button in the dialog.'
+                  - keyword: THEN
+                    content: 'The selected passengers are deleted and the page shows a successful delete message.'
+              - name: Cancel batch deletion of selected passengers
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "My Passengers" page with the batch deletion confirmation dialog open.'
+                  - keyword: WHEN
+                    content: 'Click the "Cancel" button in the dialog.'
+                  - keyword: THEN
+                    content: 'The dialog closes and the selected passengers are not deleted.'
+          - id: REQ-4.4.10
+            name: Search passengers by name or ID number
+            type: ATOMIC
+            description: 'Provide a search input above the passenger table with the placeholder "Please enter passenger name" and a "Search" button, allow the user to search by passenger name or ID number, and show the matching passenger information.'
+            dependencies:
+              - REQ-4.4.1
+            scenarios:
+              - name: Search the passenger list by a fuzzy condition
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "My Passengers" page.'
+                  - keyword: WHEN
+                    content: 'Enter a passenger name or ID number in the input with the placeholder "Please enter passenger name" and click the "Search" button.'
+                  - keyword: THEN
+                    content: 'The table shows the passenger rows that match the search condition.'
+          - id: REQ-4.4.11
+            name: Clear passenger search and show all passengers
+            type: ATOMIC
+            description: 'Provide a "×" button in the search input area above the passenger table, clear the search input after clicking it, and show the full passenger list again.'
+            dependencies:
+              - REQ-4.4.10
+            scenarios:
+              - name: Clear the passenger search results
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "My Passengers" page with a filtered passenger list shown after a search.'
+                  - keyword: WHEN
+                    content: 'Click the "×" button in the search input area.'
+                  - keyword: THEN
+                    content: 'The search input is cleared and the page shows the full passenger list again.'
+      - id: REQ-4.5
+        name: Personal Center Quick Entry
+        type: FOLDER
+        description: 'Provide a quick-entry dropdown under the top "My 12306" button with the options "Order center", "User information", "Account security", and "My passengers".'
+        dependencies:
+          - REQ-4.1.2
+        children:
+          - id: REQ-4.5.1
+            name: Open pages from my 12306 dropdown
+            type: ATOMIC
+            description: 'When the user hovers over the top "My 12306" button, show a dropdown that contains "Order center", "User information", "Account security", and "My passengers", and navigate to the personal center with the corresponding tab selected after one option is clicked.'
+            dependencies:
+              - REQ-4.1.2
+            scenarios:
+              - name: Open a personal center page from the my 12306 dropdown
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is logged in and is on a page where the top "My 12306" button is visible.'
+                  - keyword: WHEN
+                    content: 'Hover over the "My 12306" button and click one option in the dropdown.'
+                  - keyword: THEN
+                    content: 'Navigate to the personal center and show the page that corresponds to the clicked option.'
+  - id: REQ-5
+    name: Ticket Booking
+    type: FOLDER
+    description: 'Provide the booking flow from the search results page, including unauthenticated interception, quick login, passenger selection, booking submission, order confirmation, payment, and payment entry from the order center.'
+    dependencies:
+      - REQ-3.2.2
+    children:
+      - id: REQ-5.1
+        name: Login Interception and Quick Authentication
+        type: FOLDER
+        description: 'Require login before booking. When the user clicks one "Book" button without being logged in, show a quick login form instead of continuing directly.'
+        dependencies:
+          - REQ-3.2.2
+        children:
+          - id: REQ-5.1.1
+            name: Show quick login form before booking
+            type: ATOMIC
+            description: 'When the user clicks one "Book" button on the ticket search results page without being logged in, show a quick login form with the title area containing the icon "assets/logo-icon.png" and the text "Login", an input with the placeholder "Email/Username/Mobile number", a password input with the placeholder "Password", and a "LOGIN" button. ![image](./reference/login-form.png)'
+            dependencies:
+              - REQ-3.2.2
+            scenarios:
+              - name: Show the quick login form for an unauthenticated booking attempt
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is not logged in and is on a populated ticket search results page.'
+                  - keyword: WHEN
+                    content: 'Click one "Book" button.'
+                  - keyword: THEN
+                    content: 'The page shows the quick login form with the icon "assets/logo-icon.png", the text "Login", the account input, the password input, and the "LOGIN" button.'
+          - id: REQ-5.1.2
+            name: Open forgot password page from quick login form
+            type: ATOMIC
+            description: 'Provide a link with the text "Forgot your password" in the quick login form and navigate to the forgot password page after it is clicked.'
+            dependencies:
+              - REQ-5.1.1
+              - REQ-2.4.1
+            scenarios:
+              - name: Open the forgot password page from the quick login form
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is viewing the quick login form.'
+                  - keyword: WHEN
+                    content: 'Click the link "Forgot your password".'
+                  - keyword: THEN
+                    content: 'Navigate to the forgot password page.'
+          - id: REQ-5.1.3
+            name: Open registration page from quick login form
+            type: ATOMIC
+            description: 'Provide a link with the text "No account yet? Register now." in the quick login form and navigate to the registration page after it is clicked.'
+            dependencies:
+              - REQ-5.1.1
+              - REQ-2.1.1
+            scenarios:
+              - name: Open the registration page from the quick login form
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is viewing the quick login form.'
+                  - keyword: WHEN
+                    content: 'Click the link "No account yet? Register now.".'
+                  - keyword: THEN
+                    content: 'Navigate to the registration page.'
+      - id: REQ-5.2
+        name: Booking Form
+        type: FOLDER
+        description: 'Provide a booking form after the user clicks one "Book" button on the search results page. ![image](./reference/booking-1.png)'
+        dependencies:
+          - REQ-3.2.2
+        children:
+          - id: REQ-5.2.1
+            name: Open booking form from search results
+            type: ATOMIC
+            description: 'After the user clicks one "Book" button for a valid train result, open the booking form page. ![image](./reference/booking-1.png)'
+            dependencies:
+              - REQ-3.2.2
+            scenarios:
+              - name: Open the booking form from one search result row
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is logged in and is on a populated ticket search results page.'
+                  - keyword: WHEN
+                    content: 'Click one "Book" button in the result list.'
+                  - keyword: THEN
+                    content: 'Navigate to the booking form page.'
+          - id: REQ-5.2.2
+            name: View booking information
+            type: ATOMIC
+            description: 'Display the booking information section with the title "Train Information:" and the selected train details, including departure place, destination, departure date, train number, seat type, price, and current remaining ticket information such as "business-class seat ( ￥1870.0 ) 32% off 1 left", "first-class seat ( ￥967.0 ) 24% off None left", "second-class seat ( ￥576.0 ) 27% off None left", and "standing ticket ( ￥576.0 ) 27% off Enough left".'
+            dependencies:
+              - REQ-5.2.1
+            scenarios:
+              - name: Display the booking information section for the selected train
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the booking form page.'
+                  - keyword: WHEN
+                    content: 'Review the "Train Information:" section.'
+                  - keyword: THEN
+                    content: 'The section shows the selected train details, the seat types, the prices, and the current remaining ticket information.'
+          - id: REQ-5.2.3
+            name: Select passengers for booking
+            type: ATOMIC
+            description: 'Display the passenger section with the title "Passenger Information:" and the user''s frequent passengers. When the user selects one or more passengers, add one booking row per selected passenger. The table columns are "Ticket class", "Ticket type", "Name", "ID type", "ID number", "Nationality", and "Operation". The "Ticket class" dropdown contains "Business-class seat", "First-class seat", "Second-class seat", and "Standing ticket". The "Ticket type" dropdown contains "Adult" and "Child". The "Operation" column contains a "Delete" button.'
+            dependencies:
+              - REQ-5.2.1
+              - REQ-4.4.1
+            scenarios:
+              - name: Add selected passengers to the booking table
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the booking form page and has at least one frequent passenger available.'
+                  - keyword: WHEN
+                    content: 'Select one or more passengers from the frequent passenger list.'
+                  - keyword: THEN
+                    content: 'The passenger table shows one row for each selected passenger with the columns "Ticket class", "Ticket type", "Name", "ID type", "ID number", "Nationality", and "Operation".'
+          - id: REQ-5.2.4
+            name: Open terms of service page from booking form
+            type: ATOMIC
+            description: 'Provide a link with the text "I have read and agree to the Terms of Service" on the booking form page and navigate to the terms page that contains the title "Terms of Service" after it is clicked.'
+            dependencies:
+              - REQ-5.2.1
+              - REQ-2.5.1
+            scenarios:
+              - name: Open the terms of service page from the booking form
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the booking form page.'
+                  - keyword: WHEN
+                    content: 'Click the link "I have read and agree to the Terms of Service".'
+                  - keyword: THEN
+                    content: 'Navigate to the terms page and show the title "Terms of Service".'
+          - id: REQ-5.2.5
+            name: Submit valid booking information
+            type: ATOMIC
+            description: 'Provide the buttons "Previous step" and "Place order" on the booking form page. When the user clicks "Place order" with at least one selected passenger and all selected ticket classes still having available tickets, persist the booking information and show a successful booking message.'
+            dependencies:
+              - REQ-5.2.3
+            scenarios:
+              - name: Submit a valid booking request
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the booking form page with at least one passenger selected and each selected ticket class still having available tickets.'
+                  - keyword: WHEN
+                    content: 'Click the "Place order" button.'
+                  - keyword: THEN
+                    content: 'The system persists the booking information and shows a successful booking message.'
+          - id: REQ-5.2.6
+            name: Block booking submission without selected passengers
+            type: ATOMIC
+            description: 'Reject booking submission when no passenger is selected and show the message "Please select at least one passenger.".'
+            dependencies:
+              - REQ-5.2.1
+            scenarios:
+              - name: Submit the booking form without selecting any passenger
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the booking form page with no passenger selected.'
+                  - keyword: WHEN
+                    content: 'Click the "Place order" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Please select at least one passenger." and does not continue to the confirmation step.'
+          - id: REQ-5.2.7
+            name: Block booking submission without ticket availability
+            type: ATOMIC
+            description: 'Reject booking submission when one selected passenger has a ticket class with no remaining tickets and show the message "Sorry, there are no tickets available for the selected ticket class.".'
+            dependencies:
+              - REQ-5.2.3
+            scenarios:
+              - name: Submit the booking form with an unavailable ticket class
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the booking form page with at least one passenger selected and one selected ticket class having no remaining tickets.'
+                  - keyword: WHEN
+                    content: 'Click the "Place order" button.'
+                  - keyword: THEN
+                    content: 'The page shows "Sorry, there are no tickets available for the selected ticket class." and does not continue to the confirmation step.'
+      - id: REQ-5.3
+        name: Order Confirmation and Payment
+        type: FOLDER
+        description: 'Provide order confirmation, order payment, order status transitions, and order-center payment and cancellation entry points.'
+        dependencies:
+          - REQ-5.2.5
+        children:
+          - id: REQ-5.3.1
+            name: Confirm submitted booking information
+            type: ATOMIC
+            description: 'After the user submits booking information, open a confirmation dialog with the title "Please confirm the following information.", show the train information and passenger information, and provide the buttons "Confirm" and "Edit". Clicking "Confirm" confirms the order information and shows a successful submission message. Clicking "Edit" returns to the booking information page. ![image](./reference/booking-confirm.png)'
+            dependencies:
+              - REQ-5.2.5
+            scenarios:
+              - name: Confirm the order information and continue
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user has successfully submitted valid booking information.'
+                  - keyword: WHEN
+                    content: 'Click the "Confirm" button in the confirmation dialog.'
+                  - keyword: THEN
+                    content: 'The order information is confirmed and the system shows a successful order submission message.'
+              - name: Return to edit from the confirmation dialog
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is viewing the confirmation dialog after a valid booking submission.'
+                  - keyword: WHEN
+                    content: 'Click the "Edit" button.'
+                  - keyword: THEN
+                    content: 'Return to the booking information page.'
+          - id: REQ-5.3.2
+            name: View payment page
+            type: ATOMIC
+            description: 'After the user confirms the order information, open the payment page. The top of the page shows "Seats are locked, Time remained to complete your payment:" with a live 20-minute countdown in the format "MM:SS". The page also shows "Order details" with the same order information as the confirmation page, and the total price in the format "Total: ￥xxxx.xx". ![image](./reference/payment.png)'
+            dependencies:
+              - REQ-5.3.1
+            scenarios:
+              - name: Open the payment page after confirming the order
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user has confirmed the order information.'
+                  - keyword: WHEN
+                    content: 'The payment step opens.'
+                  - keyword: THEN
+                    content: 'The page shows "Seats are locked, Time remained to complete your payment:", a live countdown in the format "MM:SS", "Order details", and the total price in the format "Total: ￥xxxx.xx".'
+          - id: REQ-5.3.3
+            name: Cancel order from payment page
+            type: ATOMIC
+            description: 'Provide a "Cancel" button on the payment page. Clicking it cancels the order, releases the locked seats, and shows a successful cancellation message.'
+            dependencies:
+              - REQ-5.3.2
+            scenarios:
+              - name: Cancel the order from the payment page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the payment page for an unpaid order.'
+                  - keyword: WHEN
+                    content: 'Click the "Cancel" button.'
+                  - keyword: THEN
+                    content: 'The order is cancelled, the locked seats are released, and the page shows a successful cancellation message.'
+          - id: REQ-5.3.4
+            name: Pay for order from payment page
+            type: ATOMIC
+            description: 'Provide a "Pay" button on the payment page. Clicking it simulates a successful payment.'
+            dependencies:
+              - REQ-5.3.2
+            scenarios:
+              - name: Complete payment from the payment page
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the payment page for an unpaid order.'
+                  - keyword: WHEN
+                    content: 'Click the "Pay" button.'
+                  - keyword: THEN
+                    content: 'The system simulates a successful payment.'
+          - id: REQ-5.3.5
+            name: Show unpaid order in uncompleted orders tab
+            type: ATOMIC
+            description: 'When the user reaches the payment page after confirming the order but does not complete payment, set the order status as unpaid and show the order in the "Uncompleted orders" tab of the order center.'
+            dependencies:
+              - REQ-5.3.2
+            scenarios:
+              - name: Show an unpaid order in the uncompleted orders tab
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user has confirmed the order information and is on the payment page without completing payment.'
+                  - keyword: WHEN
+                    content: 'Leave the order unpaid.'
+                  - keyword: THEN
+                    content: 'The order status is set as unpaid and the order appears in the "Uncompleted orders" tab.'
+          - id: REQ-5.3.6
+            name: Show paid order in upcoming trips tab
+            type: ATOMIC
+            description: 'When the user completes payment and the travel time has not yet arrived, set the order status as paid and upcoming, and show the order in the "Upcoming trips" tab of the order center.'
+            dependencies:
+              - REQ-5.3.4
+            scenarios:
+              - name: Show a paid upcoming order in the upcoming trips tab
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user has an unpaid order on the payment page and the travel time has not yet arrived.'
+                  - keyword: WHEN
+                    content: 'Click the "Pay" button and complete the simulated payment.'
+                  - keyword: THEN
+                    content: 'The order status is set as paid and upcoming, and the order appears in the "Upcoming trips" tab.'
+          - id: REQ-5.3.7
+            name: Show cancelled order in uncompleted orders tab
+            type: ATOMIC
+            description: 'When the user cancels the order from the payment page, set the order status as cancelled and show the order in the "Uncompleted orders" tab of the order center.'
+            dependencies:
+              - REQ-5.3.3
+            scenarios:
+              - name: Show a cancelled order in the uncompleted orders tab
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the payment page for an unpaid order.'
+                  - keyword: WHEN
+                    content: 'Click the "Cancel" button and complete the cancellation.'
+                  - keyword: THEN
+                    content: 'The order status is set as cancelled and the order appears in the "Uncompleted orders" tab.'
+          - id: REQ-5.3.8
+            name: Continue payment from order center
+            type: ATOMIC
+            description: 'Allow the user to click the "Pay" button for one unpaid order in the "Uncompleted orders" tab and open the order payment page.'
+            dependencies:
+              - REQ-4.2.4
+              - REQ-5.3.2
+            scenarios:
+              - name: Open the payment page from the uncompleted orders tab
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Uncompleted orders" tab with at least one unpaid order.'
+                  - keyword: WHEN
+                    content: 'Click the "Pay" button for one unpaid order.'
+                  - keyword: THEN
+                    content: 'Navigate to the order payment page.'
+          - id: REQ-5.3.9
+            name: Cancel order from order center
+            type: ATOMIC
+            description: 'Allow the user to click the "Cancel" button for one unpaid order in the "Uncompleted orders" tab, open a confirmation dialog with the text "Are you sure you want to cancel this order?" and the buttons "Cancel" and "Confirm", cancel the order and release the locked seats after clicking "Confirm", or close the dialog without cancelling after clicking "Cancel".'
+            dependencies:
+              - REQ-4.2.4
+            scenarios:
+              - name: Confirm cancellation of an unpaid order from the order center
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Uncompleted orders" tab with at least one unpaid order.'
+                  - keyword: WHEN
+                    content: 'Click the "Cancel" button for one order and then click the "Confirm" button in the dialog.'
+                  - keyword: THEN
+                    content: 'The order is cancelled, the locked seats are released, and the page shows a successful cancellation message.'
+              - name: Cancel the cancellation action from the order center dialog
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the "Uncompleted orders" tab with the cancellation confirmation dialog open.'
+                  - keyword: WHEN
+                    content: 'Click the "Cancel" button in the dialog.'
+                  - keyword: THEN
+                    content: 'The dialog closes and the order remains unchanged.'
+  - id: REQ-6
+    name: Travel Guide
+    type: FOLDER
+    description: 'Provide one unified travel guide page with the content categories "Ticketing", "Endorsement and refund", and "Miscellaneous", along with multiple quick-entry routes from the navigation dropdown and the home page "Quick Guide" section.'
+    dependencies:
+      - REQ-1
+    children:
+      - id: REQ-6.1
+        name: Travel Guide Page
+        type: FOLDER
+        description: 'Allow the user to open the travel guide page from the home page navigation bar. The page shows three tabs: "Ticketing", "Endorsement and refund", and "Miscellaneous". Each tab shows the corresponding travel guidance content. ![image](./reference/travel-guide.png)'
+        dependencies:
+          - REQ-1.1
+        children:
+          - id: REQ-6.1.1
+            name: Open travel guide page from navigation bar
+            type: ATOMIC
+            description: 'Open the travel guide page from the "Travel guide" link in the home page navigation bar and display the three guide tabs and their corresponding content. ![image](./reference/travel-guide.png)'
+            dependencies:
+              - REQ-1.1
+            scenarios:
+              - name: Open the travel guide page from the navigation bar
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page.'
+                  - keyword: WHEN
+                    content: 'Click the "Travel guide" link in the navigation bar.'
+                  - keyword: THEN
+                    content: 'Navigate to the travel guide page and show the tabs "Ticketing", "Endorsement and refund", and "Miscellaneous".'
+      - id: REQ-6.2
+        name: Travel Guide Dropdown Navigation
+        type: FOLDER
+        description: 'Allow the user to hover over the "Travel guide" navigation item, open a dropdown that contains the three guide categories and direct links to category tabs and question anchors. ![image](./reference/travel-guide-dropdown.png)'
+        dependencies:
+          - REQ-1.1
+        children:
+          - id: REQ-6.2.1
+            name: Open travel guide tab from dropdown more link
+            type: ATOMIC
+            description: 'When the user hovers over "Travel guide" in the navigation bar, show a dropdown containing the categories "Ticketing", "Endorsement and refund", and "Miscellaneous". Under each category, provide one "More" link that navigates to the travel guide page and positions the page on the corresponding category tab. ![image](./reference/travel-guide-dropdown.png)'
+            dependencies:
+              - REQ-1.1
+              - REQ-6.1.1
+            scenarios:
+              - name: Open one guide category tab from the dropdown more link
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page.'
+                  - keyword: WHEN
+                    content: 'Hover over "Travel guide" in the navigation bar and click one "More" link in the dropdown.'
+                  - keyword: THEN
+                    content: 'Navigate to the travel guide page and position the page on the corresponding category tab.'
+          - id: REQ-6.2.2
+            name: Open travel guide question from dropdown question link
+            type: ATOMIC
+            description: 'When the user hovers over "Travel guide" in the navigation bar, show a dropdown containing four question links under each of the categories "Ticketing", "Endorsement and refund", and "Miscellaneous". Clicking one question link navigates to the travel guide page, positions the page on the corresponding category tab, and positions the page on the corresponding question.'
+            dependencies:
+              - REQ-1.1
+              - REQ-6.1.1
+            scenarios:
+              - name: Open one guide question from the navigation dropdown
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page.'
+                  - keyword: WHEN
+                    content: 'Hover over "Travel guide" in the navigation bar and click one question link in the dropdown.'
+                  - keyword: THEN
+                    content: 'Navigate to the travel guide page, position the page on the correct category tab, and position the page on the selected question.'
+      - id: REQ-6.3
+        name: Home Quick Guide Navigation
+        type: FOLDER
+        description: 'Use the home page "Quick Guide" section to navigate directly to common questions or to the travel guide page.'
+        dependencies:
+          - REQ-1.2
+          - REQ-6.1.1
+        children:
+          - id: REQ-6.3.1
+            name: Open common question from quick guide
+            type: ATOMIC
+            description: 'Display four common-question links in the home page "Quick Guide" section: "How to book tickets online?", "How to change or refund tickets?", "How to check train status?", and "How to use 12306 mobile app?". Clicking one link navigates to the travel guide page and positions the page on the corresponding question.'
+            dependencies:
+              - REQ-1.2
+              - REQ-6.1.1
+            scenarios:
+              - name: Open one common question from the home page quick guide section
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page.'
+                  - keyword: WHEN
+                    content: 'Click one common-question link in the "Quick Guide" section.'
+                  - keyword: THEN
+                    content: 'Navigate to the travel guide page and position the page on the corresponding question.'
+          - id: REQ-6.3.2
+            name: Open travel guide page from quick guide more link
+            type: ATOMIC
+            description: 'Display a link with the text "More" in the home page "Quick Guide" section and navigate to the travel guide page positioned on the "Ticketing" tab after it is clicked.'
+            dependencies:
+              - REQ-1.2
+              - REQ-6.1.1
+            scenarios:
+              - name: Open the travel guide page from the quick guide more link
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page.'
+                  - keyword: WHEN
+                    content: 'Click the "More" link in the "Quick Guide" section.'
+                  - keyword: THEN
+                    content: 'Navigate to the travel guide page and position the page on the "Ticketing" tab.'

@@ -1,0 +1,1616 @@
+id: ROOT
+name: PrestaShop E-commerce Website
+type: FOLDER
+description: PrestaShop B2C e-commerce website requirements covering storefront browsing, shopping cart, checkout, user authentication, and account management.
+dependencies: []
+children:
+- id: REQ-0
+  name: Visit Homepage
+  type: ATOMIC
+  description: Visit the homepage of the website.
+  dependencies: []
+  scenarios:
+  - name: Visit Homepage
+    steps:
+    - keyword: GIVEN
+      content: User is in a web browser.
+    - keyword: WHEN
+      content: Enter the website URL
+    - keyword: THEN
+      content: Display homepage with navigation bar, carousel, and product display area
+- id: REQ-1
+  name: Global Navigation
+  type: FOLDER
+  description: 'Global navigation bar component at the top of the website, fixed display on all pages.
+
+    Layout structure (left to right): Logo | Category Menu | Search Box | Language Selector | User Entry | Cart Icon.
+
+    Navigation bar uses responsive design, collapses to hamburger menu on mobile.
+
+    ![image](./reference/navigation.png)'
+  dependencies: []
+  children:
+  - id: REQ-1.1
+    name: View Global Navigation
+    type: ATOMIC
+    description: View the global navigation bar.
+    dependencies:
+    - REQ-0
+    scenarios:
+    - name: View Global Navigation
+      steps:
+      - keyword: GIVEN
+        content: User is on a store page and can see the website header.
+      - keyword: WHEN
+        content: Review the navigation area
+      - keyword: THEN
+        content: Display Logo, category menu, search box, language selector, user entry, cart icon
+  - id: REQ-1.2
+    name: Logo Click Returns Home
+    type: ATOMIC
+    description: Click website Logo to return to homepage.
+    dependencies: []
+    scenarios:
+    - name: Logo Click Returns Home
+      steps:
+      - keyword: GIVEN
+        content: User is on any page and can see the website Logo in the header.
+      - keyword: WHEN
+        content: Click the website Logo
+      - keyword: THEN
+        content: Navigate back to homepage
+  - id: REQ-1.3
+    name: Category Menu
+    type: FOLDER
+    description: 'Horizontally arranged top-level category menu (e.g., CLOTHES, ACCESSORIES, ART).
+
+      Hover to expand dropdown menu showing subcategories, supports multi-level nesting.'
+    dependencies: []
+    children:
+    - id: REQ-1.3.1
+      name: Expand Category Menu
+      type: ATOMIC
+      description: Expand the category menu to see subcategories.
+      dependencies:
+      - REQ-1.1
+      scenarios:
+      - name: Expand Category Menu
+        steps:
+        - keyword: GIVEN
+          content: User can see the category menu in the header.
+        - keyword: WHEN
+          content: Hover over a category (e.g., CLOTHES)
+        - keyword: THEN
+          content: Expand dropdown menu showing subcategories (e.g., Men, Women)
+    - id: REQ-1.3.2
+      name: Enter Subcategory
+      type: ATOMIC
+      description: Click a subcategory to navigate to its product list.
+      dependencies:
+      - REQ-1.3.1
+      scenarios:
+      - name: Enter Subcategory
+        steps:
+        - keyword: GIVEN
+          content: The category dropdown menu is expanded.
+        - keyword: WHEN
+          content: Click a subcategory link in the dropdown
+        - keyword: THEN
+          content: Navigate to the corresponding subcategory product list page
+  - id: REQ-1.4
+    name: Search Function
+    type: ATOMIC
+    description: 'Top global search box, supports product keyword search.
+
+      Real-time search suggestion dropdown displays while typing.
+
+      Press Enter or click search button to navigate to search results page.
+
+      ![image](./reference/search.png)'
+    dependencies: []
+    scenarios:
+    - name: Search Function
+      steps:
+      - keyword: GIVEN
+        content: User can see the global search box in the header.
+      - keyword: WHEN
+        content: Click the search box
+      - keyword: THEN
+        content: Search box gains focus
+      - keyword: WHEN
+        content: Enter a search keyword (e.g., shirt)
+      - keyword: THEN
+        content: Auto-expand search suggestion dropdown
+      - keyword: WHEN
+        content: Press Enter or click the search button
+      - keyword: THEN
+        content: Navigate to search results page showing matching products
+  - id: REQ-1.5
+    name: User Entry
+    type: ATOMIC
+    description: User login/register/my account entry link.
+    dependencies: []
+    scenarios:
+    - name: User Entry
+      steps:
+      - keyword: GIVEN
+        content: User can see the user entry link in the header.
+      - keyword: WHEN
+        content: Click "Sign in" link
+      - keyword: THEN
+        content: Navigate to login page
+  - id: REQ-1.6
+    name: Cart Icon
+    type: FOLDER
+    description: Display number of items in cart, click to enter cart page.
+    dependencies: []
+    children:
+    - id: REQ-1.6.1
+      name: View Cart Count
+      type: ATOMIC
+      description: View the number of items in the cart.
+      dependencies:
+      - REQ-1.1
+      scenarios:
+      - name: View Cart Count
+        steps:
+        - keyword: GIVEN
+          content: User can see the cart icon in the header.
+        - keyword: WHEN
+          content: Review the cart icon
+        - keyword: THEN
+          content: Display number of items in cart
+    - id: REQ-1.6.2
+      name: Click to Enter Cart
+      type: ATOMIC
+      description: Click the cart icon to navigate to the cart page.
+      dependencies:
+      - REQ-1.6.1
+      scenarios:
+      - name: Click to Enter Cart
+        steps:
+        - keyword: GIVEN
+          content: User can see the cart icon in the header.
+        - keyword: WHEN
+          content: Click the cart icon
+        - keyword: THEN
+          content: Navigate to cart page
+- id: REQ-2
+  name: Homepage
+  type: FOLDER
+  description: 'Homepage content display, including carousel ads, popular products, promotions, Newsletter subscription, and footer.
+
+    ![image](./reference/homepage.png)'
+  dependencies:
+  - REQ-1
+  children:
+  - id: REQ-2.1
+    name: Browse Homepage
+    type: ATOMIC
+    description: Browse the homepage.
+    dependencies:
+    - REQ-0
+    scenarios:
+    - name: Browse Homepage
+      steps:
+      - keyword: GIVEN
+        content: User is on the homepage.
+      - keyword: WHEN
+        content: View each area of the homepage
+      - keyword: THEN
+        content: Display carousel, Popular Products, promotion area, Newsletter subscription, footer
+  - id: REQ-2.2
+    name: Carousel Banner
+    type: FOLDER
+    description: Top carousel area on homepage, displaying promotional information and marketing content.
+    dependencies: []
+    children:
+    - id: REQ-2.2.1
+      name: Carousel Auto Switch
+      type: ATOMIC
+      description: Carousel automatically switches to next slide.
+      dependencies:
+      - REQ-2.1
+      scenarios:
+      - name: Carousel Auto Switch
+        steps:
+        - keyword: GIVEN
+          content: The homepage carousel is visible.
+        - keyword: WHEN
+          content: Wait a few seconds
+        - keyword: THEN
+          content: Carousel automatically switches to next slide
+    - id: REQ-2.2.2
+      name: Manual Carousel Switch
+      type: ATOMIC
+      description: Manually switch carousel slide.
+      dependencies:
+      - REQ-2.1
+      scenarios:
+      - name: Manual Carousel Switch
+        steps:
+        - keyword: GIVEN
+          content: The homepage carousel is visible.
+        - keyword: WHEN
+          content: Click left/right arrow buttons
+        - keyword: THEN
+          content: Manually switch carousel slide
+    - id: REQ-2.2.3
+      name: Click Carousel to Navigate
+      type: ATOMIC
+      description: Click carousel content to navigate to corresponding marketing page.
+      dependencies:
+      - REQ-2.1
+      scenarios:
+      - name: Click Carousel to Navigate
+        steps:
+        - keyword: GIVEN
+          content: The homepage carousel is visible.
+        - keyword: WHEN
+          content: Click carousel content
+        - keyword: THEN
+          content: Navigate to corresponding marketing page
+  - id: REQ-2.3
+    name: Popular Products Section
+    type: ATOMIC
+    description: Popular products grid on homepage, containing product cards, quick view, and wishlist functionality.
+    dependencies: []
+    scenarios:
+    - name: Popular Products Section
+      steps:
+      - keyword: GIVEN
+        content: User can see the Popular Products section on the homepage.
+      - keyword: WHEN
+        content: Click a popular product
+      - keyword: THEN
+        content: Navigate to the product detail page.
+- id: REQ-3
+  name: Category Page
+  type: FOLDER
+  description: 'Product listing page for displaying category products, search results, brand products, and comparable listing contexts.
+
+    Page layout: Left sidebar filters + Right product grid.
+
+    Top shows breadcrumb navigation, category title, product count, and sort dropdown.
+
+    Products displayed in card grid format, supports pagination.
+
+    ![image](./reference/category.png)'
+  dependencies:
+  - REQ-1
+  children:
+  - id: REQ-3.1
+    name: Enter Category Page
+    type: ATOMIC
+    description: Enter a category page.
+    dependencies:
+    - REQ-1.3.1
+    scenarios:
+    - name: Enter Category Page
+      steps:
+      - keyword: GIVEN
+        content: User can see the category menu in the header.
+      - keyword: WHEN
+        content: Click a product category in navigation menu
+      - keyword: THEN
+        content: Navigate to that category's product list page
+  - id: REQ-3.2
+    name: Breadcrumb Navigation
+    type: FOLDER
+    description: Display current page hierarchy path, supports returning to parent page.
+    dependencies: []
+    children:
+    - id: REQ-3.2.1
+      name: View Breadcrumb Navigation
+      type: ATOMIC
+      description: View the breadcrumb navigation on a category page.
+      dependencies:
+      - REQ-3.1
+      scenarios:
+      - name: View Breadcrumb Navigation
+        steps:
+        - keyword: GIVEN
+          content: User is on a category page.
+        - keyword: WHEN
+          content: View breadcrumb navigation
+        - keyword: THEN
+          content: Display current page path (e.g., Home > Clothes > Men)
+    - id: REQ-3.2.2
+      name: Navigate Back via Breadcrumb
+      type: ATOMIC
+      description: Navigate back to parent category via breadcrumb.
+      dependencies:
+      - REQ-3.2.1
+      scenarios:
+      - name: Navigate Back via Breadcrumb
+        steps:
+        - keyword: GIVEN
+          content: Breadcrumb navigation is visible.
+        - keyword: WHEN
+          content: Click parent category name in breadcrumb
+        - keyword: THEN
+          content: Navigate to parent category page
+  - id: REQ-3.3
+    name: Category Description
+    type: ATOMIC
+    description: Category description text displayed on category page.
+    dependencies: []
+    scenarios:
+    - name: Category Description
+      steps:
+      - keyword: GIVEN
+        content: User is on a category page.
+      - keyword: WHEN
+        content: View top of page
+      - keyword: THEN
+        content: Display category name and description text
+  - id: REQ-3.4
+    name: Subcategory Navigation
+    type: ATOMIC
+    description: Quick entry links to subcategories under current category.
+    dependencies: []
+    scenarios:
+    - name: Subcategory Navigation
+      steps:
+      - keyword: GIVEN
+        content: User is on a category page and can see subcategory links.
+      - keyword: WHEN
+        content: Click a subcategory link
+      - keyword: THEN
+        content: Navigate to subcategory product list
+  - id: REQ-3.5
+    name: Product Grid Display
+    type: FOLDER
+    description: Display product cards in grid format, including image, name, price, discount label, quick view, wishlist control, and related card actions.
+    dependencies: []
+    children:
+    - id: REQ-3.5.1
+      name: View Product Cards
+      type: ATOMIC
+      description: View product cards in the product grid.
+      dependencies:
+      - REQ-3.1
+      scenarios:
+      - name: View Product Cards
+        steps:
+        - keyword: GIVEN
+          content: User is on a category page and can see the product grid.
+        - keyword: WHEN
+          content: Review product list area
+        - keyword: THEN
+          content: Each product card displays product image, name, price (regular/sale), discount label
+    - id: REQ-3.5.2
+      name: Hover to Show Action Buttons
+      type: ATOMIC
+      description: Hover over a product card to show action buttons.
+      dependencies:
+      - REQ-3.5.1
+      scenarios:
+      - name: Hover to Show Action Buttons
+        steps:
+        - keyword: GIVEN
+          content: User can see product cards in the product grid.
+        - keyword: WHEN
+          content: Hover mouse over a product card
+        - keyword: THEN
+          content: Display Quick view button and wishlist button, show color preview if multiple colors available
+    - id: REQ-3.5.3
+      name: Click to Enter Detail Page
+      type: ATOMIC
+      description: Click a product card to enter detail page.
+      dependencies:
+      - REQ-3.5.1
+      scenarios:
+      - name: Click to Enter Detail Page
+        steps:
+        - keyword: GIVEN
+          content: User can see product cards in the product grid.
+        - keyword: WHEN
+          content: Click a product card
+        - keyword: THEN
+          content: Navigate to product detail page
+  - id: REQ-3.6
+    name: Filters
+    type: FOLDER
+    description: Sidebar filters, supports filtering by availability, on sale, categories, size, color, composition, price, brand, and related product attributes.
+    dependencies: []
+    children:
+    - id: REQ-3.6.1
+      name: Filter by Availability
+      type: ATOMIC
+      description: Filter products by availability.
+      dependencies:
+      - REQ-3.1
+      scenarios:
+      - name: Filter by Availability
+        steps:
+        - keyword: GIVEN
+          content: User can see the sidebar filters on a category page.
+        - keyword: WHEN
+          content: Check "In stock" filter option
+        - keyword: THEN
+          content: Product list only shows in-stock products, URL parameters update
+    - id: REQ-3.6.2
+      name: Filter by Color
+      type: ATOMIC
+      description: Filter products by color.
+      dependencies:
+      - REQ-3.1
+      scenarios:
+      - name: Filter by Color
+        steps:
+        - keyword: GIVEN
+          content: User can see the sidebar filters on a category page.
+        - keyword: WHEN
+          content: Click a color filter option (e.g., White)
+        - keyword: THEN
+          content: Product list only shows products in that color
+    - id: REQ-3.6.3
+      name: Filter by Price Range
+      type: ATOMIC
+      description: Filter products by price range.
+      dependencies:
+      - REQ-3.1
+      scenarios:
+      - name: Filter by Price Range
+        steps:
+        - keyword: GIVEN
+          content: User can see the sidebar filters on a category page.
+        - keyword: WHEN
+          content: Drag price slider to set price range
+        - keyword: THEN
+          content: Product list only shows products within price range
+    - id: REQ-3.6.4
+      name: Clear All Filters
+      type: ATOMIC
+      description: Clear all applied filters.
+      dependencies:
+      - REQ-3.6.1
+      scenarios:
+      - name: Clear All Filters
+        steps:
+        - keyword: GIVEN
+          content: At least one filter is applied on the category page.
+        - keyword: WHEN
+          content: Click "Clear all" button
+        - keyword: THEN
+          content: Reset all filter conditions, show all products
+  - id: REQ-3.7
+    name: Sort Function
+    type: ATOMIC
+    description: Product list sort dropdown menu, supports sorting by relevance, sales, name, price, reference. ![image](./reference/sort.png)
+    dependencies: []
+    scenarios:
+    - name: Sort Function
+      steps:
+      - keyword: GIVEN
+        content: User can see the sort dropdown on a category page.
+      - keyword: WHEN
+        content: Click "Sort by" dropdown menu
+      - keyword: THEN
+        content: Display sort options list
+      - keyword: WHEN
+        content: Select "Price, low to high"
+      - keyword: THEN
+        content: Product list re-sorts by price from low to high
+  - id: REQ-3.8
+    name: Product Count Display
+    type: ATOMIC
+    description: Display total product count under current filter conditions.
+    dependencies: []
+    scenarios:
+    - name: Product Count Display
+      steps:
+      - keyword: GIVEN
+        content: User is on a category page and can see the product list header.
+      - keyword: WHEN
+        content: Review product list area
+      - keyword: THEN
+        content: Display total product count (e.g., "Showing 1-12 of 18 item(s)")
+  - id: REQ-3.9
+    name: Pagination
+    type: ATOMIC
+    description: Product list pagination navigation, supports browsing more products by page.
+    dependencies: []
+    scenarios:
+    - name: Pagination
+      steps:
+      - keyword: GIVEN
+        content: User is on a category page with multiple pages of products.
+      - keyword: WHEN
+        content: Click next page button or a page number
+      - keyword: THEN
+        content: Display next page of products
+- id: REQ-4
+  name: Product Detail Page
+  type: FOLDER
+  description: 'Single product detailed information page.
+
+    Page layout: Left image area (main image + thumbnails) + Right info area (name, price, variant selection, add to cart button).
+
+    Bottom shows product description tabs, review section, related product recommendations.
+
+    Price and stock dynamically update when selecting different variants.
+
+    ![image](./reference/product_detail.png)'
+  dependencies:
+  - REQ-3
+  children:
+  - id: REQ-4.1
+    name: Enter Product Detail Page
+    type: ATOMIC
+    description: Enter a product detail page.
+    dependencies:
+    - REQ-3.5.1
+    scenarios:
+    - name: Enter Product Detail Page
+      steps:
+      - keyword: GIVEN
+        content: User can see product cards in a category page product grid.
+      - keyword: WHEN
+        content: Click any product in product list
+      - keyword: THEN
+        content: Navigate to that product's detail page
+  - id: REQ-4.2
+    name: Product Image Area
+    type: ATOMIC
+    description: Product image display area, including main image, thumbnail switching, and large image viewer.
+    dependencies: []
+    scenarios:
+    - name: Product Image Area
+      steps:
+      - keyword: GIVEN
+        content: User is on a product detail page.
+      - keyword: WHEN
+        content: View main image area
+      - keyword: THEN
+        content: Display product main image
+  - id: REQ-4.3
+    name: Product Basic Info
+    type: ATOMIC
+    description: Product basic information display, including name, price (tax incl./excl.), regular price and discount, discount percentage, description.
+    dependencies: []
+    scenarios:
+    - name: Product Basic Info
+      steps:
+      - keyword: GIVEN
+        content: User is on a product detail page.
+      - keyword: WHEN
+        content: Review product info area
+      - keyword: THEN
+        content: Display product name, current price, regular price (if discounted), discount percentage, tax info, product description
+  - id: REQ-4.4
+    name: Variant Selection
+    type: ATOMIC
+    description: Product variant selector, including size, color, and other attribute selection.
+    dependencies: []
+    scenarios:
+    - name: Variant Selection
+      steps:
+      - keyword: GIVEN
+        content: User is on a product detail page and can see the variant selectors.
+      - keyword: WHEN
+        content: Click Size dropdown menu to select size
+      - keyword: THEN
+        content: Selected size displays in dropdown
+      - keyword: WHEN
+        content: Click color swatch to select color
+      - keyword: THEN
+        content: Selected color highlights, product image may switch to corresponding color
+  - id: REQ-4.5
+    name: Quantity Selection
+    type: FOLDER
+    description: Product quantity selector, supports plus/minus buttons, direct input, and stock warning.
+    dependencies: []
+    children:
+    - id: REQ-4.5.1
+      name: Increase Quantity
+      type: ATOMIC
+      description: Increase product quantity.
+      dependencies:
+      - REQ-4.1
+      scenarios:
+      - name: Increase Quantity
+        steps:
+        - keyword: GIVEN
+          content: User is on a product detail page and can see the quantity selector.
+        - keyword: WHEN
+          content: Click "+" button
+        - keyword: THEN
+          content: Quantity increases by 1
+    - id: REQ-4.5.2
+      name: Decrease Quantity
+      type: ATOMIC
+      description: Decrease product quantity.
+      dependencies:
+      - REQ-4.5.1
+      scenarios:
+      - name: Decrease Quantity
+        steps:
+        - keyword: GIVEN
+          content: User is on a product detail page and can see the quantity selector.
+        - keyword: WHEN
+          content: Click "-" button
+        - keyword: THEN
+          content: Quantity decreases by 1, minimum is 1
+    - id: REQ-4.5.3
+      name: Direct Input Quantity
+      type: ATOMIC
+      description: Directly enter product quantity.
+      dependencies:
+      - REQ-4.1
+      scenarios:
+      - name: Direct Input Quantity
+        steps:
+        - keyword: GIVEN
+          content: User is on a product detail page and can see the quantity selector.
+        - keyword: WHEN
+          content: Directly enter number in quantity input box
+        - keyword: THEN
+          content: Quantity updates to entered value
+    - id: REQ-4.5.4
+      name: Stock Insufficient Warning
+      type: ATOMIC
+      description: Display warning when entered quantity exceeds stock.
+      dependencies:
+      - REQ-4.1
+      scenarios:
+      - name: Stock Insufficient Warning
+        steps:
+        - keyword: GIVEN
+          content: User is on a product detail page and can see the quantity selector.
+        - keyword: WHEN
+          content: Enter quantity exceeding stock
+        - keyword: THEN
+          content: Display stock insufficient warning message
+  - id: REQ-4.6
+    name: Add to Cart
+    type: FOLDER
+    description: 'Add product to cart functionality, includes success modal, continue shopping, and proceed to checkout options.
+
+      ![image](./reference/add_to_cart.png)'
+    dependencies:
+    - REQ-4.4
+    - REQ-4.5
+    children:
+    - id: REQ-4.6.1
+      name: Add Product to Cart
+      type: ATOMIC
+      description: Add a product to the cart.
+      dependencies:
+      - REQ-4.4
+      scenarios:
+      - name: Add Product to Cart
+        steps:
+        - keyword: GIVEN
+          content: User is on a product detail page with a selected variant and quantity.
+        - keyword: WHEN
+          content: Click "ADD TO CART" button
+        - keyword: THEN
+          content: Pop up success modal showing "Product successfully added to your shopping cart"
+    - id: REQ-4.6.2
+      name: Continue Shopping After Add
+      type: ATOMIC
+      description: Continue shopping after adding product to cart.
+      dependencies:
+      - REQ-4.6.1
+      scenarios:
+      - name: Continue Shopping After Add
+        steps:
+        - keyword: GIVEN
+          content: The add-to-cart success modal is visible.
+        - keyword: WHEN
+          content: Click "Continue shopping" button
+        - keyword: THEN
+          content: Close modal, return to current product page to continue browsing
+    - id: REQ-4.6.3
+      name: Proceed to Checkout After Add
+      type: ATOMIC
+      description: Proceed to checkout after adding product to cart.
+      dependencies:
+      - REQ-4.6.1
+      scenarios:
+      - name: Proceed to Checkout After Add
+        steps:
+        - keyword: GIVEN
+          content: The add-to-cart success modal is visible.
+        - keyword: WHEN
+          content: Click "Proceed to checkout" button
+        - keyword: THEN
+          content: Navigate to cart page
+  - id: REQ-4.7
+    name: Add to Wishlist
+    type: ATOMIC
+    description: Add product to user wishlist (requires login).
+    dependencies: []
+    scenarios:
+    - name: Add to Wishlist
+      steps:
+      - keyword: GIVEN
+        content: User is on a product detail page.
+      - keyword: WHEN
+        content: Click wishlist button
+      - keyword: THEN
+        content: If logged in, product added to wishlist with confirmation; if not logged in, prompt to login
+  - id: REQ-4.8
+    name: Product Description Tabs
+    type: FOLDER
+    description: Tabs at bottom of product detail, including Description and Product Details (reference, data sheet, features).
+    dependencies: []
+    children:
+    - id: REQ-4.8.1
+      name: View Description Tab
+      type: ATOMIC
+      description: View the product description tab.
+      dependencies:
+      - REQ-4.1
+      scenarios:
+      - name: View Description Tab
+        steps:
+        - keyword: GIVEN
+          content: User is on a product detail page and can see the product tabs.
+        - keyword: WHEN
+          content: Click "Description" tab
+        - keyword: THEN
+          content: Display detailed product description text
+    - id: REQ-4.8.2
+      name: View Product Details Tab
+      type: ATOMIC
+      description: View the product details tab.
+      dependencies:
+      - REQ-4.1
+      scenarios:
+      - name: View Product Details Tab
+        steps:
+        - keyword: GIVEN
+          content: User is on a product detail page and can see the product tabs.
+        - keyword: WHEN
+          content: Click "Product Details" tab
+        - keyword: THEN
+          content: Display product specifications table (reference, data sheet, specific features)
+  - id: REQ-4.9
+    name: Product Reviews
+    type: FOLDER
+    description: Product review functionality, including review list, rating display, and add review (requires login).
+    dependencies: []
+    children:
+    - id: REQ-4.9.1
+      name: View Review List
+      type: ATOMIC
+      description: View the product review list.
+      dependencies:
+      - REQ-4.1
+      scenarios:
+      - name: View Review List
+        steps:
+        - keyword: GIVEN
+          content: User is on a product detail page.
+        - keyword: WHEN
+          content: Scroll to review area
+        - keyword: THEN
+          content: Display review list and average rating
+    - id: REQ-4.9.2
+      name: Add Review
+      type: ATOMIC
+      description: Add a review for the product.
+      dependencies:
+      - REQ-4.9.1
+      scenarios:
+      - name: Add Review
+        steps:
+        - keyword: GIVEN
+          content: User can see the review section on a product detail page.
+        - keyword: WHEN
+          content: Click add review button
+        - keyword: THEN
+          content: If logged in, display review form; if not logged in, prompt to login
+  - id: REQ-4.10
+    name: Recently Viewed
+    type: ATOMIC
+    description: Display user's recently viewed products.
+    dependencies: []
+    scenarios:
+    - name: Recently Viewed
+      steps:
+      - keyword: GIVEN
+        content: User is on a product detail page.
+      - keyword: WHEN
+        content: Scroll to page bottom
+      - keyword: THEN
+        content: Display recently viewed products list
+  - id: REQ-4.11
+    name: Related Products
+    type: ATOMIC
+    description: Recommend other products in the same category.
+    dependencies: []
+    scenarios:
+    - name: Related Products
+      steps:
+      - keyword: GIVEN
+        content: User is on a product detail page.
+      - keyword: WHEN
+        content: Scroll to recommendations area
+      - keyword: THEN
+        content: Display related products from same category
+- id: REQ-5
+  name: Shopping Cart
+  type: FOLDER
+  description: 'Shopping cart page, displaying products user has added.
+
+    List includes: product image, name, variant, unit price, quantity (editable), subtotal, delete button.
+
+    Right side shows summary: items subtotal, shipping fee, discount, total (tax incl.).
+
+    Price updates in real-time after quantity modification.
+
+    ![image](./reference/cart.png)'
+  dependencies:
+  - REQ-4.6
+  children:
+  - id: REQ-5.1
+    name: Enter Cart
+    type: ATOMIC
+    description: Enter the shopping cart page.
+    dependencies:
+    - REQ-4.6.1
+    scenarios:
+    - name: Enter Cart
+      steps:
+      - keyword: GIVEN
+        content: User has at least one product in the cart.
+      - keyword: WHEN
+        content: Click top cart icon or "Proceed to checkout" in add to cart modal
+      - keyword: THEN
+        content: Navigate to cart page
+  - id: REQ-5.2
+    name: Cart Product List
+    type: ATOMIC
+    description: Product list display in cart, including image, name, variant, unit price, quantity, subtotal, and delete button.
+    dependencies: []
+    scenarios:
+    - name: Cart Product List
+      steps:
+      - keyword: GIVEN
+        content: User is on the cart page.
+      - keyword: WHEN
+        content: Review cart product list
+      - keyword: THEN
+        content: Each product displays image, name, variant (Size, Color), unit price, quantity, subtotal, delete button
+  - id: REQ-5.3
+    name: Modify Product Quantity
+    type: ATOMIC
+    description: Modify product quantity in cart.
+    dependencies: []
+    scenarios:
+    - name: Modify Product Quantity
+      steps:
+      - keyword: GIVEN
+        content: User is on the cart page and can see a product row.
+      - keyword: WHEN
+        content: Click product quantity up/down arrows
+      - keyword: THEN
+        content: Product quantity updates, subtotal and total automatically recalculate
+  - id: REQ-5.4
+    name: Delete Product
+    type: ATOMIC
+    description: Delete product from cart.
+    dependencies: []
+    scenarios:
+    - name: Delete Product
+      steps:
+      - keyword: GIVEN
+        content: User is on the cart page and can see a product row.
+      - keyword: WHEN
+        content: Click delete icon on product row
+      - keyword: THEN
+        content: Product removed from cart, total recalculates
+  - id: REQ-5.5
+    name: Cart Summary
+    type: ATOMIC
+    description: Price summary area on cart page, showing items subtotal, shipping fee, discount amount, and total.
+    dependencies: []
+    scenarios:
+    - name: Cart Summary
+      steps:
+      - keyword: GIVEN
+        content: User is on the cart page.
+      - keyword: WHEN
+        content: Review cart summary area
+      - keyword: THEN
+        content: Display items subtotal, shipping fee, discount amount (if any), total (tax incl.)
+  - id: REQ-5.6
+    name: Continue Shopping Link
+    type: ATOMIC
+    description: Return to product browsing page to continue shopping. ![image](./reference/add_to_cart.png)
+    dependencies: []
+    scenarios:
+    - name: Continue Shopping Link
+      steps:
+      - keyword: GIVEN
+        content: User is on the cart page.
+      - keyword: WHEN
+        content: Click "Continue shopping" link
+      - keyword: THEN
+        content: Return to product list or homepage
+  - id: REQ-5.7
+    name: Proceed to Checkout Button
+    type: ATOMIC
+    description: Enter checkout flow.
+    dependencies: []
+    scenarios:
+    - name: Proceed to Checkout Button
+      steps:
+      - keyword: GIVEN
+        content: User is on the cart page.
+      - keyword: WHEN
+        content: Click "PROCEED TO CHECKOUT" button
+      - keyword: THEN
+        content: Enter checkout flow
+- id: REQ-6
+  name: Checkout Flow
+  type: FOLDER
+  description: 'Multi-step checkout flow, using single-page multi-step form design.
+
+    Step order: 1.Personal Information → 2.Addresses → 3.Shipping Method → 4.Payment → 5.Order Confirmation.
+
+    Left side shows step progress, right side shows order summary and price total.
+
+    Each step auto-collapses after completion, can click to edit completed steps.
+
+    ![image](./reference/checkout.png)'
+  dependencies:
+  - REQ-5
+  children:
+  - id: REQ-6.1
+    name: Start Checkout
+    type: ATOMIC
+    description: Start the checkout flow.
+    dependencies:
+    - REQ-5.7
+    scenarios:
+    - name: Start Checkout
+      steps:
+      - keyword: GIVEN
+        content: User is on the cart page.
+      - keyword: WHEN
+        content: Click checkout button from cart
+      - keyword: THEN
+        content: Enter checkout flow first step
+  - id: REQ-6.2
+    name: Personal Information Step
+    type: ATOMIC
+    description: Checkout flow first step, logged-in users see their info, non-logged users can login/register/guest checkout. ![image](./reference/checkout.png)
+    dependencies: []
+    scenarios:
+    - name: Personal Information Step
+      steps:
+      - keyword: GIVEN
+        content: User is on checkout personal information step and is logged in.
+      - keyword: WHEN
+        content: View personal information
+      - keyword: THEN
+        content: Display current user's personal information summary
+      - keyword: GIVEN
+        content: User is on checkout personal information step and is not logged in.
+      - keyword: WHEN
+        content: Select login/register/guest checkout
+      - keyword: THEN
+        content: Navigate to corresponding form based on selection
+  - id: REQ-6.3
+    name: Addresses Step
+    type: FOLDER
+    description: Select or add shipping address, supports selecting existing address, adding new address, editing address, and setting invoice address. ![image](./reference/checkout_address.png)
+    dependencies: []
+    children:
+    - id: REQ-6.3.1
+      name: Select Existing Address
+      type: ATOMIC
+      description: Select an existing shipping address.
+      dependencies:
+      - REQ-6.2
+      scenarios:
+      - name: Select Existing Address
+        steps:
+        - keyword: GIVEN
+          content: User is on checkout addresses step.
+        - keyword: WHEN
+          content: Select an existing address
+        - keyword: THEN
+          content: Address is selected and highlighted
+    - id: REQ-6.3.2
+      name: Add New Address
+      type: ATOMIC
+      description: Add a new shipping address.
+      dependencies:
+      - REQ-6.2
+      scenarios:
+      - name: Add New Address
+        steps:
+        - keyword: GIVEN
+          content: User is on checkout addresses step.
+        - keyword: WHEN
+          content: Click "add new address"
+        - keyword: THEN
+          content: Display address form
+    - id: REQ-6.3.3
+      name: Set Invoice Address
+      type: ATOMIC
+      description: Set the invoice address.
+      dependencies:
+      - REQ-6.3.1
+      scenarios:
+      - name: Set Invoice Address
+        steps:
+        - keyword: GIVEN
+          content: User is on checkout addresses step.
+        - keyword: WHEN
+          content: Set invoice address (same as shipping/different)
+        - keyword: THEN
+          content: Use same address or display invoice address form based on selection
+  - id: REQ-6.4
+    name: Shipping Method Step
+    type: ATOMIC
+    description: Select shipping method, display shipping cost. ![image](./reference/checkout_shipping.png)
+    dependencies:
+    - REQ-6.3.1
+    scenarios:
+    - name: Shipping Method Step
+      steps:
+      - keyword: GIVEN
+        content: User is on checkout shipping method step.
+      - keyword: WHEN
+        content: View available shipping methods
+      - keyword: THEN
+        content: Display shipping method list with name, cost, estimated delivery time
+      - keyword: WHEN
+        content: Select a shipping method
+      - keyword: THEN
+        content: Shipping method is selected, order total updates
+  - id: REQ-6.5
+    name: Payment Step
+    type: ATOMIC
+    description: Select payment method, agree to terms before placing order. ![image](./reference/checkout_payment.png)
+    dependencies:
+    - REQ-6.4
+    scenarios:
+    - name: Payment Step
+      steps:
+      - keyword: GIVEN
+        content: User is on checkout payment step.
+      - keyword: WHEN
+        content: View available payment methods
+      - keyword: THEN
+        content: Display payment method list
+      - keyword: WHEN
+        content: Select a payment method
+      - keyword: THEN
+        content: Payment method is selected
+      - keyword: WHEN
+        content: Check agree to terms checkbox
+      - keyword: THEN
+        content: Terms checkbox is checked
+      - keyword: WHEN
+        content: Click to view terms details
+      - keyword: THEN
+        content: Pop up or navigate to display terms content
+  - id: REQ-6.6
+    name: Order Confirmation
+    type: ATOMIC
+    description: Confirm order information and complete order, navigate to order complete page. ![image](./reference/checkout_summary.png)
+    dependencies:
+    - REQ-6.5
+    scenarios:
+    - name: Order Confirmation
+      steps:
+      - keyword: GIVEN
+        content: User is on checkout order confirmation step.
+      - keyword: WHEN
+        content: Click order confirmation button
+      - keyword: THEN
+        content: Order created successfully, navigate to order complete page
+  - id: REQ-6.7
+    name: Order Complete Page
+    type: ATOMIC
+    description: Confirmation page after order successfully created, displaying order reference, order details, and continue shopping link. ![image](./reference/checkout_summary.png)
+    dependencies:
+    - REQ-6.6
+    scenarios:
+    - name: Order Complete Page
+      steps:
+      - keyword: GIVEN
+        content: User is on the order complete page.
+      - keyword: WHEN
+        content: View order complete page
+      - keyword: THEN
+        content: Display order reference, order details summary
+      - keyword: WHEN
+        content: Click continue shopping link
+      - keyword: THEN
+        content: Return to homepage or product list
+- id: REQ-7
+  name: User Authentication
+  type: FOLDER
+  description: 'User authentication module, including login, registration, forgot password functionality.
+
+    Login page layout: Left login form + Right registration entry.
+
+    Supports remember me, password show/hide toggle.
+
+    ![image](./reference/login.png)'
+  dependencies:
+  - REQ-1
+  children:
+  - id: REQ-7.1
+    name: Enter Login Page
+    type: ATOMIC
+    description: Enter the user login page.
+    dependencies:
+    - REQ-1.5
+    scenarios:
+    - name: Enter Login Page
+      steps:
+      - keyword: GIVEN
+        content: User can see the user entry link in the header.
+      - keyword: WHEN
+        content: Click top navigation "Sign in" link
+      - keyword: THEN
+        content: Navigate to login page
+  - id: REQ-7.2
+    name: User Login
+    type: ATOMIC
+    description: Login form, including email, password input, show/hide password, remember me option. ![image](./reference/login.png)
+    dependencies:
+    - REQ-7.1
+    scenarios:
+    - name: User Login
+      steps:
+      - keyword: GIVEN
+        content: User is on the login page and can see the login form.
+      - keyword: WHEN
+        content: Enter email address in Email input box
+      - keyword: THEN
+        content: Email is entered
+      - keyword: WHEN
+        content: Enter password in Password input box
+      - keyword: THEN
+        content: Password displays as masked characters
+      - keyword: WHEN
+        content: Click "SHOW" button
+      - keyword: THEN
+        content: Password toggles to plain text display
+      - keyword: WHEN
+        content: Check "Remember me"
+      - keyword: THEN
+        content: Remember me is checked
+      - keyword: WHEN
+        content: Click "SIGN IN" button
+      - keyword: THEN
+        content: If credentials correct, login success, navigate to my account or previous page; otherwise display error message
+  - id: REQ-7.3
+    name: User Registration
+    type: ATOMIC
+    description: 'New user registration form, including social title, name, email, password, birthday, subscription options, and terms agreement.
+
+      ![image](./reference/register.png)'
+    dependencies:
+    - REQ-7.1
+    scenarios:
+    - name: User Registration
+      steps:
+      - keyword: GIVEN
+        content: User is on the login page.
+      - keyword: WHEN
+        content: Click "No account? Create one here" link
+      - keyword: THEN
+        content: Display registration form
+      - keyword: GIVEN
+        content: Registration form is visible.
+      - keyword: WHEN
+        content: Select social title (Mr. / Mrs.)
+      - keyword: THEN
+        content: Title is selected
+      - keyword: WHEN
+        content: Fill in First name and Last name
+      - keyword: THEN
+        content: Names are filled
+      - keyword: WHEN
+        content: Fill in Email address
+      - keyword: THEN
+        content: Email is filled
+      - keyword: WHEN
+        content: Fill in Password
+      - keyword: THEN
+        content: Password is filled
+      - keyword: WHEN
+        content: Fill in Birthdate
+      - keyword: THEN
+        content: Birthdate is filled
+      - keyword: WHEN
+        content: Optionally check receive offers email and subscribe to Newsletter
+      - keyword: THEN
+        content: Options are checked
+      - keyword: WHEN
+        content: Check agree to terms (required)
+      - keyword: THEN
+        content: Terms are agreed
+      - keyword: WHEN
+        content: Click "SAVE" button
+      - keyword: THEN
+        content: Registration success, auto login and navigate to my account page
+  - id: REQ-7.4
+    name: Forgot Password
+    type: ATOMIC
+    description: Forgot password functionality, sends password reset email. ![image](./reference/forgot_password.png)
+    dependencies:
+    - REQ-7.1
+    scenarios:
+    - name: Forgot Password
+      steps:
+      - keyword: GIVEN
+        content: User is on the login page.
+      - keyword: WHEN
+        content: Click "Forgot your password?" link
+      - keyword: THEN
+        content: Navigate to password reset page
+      - keyword: GIVEN
+        content: User is on the password reset page.
+      - keyword: WHEN
+        content: Enter registered email
+      - keyword: THEN
+        content: Email is entered
+      - keyword: WHEN
+        content: Click send button
+      - keyword: THEN
+        content: Display email sent success message
+- id: REQ-8
+  name: My Account
+  type: FOLDER
+  description: 'User personal account management center, accessible after login.
+
+    Page layout: Left function menu + Right content area.
+
+    Features include: Account overview, personal info editing, address management, order history, wishlist management, logout.
+
+    ![image](./reference/my_account.png)'
+  dependencies:
+  - REQ-7.2
+  children:
+  - id: REQ-8.1
+    name: Enter My Account
+    type: ATOMIC
+    description: Enter My Account page.
+    dependencies:
+    - REQ-7.2
+    scenarios:
+    - name: Enter My Account
+      steps:
+      - keyword: GIVEN
+        content: User is logged in and can see the account entry.
+      - keyword: WHEN
+        content: Click username or "My account" link
+      - keyword: THEN
+        content: Navigate to my account page
+  - id: REQ-8.2
+    name: Account Overview
+    type: ATOMIC
+    description: Account homepage, displaying user info summary and quick entry to each function. ![image](./reference/my_account.png)
+    dependencies:
+    - REQ-8.1
+    scenarios:
+    - name: Account Overview
+      steps:
+      - keyword: GIVEN
+        content: User is on My Account page.
+      - keyword: WHEN
+        content: View account overview page
+      - keyword: THEN
+        content: Display user info summary and function entries (orders, addresses, information and related account entries.)
+  - id: REQ-8.3
+    name: Account Information Management
+    type: ATOMIC
+    description: Modify personal information and password. ![image](./reference/my_account_info.png)
+    dependencies:
+    - REQ-8.1
+    scenarios:
+    - name: Account Information Management
+      steps:
+      - keyword: GIVEN
+        content: User is on My Account page.
+      - keyword: WHEN
+        content: Click "Information" link
+      - keyword: THEN
+        content: Enter account information edit page
+      - keyword: GIVEN
+        content: User is on account information edit page.
+      - keyword: WHEN
+        content: Modify personal information and save
+      - keyword: THEN
+        content: Information updated successfully
+      - keyword: WHEN
+        content: Modify password and save
+      - keyword: THEN
+        content: Password updated successfully
+  - id: REQ-8.4
+    name: Address Management
+    type: FOLDER
+    description: Manage shipping addresses, including view list, add, edit, and delete addresses. ![image](./reference/my_account_address.png)
+    dependencies: []
+    children:
+    - id: REQ-8.4.1
+      name: View Address List
+      type: ATOMIC
+      description: View the list of addresses.
+      dependencies:
+      - REQ-8.1
+      scenarios:
+      - name: View Address List
+        steps:
+        - keyword: GIVEN
+          content: User is on My Account page.
+        - keyword: WHEN
+          content: Click "Addresses" link
+        - keyword: THEN
+          content: Display address list page
+    - id: REQ-8.4.2
+      name: Add New Address
+      type: ATOMIC
+      description: Add a new address.
+      dependencies:
+      - REQ-8.4.1
+      scenarios:
+      - name: Add New Address
+        steps:
+        - keyword: GIVEN
+          content: User is on address list page.
+        - keyword: WHEN
+          content: Click "Create new address" button
+        - keyword: THEN
+          content: Display address form
+        - keyword: GIVEN
+          content: Address form is visible.
+        - keyword: WHEN
+          content: Fill in address info (Alias, First name, Last name, Address, Zip/Postal code, City, Country, Phone)
+        - keyword: THEN
+          content: Form filled
+        - keyword: WHEN
+          content: Click "SAVE" button
+        - keyword: THEN
+          content: New address added successfully, return to address list
+    - id: REQ-8.4.3
+      name: Edit Address
+      type: ATOMIC
+      description: Edit an existing address.
+      dependencies:
+      - REQ-8.4.1
+      scenarios:
+      - name: Edit Address
+        steps:
+        - keyword: GIVEN
+          content: User is on address list page.
+        - keyword: WHEN
+          content: Click "Update" button on address card
+        - keyword: THEN
+          content: Enter address edit page, display current address info
+        - keyword: GIVEN
+          content: User is on address edit page.
+        - keyword: WHEN
+          content: Modify address info and click "SAVE"
+        - keyword: THEN
+          content: Address updated successfully
+    - id: REQ-8.4.4
+      name: Delete Address
+      type: ATOMIC
+      description: Delete an existing address.
+      dependencies:
+      - REQ-8.4.1
+      scenarios:
+      - name: Delete Address
+        steps:
+        - keyword: GIVEN
+          content: User is on address list page.
+        - keyword: WHEN
+          content: Click "Delete" button on address card
+        - keyword: THEN
+          content: Address deleted, removed from list
+  - id: REQ-8.5
+    name: Order History
+    type: FOLDER
+    description: View order history, including order list, status, details, reorder, and download invoice. ![image](./reference/my_account_order.png)
+    dependencies: []
+    children:
+    - id: REQ-8.5.1
+      name: View Order List
+      type: ATOMIC
+      description: View the list of orders.
+      dependencies:
+      - REQ-8.1
+      scenarios:
+      - name: View Order List
+        steps:
+        - keyword: GIVEN
+          content: User is on My Account page.
+        - keyword: WHEN
+          content: Click "Order history and details" link
+        - keyword: THEN
+          content: Display order list with order reference, date, status, total
+    - id: REQ-8.5.2
+      name: View Order Details
+      type: ATOMIC
+      description: View details of an order.
+      dependencies:
+      - REQ-8.5.1
+      scenarios:
+      - name: View Order Details
+        steps:
+        - keyword: GIVEN
+          content: User is viewing the order list.
+        - keyword: WHEN
+          content: Click "Details" link on an order
+        - keyword: THEN
+          content: Expand/display order details with product list, shipping info, payment info
+    - id: REQ-8.5.3
+      name: Reorder
+      type: ATOMIC
+      description: Reorder products from a past order.
+      dependencies:
+      - REQ-8.5.1
+      scenarios:
+      - name: Reorder
+        steps:
+        - keyword: GIVEN
+          content: User is viewing the order list.
+        - keyword: WHEN
+          content: Click "Reorder" button
+        - keyword: THEN
+          content: Add order products back to cart
+    - id: REQ-8.5.4
+      name: Download Invoice
+      type: ATOMIC
+      description: Download the invoice for an order.
+      dependencies:
+      - REQ-8.5.1
+      scenarios:
+      - name: Download Invoice
+        steps:
+        - keyword: GIVEN
+          content: User is viewing the order list.
+        - keyword: WHEN
+          content: Click "PDF" invoice download link
+        - keyword: THEN
+          content: Download order invoice PDF file
+  - id: REQ-8.6
+    name: Wishlist Management
+    type: FOLDER
+    description: Manage wishlists, including view list, create, rename, delete wishlist, and manage products in wishlist. ![image](./reference/my_account_wishlist.png)
+    dependencies: []
+    children:
+    - id: REQ-8.6.1
+      name: View Wishlist List
+      type: ATOMIC
+      description: View the list of wishlists.
+      dependencies:
+      - REQ-8.1
+      scenarios:
+      - name: View Wishlist List
+        steps:
+        - keyword: GIVEN
+          content: User is on My Account page.
+        - keyword: WHEN
+          content: Click "Wishlist" link
+        - keyword: THEN
+          content: Display wishlist list page
+    - id: REQ-8.6.2
+      name: Create New Wishlist
+      type: ATOMIC
+      description: Create a new wishlist.
+      dependencies:
+      - REQ-8.6.1
+      scenarios:
+      - name: Create New Wishlist
+        steps:
+        - keyword: GIVEN
+          content: User is on wishlist list page.
+        - keyword: WHEN
+          content: Click "Create new wishlist" button
+        - keyword: THEN
+          content: Pop up create modal
+        - keyword: GIVEN
+          content: Create wishlist modal is visible.
+        - keyword: WHEN
+          content: Enter wishlist name and confirm
+        - keyword: THEN
+          content: New wishlist created successfully, displays in list
+    - id: REQ-8.6.3
+      name: View Wishlist Products
+      type: ATOMIC
+      description: View products in a wishlist.
+      dependencies:
+      - REQ-8.6.1
+      scenarios:
+      - name: View Wishlist Products
+        steps:
+        - keyword: GIVEN
+          content: User is on wishlist list page.
+        - keyword: WHEN
+          content: Click wishlist name
+        - keyword: THEN
+          content: Display products in that wishlist
+    - id: REQ-8.6.4
+      name: Rename Wishlist
+      type: ATOMIC
+      description: Rename a wishlist.
+      dependencies:
+      - REQ-8.6.1
+      scenarios:
+      - name: Rename Wishlist
+        steps:
+        - keyword: GIVEN
+          content: User is on wishlist list page.
+        - keyword: WHEN
+          content: Click wishlist edit/rename button
+        - keyword: THEN
+          content: Can edit wishlist name
+        - keyword: WHEN
+          content: Enter new name and save
+        - keyword: THEN
+          content: Wishlist name updated successfully
+    - id: REQ-8.6.5
+      name: Delete Wishlist
+      type: ATOMIC
+      description: Delete a wishlist.
+      dependencies:
+      - REQ-8.6.1
+      scenarios:
+      - name: Delete Wishlist
+        steps:
+        - keyword: GIVEN
+          content: User is on wishlist list page.
+        - keyword: WHEN
+          content: Click wishlist delete button
+        - keyword: THEN
+          content: Wishlist deleted, removed from list
+    - id: REQ-8.6.6
+      name: Remove Product from Wishlist
+      type: ATOMIC
+      description: Remove a product from a wishlist.
+      dependencies:
+      - REQ-8.6.3
+      scenarios:
+      - name: Remove Product from Wishlist
+        steps:
+        - keyword: GIVEN
+          content: User is viewing products in a wishlist.
+        - keyword: WHEN
+          content: Click product remove button
+        - keyword: THEN
+          content: Product removed from wishlist
+    - id: REQ-8.6.7
+      name: Add Wishlist Product to Cart
+      type: ATOMIC
+      description: Add a product from a wishlist to the cart.
+      dependencies:
+      - REQ-8.6.3
+      scenarios:
+      - name: Add Wishlist Product to Cart
+        steps:
+        - keyword: GIVEN
+          content: User is viewing products in a wishlist.
+        - keyword: WHEN
+          content: Click product "Add to cart" button
+        - keyword: THEN
+          content: Product added to cart
+  - id: REQ-8.7
+    name: User Logout
+    type: ATOMIC
+    description: Logout from current session. ![image](./reference/logout.png)
+    dependencies:
+    - REQ-8.1
+    scenarios:
+    - name: User Logout
+      steps:
+      - keyword: GIVEN
+        content: User is logged in and can see the 'Sign out' link.
+      - keyword: WHEN
+        content: Click "Sign out" link
+      - keyword: THEN
+        content: Logout, navigate to homepage or login page

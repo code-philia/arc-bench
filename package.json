@@ -1,0 +1,15 @@
+{
+  "name": "arc-reproduction",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reproduction package for ARC web application generation and evaluation.",
+  "scripts": {
+    "test": "node scripts/run-playwright.js",
+    "test:app": "node scripts/run-playwright.js --app",
+    "test:all": "node scripts/run-playwright.js --app all",
+    "test:install": "playwright install"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.0"
+  }
+}
