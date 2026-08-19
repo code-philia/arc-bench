@@ -1,7 +1,7 @@
 id: ROOT
 name: BookStack Knowledge Base System
 type: FOLDER
-description: Web-based knowledge base system for browsing, organizing, and reading shelves, books, chapters, and pages.
+description: Web-based knowledge base system for browsing, organizing, and reading shelves, books, chapters, and pages. This workspace includes seeded reading content used by the scenarios, including sample shelf, editable shelf, sample book, editable book, sample chapter, sample page, draft page, notes overview content, deletable note content, editable note content, archivable note content, colorable note content, labeled note content, pinned notes, favorite content, recently viewed content, recently updated content, label catalog items, label filtered notes, searchable notes, and settings state. These are ordinary product records used by the requirements, not a separate fixture DSL.
 dependencies: []
 children:
   - id: REQ-1
@@ -86,7 +86,7 @@ children:
       - id: REQ-3.1
         name: Enter Authenticated Homepage
         type: ATOMIC
-        description: Display the dashboard layout after a successful login.
+        description: Display the dashboard layout after a successful login, including the "My Recent Drafts", "My Recently Viewed", "My Most Viewed Favorites", and "Recently Updated Pages" overview sections.
         dependencies:
           - REQ-2.2
         scenarios:
@@ -97,7 +97,7 @@ children:
               - keyword: WHEN
                 content: The system finishes the post-login navigation.
               - keyword: THEN
-                content: The authenticated homepage dashboard is displayed with its overview cards and lists.
+                content: The authenticated homepage dashboard is displayed with "My Recent Drafts", "My Recently Viewed", "My Most Viewed Favorites", and "Recently Updated Pages" overview sections.
   - id: REQ-4
     name: Shelves Module
     type: FOLDER

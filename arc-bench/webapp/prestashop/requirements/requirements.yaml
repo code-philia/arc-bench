@@ -1,7 +1,7 @@
 id: ROOT
 name: PrestaShop E-commerce Website
 type: FOLDER
-description: PrestaShop B2C e-commerce website requirements covering storefront browsing, shopping cart, checkout, user authentication, and account management.
+description: PrestaShop B2C e-commerce website requirements covering storefront browsing, shopping cart, checkout, user authentication, and account management. This workspace includes seeded storefront data used by the scenarios, including public home-page content, category catalogs, category listings, searchable catalogs, sortable catalogs, product detail records, cart-ready products, checkout customer data, registered-user state, wishlist state, address-book data, order-history data, review data, and cart-header state. These are ordinary product records used by the requirements, not a separate fixture DSL.
 dependencies: []
 children:
 - id: REQ-0
@@ -448,14 +448,14 @@ children:
     - id: REQ-3.6.3
       name: Filter by Price Range
       type: ATOMIC
-      description: Filter products by price range.
+      description: Filter products by price range. The seeded category catalog contains priced products on both sides of a 20-unit threshold so the filter can show matching products with visible currency prices after the user enters that limit.
       dependencies:
       - REQ-3.1
       scenarios:
       - name: Filter by Price Range
         steps:
         - keyword: GIVEN
-          content: User can see the sidebar filters on a category page.
+          content: User can see the sidebar filters on a category page, and the category includes products priced within and outside the chosen range.
         - keyword: WHEN
           content: Drag price slider to set price range
         - keyword: THEN
@@ -568,13 +568,13 @@ children:
   - id: REQ-4.3
     name: Product Basic Info
     type: ATOMIC
-    description: Product basic information display, including name, price (tax incl./excl.), regular price and discount, discount percentage, description.
+    description: Product basic information display, including name, price (tax incl./excl.), regular price and discount, discount percentage, description. The seeded product detail catalog includes a discounted product with tax information, description text, and a visible 20% discount.
     dependencies: []
     scenarios:
     - name: Product Basic Info
       steps:
       - keyword: GIVEN
-        content: User is on a product detail page.
+        content: User is on a product detail page for a seeded discounted product.
       - keyword: WHEN
         content: Review product info area
       - keyword: THEN
@@ -1189,7 +1189,7 @@ children:
   - id: REQ-7.3
     name: User Registration
     type: ATOMIC
-    description: 'New user registration form, including social title, name, email, password, birthday, subscription options, and terms agreement.
+    description: 'New user registration form, including social title, name, email, password, birthday, subscription options, and terms agreement. The birthday field accepts a valid calendar date entered in yyyy-mm-dd form, such as 1995-08-21, and stores it as part of the customer profile.
 
       ![image](./reference/register.png)'
     dependencies:

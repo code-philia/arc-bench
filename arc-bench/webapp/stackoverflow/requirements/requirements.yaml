@@ -2,7 +2,7 @@ id: ROOT
 name: Stack Overflow Platform
 type: FOLDER
 description: Web-based question and answer platform for developers that supports community knowledge sharing
-  through asking, answering, searching, tagging, and reputation-driven participation.
+  through asking, answering, searching, tagging, and reputation-driven participation. This workspace includes seeded community data used by the scenarios, including public home-page content, homepage questions, registration candidates, registered users, elevated users, profile summaries, activity profiles, ask-question state, question details, owned questions, answers, comments, tags catalog entries, tagged questions, search index entries, votable questions, comment threads, answer threads, custom filter state, and badge data. These are ordinary product records used by the requirements, not a separate fixture DSL.
 dependencies: []
 children:
 - id: REQ-0
@@ -1137,7 +1137,7 @@ children:
   children:
   - id: REQ-7.1
     name: Basic Search
-    description: Displays search results page with matching questions, ranked by relevance.
+    description: Displays search results page with matching questions, ranked by relevance. The seeded search index includes public questions whose title, body, or tags contain React and state-management terms so a user can exercise keyword search against existing content.
     dependencies:
     - REQ-1.1
     type: ATOMIC
@@ -1145,7 +1145,7 @@ children:
     - name: Basic Search
       steps:
       - keyword: GIVEN
-        content: User can see the header search box.
+        content: User can see the header search box, and the searchable public question index contains matching React/state-management content.
       - keyword: WHEN
         content: Enter keywords in search box in header
       - keyword: THEN

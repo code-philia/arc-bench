@@ -1,7 +1,7 @@
 id: ROOT
 name: Ctrip Travel System
 type: FOLDER
-description: 'A one-stop travel service platform that provides booking services for hotels, flights, tour packages, and related travel services. This requirement set focuses on user authentication and account management. Reference: Homepage ![image](./reference/index.jpg)'
+description: 'A one-stop travel service platform that provides booking services for hotels, flights, tour packages, and related travel services. This requirement set focuses on user authentication and account management. Reference: Homepage ![image](./reference/index.jpg) This workspace includes seeded travel data used by the scenarios, including public_homepage, registration_candidate, registered_account, sms_login_account, flight_search_home, flight_search_history, flight_result_dataset, flight_no_result_route, booking_page_dataset, booking_user, order_center_user, order_center_dataset, personal_center_user, profile_user, security_profile, phone_binding_state, email_binding_state, traveler_records, address_records, contact_records, invoice_title_records, reimbursement_user, reimbursement_orders, airport_guide_catalog, airport_detail_dataset, and flight_status_dataset. These are ordinary product records used by the requirements, not a separate fixture DSL.'
 dependencies: []
 children:
 - id: REQ-0

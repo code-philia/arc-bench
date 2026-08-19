@@ -1,7 +1,7 @@
 id: ROOT
 name: Keep
 type: FOLDER
-description: Note management system for creating, organizing, searching, and configuring personal notes.
+description: Note management system for creating, organizing, searching, and configuring personal notes. This workspace includes seeded note data used by the scenarios, including public home-page content, notes overview content, deletable notes, editable notes, archivable notes, colorable notes, label catalogs, labeled notes, label-filtered notes, pinnable notes, searchable notes, and settings state. These are ordinary product records used by the requirements, not a separate fixture DSL.
 dependencies: []
 children:
   - id: REQ-1

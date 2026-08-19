@@ -1,7 +1,7 @@
 id: ROOT
 name: Train Ticket Booking System
 type: FOLDER
-description: 'A train ticket booking system that provides user authentication, ticket search and booking, order management, and travel information services.'
+description: 'A train ticket booking system that provides user authentication, ticket search and booking, order management, and travel information services. This workspace includes seeded travel-booking records used by the scenarios, including public home-page content, registration candidates, existing traveler accounts, SMS-login accounts, route-search examples, bookable routes, booking-page records, order-center states, traveler/address/contact/invoice records, profile binding states, flight-status records, reimbursement records, and airport-guide content. These are ordinary product records used by the requirements, not a separate fixture DSL.'
 dependencies: []
 children:
   - id: REQ-1
@@ -348,7 +348,7 @@ children:
           - id: REQ-2.4.2
             name: View forgot password flow
             type: ATOMIC
-            description: 'Display a two-step forgot password flow. The first step shows a form with an input labeled "Email: ", an input labeled "ID number: ", and a "submit" button. The second step shows a form with password inputs labeled "New password: " and "Confirm new password: ", and a "submit" button. ![image](./reference/forgot-password.png)'
+            description: 'Display a two-step forgot password flow. The first step shows a form with an input labeled "Email: ", an input labeled "ID number: ", and a "submit" button. The second step shows a form with password inputs labeled "New password: " and "Confirm new password: ", and a "submit" button. When the entered email and ID number do not match a registration record, the page shows the exact error message "Email address and ID number do not match." ![image](./reference/forgot-password.png)'
             dependencies:
               - REQ-2.4.1
             scenarios:
@@ -404,7 +404,7 @@ children:
                   - keyword: WHEN
                     content: 'Click the "submit" button.'
                   - keyword: THEN
-                    content: 'The page shows "Email and ID number do not match our records." and does not continue to the next step.'
+                    content: 'The page shows "Email address and ID number do not match." and does not continue to the next step.'
           - id: REQ-2.4.6
             name: Block password reset with mismatched new passwords
             type: ATOMIC
@@ -489,7 +489,7 @@ children:
           - id: REQ-3.1.2
             name: Choose location by typing
             type: ATOMIC
-            description: 'Allow the user to type pinyin or Chinese characters in the departure or arrival field, show a fuzzy-matched list with the title "Top destinations" and matching cities and stations with both pinyin and Chinese names, and fill the input with the selected location after selection. ![image](./reference/location-selector-list.png)'
+            description: 'Allow the user to type pinyin or Chinese characters in the departure field labeled "From" or the arrival field labeled "To", show a fuzzy-matched list with the title "Top destinations" and matching cities and stations with both pinyin and Chinese names, and fill the input with the selected location after selection. ![image](./reference/location-selector-list.png)'
             dependencies:
               - REQ-3.1.1
             scenarios:
@@ -504,7 +504,7 @@ children:
           - id: REQ-3.1.3
             name: Choose location by tab list
             type: ATOMIC
-            description: 'Allow the user to click the departure or arrival input field, open a tabbed location selector with the tabs "Popular", "ABCDE", "FGHIJ", "KLMNO", "PQRST", and "UVWXYZ", show city and station names with both pinyin and Chinese names, and fill the input with the selected location after selection. ![image](./reference/location-selector-form.png)'
+            description: 'Allow the user to click the departure field labeled "From" or the arrival field labeled "To", open a tabbed location selector with the tabs "Popular", "ABCDE", "FGHIJ", "KLMNO", "PQRST", and "UVWXYZ", show city and station names with both pinyin and Chinese names, and fill the input with the selected location after selection. ![image](./reference/location-selector-form.png)'
             dependencies:
               - REQ-3.1.1
             scenarios:
@@ -519,7 +519,7 @@ children:
           - id: REQ-3.1.4
             name: Choose departure date
             type: ATOMIC
-            description: 'Allow the user to click the departure date input, open a date picker, choose one departure date, and fill the input with the selected date. The date picker only allows dates from the current day through the next two weeks. Expired dates cannot be selected. ![image](./reference/date-selector.png)'
+            description: 'Allow the user to click the departure date input labeled "Date", open a date picker, choose one departure date, and fill the input with the selected date. The date picker only allows dates from the current day through the next two weeks. Expired dates cannot be selected. ![image](./reference/date-selector.png)'
             dependencies:
               - REQ-3.1.1
             scenarios:
@@ -559,7 +559,7 @@ children:
           - id: REQ-3.1.6
             name: Block search without valid departure place
             type: ATOMIC
-            description: 'Reject ticket search when the departure place is not selected or the input is invalid and show the message "Please select the place of departure.".'
+            description: 'Reject ticket search when the departure place is not selected or the input is invalid and show the message "Please enter a valid departure place.".'
             dependencies:
               - REQ-3.1.1
             scenarios:
@@ -570,11 +570,11 @@ children:
                   - keyword: WHEN
                     content: 'Click the "Search" button.'
                   - keyword: THEN
-                    content: 'The page shows "Please select the place of departure." and does not navigate to the search results page.'
+                    content: 'The page shows "Please enter a valid departure place." and does not navigate to the search results page.'
           - id: REQ-3.1.7
             name: Block search without valid arrival place
             type: ATOMIC
-            description: 'Reject ticket search when the arrival place is not selected or the input is invalid and show the message "Please select the place of arrival.".'
+            description: 'Reject ticket search when the arrival place is not selected or the input is invalid and show the message "Please enter a valid arrival place.".'
             dependencies:
               - REQ-3.1.1
             scenarios:
@@ -585,7 +585,7 @@ children:
                   - keyword: WHEN
                     content: 'Click the "Search" button.'
                   - keyword: THEN
-                    content: 'The page shows "Please select the place of arrival." and does not navigate to the search results page.'
+                    content: 'The page shows "Please enter a valid arrival place." and does not navigate to the search results page.'
       - id: REQ-3.2
         name: Ticket Search Results
         type: FOLDER
@@ -626,7 +626,7 @@ children:
           - id: REQ-3.2.3
             name: Show empty search results gracefully
             type: ATOMIC
-            description: 'Display an empty-state page when no train matches the search conditions. The page keeps the search condition inputs at the top and shows the icon "assets/empty.png" with the text "sorry, according to your inquiry condition, there is no train at present.".'
+            description: 'Display an empty-state page when no train matches the search conditions. The page keeps the search condition inputs at the top and shows the icon "assets/empty.png", the result count "0 results", and the text "sorry, according to your inquiry condition, there is no train at present.".'
             dependencies:
               - REQ-3.1.5
             scenarios:
@@ -637,7 +637,7 @@ children:
                   - keyword: WHEN
                     content: 'The search results page finishes loading.'
                   - keyword: THEN
-                    content: 'The page keeps the search condition inputs visible at the top and shows "assets/empty.png" with the text "sorry, according to your inquiry condition, there is no train at present.".'
+                    content: 'The page keeps the search condition inputs visible at the top and shows "assets/empty.png", the result count "0 results", and the text "sorry, according to your inquiry condition, there is no train at present.".'
           - id: REQ-3.2.4
             name: Search again with updated conditions
             type: ATOMIC
@@ -1001,7 +1001,7 @@ children:
           - id: REQ-4.2.4
             name: View uncompleted orders table
             type: ATOMIC
-            description: 'Display a table in "Uncompleted orders" where each row represents one passenger order, and transfer tickets are grouped together. The table columns are "Train Information", "Passenger Information", "Seat Information", "Price", "Status", and "Total Price". Each order group is followed by a "Pay" button. ![image](./reference/uncompleted-orders.png)'
+            description: 'Display a table in "Uncompleted orders" where each row represents one passenger order, and transfer tickets are grouped together. The table visibly exposes train-detail columns such as "Train No.", "Departure date", "Departure station", and "Arrival station", together with an "Operation" column and the payment action; it may also show passenger, seat, price, status, and total-price details. Each order group is followed by a "Pay" button. ![image](./reference/uncompleted-orders.png)'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -1012,11 +1012,11 @@ children:
                   - keyword: WHEN
                     content: 'Review the order table.'
                   - keyword: THEN
-                    content: 'The page shows the columns "Train Information", "Passenger Information", "Seat Information", "Price", "Status", and "Total Price", and each order group is followed by a "Pay" button.'
+                    content: 'The page shows the columns "Train No.", "Departure date", "Departure station", "Arrival station", and "Operation", and each order group is followed by a "Pay" button.'
           - id: REQ-4.2.5
             name: Open payment page from uncompleted orders
             type: ATOMIC
-            description: 'Allow the user to click the "Pay" button for one uncompleted order and enter the order payment page that shows the order information and payment information.'
+            description: 'Allow the user to click the "Pay" button for one uncompleted order and enter the order payment page that shows the order information, a visible "Order details" area, and payment information.'
             dependencies:
               - REQ-4.2.4
               - REQ-5.3.5
@@ -1028,7 +1028,7 @@ children:
                   - keyword: WHEN
                     content: 'Click the "Pay" button for one order group.'
                   - keyword: THEN
-                    content: 'Navigate to the order payment page and show the order information and payment information.'
+                    content: 'Navigate to the order payment page and show the order information, the "Order details" area, and payment information.'
           - id: REQ-4.2.6
             name: Show empty upcoming trips state
             type: ATOMIC
@@ -1101,7 +1101,7 @@ children:
           - id: REQ-4.2.10
             name: View upcoming trips table
             type: ATOMIC
-            description: 'Display the "Upcoming trips" orders in a table with the columns "Train Information", "Passenger Information", "Seat Information", "Price", "Status", and "Total Price". Transfer tickets are grouped together. ![image](./reference/uncompleted-orders.png)'
+            description: 'Display the "Upcoming trips" orders in a table with visible train-detail columns such as "Train No.", "Departure date", "Departure station", and "Arrival station", together with an "Operation" column; passenger, seat, price, status, and total-price details may also be shown. Transfer tickets are grouped together. ![image](./reference/uncompleted-orders.png)'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -1112,7 +1112,7 @@ children:
                   - keyword: WHEN
                     content: 'Review the order table.'
                   - keyword: THEN
-                    content: 'The page shows the columns "Train Information", "Passenger Information", "Seat Information", "Price", "Status", and "Total Price" for the upcoming trips.'
+                    content: 'The page shows the columns "Train No.", "Departure date", "Departure station", "Arrival station", and "Operation" for the upcoming trips.'
           - id: REQ-4.2.11
             name: Refund an upcoming trip
             type: ATOMIC
@@ -1146,7 +1146,7 @@ children:
           - id: REQ-4.2.13
             name: Show empty history orders state
             type: ATOMIC
-            description: 'When the "History orders" tab has no order, show "assets/empty.png" and the text "You don''t have any bookings or we can''t access your bookings at this time.".'
+            description: 'When the "History orders" tab has no order, keep the "Search tickets" entry available above the empty state and show "assets/empty.png" with the text "You don''t have any bookings or we can''t access your bookings at this time.".'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -1157,7 +1157,7 @@ children:
                   - keyword: WHEN
                     content: 'Review the tab content.'
                   - keyword: THEN
-                    content: 'The page shows "assets/empty.png" and the text "You don''t have any bookings or we can''t access your bookings at this time.".'
+                    content: 'The page shows "Search tickets", "assets/empty.png", and the text "You don''t have any bookings or we can''t access your bookings at this time.".'
           - id: REQ-4.2.14
             name: Open default ticket search from empty history orders state
             type: ATOMIC
@@ -1177,7 +1177,7 @@ children:
           - id: REQ-4.2.15
             name: Filter history orders by date range
             type: ATOMIC
-            description: 'Provide a filter in the "History orders" tab with the label "Date of ride", two date pickers for the range, and a "Search" button that shows the matching historical orders.'
+            description: 'Provide a filter in the "History orders" tab with date-type choices "Search by booking date" and "Search by departure date", two date pickers for the selected range, and a "Search" button that shows the matching historical orders.'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -1186,7 +1186,7 @@ children:
                   - keyword: GIVEN
                     content: 'The user is on the "History orders" tab.'
                   - keyword: WHEN
-                    content: 'Choose a start date and end date under "Date of ride" and click the "Search" button.'
+                    content: 'Choose "Search by booking date" or "Search by departure date", choose a start date and end date, and click the "Search" button.'
                   - keyword: THEN
                     content: 'The page shows the historical orders that match the selected ride date range.'
           - id: REQ-4.2.16
@@ -1305,7 +1305,7 @@ children:
           - id: REQ-4.3.5
             name: View account security page
             type: ATOMIC
-            description: 'Open the "Account security" page and show the entries "Login password" and "Security mailbox". ![image](./reference/account-security.png)'
+            description: 'Open the "Account security" page and show the entries "Login password", "Security mailbox", and "Mobile number". ![image](./reference/account-security.png)'
             dependencies:
               - REQ-4.1.2
             scenarios:
@@ -1316,7 +1316,7 @@ children:
                   - keyword: WHEN
                     content: 'Click "Personal" and then click "Account security".'
                   - keyword: THEN
-                    content: 'The page shows the entries "Login password" and "Security mailbox".'
+                    content: 'The page shows the entries "Login password", "Security mailbox", and "Mobile number".'
           - id: REQ-4.3.6
             name: Edit login password from account security page
             type: ATOMIC
@@ -1715,7 +1715,7 @@ children:
           - id: REQ-5.2.1
             name: Open booking form from search results
             type: ATOMIC
-            description: 'After the user clicks one "Book" button for a valid train result, open the booking form page. ![image](./reference/booking-1.png)'
+            description: 'After the user clicks one "Book" button for a valid train result, open the booking form page with a visible "Train Information" section heading. ![image](./reference/booking-1.png)'
             dependencies:
               - REQ-3.2.2
             scenarios:
@@ -1726,11 +1726,11 @@ children:
                   - keyword: WHEN
                     content: 'Click one "Book" button in the result list.'
                   - keyword: THEN
-                    content: 'Navigate to the booking form page.'
+                    content: 'Navigate to the booking form page and show the "Train Information" section.'
           - id: REQ-5.2.2
             name: View booking information
             type: ATOMIC
-            description: 'Display the booking information section with the title "Train Information:" and the selected train details, including departure place, destination, departure date, train number, seat type, price, and current remaining ticket information such as "business-class seat ( ￥1870.0 ) 32% off 1 left", "first-class seat ( ￥967.0 ) 24% off None left", "second-class seat ( ￥576.0 ) 27% off None left", and "standing ticket ( ￥576.0 ) 27% off Enough left".'
+            description: 'Display the booking information section with the title "Train Information:" and the selected train details, including departure place, destination, departure date, train number, seat type, price, current remaining ticket information such as "business-class seat ( ￥1870.0 ) 32% off 1 left", "first-class seat ( ￥967.0 ) 24% off None left", "second-class seat ( ￥576.0 ) 27% off None left", and "standing ticket ( ￥576.0 ) 27% off Enough left", and a visible "Place order" button on the booking form page.'
             dependencies:
               - REQ-5.2.1
             scenarios:
@@ -1739,13 +1739,13 @@ children:
                   - keyword: GIVEN
                     content: 'The user is on the booking form page.'
                   - keyword: WHEN
-                    content: 'Review the "Train Information:" section.'
+                    content: 'Review the "Train Information:" section and the visible "Place order" button.'
                   - keyword: THEN
                     content: 'The section shows the selected train details, the seat types, the prices, and the current remaining ticket information.'
           - id: REQ-5.2.3
             name: Select passengers for booking
             type: ATOMIC
-            description: 'Display the passenger section with the title "Passenger Information:" and the user''s frequent passengers. When the user selects one or more passengers, add one booking row per selected passenger. The table columns are "Ticket class", "Ticket type", "Name", "ID type", "ID number", "Nationality", and "Operation". The "Ticket class" dropdown contains "Business-class seat", "First-class seat", "Second-class seat", and "Standing ticket". The "Ticket type" dropdown contains "Adult" and "Child". The "Operation" column contains a "Delete" button.'
+            description: 'Display the passenger section with the title "Passenger Information:" and the user''s frequent passengers. When the user selects one or more passengers, add one booking row per selected passenger and keep the "Place order" action available for submission. The table columns are "Ticket class", "Ticket type", "Name", "ID type", "ID number", "Nationality", and "Operation". The "Ticket class" dropdown contains "Business-class seat", "First-class seat", "Second-class seat", and "Standing ticket". The "Ticket type" dropdown contains "Adult" and "Child". The "Operation" column contains a "Delete" button.'
             dependencies:
               - REQ-5.2.1
               - REQ-4.4.1
@@ -1757,7 +1757,7 @@ children:
                   - keyword: WHEN
                     content: 'Select one or more passengers from the frequent passenger list.'
                   - keyword: THEN
-                    content: 'The passenger table shows one row for each selected passenger with the columns "Ticket class", "Ticket type", "Name", "ID type", "ID number", "Nationality", and "Operation".'
+                    content: 'The passenger table shows one row for each selected passenger with the columns "Ticket class", "Ticket type", "Name", "ID type", "ID number", "Nationality", and "Operation", and the page keeps the "Place order" button visible.'
           - id: REQ-5.2.4
             name: Open terms of service page from booking form
             type: ATOMIC
@@ -1942,7 +1942,7 @@ children:
           - id: REQ-5.3.8
             name: Continue payment from order center
             type: ATOMIC
-            description: 'Allow the user to click the "Pay" button for one unpaid order in the "Uncompleted orders" tab and open the order payment page.'
+            description: 'Allow the user to click the "Pay" button for one unpaid order in the "Uncompleted orders" tab and open the order payment page with a visible "Order details" area.'
             dependencies:
               - REQ-4.2.4
               - REQ-5.3.2
@@ -1954,7 +1954,7 @@ children:
                   - keyword: WHEN
                     content: 'Click the "Pay" button for one unpaid order.'
                   - keyword: THEN
-                    content: 'Navigate to the order payment page.'
+                    content: 'Navigate to the order payment page and show the "Order details" area.'
           - id: REQ-5.3.9
             name: Cancel order from order center
             type: ATOMIC
@@ -2057,7 +2057,7 @@ children:
           - id: REQ-6.3.1
             name: Open common question from quick guide
             type: ATOMIC
-            description: 'Display four common-question links in the home page "Quick Guide" section: "How to book tickets online?", "How to change or refund tickets?", "How to check train status?", and "How to use 12306 mobile app?". Clicking one link navigates to the travel guide page and positions the page on the corresponding question.'
+            description: 'Display four common-question links in the home page "Quick Guide" section: "How to book tickets online?", "How to change or refund tickets?", "How to check train status?", and "How to use 12306 mobile app?". Clicking one link navigates to the travel guide page, shows the related topic heading such as "Ticketing", and positions the page on the corresponding question.'
             dependencies:
               - REQ-1.2
               - REQ-6.1.1
@@ -2069,7 +2069,7 @@ children:
                   - keyword: WHEN
                     content: 'Click one common-question link in the "Quick Guide" section.'
                   - keyword: THEN
-                    content: 'Navigate to the travel guide page and position the page on the corresponding question.'
+                    content: 'Navigate to the travel guide page, show the related topic heading such as "Ticketing", and position the page on the corresponding question.'
           - id: REQ-6.3.2
             name: Open travel guide page from quick guide more link
             type: ATOMIC
