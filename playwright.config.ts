@@ -7,7 +7,7 @@ const workers = process.env.PLAYWRIGHT_WORKERS
   : undefined;
 
 export default defineConfig({
-  testDir: './arc-bench/webapp/tests',
+  testDir: './arc-bench/webapp',
   timeout: testTimeout,
   expect: {
     timeout: expectTimeout,
@@ -22,7 +22,7 @@ export default defineConfig({
   ],
   outputDir: process.env.PLAYWRIGHT_OUTPUT_DIR || 'test-results',
   use: {
-    baseURL: process.env.TARGET_URL || process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:3000',
+    baseURL: process.env.TARGET_URL || process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:3301',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

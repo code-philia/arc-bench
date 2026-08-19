@@ -8,6 +8,8 @@ const rootDir = path.resolve(__dirname, '..');
 const configPath = path.join(rootDir, 'apps.config.json');
 const appConfig = JSON.parse(fs.readFileSync(configPath, 'utf8')).apps;
 const appNames = Object.keys(appConfig);
+const defaultTargetUrl = process.env.TARGET_URL
+  || `http://127.0.0.1:${process.env.ARC_RUNTIME_PORT || '3301'}`;
 
 function printHelp() {
   console.log(`Usage:
@@ -26,9 +28,9 @@ Options:
   --help                       Show this help.
 
 Examples:
-  npm run test -- --app 12306 --target-url http://127.0.0.1:3101
-  npm run test -- --app 12306 --workers 4 --timeout 90000
-  npm run test -- --app all --target-url 12306=http://127.0.0.1:3101,bookstack=http://127.0.0.1:3102`);
+  npm run test -- --app demo-smoke
+  npm run test -- --app demo-smoke --workers 1 --timeout 90000
+  npm run test -- --app all --target-url http://127.0.0.1:3301`);
 }
 
 function takeValue(args, index, option) {
@@ -93,7 +95,7 @@ function resolveApps(selection) {
 
 function runForApp(appName, options, targetUrls) {
   const app = appConfig[appName];
-  const targetUrl = targetUrls[appName] || targetUrls['*'] || app.targetUrl;
+  const targetUrl = targetUrls[appName] || targetUrls['*'] || app.targetUrl || defaultTargetUrl;
   const env = {
     ...process.env,
     ARC_APP: appName,

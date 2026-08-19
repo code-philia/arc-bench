@@ -1,224 +1,331 @@
-# Compiling Large Multi-Modal Requirement Documents into Runnable Software Systems: From an Agentic Test-Driven Perspective
+# ARC Experiment Reproduction Repository
 
-This repository is a reproduction bundle for ARC generation and evaluation.
+## Repository Scope and References
 
-## Contents
+This repository is the reproduction and evaluation bundle for ARC
+(Agentic Requirement Compiler). It contains:
 
-- `agentic-requirement-compiler/`: ARC compiler as a git submodule.
-- `arc-bench/`: six web apps, each with a complete `requirements/` directory and `tests/` directory.
-- Root Playwright config and a test runner that supports one app or all apps, worker control, timeouts, and target URL overrides.
+- `arc-bench/webapp/<app>/requirements/`: structured requirements for the
+  benchmark web apps and a minimal smoke demo;
+- `arc-bench/webapp/<app>/tests/`: Playwright tests for those apps;
+- `agentic-requirement-compiler/`: the ARC compiler as a Git submodule;
+- `Dockerfile` and `docker/entrypoint.sh`: the containerized compile, run, and
+  test workflow.
 
-## Repository Layout
+Generated applications, logs, raw test results, and HTML reports are exported
+under `docker-output/<app>/` after a run.
 
-```text
-ARC/
-|-- agentic-requirement-compiler/
-|-- arc-bench/
-|   `-- webapp/
-|       |-- requirements/
-|       `-- tests/
-|-- apps.config.json
-|-- playwright.config.ts
-|-- scripts/
-`-- README.md
-```
+This repository is not a standalone implementation of the ARC compiler. The
+compiler and its application templates are provided through Git submodules.
 
-## Reproduction Flow
+- **ARC Agent**: <https://github.com/code-philia/agentic-requirement-compiler>
 
-### 1. Fetch the compiler
+## Repository Checkout and Environment Setup
 
-Clone this repository with submodules:
+### Prerequisites
+
+Install the following:
+
+- Docker Desktop on Windows/macOS or Docker Engine on Linux;
+- access to an OpenAI-compatible model API;
+
+### Clone the Repository and Update Submodules
 
 ```bash
-git clone --recurse-submodules <ARC_REPO_URL> ARC
+git clone https://github.com/code-philia/ARC.git ARC
 cd ARC
+
+git submodule sync --recursive
+git submodule update --init --remote --recursive
 ```
 
-If you already cloned without submodules:
+### Configure ARC Environment
 
-```bash
-git submodule update --init --recursive
-```
-
-The compiler repository is pinned at `agentic-requirement-compiler/`.
-
-### 2. Set up ARC compiler dependencies
-
-Follow the compiler README in `agentic-requirement-compiler/`:
-
-```bash
-cd agentic-requirement-compiler
-uv venv
-
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
-
-uv pip install -r src/requirements.txt
-uv pip install -e .
-```
-
-Set your model configuration in `.env` at the ARC root if needed. Start from `.env.example`.
-
-When running ARC from the compiler submodule, point the compiler to the root env file:
-
-```bash
-export ARC_ENV_FILE="$(pwd)/../.env"
-```
-
-On Windows PowerShell:
-
-```powershell
-$env:ARC_ENV_FILE = (Resolve-Path ..\.env)
-```
-
-### 3. Generate one app
-
-Each web app in `arc-bench/webapp/requirements/` can be compiled independently.
-
-The `--web-port` value is part of the reproduction contract. Use the same port later when you run the generated app and the Playwright tests.
-
-Example for `12306`:
-
-```bash
-cd agentic-requirement-compiler
-arc-agent ../arc-bench/webapp/requirements/12306 --app-type web --output-dir ../workspace/12306 --web-port 3101 --clear-all
-```
-
-Use the matching port for each app:
-
-- `12306` -> `3101`
-- `bookstack` -> `3102`
-- `ctrip` -> `3103`
-- `keep` -> `3104`
-- `prestashop` -> `3105`
-- `stackoverflow` -> `3106`
-
-### 4. Start the generated app
-
-The web template produced by ARC is backend-led. Build the frontend, then start the backend from the generated output directory. The backend serves both `/api/*` and the compiled frontend from the same origin.
-
-The generated template README explains the exact commands, but the standard flow is:
-
-```bash
-cd ../workspace/12306
-cd backend
-npm install
-
-cd ../frontend
-npm install
-npm run build
-
-cd ../backend
-PORT=3101 npm run start
-```
-
-On Windows PowerShell, set `PORT` before starting the backend:
-
-```powershell
-cd ..\workspace\12306\backend
-$env:PORT = "3101"
-npm run start
-```
-
-The app should be reachable at the port passed through `--web-port`.
-
-Health check:
-
-```bash
-curl http://127.0.0.1:3101/api/health
-```
-
-If you use the generated frontend dev server instead of the backend-hosted production-style flow, make sure the Playwright `--target-url` points to the actual browser entry URL.
-
-### 5. Run Playwright tests
-
-Install Playwright once at the ARC root:
-
-```bash
-cd ../../
-npm install
-npm run test:install
-```
-
-Run one app:
-
-```bash
-npm run test -- --app 12306 --target-url http://127.0.0.1:3101
-```
-
-Run all six apps:
-
-```bash
-npm run test -- --app all
-```
-
-Override worker count and timeout when needed:
-
-```bash
-npm run test -- --app 12306 --workers 4 --timeout 90000 --target-url http://127.0.0.1:3101
-```
-
-Pass a different target URL per app when running all:
-
-```bash
-npm run test -- --app all --target-url 12306=http://127.0.0.1:3101,bookstack=http://127.0.0.1:3102,ctrip=http://127.0.0.1:3103,keep=http://127.0.0.1:3104,prestashop=http://127.0.0.1:3105,stackoverflow=http://127.0.0.1:3106
-```
-
-## Batch Commands
-
-Generate another app by changing the requirement directory, output directory, and port:
-
-```bash
-cd agentic-requirement-compiler
-arc-agent ../arc-bench/webapp/requirements/bookstack --app-type web --output-dir ../workspace/bookstack --web-port 3102 --clear-all
-arc-agent ../arc-bench/webapp/requirements/ctrip --app-type web --output-dir ../workspace/ctrip --web-port 3103 --clear-all
-arc-agent ../arc-bench/webapp/requirements/keep --app-type web --output-dir ../workspace/keep --web-port 3104 --clear-all
-arc-agent ../arc-bench/webapp/requirements/prestashop --app-type web --output-dir ../workspace/prestashop --web-port 3105 --clear-all
-arc-agent ../arc-bench/webapp/requirements/stackoverflow --app-type web --output-dir ../workspace/stackoverflow --web-port 3106 --clear-all
-```
-
-For each generated app, repeat the same backend-hosted start flow with the matching `PORT`.
-
-## Generated Web App Runtime
-
-The generated ARC web template uses this runtime shape:
+The environment file belongs to the ARC compiler submodule. Read the configuration instructions in:
 
 ```text
-workspace/<app>/
-|-- frontend/
-`-- backend/
+agentic-requirement-compiler/README.md
 ```
 
-Production-style serving is single-origin:
+Create the compiler environment file from the template.
+
+Linux/macOS:
 
 ```bash
-cd workspace/<app>/backend
-npm install
-
-cd ../frontend
-npm install
-npm run build
-
-cd ../backend
-npm run start
+cp agentic-requirement-compiler/.env_example \
+   agentic-requirement-compiler/.env
 ```
 
-Set `PORT` explicitly if the process is not already using the ARC-configured `--web-port`.
+Windows PowerShell:
 
-## Test Runner
+```powershell
+Copy-Item `
+  agentic-requirement-compiler\.env_example `
+  agentic-requirement-compiler\.env
+```
 
-`scripts/run-playwright.js` wraps Playwright with these controls:
+Edit `agentic-requirement-compiler/.env` according to the ARC compiler README.
+At minimum, configure the model API credentials and model name. The file is
+passed to Docker at runtime and is excluded from the Docker image.
 
-- `--app <name|all>`
-- `--workers <n>`
-- `--timeout <ms>`
-- `--expect-timeout <ms>`
-- `--target-url <url>` or `app=url,app=url`
+## Complete Reproduction Flow
 
-The runner maps each app to the corresponding test directory under `arc-bench/webapp/tests/`.
+For one application, the complete flow is:
 
-## Notes
+```text
+arc-bench/webapp/<app>/
+|-- requirements/   input requirements and reference assets
+`-- tests/          Playwright tests for the generated app
 
-- The six apps are: `12306`, `bookstack`, `ctrip`, `keep`, `prestashop`, and `stackoverflow`.
-- `playwright.config.ts` uses `TARGET_URL` as the base URL.
-- Generated output is expected under `workspace/`.
+ARC compiles `arc-bench/webapp/<app>/requirements/`
+  -> generated backend starts on port 3301
+  -> /api/health becomes available
+  -> Playwright tests run from `arc-bench/webapp/<app>/tests/`
+  -> application, logs, raw results, and HTML report are exported
+```
+
+The recommended command performs all steps in one isolated container. Start
+with `demo-smoke` for a small smoke test before running the larger benchmark
+apps.
+
+If you add or modify `arc-bench/`, `apps.config.json`, `scripts/`, or
+`docker/entrypoint.sh`, rebuild the image before running the container again.
+The image copies those files at build time.
+
+Linux:
+
+```bash
+mkdir -p docker-output
+
+docker run --rm \
+  --env-file agentic-requirement-compiler/.env \
+  --mount "type=bind,source=$PWD/docker-output,target=/export" \
+  arc-reproduction:latest demo-smoke
+```
+
+macOS:
+
+```bash
+mkdir -p docker-output
+
+docker run --rm \
+  --env-file agentic-requirement-compiler/.env \
+  --mount "type=bind,source=$PWD/docker-output,target=/export" \
+  arc-reproduction:latest demo-smoke
+```
+
+Windows PowerShell:
+
+```powershell
+New-Item -ItemType Directory -Force docker-output | Out-Null
+
+docker run --rm `
+  --env-file agentic-requirement-compiler\.env `
+  --mount "type=bind,source=$((Get-Location).Path)\docker-output,target=/export" `
+  arc-reproduction:latest demo-smoke
+```
+
+Replace `demo-smoke` with one of:
+
+```text
+demo-smoke
+12306
+bookstack
+ctrip
+keep
+prestashop
+stackoverflow
+```
+
+The container entrypoint performs:
+
+```text
+arc compile
+  -> PORT=3301 npm run start
+  -> wait for http://127.0.0.1:3301/api/health
+  -> npm run test -- --app <app-name>
+```
+
+The container exits with:
+
+- `0` when compilation, startup, and tests succeed;
+- a non-zero status when compilation fails, the health check fails, or tests
+  fail.
+
+## Step-by-Step Commands
+
+The one-container command above is recommended for complete reproduction. The
+following commands are useful when debugging or running one stage separately.
+
+### Step 1: Build the Docker Image
+
+Linux/macOS:
+
+```bash
+docker build --progress=plain -t arc-reproduction:latest .
+```
+
+Windows PowerShell:
+
+```powershell
+docker build --progress=plain -t arc-reproduction:latest .
+```
+
+Parameter meanings:
+
+- `docker build`: builds an image from the `Dockerfile`;
+- `--progress=plain`: prints complete build logs;
+- `-t arc-reproduction:latest`: assigns the image name and tag;
+- `.`: uses the current repository as the Docker build context.
+
+
+### Step 2: Compile an Application Only
+This command runs ARC compilation without starting the generated application or
+running Playwright.
+
+Linux/macOS:
+
+```bash
+docker run --rm \
+  --env-file agentic-requirement-compiler/.env \
+  --mount "type=bind,source=$PWD/docker-output,target=/export" \
+  --entrypoint arc \
+  arc-reproduction:latest \
+  compile /opt/arc/arc-bench/webapp/demo-smoke/requirements \
+  -o /export/demo-smoke/application \
+  --type web \
+  --clean
+```
+
+Windows PowerShell:
+
+```powershell
+docker run --rm `
+  --env-file agentic-requirement-compiler\.env `
+  --mount "type=bind,source=$((Get-Location).Path)\docker-output,target=/export" `
+  --entrypoint arc `
+  arc-reproduction:latest `
+  compile /opt/arc/arc-bench/webapp/demo-smoke/requirements `
+  -o /export/demo-smoke/application `
+  --type web `
+  --clean
+```
+
+Parameter meanings:
+
+- `--entrypoint arc`: bypasses the default Docker entrypoint and calls the
+  installed ARC CLI directly;
+- `compile`: compiles a requirement directory into an application;
+- `/opt/arc/arc-bench/webapp/demo-smoke/requirements`: the requirement
+  directory inside the image;
+- `-o /export/demo-smoke/application`: the generated application output
+  directory;
+- `--type web`: selects web application generation;
+- `--clean`: removes an existing output directory before compilation;
+- `--mount ...:/export`: persists the container output under
+  `docker-output/demo-smoke/application` on the host.
+
+### Step 3: Start an Existing Application and Run Its Tests
+
+The default entrypoint already starts and tests a newly generated application.
+To test an existing generated application, mount it into a fresh container,
+start its backend, wait for the health endpoint, and run Playwright.
+
+Linux/macOS:
+
+```bash
+docker run --rm \
+  --mount "type=bind,source=$PWD/docker-output/demo-smoke/application,target=/workspaces/demo-smoke" \
+  --entrypoint /bin/bash \
+  arc-reproduction:latest \
+  -lc 'set -e
+       (cd /workspaces/demo-smoke/backend && PORT=3301 npm run start >/tmp/arc-app.log 2>&1) &
+       server_pid=$!
+       trap "kill $server_pid 2>/dev/null || true" EXIT
+       until curl --fail --silent http://127.0.0.1:3301/api/health >/dev/null; do sleep 1; done
+       cd /opt/arc
+       TARGET_URL=http://127.0.0.1:3301 npm run test -- --app demo-smoke'
+```
+
+Windows PowerShell:
+
+```powershell
+docker run --rm `
+  --mount "type=bind,source=$((Get-Location).Path)\docker-output\demo-smoke\application,target=/workspaces/demo-smoke" `
+  --entrypoint /bin/bash `
+  arc-reproduction:latest `
+  -lc 'set -e; (cd /workspaces/demo-smoke/backend && PORT=3301 npm run start >/tmp/arc-app.log 2>&1) & server_pid=$!; trap "kill $server_pid 2>/dev/null || true" EXIT; until curl --fail --silent http://127.0.0.1:3301/api/health >/dev/null; do sleep 1; done; cd /opt/arc; TARGET_URL=http://127.0.0.1:3301 npm run test -- --app demo-smoke'
+```
+
+This form assumes the generated application already contains its dependencies
+and frontend build output. Otherwise, use the complete one-container command.
+
+### Step 4: Run All Applications
+
+Linux/macOS:
+
+```bash
+for app in demo-smoke 12306 bookstack ctrip keep prestashop stackoverflow; do
+  docker run --rm \
+    --env-file agentic-requirement-compiler/.env \
+    --mount "type=bind,source=$PWD/docker-output,target=/export" \
+    arc-reproduction:latest "$app"
+done
+```
+
+Windows PowerShell:
+
+```powershell
+$apps = @("demo-smoke", "12306", "bookstack", "ctrip", "keep", "prestashop", "stackoverflow")
+New-Item -ItemType Directory -Force docker-output | Out-Null
+
+foreach ($app in $apps) {
+  docker run --rm `
+    --env-file agentic-requirement-compiler\.env `
+    --mount "type=bind,source=$((Get-Location).Path)\docker-output,target=/export" `
+    arc-reproduction:latest $app
+}
+```
+
+Each application runs in its own container and does not reuse another
+application's backend process or workspace.
+
+To launch the six benchmark applications in six separate Windows PowerShell
+terminal windows, run:
+
+```powershell
+.\scripts\start-complete-flow.ps1
+```
+
+Optional switches:
+
+- `-IncludeSmokeDemo`: also starts `demo-smoke`;
+- `-CleanOutput`: removes `docker-output\<app>` before starting each app;
+- `-ImageName <name>`: overrides the Docker image name, default
+  `arc-reproduction:latest`;
+- `-EnvFile <path>`: overrides the environment file path, default
+  `agentic-requirement-compiler\.env`;
+- `-OutputDir <path>`: overrides the export directory, default
+  `docker-output`.
+
+## Outputs and Test Runner
+
+Results are written to:
+
+```text
+docker-output/<app>/
+|-- application/       generated ARC application
+|-- logs/
+|   |-- compile.log    ARC compilation log
+|   |-- app.log        application startup log
+|   `-- test.log       Playwright log
+|-- test-results/      screenshots, videos, traces, and raw results
+|-- playwright-report/ Playwright HTML report
+`-- summary.txt        compilation, runtime, and test statuses
+```
+
+Open the HTML report at:
+
+```text
+docker-output/demo-smoke/playwright-report/index.html
+```

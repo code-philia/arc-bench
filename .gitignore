@@ -3,6 +3,6 @@ node_modules/
 playwright-report/
 test-results/
 workspace/
+docker-output/
 .env
 .env.*
-!.env.example
