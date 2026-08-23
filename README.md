@@ -1,6 +1,6 @@
 # ARC Experiment Reproduction Repository
 
-## TODO for Weiyu, provide a table showing the #requirement-#test-#domain
+## TODO for Weiyu, provide a table showing the appname-#requirement-#test-#domain
 
 ## Repository Scope and References
 
