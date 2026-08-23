@@ -1,5 +1,7 @@
 # ARC Experiment Reproduction Repository
 
+## TODO for Weiyu, provide a table showing the #requirement-#test-#domain
+
 ## Repository Scope and References
 
 This repository is the reproduction and evaluation bundle for ARC
