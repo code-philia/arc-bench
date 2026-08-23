@@ -1,9 +1,5 @@
 {
   "apps": {
-    "demo-smoke": {
-      "requirementDir": "arc-bench/webapp/demo-smoke/requirements",
-      "testDir": "arc-bench/webapp/demo-smoke/tests"
-    },
     "12306": {
       "requirementDir": "arc-bench/webapp/12306/requirements",
       "testDir": "arc-bench/webapp/12306/tests"

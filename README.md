@@ -1,42 +1,86 @@
-# ARC Experiment Reproduction Repository
-
-## TODO for Weiyu, provide a table showing the appname-#requirement-#test-#domain
+# ARC-Bench
 
 ## Repository Scope and References
 
-This repository is the reproduction and evaluation bundle for ARC
-(Agentic Requirement Compiler). It contains:
+This repository hosts `arc-bench`, a benchmark suite for evaluating whether a
+code generation system can turn multi-modal requirement documents into
+runnable applications that satisfy end-to-end Playwright tests. It contains:
 
 - `arc-bench/webapp/<app>/requirements/`: structured requirements for the
-  benchmark web apps and a minimal smoke demo;
+  benchmark web apps;
 - `arc-bench/webapp/<app>/tests/`: Playwright tests for those apps;
-- `agentic-requirement-compiler/`: the ARC compiler as a Git submodule;
-- `Dockerfile` and `docker/entrypoint.sh`: the containerized compile, run, and
-  test workflow.
+- `scripts/run-playwright.js` and `playwright.config.ts`: the benchmark test
+  runner;
+- `Dockerfile`: an optional containerized benchmark execution environment.
 
 Generated applications, logs, raw test results, and HTML reports are exported
 under `docker-output/<app>/` after a run.
 
-This repository is not a standalone implementation of the ARC compiler. The
-compiler and its application templates are provided through Git submodules.
+## Benchmark Applications
+
+Requirement counts are the number of atomic requirement nodes in
+`requirements.yaml`. Test counts are the number of Playwright `test(...)` cases.
+
+| App | Requirements | Test cases | Original website |
+| --- | ---: | ---: | --- |
+| `keep` | 32 | 32 | Google Keep, <https://keep.google.com/> |
+| `bookstack` | 34 | 34 | BookStack, <https://demo.bookstackapp.com/> |
+| `stackoverflow` | 66 | 66 | Stack Overflow, <https://stackoverflow.com/> |
+| `prestashop` | 86 | 86 | PrestaShop, <https://demo.prestashop.com/> |
+| `12306` | 117 | 117 | China Railway 12306, <https://www.12306.cn/en> |
+| `ctrip` | 125 | 125 | Ctrip, <https://www.ctrip.com/> |
+
+## Benchmark Basic Usage
+
+The benchmark usage is independent of any particular generation method:
+
+```text
+arc-bench/webapp/<app>/requirements/
+  -> generate a runnable web application with a chosen method
+  -> start the generated application
+  -> run arc-bench/webapp/<app>/tests/ against the application URL
+```
+
+Install the local test runner when running tests directly on the host:
+
+```bash
+npm install
+npm run test:install
+```
+
+Run one benchmark application's tests against a running application:
+
+```bash
+npm run test -- --app bookstack --target-url http://127.0.0.1:3301
+```
+
+The Docker image in this repository provides a benchmark execution environment:
+Node.js, Playwright browsers, the test runner, and benchmark files. For
+non-ARC generators, you can use the image as a clean test environment by
+mounting a generated application and running the benchmark tests against it.
+
+## ARC Baseline Reproduction Flow
+
+This section is an application example of the benchmark using ARC (Agentic
+Requirement Compiler) as the generation method. This repository is not a
+standalone implementation of the ARC compiler; the compiler and its application
+templates are provided through Git submodules.
 
 - **ARC Agent**: <https://github.com/code-philia/agentic-requirement-compiler>
 
-## Repository Checkout and Environment Setup
-
 ### Prerequisites
 
-Install the following:
+Install the following for the ARC baseline example:
 
 - Docker Desktop on Windows/macOS or Docker Engine on Linux;
-- access to an OpenAI-compatible model API;
+- access to an OpenAI-compatible model API.
 
 ### Clone the Repository and Update Submodules
 
-```bash
-git clone https://github.com/code-philia/ARC.git ARC
-cd ARC
+Clone the benchmark repository and initialize the ARC compiler submodule and
+its nested submodules:
 
+```bash
 git submodule sync --recursive
 git submodule update --init --remote --recursive
 ```
@@ -70,8 +114,6 @@ Edit `agentic-requirement-compiler/.env` according to the ARC compiler README.
 At minimum, configure the model API credentials and model name. The file is
 passed to Docker at runtime and is excluded from the Docker image.
 
-## Complete Reproduction Flow
-
 For one application, the complete flow is:
 
 ```text
@@ -86,9 +128,9 @@ ARC compiles `arc-bench/webapp/<app>/requirements/`
   -> application, logs, raw results, and HTML report are exported
 ```
 
-The recommended command performs all steps in one isolated container. Start
-with `demo-smoke` for a small smoke test before running the larger benchmark
-apps.
+The recommended ARC baseline command performs all steps in one isolated
+container. The examples below use `bookstack`; replace it with another benchmark
+app name as needed.
 
 If you add or modify `arc-bench/`, `apps.config.json`, `scripts/`, or
 `docker/entrypoint.sh`, rebuild the image before running the container again.
@@ -102,7 +144,7 @@ mkdir -p docker-output
 docker run --rm \
   --env-file agentic-requirement-compiler/.env \
   --mount "type=bind,source=$PWD/docker-output,target=/export" \
-  arc-reproduction:latest demo-smoke
+  arc-reproduction:latest bookstack
 ```
 
 macOS:
@@ -113,7 +155,7 @@ mkdir -p docker-output
 docker run --rm \
   --env-file agentic-requirement-compiler/.env \
   --mount "type=bind,source=$PWD/docker-output,target=/export" \
-  arc-reproduction:latest demo-smoke
+  arc-reproduction:latest bookstack
 ```
 
 Windows PowerShell:
@@ -124,19 +166,18 @@ New-Item -ItemType Directory -Force docker-output | Out-Null
 docker run --rm `
   --env-file agentic-requirement-compiler\.env `
   --mount "type=bind,source=$((Get-Location).Path)\docker-output,target=/export" `
-  arc-reproduction:latest demo-smoke
+  arc-reproduction:latest bookstack
 ```
 
-Replace `demo-smoke` with one of:
+Replace `bookstack` with one of:
 
 ```text
-demo-smoke
-12306
-bookstack
-ctrip
 keep
-prestashop
+bookstack
 stackoverflow
+prestashop
+12306
+ctrip
 ```
 
 The container entrypoint performs:
@@ -193,8 +234,8 @@ docker run --rm \
   --mount "type=bind,source=$PWD/docker-output,target=/export" \
   --entrypoint arc \
   arc-reproduction:latest \
-  compile /opt/arc/arc-bench/webapp/demo-smoke/requirements \
-  -o /export/demo-smoke/application \
+  compile /opt/arc/arc-bench/webapp/bookstack/requirements \
+  -o /export/bookstack/application \
   --type web \
   --clean
 ```
@@ -207,8 +248,8 @@ docker run --rm `
   --mount "type=bind,source=$((Get-Location).Path)\docker-output,target=/export" `
   --entrypoint arc `
   arc-reproduction:latest `
-  compile /opt/arc/arc-bench/webapp/demo-smoke/requirements `
-  -o /export/demo-smoke/application `
+  compile /opt/arc/arc-bench/webapp/bookstack/requirements `
+  -o /export/bookstack/application `
   --type web `
   --clean
 ```
@@ -218,14 +259,14 @@ Parameter meanings:
 - `--entrypoint arc`: bypasses the default Docker entrypoint and calls the
   installed ARC CLI directly;
 - `compile`: compiles a requirement directory into an application;
-- `/opt/arc/arc-bench/webapp/demo-smoke/requirements`: the requirement
+- `/opt/arc/arc-bench/webapp/bookstack/requirements`: the requirement
   directory inside the image;
-- `-o /export/demo-smoke/application`: the generated application output
+- `-o /export/bookstack/application`: the generated application output
   directory;
 - `--type web`: selects web application generation;
 - `--clean`: removes an existing output directory before compilation;
 - `--mount ...:/export`: persists the container output under
-  `docker-output/demo-smoke/application` on the host.
+  `docker-output/bookstack/application` on the host.
 
 ### Step 3: Start an Existing Application and Run Its Tests
 
@@ -237,26 +278,26 @@ Linux/macOS:
 
 ```bash
 docker run --rm \
-  --mount "type=bind,source=$PWD/docker-output/demo-smoke/application,target=/workspaces/demo-smoke" \
+  --mount "type=bind,source=$PWD/docker-output/bookstack/application,target=/workspaces/bookstack" \
   --entrypoint /bin/bash \
   arc-reproduction:latest \
   -lc 'set -e
-       (cd /workspaces/demo-smoke/backend && PORT=3301 npm run start >/tmp/arc-app.log 2>&1) &
+       (cd /workspaces/bookstack/backend && PORT=3301 npm run start >/tmp/arc-app.log 2>&1) &
        server_pid=$!
        trap "kill $server_pid 2>/dev/null || true" EXIT
        until curl --fail --silent http://127.0.0.1:3301/api/health >/dev/null; do sleep 1; done
        cd /opt/arc
-       TARGET_URL=http://127.0.0.1:3301 npm run test -- --app demo-smoke'
+       TARGET_URL=http://127.0.0.1:3301 npm run test -- --app bookstack'
 ```
 
 Windows PowerShell:
 
 ```powershell
 docker run --rm `
-  --mount "type=bind,source=$((Get-Location).Path)\docker-output\demo-smoke\application,target=/workspaces/demo-smoke" `
+  --mount "type=bind,source=$((Get-Location).Path)\docker-output\bookstack\application,target=/workspaces/bookstack" `
   --entrypoint /bin/bash `
   arc-reproduction:latest `
-  -lc 'set -e; (cd /workspaces/demo-smoke/backend && PORT=3301 npm run start >/tmp/arc-app.log 2>&1) & server_pid=$!; trap "kill $server_pid 2>/dev/null || true" EXIT; until curl --fail --silent http://127.0.0.1:3301/api/health >/dev/null; do sleep 1; done; cd /opt/arc; TARGET_URL=http://127.0.0.1:3301 npm run test -- --app demo-smoke'
+  -lc 'set -e; (cd /workspaces/bookstack/backend && PORT=3301 npm run start >/tmp/arc-app.log 2>&1) & server_pid=$!; trap "kill $server_pid 2>/dev/null || true" EXIT; until curl --fail --silent http://127.0.0.1:3301/api/health >/dev/null; do sleep 1; done; cd /opt/arc; TARGET_URL=http://127.0.0.1:3301 npm run test -- --app bookstack'
 ```
 
 This form assumes the generated application already contains its dependencies
@@ -267,7 +308,7 @@ and frontend build output. Otherwise, use the complete one-container command.
 Linux/macOS:
 
 ```bash
-for app in demo-smoke 12306 bookstack ctrip keep prestashop stackoverflow; do
+for app in keep bookstack stackoverflow prestashop 12306 ctrip; do
   docker run --rm \
     --env-file agentic-requirement-compiler/.env \
     --mount "type=bind,source=$PWD/docker-output,target=/export" \
@@ -278,7 +319,7 @@ done
 Windows PowerShell:
 
 ```powershell
-$apps = @("demo-smoke", "12306", "bookstack", "ctrip", "keep", "prestashop", "stackoverflow")
+$apps = @("keep", "bookstack", "stackoverflow", "prestashop", "12306", "ctrip")
 New-Item -ItemType Directory -Force docker-output | Out-Null
 
 foreach ($app in $apps) {
@@ -291,24 +332,6 @@ foreach ($app in $apps) {
 
 Each application runs in its own container and does not reuse another
 application's backend process or workspace.
-
-To launch the six benchmark applications in six separate Windows PowerShell
-terminal windows, run:
-
-```powershell
-.\scripts\start-complete-flow.ps1
-```
-
-Optional switches:
-
-- `-IncludeSmokeDemo`: also starts `demo-smoke`;
-- `-CleanOutput`: removes `docker-output\<app>` before starting each app;
-- `-ImageName <name>`: overrides the Docker image name, default
-  `arc-reproduction:latest`;
-- `-EnvFile <path>`: overrides the environment file path, default
-  `agentic-requirement-compiler\.env`;
-- `-OutputDir <path>`: overrides the export directory, default
-  `docker-output`.
 
 ## Outputs and Test Runner
 
@@ -329,5 +352,5 @@ docker-output/<app>/
 Open the HTML report at:
 
 ```text
-docker-output/demo-smoke/playwright-report/index.html
+docker-output/bookstack/playwright-report/index.html
 ```
