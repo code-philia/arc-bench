@@ -1,10 +1,14 @@
 # ARC-Bench
 
-## Repository Scope and References
+`arc-bench` is a benchmark for requirement-to-application generation. It
+evaluates whether a generation system can transform multi-modal web application
+requirements into a runnable implementation whose behavior is validated by
+end-to-end Playwright tests.
 
-This repository hosts `arc-bench`, a benchmark suite for evaluating whether a
-code generation system can turn multi-modal requirement documents into
-runnable applications that satisfy end-to-end Playwright tests. It contains:
+The benchmark is organized as a set of web application tasks. Each task pairs a
+requirement package with an executable test suite, so different generators can
+be compared against the same inputs and behavioral checks. This repository
+contains:
 
 - `arc-bench/webapp/<app>/requirements/`: structured requirements for the
   benchmark web apps;
@@ -13,15 +17,16 @@ runnable applications that satisfy end-to-end Playwright tests. It contains:
   runner;
 - `Dockerfile`: an optional containerized benchmark execution environment.
 
-Generated applications, logs, raw test results, and HTML reports are exported
-under `docker-output/<app>/` after a run.
+The benchmark itself is generator-agnostic: any method can consume the
+requirements, produce a web application, start it locally, and run the provided
+tests against the application URL.
 
-## Benchmark Applications
+## 📊 Benchmark Applications
 
 Requirement counts are the number of atomic requirement nodes in
 `requirements.yaml`. Test counts are the number of Playwright `test(...)` cases.
 
-| App | Requirements | Test cases | Original website |
+| App | # Requirements | # Test cases | # Domain |
 | --- | ---: | ---: | --- |
 | `keep` | 32 | 32 | Google Keep, <https://keep.google.com/> |
 | `bookstack` | 34 | 34 | BookStack, <https://demo.bookstackapp.com/> |
@@ -30,7 +35,7 @@ Requirement counts are the number of atomic requirement nodes in
 | `12306` | 117 | 117 | China Railway 12306, <https://www.12306.cn/en> |
 | `ctrip` | 125 | 125 | Ctrip, <https://www.ctrip.com/> |
 
-## Benchmark Basic Usage
+## 🚀 Benchmark Basic Usage
 
 The benchmark usage is independent of any particular generation method:
 
@@ -59,7 +64,7 @@ Node.js, Playwright browsers, the test runner, and benchmark files. For
 non-ARC generators, you can use the image as a clean test environment by
 mounting a generated application and running the benchmark tests against it.
 
-## ARC Baseline Reproduction Flow
+## 🧩 ARC Baseline Reproduction Flow
 
 This section is an application example of the benchmark using ARC (Agentic
 Requirement Compiler) as the generation method. This repository is not a
@@ -195,12 +200,12 @@ The container exits with:
 - a non-zero status when compilation fails, the health check fails, or tests
   fail.
 
-## Step-by-Step Commands
+### Step-by-Step Commands
 
 The one-container command above is recommended for complete reproduction. The
 following commands are useful when debugging or running one stage separately.
 
-### Step 1: Build the Docker Image
+#### Step 1: Build the Docker Image
 
 Linux/macOS:
 
@@ -222,7 +227,7 @@ Parameter meanings:
 - `.`: uses the current repository as the Docker build context.
 
 
-### Step 2: Compile an Application Only
+#### Step 2: Compile an Application Only
 This command runs ARC compilation without starting the generated application or
 running Playwright.
 
@@ -268,7 +273,7 @@ Parameter meanings:
 - `--mount ...:/export`: persists the container output under
   `docker-output/bookstack/application` on the host.
 
-### Step 3: Start an Existing Application and Run Its Tests
+#### Step 3: Start an Existing Application and Run Its Tests
 
 The default entrypoint already starts and tests a newly generated application.
 To test an existing generated application, mount it into a fresh container,
@@ -303,7 +308,7 @@ docker run --rm `
 This form assumes the generated application already contains its dependencies
 and frontend build output. Otherwise, use the complete one-container command.
 
-### Step 4: Run All Applications
+#### Step 4: Run All Applications
 
 Linux/macOS:
 
@@ -333,7 +338,7 @@ foreach ($app in $apps) {
 Each application runs in its own container and does not reuse another
 application's backend process or workspace.
 
-## Outputs and Test Runner
+### Outputs and Test Runner
 
 Results are written to:
 
