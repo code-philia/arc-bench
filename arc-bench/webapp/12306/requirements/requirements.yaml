@@ -2086,3 +2086,42 @@ children:
                     content: 'Click the "More" link in the "Quick Guide" section.'
                   - keyword: THEN
                     content: 'Navigate to the travel guide page and position the page on the "Ticketing" tab.'
+data:
+  - category: Account Seed Data
+    items:
+      - 'The system contains the verified account registered_user with username "registered_user", email "registered_user@example.com", mobile number "13800000010", ID number "P20260010", and password "Password123!".'
+      - 'The system contains the verified password-recovery account reset_user with email "reset_user@example.com", ID number "P20260011", and password "Password123!".'
+      - 'The system contains the verified account personal_center_user with username "personal_center_user", email "personal_center_user@example.com", mobile number "13800000020", and password "Password123!".'
+      - 'The system contains the verified account profile_user with username "profile_user", email "profile_user@example.com", mobile number "13800000030", and password "Password123!".'
+      - 'The system contains the verified account passenger_manager_user with username "passenger_manager_user", email "passenger_manager_user@example.com", and password "Password123!".'
+      - 'The system contains the verified account bookable_user with username "bookable_user", email "bookable_user@example.com", and password "Password123!".'
+      - 'The system contains the verified account orders_empty_user with username "orders_empty_user", email "orders_empty_user@example.com", and password "Password123!".'
+      - 'The system contains the verified account orders_unpaid_user with username "orders_unpaid_user", email "orders_unpaid_user@example.com", and password "Password123!".'
+      - 'The system contains the verified account orders_upcoming_user with username "orders_upcoming_user", email "orders_upcoming_user@example.com", and password "Password123!".'
+      - 'The system contains the verified account orders_history_user with username "orders_history_user", email "orders_history_user@example.com", and password "Password123!".'
+      - 'The system contains the verified account orders_cancelled_user with username "orders_cancelled_user", email "orders_cancelled_user@example.com", and password "Password123!".'
+      - 'The system contains an existing account record with ID number "P20260002".'
+      - 'The system contains an existing account record with username "username_taken".'
+  - category: Passenger Seed Data
+    items:
+      - 'The passenger_manager_user account has one default frequent passenger representing the account holder, and that passenger cannot be deleted.'
+      - 'The passenger_manager_user account has a passenger named "Passenger Example" with ID number "P20269999", passport expiration date "2027-12-31", date of birth "2000-01-15", nationality "China", gender "Female", email "passenger@example.com", mobile number "13800000040", and passenger type "Adult".'
+      - 'The passenger_manager_user account has at least two additional deletable passenger records.'
+      - 'The bookable_user account has at least one selectable frequent passenger record.'
+  - category: Station, Train, and Transfer Seed Data
+    items:
+      - 'The station directory contains the valid locations "Shanghai", "Beijing", "Yancheng", and "Lhasa", including the related stations "Shanghai Hongqiao" and "Beijing South".'
+      - 'The Shanghai-to-Beijing route has populated results for 2026-07-21 and 2026-07-22, including multiple trains with different train types, departure times, arrival times, travel times, prices, departure stations, arrival stations, and seat availability. The results include G/C/D and Other train types, a train departing from "Shanghai Hongqiao", a train arriving at "Beijing South", a train departing during "06:00-12:00", and seat-class prices and inventory for Business-class seat, First-class seat, Second-class seat, and Standing ticket with both available and unavailable seat classes.'
+      - 'The default Beijing-to-Shanghai route has populated results for the current test date.'
+      - 'The Yancheng-to-Lhasa route on 2026-07-22 has no direct train and has multiple valid transfer plans. Each plan has two train segments, a transfer station, waiting time, departure and arrival times, total travel time, and price.'
+  - category: Booking and Order Seed Data
+    items:
+      - 'The orders_empty_user account has an empty order dataset for uncompleted orders, upcoming trips, and history orders.'
+      - 'The orders_unpaid_user account has an unpaid order containing train information, passenger information, seat information, price, total price, and an order status that permits payment or cancellation.'
+      - 'The orders_upcoming_user account has a paid upcoming order with a future departure date, an unexpired refund deadline, and an order number, train number, or passenger name containing "G1001".'
+      - 'The orders_history_user account has a historical order containing train information, passenger information, seat information, price, total price, status, and ride date, with an order number, train number, or passenger name containing "G1001".'
+      - 'The orders_cancelled_user account has a cancelled order.'
+  - category: Travel Guide Seed Data
+    items:
+      - 'The travel guide contains the categories "Ticketing", "Endorsement and refund", and "Miscellaneous".'
+      - 'The travel guide contains the question "How to book tickets online?" under the "Ticketing" category with an accessible question anchor and detail content.'
