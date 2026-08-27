@@ -6,28 +6,86 @@ export const FIXTURES = {
     email: 'bookstack_user@example.com',
     password: 'Password123!',
   },
-  shelf: {
-    name: 'Shelf Alpha',
-    updatedName: 'Shelf Alpha Updated',
-    description: 'Reference shelf description',
-    updatedDescription: 'Updated shelf description',
-    tags: 'knowledge-base, docs',
+  shelves: {
+    list: { name: 'Shelf 4.1' },
+    details: { name: 'Shelf 4.2.1' },
+    create: {
+      contextName: 'Shelf 4.3.1',
+      name: 'Shelf Created 4.3.1',
+      description: 'Shelf created by REQ-4.3.1.',
+      tags: 'created, shelf',
+    },
+    cancelCreate: { contextName: 'Shelf 4.3.2' },
+    deleteConfirm: { name: 'Shelf 4.4.1' },
+    deleteCancel: { name: 'Shelf 4.4.2' },
+    editSave: {
+      name: 'Shelf 4.5.1',
+      updatedName: 'Shelf Updated 4.5.1',
+      description: 'Reference shelf description.',
+      updatedDescription: 'Shelf updated by REQ-4.5.1.',
+      tags: 'knowledge-base, docs',
+    },
+    editCancel: {
+      name: 'Shelf 4.5.2',
+      updatedName: 'Shelf Updated 4.5.2',
+      description: 'Reference shelf description.',
+      updatedDescription: 'Shelf updated by REQ-4.5.2.',
+      tags: 'knowledge-base, docs',
+    },
+    bookDetails: { name: 'Shelf 5.2.2' },
+    bookCreate: { name: 'Shelf 5.6.1' },
+    recentlyViewed: { name: 'Shelf 7.1' },
+    recentlyViewedNavigation: { name: 'Shelf 7.2' },
   },
-  book: {
-    name: 'Book Alpha',
-    updatedName: 'Book Alpha Updated',
-    description: 'Reference book description',
-    updatedDescription: 'Updated book description',
-    tags: 'manual, handbook',
+  books: {
+    list: { name: 'Book 5.1' },
+    detailsFromList: { name: 'Book 5.2.1' },
+    detailsFromShelf: { shelfName: 'Shelf 5.2.2', name: 'Book 5.2.2' },
+    createFromList: {
+      name: 'Book Created 5.3.1',
+      description: 'Book created by REQ-5.3.1.',
+      tags: 'created, book',
+    },
+    editSave: {
+      name: 'Book 5.4.1',
+      updatedName: 'Book Updated 5.4.1',
+      description: 'Reference book description.',
+      updatedDescription: 'Book updated by REQ-5.4.1.',
+      tags: 'manual, handbook',
+    },
+    editCancel: {
+      name: 'Book 5.4.2',
+      updatedName: 'Book Updated 5.4.2',
+      description: 'Reference book description.',
+      updatedDescription: 'Book updated by REQ-5.4.2.',
+      tags: 'manual, handbook',
+    },
+    deleteConfirm: { name: 'Book 5.5.1' },
+    deleteCancel: { name: 'Book 5.5.2' },
+    createFromShelf: {
+      shelfName: 'Shelf 5.6.1',
+      name: 'Book Created 5.6.1',
+      description: 'Book created by REQ-5.6.1.',
+      tags: 'created, shelf-book',
+    },
+    pageSave: { name: 'Book 6.1.1' },
+    draftSave: { name: 'Book 6.1.2' },
+    draftDelete: { bookName: 'Book 6.1.3', pageName: 'Draft 6.1.3' },
+    chapterCreate: { name: 'Book 6.2.1' },
+    pageRead: { name: 'Book 6.3.1', pageName: 'Page 6.3.1' },
+    pageEdit: { name: 'Book 6.3.2', pageName: 'Page 6.3.2' },
+    favorite: { name: 'Book 8.1' },
+    favoriteNavigation: { name: 'Book 8.2' },
+    recentlyUpdated: { name: 'Book 9.1' },
+  },
+  pages: {
+    save: { name: 'Page Created 6.1.1', content: 'Page content created by REQ-6.1.1.' },
+    draft: { name: 'Page Draft 6.1.2', content: 'Draft content created by REQ-6.1.2.' },
+    recentlyUpdated: { name: 'Page Updated 9.1', content: 'Page content created by REQ-9.1.' },
   },
   chapter: {
-    name: 'Chapter Alpha',
-    description: 'Reference chapter description',
-  },
-  page: {
-    name: 'Page Alpha',
-    updatedName: 'Page Alpha Updated',
-    content: 'Reference page content for BookStack page creation.',
+    name: 'Chapter Created 6.2.1',
+    description: 'Chapter created by REQ-6.2.1.',
   },
 } as const;
 
@@ -125,9 +183,9 @@ export async function openShelves(page: Page): Promise<void> {
   await clickNamed(page, /^Shelves$/i);
 }
 
-export async function openShelfDetails(page: Page): Promise<void> {
+export async function openShelfDetails(page: Page, shelfName: string): Promise<void> {
   await openShelves(page);
-  await clickNamed(page, FIXTURES.shelf.name);
+  await clickNamed(page, shelfName);
 }
 
 export async function openBooks(page: Page): Promise<void> {
@@ -135,14 +193,14 @@ export async function openBooks(page: Page): Promise<void> {
   await clickNamed(page, /^Books$/i);
 }
 
-export async function openBookDetailsFromList(page: Page): Promise<void> {
+export async function openBookDetailsFromList(page: Page, bookName: string): Promise<void> {
   await openBooks(page);
-  await clickNamed(page, FIXTURES.book.name);
+  await clickNamed(page, bookName);
 }
 
-export async function openBookDetailsFromShelf(page: Page): Promise<void> {
-  await openShelfDetails(page);
-  await clickNamed(page, FIXTURES.book.name);
+export async function openBookDetailsFromShelf(page: Page, shelfName: string, bookName: string): Promise<void> {
+  await openShelfDetails(page, shelfName);
+  await clickNamed(page, bookName);
 }
 
 export async function openBookCreationFromList(page: Page): Promise<void> {
@@ -150,57 +208,70 @@ export async function openBookCreationFromList(page: Page): Promise<void> {
   await clickNamed(page, /Create New Book/i);
 }
 
-export async function openBookCreationFromShelf(page: Page): Promise<void> {
-  await openShelfDetails(page);
+export async function openBookCreationFromShelf(page: Page, shelfName: string): Promise<void> {
+  await openShelfDetails(page, shelfName);
   await clickNamed(page, /Create New Book/i);
 }
 
-export async function fillBookForm(page: Page, variant: 'create' | 'edit'): Promise<void> {
-  await fillField(page, 'Name', variant === 'create' ? FIXTURES.book.name : FIXTURES.book.updatedName);
-  await fillField(page, 'Description', variant === 'create' ? FIXTURES.book.description : FIXTURES.book.updatedDescription);
+export async function fillBookForm(
+  page: Page,
+  data: { name: string; description: string; tags: string; updatedName?: string; updatedDescription?: string },
+  mode: 'create' | 'edit' = 'create',
+): Promise<void> {
+  await fillField(page, 'Name', mode === 'edit' ? data.updatedName ?? data.name : data.name);
+  await fillField(page, 'Description', mode === 'edit' ? data.updatedDescription ?? data.description : data.description);
   const tagsField = page.getByRole('textbox', { name: /tags/i }).first();
   if (await tagsField.count()) {
-    await tagsField.fill(FIXTURES.book.tags);
+    await tagsField.fill(data.tags);
   }
 }
 
-export async function fillShelfForm(page: Page, variant: 'create' | 'edit'): Promise<void> {
-  await fillField(page, 'Name', variant === 'create' ? FIXTURES.shelf.name : FIXTURES.shelf.updatedName);
-  await fillField(page, 'Description', variant === 'create' ? FIXTURES.shelf.description : FIXTURES.shelf.updatedDescription);
+export async function fillShelfForm(
+  page: Page,
+  data: { name: string; description: string; tags: string; updatedName?: string; updatedDescription?: string },
+  mode: 'create' | 'edit' = 'create',
+): Promise<void> {
+  await fillField(page, 'Name', mode === 'edit' ? data.updatedName ?? data.name : data.name);
+  await fillField(page, 'Description', mode === 'edit' ? data.updatedDescription ?? data.description : data.description);
   const tagsField = page.getByRole('textbox', { name: /tags/i }).first();
   if (await tagsField.count()) {
-    await tagsField.fill(FIXTURES.shelf.tags);
+    await tagsField.fill(data.tags);
   }
 }
 
-export async function openPageEditor(page: Page): Promise<void> {
-  await openBookDetailsFromList(page);
+export async function openPageEditor(page: Page, bookName: string): Promise<void> {
+  await openBookDetailsFromList(page, bookName);
   await clickNamed(page, /New Page/i);
 }
 
-export async function fillPageEditor(page: Page): Promise<void> {
-  await fillField(page, 'Name', FIXTURES.page.name);
+export async function openDraftPageEditor(page: Page, bookName: string, pageName: string): Promise<void> {
+  await openBookDetailsFromList(page, bookName);
+  await clickNamed(page, pageName);
+}
+
+export async function fillPageEditor(page: Page, data: { name: string; content: string }): Promise<void> {
+  await fillField(page, 'Name', data.name);
   const editor = await firstVisible([
     page.getByRole('textbox', { name: /markdown|content|html/i }),
     page.getByLabel(/markdown|content|html/i),
     page.locator('textarea'),
   ]);
-  await editor.fill(FIXTURES.page.content);
+  await editor.fill(data.content);
 }
 
-export async function openChapterCreation(page: Page): Promise<void> {
-  await openBookDetailsFromList(page);
+export async function openChapterCreation(page: Page, bookName: string): Promise<void> {
+  await openBookDetailsFromList(page, bookName);
   await clickNamed(page, /New Chapter/i);
 }
 
-export async function fillChapterForm(page: Page): Promise<void> {
-  await fillField(page, 'Name', FIXTURES.chapter.name);
-  await fillField(page, 'Description', FIXTURES.chapter.description);
+export async function fillChapterForm(page: Page, data: { name: string; description: string }): Promise<void> {
+  await fillField(page, 'Name', data.name);
+  await fillField(page, 'Description', data.description);
 }
 
-export async function openPageReading(page: Page): Promise<void> {
-  await openBookDetailsFromList(page);
-  await clickNamed(page, FIXTURES.page.name);
+export async function openPageReading(page: Page, bookName: string, pageName: string): Promise<void> {
+  await openBookDetailsFromList(page, bookName);
+  await clickNamed(page, pageName);
 }
 
 export async function returnHomeByLogo(page: Page): Promise<void> {
