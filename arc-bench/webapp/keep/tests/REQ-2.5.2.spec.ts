@@ -6,7 +6,7 @@ import * as h from './helpers';
 
 test('REQ-2.5.2: Archive Undo', async ({ page }) => {
   await h.openHome(page);
-  await h.archiveNote(page, h.FIXTURES.notes.archiveTitle);
+  await h.archiveNote(page, h.FIXTURES.notes.archive252Title);
   await h.clickFirstAvailable(page, [[/^undo$/i]]);
-  await h.expectNoteVisible(page, h.FIXTURES.notes.archiveTitle);
+  await h.expectNoteVisible(page, h.FIXTURES.notes.archive252Title);
 });

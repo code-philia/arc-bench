@@ -7,8 +7,8 @@ import * as h from './helpers';
 test('REQ-2.6.2: Choose note color when created', async ({ page }) => {
   await h.openHome(page);
   await h.chooseColorDuringCreate(page);
-  await h.fillField(page, [/title/i], h.FIXTURES.notes.colorTitle);
+  await h.fillField(page, [/title/i], h.FIXTURES.notes.colorCreatedTitle);
   await h.fillField(page, [/take a note/i, /note/i, /content/i], h.FIXTURES.notes.colorContent);
   await h.closeEditor(page);
-  await h.expectNoteVisible(page, h.FIXTURES.notes.colorTitle);
+  await h.expectNoteVisible(page, h.FIXTURES.notes.colorCreatedTitle);
 });

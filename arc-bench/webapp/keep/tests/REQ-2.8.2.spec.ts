@@ -6,7 +6,7 @@ import * as h from './helpers';
 
 test('REQ-2.8.2: Unpin note', async ({ page }) => {
   await h.openHome(page);
-  await h.pinNote(page, h.FIXTURES.notes.pinTitle);
-  await h.unpinNote(page, h.FIXTURES.notes.pinTitle);
-  await h.expectNoteVisible(page, h.FIXTURES.notes.pinTitle);
+  await h.pinNote(page, h.FIXTURES.notes.pin232Title);
+  await h.unpinNote(page, h.FIXTURES.notes.pin232Title);
+  await h.expectNoteVisible(page, h.FIXTURES.notes.pin232Title);
 });

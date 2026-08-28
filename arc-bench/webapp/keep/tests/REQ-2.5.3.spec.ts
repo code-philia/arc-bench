@@ -6,7 +6,7 @@ import * as h from './helpers';
 
 test('REQ-2.5.3: Show archived notes', async ({ page }) => {
   await h.openHome(page);
-  await h.archiveNote(page, h.FIXTURES.notes.archiveTitle);
+  await h.archiveNote(page, h.FIXTURES.notes.archive253Title);
   await h.openArchive(page);
-  await h.expectNoteVisible(page, h.FIXTURES.notes.archiveTitle);
+  await h.expectNoteVisible(page, h.FIXTURES.notes.archive253Title);
 });

@@ -8,6 +8,6 @@ test('REQ-2.7.6.3: View Reminders', async ({ page }) => {
   await h.openHome(page);
   await h.openSidebar(page);
   await h.clickFirstAvailable(page, [[h.FIXTURES.labels.default]]);
-  await h.expectNoteVisible(page, h.FIXTURES.notes.reminderTitle);
+  await h.expectNoteVisible(page, h.FIXTURES.notes.reminderExistingTitle);
   await h.expectTextAbsent(page, h.FIXTURES.notes.otherTitle);
 });
