@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-2.4.5
-// fixtures: password_reset_user
+// fixtures: reset_user
 
 test('REQ-2.4.5: Submit the identity verification step with unmatched records', async ({ page }) => {
   await h.openForgotPasswordPage(page);

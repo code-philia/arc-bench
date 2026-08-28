@@ -7,5 +7,5 @@ import * as h from './helpers';
 test('REQ-4.2.17: Display historical orders in a table', async ({ page }) => {
   await h.openTicketOrders(page, h.FIXTURES.ordersHistoryUser);
   await h.clickNamed(page, 'History orders');
-  await h.expectTextsVisible(page, ['Train No.', 'Departure date', 'Departure station', 'Arrival station', 'Operation']);
+  await h.expectTextsVisible(page, ['Train Information', 'Passenger Information', 'Seat Information', 'Price', 'Status', 'Total Price']);
 });

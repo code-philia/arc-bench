@@ -1,4 +1,22 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { expect, Locator, Page, test } from '@playwright/test';
+
+test.beforeEach(async ({ request }) => {
+  const response = await request.post('/api/test/reset');
+  expect(response.ok()).toBeTruthy();
+});
+
+export async function resetTestDatabase(page: Page): Promise<void> {
+  const response = await page.request.post('/api/test/reset');
+  expect(response.ok()).toBeTruthy();
+}
+
+export const TEST_DATE = process.env.ARC_TEST_DATE || new Date().toISOString().slice(0, 10);
+
+export function dateOffset(days: number): string {
+  const date = new Date(`${TEST_DATE}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
 
 export const FIXTURES = {
   registration: {
@@ -109,6 +127,17 @@ export const FIXTURES = {
     mobile: '13800000040',
     passengerType: 'Adult',
   },
+  newPassenger: {
+    name: 'Added Passenger',
+    passportNumber: 'P20269996',
+    passportExpirationDate: '2028-12-31',
+    birthDate: '1999-02-20',
+    nationality: 'China',
+    gender: 'Male',
+    email: 'added.passenger@example.com',
+    mobile: '13800000043',
+    passengerType: 'Adult',
+  },
   passengerManagerUser: {
     username: 'passenger_manager_user',
     email: 'passenger_manager_user@example.com',
@@ -122,20 +151,20 @@ export const FIXTURES = {
   searchRoute: {
     from: 'Shanghai',
     to: 'Beijing',
-    date: '2026-07-21',
-    alternateDate: '2026-07-22',
+    date: TEST_DATE,
+    alternateDate: dateOffset(1),
     fuzzyInput: 'shang',
     selectedLocation: 'Shanghai',
   },
   emptyRoute: {
     from: 'Ghost City',
     to: 'Nowhere',
-    date: '2026-07-21',
+    date: TEST_DATE,
   },
   transferRoute: {
     from: 'Yancheng',
     to: 'Lhasa',
-    date: '2026-07-22',
+    date: TEST_DATE,
   },
   orderKeyword: 'G1001',
 } as const;
@@ -157,13 +186,15 @@ export function toPattern(value: string | RegExp): RegExp {
 }
 
 async function firstVisible(locators: Locator[]): Promise<Locator> {
-  for (const locator of locators) {
-    const candidate = locator.first();
-    try {
-      if (await candidate.isVisible({ timeout: 500 })) return candidate;
-    } catch {
-      // continue
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    for (const locator of locators) {
+      const count = await locator.count();
+      for (let index = 0; index < count; index += 1) {
+        const candidate = locator.nth(index);
+        if (await candidate.isVisible()) return candidate;
+      }
     }
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
   return locators[0].first();
 }
@@ -174,6 +205,43 @@ export async function openHome(page: Page): Promise<void> {
 
 export async function clickNamed(page: Page, value: string | RegExp): Promise<void> {
   const name = toPattern(value);
+  if (value instanceof RegExp && value.source === 'book') {
+    const bookButton = page.locator('.book-button:not(:disabled)').first();
+    await bookButton.click();
+    return;
+  }
+  if (typeof value === 'string' && (value === 'From' || value === 'To')) {
+    const field = page.getByLabel(value);
+    if (await field.count()) {
+      await field.first().click();
+      return;
+    }
+  }
+  if (typeof value === 'string' && value.startsWith('Search by ')) {
+    await page.locator('select[aria-label="Order date type"]').selectOption({ label: value });
+    return;
+  }
+  if (typeof value === 'string' && /^\d{2}:\d{2}-\d{2}:\d{2}$/.test(value)) {
+    await page.locator('select[aria-label="Departure time"]').selectOption({ label: value });
+    return;
+  }
+  if (typeof value === 'string' && ['Login password', 'Security mailbox', 'Mobile number'].includes(value)) {
+    await page.locator('.security-view').getByRole('button', { name: value, exact: true }).click();
+    return;
+  }
+  const modal = page.locator('.modal-backdrop');
+  if (await modal.count()) {
+    const modalTarget = modal.getByRole('link', { name }).first();
+    if (await modalTarget.count()) {
+      await modalTarget.click();
+      return;
+    }
+    const modalButton = modal.getByRole('button', { name }).first();
+    if (await modalButton.count()) {
+      await modalButton.click();
+      return;
+    }
+  }
   const locator = await firstVisible([
     page.getByRole('button', { name }),
     page.getByRole('link', { name }),
@@ -192,6 +260,11 @@ export async function hoverNamed(page: Page, value: string | RegExp): Promise<vo
     page.getByRole('link', { name }),
     page.getByText(name),
   ]);
+  const menu = locator.locator('xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " nav-menu ")]').first();
+  if (await menu.count()) {
+    await menu.hover();
+    return;
+  }
   await locator.hover();
 }
 
@@ -199,12 +272,15 @@ export async function expectTextsVisible(page: Page, values: Array<string | RegE
   for (const value of values) {
     const name = toPattern(value);
     const locator = await firstVisible([
+      page.getByText(name),
       page.getByRole('heading', { name }),
       page.getByRole('button', { name }),
       page.getByRole('link', { name }),
       page.getByRole('tab', { name }),
       page.getByRole('cell', { name }),
-      page.getByText(name),
+      page.getByRole('columnheader', { name }),
+      page.getByRole('textbox', { name }),
+      page.getByRole('combobox', { name }),
       page.getByLabel(name),
       page.getByPlaceholder(name),
     ]);
@@ -342,6 +418,7 @@ export async function loginAs(page: Page, account: NamedAccount = FIXTURES.regis
   const accountValue = account.username ?? account.email ?? account.mobile ?? '';
   await fillLoginForm(page, accountValue, account.password);
   await clickNamed(page, 'LOGIN');
+  await page.waitForURL(/\/$/);
 }
 
 export async function logout(page: Page): Promise<void> {
@@ -358,13 +435,13 @@ export async function expectForgotPasswordPage(page: Page): Promise<void> {
 }
 
 export async function fillForgotPasswordStepOne(page: Page, email: string, idNumber: string): Promise<void> {
-  await fillField(page, 'Email', email);
-  await fillField(page, 'ID number', idNumber);
+  await page.locator('input[aria-label="Email"]').fill(email);
+  await page.locator('input[aria-label="ID number"]').fill(idNumber);
 }
 
 export async function fillForgotPasswordStepTwo(page: Page, password: string, confirmPassword: string): Promise<void> {
-  await fillField(page, 'New password', password);
-  await fillField(page, 'Confirm new password', confirmPassword);
+  await page.locator('input[aria-label="New password"]').fill(password);
+  await page.locator('input[aria-label="Confirm new password"]').fill(confirmPassword);
 }
 
 export async function expectQuickSearch(page: Page): Promise<void> {
@@ -404,20 +481,20 @@ export async function openTicketOrders(page: Page, account: NamedAccount = FIXTU
 
 export async function openUserInformation(page: Page): Promise<void> {
   await openPersonalCenter(page, FIXTURES.profileUser);
-  await clickNamed(page, /personal/i);
-  await clickNamed(page, /user information/i);
+  await page.locator('.center-menu details').filter({ hasText: 'Personal' }).locator('summary').click();
+  await page.locator('.center-menu a').filter({ hasText: /^User information$/i }).click();
 }
 
 export async function openAccountSecurity(page: Page): Promise<void> {
   await openPersonalCenter(page, FIXTURES.profileUser);
-  await clickNamed(page, /personal/i);
-  await clickNamed(page, /account security/i);
+  await page.locator('.center-menu details').filter({ hasText: 'Personal' }).locator('summary').click();
+  await page.locator('.center-menu a').filter({ hasText: /^Account security$/i }).click();
 }
 
 export async function openMyPassengers(page: Page): Promise<void> {
   await openPersonalCenter(page, FIXTURES.passengerManagerUser);
-  await clickNamed(page, /information management/i);
-  await clickNamed(page, /my passengers/i);
+  await page.locator('.center-menu details').filter({ hasText: 'Information management' }).locator('summary').click();
+  await page.locator('.center-menu a').filter({ hasText: /^My passengers$/i }).click();
 }
 
 export async function openBookingForm(page: Page, authenticated: boolean): Promise<void> {
@@ -429,15 +506,31 @@ export async function openBookingForm(page: Page, authenticated: boolean): Promi
 }
 
 export async function selectPassengerForBooking(page: Page): Promise<void> {
-  const checkbox = page.getByRole('checkbox').nth(1);
+  const checkbox = page.locator('.passenger-picker input[type="checkbox"]').first();
   await checkbox.check();
+  await expect(checkbox).toBeChecked();
+}
+
+export async function fillPassengerForm(page: Page, overrides: Record<string, string> = {}): Promise<void> {
+  const passenger = { ...FIXTURES.newPassenger, ...overrides };
+  const modal = page.locator('.form-modal');
+  await modal.getByLabel('Nationality').selectOption({ label: passenger.nationality });
+  await modal.getByLabel('Name', { exact: true }).fill(passenger.name);
+  await modal.getByLabel('Passport number').fill(passenger.passportNumber);
+  await modal.getByLabel('Passport expiration date').fill(passenger.passportExpirationDate);
+  await modal.getByLabel('Date of birth').fill(passenger.birthDate);
+  await modal.getByRole('radio', { name: passenger.gender, exact: true }).check();
+  await modal.getByLabel('Email address').fill(passenger.email);
+  await modal.getByLabel('Mobile number').fill(passenger.mobile);
+  await modal.getByLabel('Passenger type').selectOption({ label: passenger.passengerType });
 }
 
 export async function reachPaymentPage(page: Page): Promise<void> {
   await openBookingForm(page, true);
   await selectPassengerForBooking(page);
   await clickNamed(page, /place order/i);
-  await clickNamed(page, /confirm/i);
+  await page.locator('.confirm-modal').getByRole('button', { name: 'Confirm', exact: true }).click();
+  await page.waitForURL(/\/payment\?order=/);
 }
 
 export async function openTravelGuide(page: Page): Promise<void> {
@@ -462,14 +555,46 @@ export async function assertResultsPage(page: Page): Promise<void> {
 }
 
 export async function assertSortToggle(page: Page, headerText: string): Promise<void> {
-  await clickNamed(page, headerText);
-  await expectTextsVisible(page, [headerText]);
-  await clickNamed(page, headerText);
-  await expectTextsVisible(page, [headerText]);
+  const column = headerText === 'Departure Time' ? 1 : headerText === 'Travel time' ? 2 : 3;
+  const values = async () => (await page.locator('.train-table tbody tr').evaluateAll((rows, index) => rows.map((row) => {
+    const text = row.querySelectorAll('td')[index as number]?.textContent?.trim() || '';
+    const duration = text.match(/(\d+)h(\d+)m/);
+    if (duration) return Number(duration[1]) * 60 + Number(duration[2]);
+    return text.replace(/\s+/g, '');
+  }), column));
+  const sortButton = page.getByRole('button', { name: toPattern(headerText) });
+  await sortButton.click();
+  const ascending = await values();
+  expect(ascending).toEqual([...ascending].sort((a, b) => typeof a === 'number' && typeof b === 'number' ? a - b : String(a).localeCompare(String(b))));
+  await sortButton.click();
+  const descending = await values();
+  expect(descending).toEqual([...descending].sort((a, b) => typeof a === 'number' && typeof b === 'number' ? b - a : String(b).localeCompare(String(a))));
+}
+
+export async function assertTransferSortToggle(page: Page, headerText: string): Promise<void> {
+  const attribute = headerText === 'Departure Time' ? 'data-departure' : headerText === 'Travel time' ? 'data-travel' : 'data-arrival';
+  const value = async () => page.locator('.transfer-plan').evaluateAll((plans, name) => plans.map((plan) => plan.getAttribute(name as string) || ''), attribute);
+  const sortButton = page.getByRole('button', { name: toPattern(headerText) });
+  await sortButton.click();
+  const ascending = await value();
+  const compare = (a: string, b: string) => Number.isNaN(Number(a)) ? a.localeCompare(b) : Number(a) - Number(b);
+  expect(ascending).toEqual([...ascending].sort(compare));
+  await sortButton.click();
+  const descending = await value();
+  expect(descending).toEqual([...descending].sort((a, b) => compare(b, a)));
+}
+
+export async function expectDialog(page: Page, title: string): Promise<void> {
+  await expect(page.getByRole('heading', { name: toPattern(title) })).toBeVisible();
 }
 
 export async function assertFilterInteraction(page: Page, sectionText: string, optionText: string): Promise<void> {
   await expectTextsVisible(page, [sectionText]);
   await clickNamed(page, optionText);
+  const select = page.locator('select').filter({ hasText: optionText });
+  if (await select.count()) {
+    await expect(select.first()).toHaveValue(optionText);
+    return;
+  }
   await expectTextsVisible(page, [optionText]);
 }

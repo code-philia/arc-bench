@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-6.1.1
@@ -7,4 +7,5 @@ import * as h from './helpers';
 test('REQ-6.1.1: Open the travel guide page from the navigation bar', async ({ page }) => {
   await h.openTravelGuide(page);
   await h.expectTextsVisible(page, ['Ticketing', 'Endorsement and refund', 'Miscellaneous']);
+  await expect(page.locator('[data-question="How to book tickets online?"]')).toBeVisible();
 });

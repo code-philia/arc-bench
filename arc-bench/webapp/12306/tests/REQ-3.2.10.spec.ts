@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-3.2.10
@@ -7,4 +7,5 @@ import * as h from './helpers';
 test('REQ-3.2.10: Filter the result list by departure station', async ({ page }) => {
   await h.openSearchResults(page);
   await h.assertFilterInteraction(page, 'From Station', 'Shanghai Hongqiao');
+  await expect(page.locator('.train-table tbody tr')).toHaveCount(2);
 });

@@ -6,7 +6,9 @@ import * as h from './helpers';
 
 test('REQ-4.3.4: Save a new passenger type in the additional information section', async ({ page }) => {
   await h.openUserInformation(page);
-  await h.clickNamed(page, 'Edit');
-  await h.clickNamed(page, 'Save');
-  await h.expectSuccessFeedback(page);
+  const section = page.locator('.panel').filter({ hasText: 'Additional information' });
+  await section.getByRole('button', { name: 'Edit', exact: true }).click();
+  await section.getByLabel('Passenger type').selectOption({ label: 'Child' });
+  await section.getByRole('button', { name: 'Save', exact: true }).click();
+  await h.expectTextsVisible(page, ['Child']);
 });
