@@ -4,6 +4,10 @@
   "private": true,
   "description": "Reproduction package for ARC web application generation and evaluation.",
   "scripts": {
+    "docker:build": "docker build --progress=plain -t arc-reproduction:latest .",
+    "reference": "node scripts/run-reference-docker.js",
+    "reference:12306": "node scripts/run-reference-docker.js --app 12306",
+    "reference:all": "node scripts/run-reference-docker.js --app all",
     "test": "node scripts/run-playwright.js",
     "test:app": "node scripts/run-playwright.js --app",
     "test:all": "node scripts/run-playwright.js --app all",

@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=mcr.microsoft.com/playwright/python:v1.54.0-noble
+ARG BASE_IMAGE=mcr.microsoft.com/playwright:v1.54.0-noble
 FROM ${BASE_IMAGE}
 
 ENV PYTHONUNBUFFERED=1 \
@@ -12,8 +12,9 @@ RUN apt-get update \
         build-essential \
         curl \
         git \
-        nodejs \
-        npm \
+        python3 \
+        python3-pip \
+        python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/arc
@@ -33,8 +34,10 @@ COPY apps.config.json playwright.config.ts ./
 COPY scripts/ ./scripts/
 COPY arc-bench/ ./arc-bench/
 COPY docker/entrypoint.sh /usr/local/bin/arc-docker-entrypoint
+COPY docker/reference-entrypoint.sh /usr/local/bin/arc-reference-entrypoint
 
 RUN chmod +x /usr/local/bin/arc-docker-entrypoint \
+    && chmod +x /usr/local/bin/arc-reference-entrypoint \
     && mkdir -p /workspaces /export
 
 EXPOSE 3301

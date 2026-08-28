@@ -2,27 +2,33 @@
   "apps": {
     "12306": {
       "requirementDir": "arc-bench/webapp/12306/requirements",
-      "testDir": "arc-bench/webapp/12306/tests"
+      "testDir": "arc-bench/webapp/12306/tests",
+      "projectDir": "arc-bench/webapp/12306/project"
     },
     "bookstack": {
       "requirementDir": "arc-bench/webapp/bookstack/requirements",
-      "testDir": "arc-bench/webapp/bookstack/tests"
+      "testDir": "arc-bench/webapp/bookstack/tests",
+      "projectDir": "arc-bench/webapp/bookstack/project"
     },
     "ctrip": {
       "requirementDir": "arc-bench/webapp/ctrip/requirements",
-      "testDir": "arc-bench/webapp/ctrip/tests"
+      "testDir": "arc-bench/webapp/ctrip/tests",
+      "projectDir": "arc-bench/webapp/ctrip/project"
     },
     "keep": {
       "requirementDir": "arc-bench/webapp/keep/requirements",
-      "testDir": "arc-bench/webapp/keep/tests"
+      "testDir": "arc-bench/webapp/keep/tests",
+      "projectDir": "arc-bench/webapp/keep/project"
     },
     "prestashop": {
       "requirementDir": "arc-bench/webapp/prestashop/requirements",
-      "testDir": "arc-bench/webapp/prestashop/tests"
+      "testDir": "arc-bench/webapp/prestashop/tests",
+      "projectDir": "arc-bench/webapp/prestashop/project"
     },
     "stackoverflow": {
       "requirementDir": "arc-bench/webapp/stackoverflow/requirements",
-      "testDir": "arc-bench/webapp/stackoverflow/tests"
+      "testDir": "arc-bench/webapp/stackoverflow/tests",
+      "projectDir": "arc-bench/webapp/stackoverflow/project"
     }
   }
 }
