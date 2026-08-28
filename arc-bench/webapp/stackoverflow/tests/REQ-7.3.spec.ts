@@ -2,10 +2,10 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-7.3
-// fixtures: registered_user, homepage_questions, custom_filter_state
+// fixtures: accounts.filterUser, homepage_questions, tags.catalog
 
 test('REQ-7.3: Create Custom Filter', async ({ page }) => {
-  await h.login(page);
+  await h.login(page, h.FIXTURES.accounts.filterUser);
   await h.openQuestionList(page);
   await h.clickFirstAvailable(page, [[/^filter$/i]]);
   await h.expectTextsVisible(page, [/sort/i, /tag/i, /filter panel/i]);
