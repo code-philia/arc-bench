@@ -13,6 +13,7 @@ test('REQ-5.3.9: Confirm cancellation of an unpaid order from the order center',
 });
 
 test('REQ-5.3.9: Cancel the cancellation action from the order center dialog', async ({ page }) => {
+  await h.resetTestDatabase(page);
   await h.openTicketOrders(page, h.FIXTURES.ordersUnpaidUser);
   await h.clickNamed(page, 'Uncompleted orders');
   await h.clickNamed(page, 'Cancel');

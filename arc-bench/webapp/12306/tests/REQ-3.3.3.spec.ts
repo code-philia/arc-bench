@@ -6,5 +6,5 @@ import * as h from './helpers';
 
 test('REQ-3.3.3: Toggle transfer plan sorting by first-segment departure time', async ({ page }) => {
   await h.openTransferResults(page);
-  await h.assertSortToggle(page, 'Departure Time');
+  await h.assertTransferSortToggle(page, 'Departure Time');
 });

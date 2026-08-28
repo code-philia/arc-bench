@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-4.2.12
@@ -8,6 +8,6 @@ test('REQ-4.2.12: Open upcoming trips from the booking dropdown', async ({ page 
   await h.openHome(page);
   await h.loginAs(page);
   await h.hoverNamed(page, /Booking/i);
-  await h.clickNamed(page, /Upcoming trips/i);
-  await h.expectTextsVisible(page, ['Upcoming trips']);
+  await page.getByRole('button', { name: 'Upcoming trips', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Upcoming trips', exact: true }).last()).toBeVisible();
 });

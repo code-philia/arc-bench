@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-3.1.4
@@ -6,12 +6,17 @@ import * as h from './helpers';
 
 test('REQ-3.1.4: Select a valid departure date in the allowed range', async ({ page }) => {
   await h.openHome(page);
-  await h.fillField(page, 'Date', h.FIXTURES.searchRoute.date);
-  await h.expectTextsVisible(page, [h.FIXTURES.searchRoute.date]);
+  const date = page.getByLabel('Date');
+  await date.fill(h.FIXTURES.searchRoute.date);
+  await expect(date).toHaveValue(h.FIXTURES.searchRoute.date);
 });
 
 test('REQ-3.1.4: Prevent selection of an expired date', async ({ page }) => {
+  await h.resetTestDatabase(page);
   await h.openHome(page);
-  await h.clickNamed(page, 'Date');
-  await h.expectTextsVisible(page, ['Date']);
+  const date = page.getByLabel('Date');
+  await expect(date).toHaveAttribute('min', /\d{4}-\d{2}-\d{2}/);
+  await expect(date).toHaveAttribute('max', /\d{4}-\d{2}-\d{2}/);
+  const min = await date.getAttribute('min');
+  await expect(date).toHaveJSProperty('min', min);
 });

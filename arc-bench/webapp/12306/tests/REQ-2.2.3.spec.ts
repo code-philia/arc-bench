@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-2.2.3
@@ -9,4 +9,5 @@ test('REQ-2.2.3: Log in with valid credentials', async ({ page }) => {
   await h.fillLoginForm(page, h.FIXTURES.registeredUser.username!, h.FIXTURES.registeredUser.password);
   await h.clickNamed(page, 'LOGIN');
   await h.expectSuccessFeedback(page);
+  await expect(page.getByRole('button', { name: /sign out/i })).toBeVisible();
 });

@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-2.1.4: Submit the form with missing required information', async ({ page }) => {
   await h.openRegistrationPage(page);
-  await h.clickNamed(page, 'Register');
+  await page.getByRole('button', { name: 'Register', exact: true }).click();
   await h.expectErrorFeedback(page, 'Please fill in all required fields.');
 });

@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-6.3.1
@@ -8,4 +8,5 @@ test('REQ-6.3.1: Open one common question from the home page quick guide section
   await h.openHome(page);
   await h.clickNamed(page, /How to book tickets online\?/i);
   await h.expectTextsVisible(page, ['Ticketing']);
+  await expect(page.locator('[data-question="How to book tickets online?"]')).toBeInViewport();
 });

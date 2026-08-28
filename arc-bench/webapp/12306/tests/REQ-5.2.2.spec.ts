@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-5.2.2
@@ -7,4 +7,8 @@ import * as h from './helpers';
 test('REQ-5.2.2: Display the booking information section for the selected train', async ({ page }) => {
   await h.openBookingForm(page, true);
   await h.expectTextsVisible(page, ['Train Information', 'Place order']);
+  await h.expectTextsVisible(page, ['business-class seat', 'first-class seat', 'second-class seat', 'standing ticket']);
+  await expect(page.locator('.seat-summary')).toContainText(/1 left/i);
+  await expect(page.locator('.seat-summary')).toContainText(/None left/i);
+  await expect(page.locator('.seat-summary')).toContainText(/Enough left/i);
 });

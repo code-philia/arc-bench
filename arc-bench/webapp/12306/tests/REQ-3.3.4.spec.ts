@@ -6,5 +6,5 @@ import * as h from './helpers';
 
 test('REQ-3.3.4: Toggle transfer plan sorting by total travel time', async ({ page }) => {
   await h.openTransferResults(page);
-  await h.assertSortToggle(page, 'Travel time');
+  await h.assertTransferSortToggle(page, 'Travel time');
 });

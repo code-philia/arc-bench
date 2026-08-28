@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-6.3.2
@@ -8,4 +8,5 @@ test('REQ-6.3.2: Open the travel guide page from the quick guide more link', asy
   await h.openHome(page);
   await h.clickNamed(page, /^More$/i);
   await h.expectTextsVisible(page, ['Ticketing']);
+  await expect(page.locator('.guide-tabs button.active')).toHaveText('Ticketing');
 });

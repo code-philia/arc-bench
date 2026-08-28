@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-4.1.3: Open the default ticket search from the personal center notice link', async ({ page }) => {
   await h.openPersonalCenter(page);
-  await h.clickNamed(page, /Search/i);
-  await h.expectQuickSearch(page);
+  await h.clickNamed(page, 'ticket booking');
+  await h.assertResultsPage(page);
 });

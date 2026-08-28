@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-2.4.6
-// fixtures: password_reset_user
+// fixtures: reset_user
 
 test('REQ-2.4.6: Submit the new password step with mismatched passwords', async ({ page }) => {
   await h.openForgotPasswordPage(page);
