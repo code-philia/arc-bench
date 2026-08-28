@@ -28,8 +28,8 @@ Options:
   --help                       Show this help.
 
 Examples:
-  npm run test -- --app 12306
-  npm run test -- --app 12306 --workers 1 --timeout 90000
+  npm run test -- --app bookstack
+  npm run test -- --app bookstack --workers 1 --timeout 90000
   npm run test -- --app all --target-url http://127.0.0.1:3301`);
 }
 

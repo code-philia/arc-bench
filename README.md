@@ -13,6 +13,8 @@ contains:
 - `arc-bench/webapp/<app>/requirements/`: structured requirements for the
   benchmark web apps;
 - `arc-bench/webapp/<app>/tests/`: Playwright tests for those apps;
+- `arc-bench/webapp/<app>/project/`: optional reference implementation for an
+  app;
 - `scripts/run-playwright.js` and `playwright.config.ts`: the benchmark test
   runner;
 - `Dockerfile`: an optional containerized benchmark execution environment.
@@ -60,9 +62,41 @@ npm run test -- --app bookstack --target-url http://127.0.0.1:3301
 ```
 
 The Docker image in this repository provides a benchmark execution environment:
-Node.js, Playwright browsers, the test runner, and benchmark files. For
-non-ARC generators, you can use the image as a clean test environment by
-mounting a generated application and running the benchmark tests against it.
+Node.js, Playwright browsers, the test runner, and benchmark files. Application
+source code is imported at runtime, then installed, started, and tested inside
+the container.
+
+## 🧪 Reference Implementation Testing
+
+Reference implementations can be placed under:
+
+```text
+arc-bench/webapp/<app>/project/
+```
+The reference app must listen on `PORT` and expose a health endpoint at
+`/api/health`.
+
+### Run Reference Implementation
+
+Build or rebuild the benchmark image after changing Docker scripts or the test
+runner:
+
+```bash
+npm run docker:build
+```
+
+Run the `12306` reference implementation in Docker and execute its benchmark
+tests:
+
+```bash
+npm run reference -- --app 12306
+```
+
+Equivalent shorthand:
+
+```bash
+npm run reference:12306
+```
 
 ## 🧩 ARC Baseline Reproduction Flow
 
@@ -101,7 +135,6 @@ agentic-requirement-compiler/README.md
 Create the compiler environment file from the template.
 
 Linux/macOS:
-
 ```bash
 cp agentic-requirement-compiler/.env_example \
    agentic-requirement-compiler/.env

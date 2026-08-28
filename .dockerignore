@@ -18,3 +18,5 @@ test-results
 dist
 build
 *.log
+arc-bench/webapp/*/project
+arc-bench/webapp/*/project/**
