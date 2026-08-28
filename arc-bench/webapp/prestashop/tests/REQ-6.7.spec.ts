@@ -2,11 +2,11 @@ import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-6.7
-// fixtures: product_detail_product, cart_ready_product, checkout_customer
+// fixtures: accounts.checkoutOrderComplete, products.orderComplete, address.home
 
 test('REQ-6.7: Order Complete Page', async ({ page }) => {
-  await h.login(page);
-  await h.openDefaultProductDetail(page);
+  await h.login(page, h.FIXTURES.accounts.checkoutOrderComplete);
+  await h.openProductDetail(page, h.FIXTURES.products.orderComplete);
   await h.addProductToCart(page);
   await h.clickFirstAvailable(page, [[/proceed to checkout/i]]);
   await h.clickFirstAvailable(page, [[/continue/i, /shipping/i]]);

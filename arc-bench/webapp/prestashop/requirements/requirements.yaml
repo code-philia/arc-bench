@@ -1614,3 +1614,66 @@ children:
         content: Click "Sign out" link
       - keyword: THEN
         content: Logout, navigate to homepage or login page
+data:
+  - category: Account Seed Data
+    items:
+      - 'The system contains a verified customer account with email "prestashop_user@example.com", password "ShopPass123!", first name "Store", last name "User", and birthdate "1995-08-21".'
+      - 'The system contains a separate verified customer account for profile editing with email "prestashop_profile_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for checkout information with email "prestashop_checkout_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for selecting an existing checkout address with email "prestashop_checkout_address_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for adding a checkout address with email "prestashop_checkout_new_address_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for setting an invoice address with email "prestashop_checkout_invoice_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for the REQ-6.6 checkout flow with email "prestashop_checkout_6_6_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for the REQ-6.7 checkout flow with email "prestashop_checkout_6_7_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for viewing addresses with email "prestashop_address_view_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for creating an address with email "prestashop_address_create_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for editing an address with email "prestashop_address_edit_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for deleting an address with email "prestashop_address_delete_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account with a stable order history with email "prestashop_order_history_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for viewing wishlists with email "prestashop_wishlist_view_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for creating a wishlist with email "prestashop_wishlist_create_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for renaming a wishlist with email "prestashop_wishlist_rename_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for deleting a wishlist with email "prestashop_wishlist_delete_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for removing a wishlist product with email "prestashop_wishlist_remove_user@example.com" and password "ShopPass123!".'
+      - 'The system contains a separate verified customer account for adding a wishlist product to the cart with email "prestashop_wishlist_cart_user@example.com" and password "ShopPass123!".'
+  - category: Catalog and Product Seed Data
+    items:
+      - 'The catalog contains the top-level category "CLOTHES" with the subcategories "Men" and "Women".'
+      - 'The Men category contains a multi-page product dataset with at least 13 products, including "Hummingbird detail t-shirt", "Hummingbird cart t-shirt", "Hummingbird checkout-step t-shirt", "Hummingbird order-confirmation t-shirt", "Hummingbird order-complete t-shirt", "Hummingbird order-history t-shirt", "Hummingbird wishlist t-shirt", "White t-shirt", and "Black mug"; the products have stock, color, price, sale, and category attributes suitable for filtering, sorting, and pagination.'
+      - 'The homepage Popular Products section includes the product "Hummingbird detail t-shirt", and the product card links to its product detail page.'
+      - 'The product "Hummingbird detail t-shirt" has product images, a description, product details, a regular price, a sale price, a 20% tax rate, related products, and at least one existing review with an average rating.'
+      - 'The product "Hummingbird detail t-shirt" has a selectable size "M" and color "White", sufficient stock for normal quantities including 3, and stock lower than 999.'
+      - 'The product "Hummingbird cart t-shirt" is published, purchasable, and has a default available combination with sufficient stock for cart operations.'
+      - 'The product "Hummingbird checkout-step t-shirt" is published, purchasable, and has a default available combination with sufficient stock for checkout-step tests.'
+      - 'The product "Hummingbird order-confirmation t-shirt" is published, purchasable, and has a default available combination with stock sufficient for one order.'
+      - 'The product "Hummingbird order-complete t-shirt" is published, purchasable, and has a default available combination with stock sufficient for one order.'
+      - 'The product "Hummingbird order-history t-shirt" is published, purchasable, and has a default available combination so that a historical order can be reordered.'
+      - 'The product "Hummingbird wishlist t-shirt" is published, purchasable, and has a default available combination for wishlist product operations.'
+      - 'The product search index returns matching products when the keyword "shirt" is entered.'
+  - category: Checkout Configuration Seed Data
+    items:
+      - 'The store has at least one available shipping method named "delivery" or "pick up" with a shipping cost and estimated delivery time.'
+      - 'The store has an available payment method named "bank wire" or "pay by check".'
+      - 'The checkout payment step contains an available terms-and-conditions agreement that can be checked and opened.'
+      - 'The country selector contains the country "China".'
+  - category: Address Seed Data
+    items:
+      - 'The prestashop_checkout_address_user account has a valid default address with alias "Home".'
+      - 'The prestashop_checkout_invoice_user account has a valid address available for the shipping and invoice-address flow.'
+      - 'The prestashop_checkout_6_6_user account has a valid default address available for completing the REQ-6.6 order-confirmation checkout flow.'
+      - 'The prestashop_checkout_6_7_user account has a valid default address available for completing the REQ-6.7 order-complete checkout flow.'
+      - 'The prestashop_address_view_user account has a valid address with alias "Home".'
+      - 'The prestashop_address_create_user account has an initially empty address book.'
+      - 'The prestashop_address_edit_user account has a valid editable address with alias "Home".'
+      - 'The prestashop_address_delete_user account has a valid deletable address with alias "Home".'
+  - category: Order Seed Data
+    items:
+      - 'The prestashop_order_history_user account has at least one completed historical order containing an order reference, date, status, total, product list, shipping information, payment information, and a downloadable PDF invoice.'
+      - 'The historical order contains the product "Hummingbird order-history t-shirt", which remains available for reorder and can be added back to the shopping cart.'
+  - category: Wishlist Seed Data
+    items:
+      - 'The prestashop_wishlist_view_user account has a wishlist named "Favorites" containing "Hummingbird wishlist t-shirt".'
+      - 'The prestashop_wishlist_rename_user account has a wishlist named "Favorites" that can be renamed.'
+      - 'The prestashop_wishlist_delete_user account has a deletable wishlist named "Favorites".'
+      - 'The prestashop_wishlist_remove_user account has a wishlist named "Favorites" containing "Hummingbird wishlist t-shirt".'
+      - 'The prestashop_wishlist_cart_user account has a wishlist named "Favorites" containing "Hummingbird wishlist t-shirt".'

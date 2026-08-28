@@ -4,38 +4,146 @@ import { Download, expect, Locator, Page } from '@playwright/test';
 type Scope = Page | Locator;
 type Match = string | RegExp | Array<string | RegExp>;
 
+export type ProductFixture = {
+  name: string;
+  size?: string;
+  color?: string;
+  quantity?: string;
+  excessiveQuantity?: string;
+};
+
+export type AccountFixture = {
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+};
+
 export const FIXTURES = {
   catalog: {
     topCategory: 'CLOTHES',
     subcategory: 'Men',
     secondarySubcategory: 'Women',
     searchKeyword: 'shirt',
-    popularProduct: 'Hummingbird printed t-shirt',
+    popularProduct: 'Hummingbird detail t-shirt',
     alternativeProduct: 'The best is yet to come notebook',
     whiteProduct: 'White t-shirt',
     blackProduct: 'Black mug',
   },
-  product: {
-    name: 'Hummingbird printed t-shirt',
-    size: 'M',
-    color: 'White',
-    reviewTitle: 'Stylish and comfortable',
-    reviewContent: 'The fit is good and the fabric feels comfortable.',
-    quantity: '3',
-    excessiveQuantity: '999',
+  products: {
+    detail: {
+      name: 'Hummingbird detail t-shirt',
+      size: 'M',
+      color: 'White',
+      quantity: '3',
+      excessiveQuantity: '999',
+    },
+    cart: {
+      name: 'Hummingbird cart t-shirt',
+    },
+    checkoutStep: {
+      name: 'Hummingbird checkout-step t-shirt',
+    },
+    orderConfirmation: {
+      name: 'Hummingbird order-confirmation t-shirt',
+    },
+    orderComplete: {
+      name: 'Hummingbird order-complete t-shirt',
+    },
+    orderHistory: {
+      name: 'Hummingbird order-history t-shirt',
+    },
+    wishlist: {
+      name: 'Hummingbird wishlist t-shirt',
+    },
   },
-  account: {
-    firstName: 'Store',
-    lastName: 'User',
-    email: 'prestashop_user@example.com',
-    password: 'ShopPass123!',
-    newEmail: 'prestashop_user_next@example.com',
-    newPassword: 'ShopPass456!',
-    birthdate: '1995-08-21',
+  accounts: {
+    login: {
+      firstName: 'Store',
+      lastName: 'User',
+      email: 'prestashop_user@example.com',
+      password: 'ShopPass123!',
+    },
+    profile: {
+      email: 'prestashop_profile_user@example.com',
+      password: 'ShopPass123!',
+      newEmail: 'prestashop_profile_user_next@example.com',
+      newPassword: 'ShopPass456!',
+    },
+    checkoutInformation: {
+      email: 'prestashop_checkout_user@example.com',
+      password: 'ShopPass123!',
+    },
+    checkoutExistingAddress: {
+      email: 'prestashop_checkout_address_user@example.com',
+      password: 'ShopPass123!',
+    },
+    checkoutNewAddress: {
+      email: 'prestashop_checkout_new_address_user@example.com',
+      password: 'ShopPass123!',
+    },
+    checkoutInvoice: {
+      email: 'prestashop_checkout_invoice_user@example.com',
+      password: 'ShopPass123!',
+    },
+    checkoutOrderConfirmation: {
+      email: 'prestashop_checkout_6_6_user@example.com',
+      password: 'ShopPass123!',
+    },
+    checkoutOrderComplete: {
+      email: 'prestashop_checkout_6_7_user@example.com',
+      password: 'ShopPass123!',
+    },
+    addressView: {
+      email: 'prestashop_address_view_user@example.com',
+      password: 'ShopPass123!',
+    },
+    addressCreate: {
+      email: 'prestashop_address_create_user@example.com',
+      password: 'ShopPass123!',
+    },
+    addressEdit: {
+      email: 'prestashop_address_edit_user@example.com',
+      password: 'ShopPass123!',
+    },
+    addressDelete: {
+      email: 'prestashop_address_delete_user@example.com',
+      password: 'ShopPass123!',
+    },
+    orderHistory: {
+      email: 'prestashop_order_history_user@example.com',
+      password: 'ShopPass123!',
+    },
+    wishlistView: {
+      email: 'prestashop_wishlist_view_user@example.com',
+      password: 'ShopPass123!',
+    },
+    wishlistCreate: {
+      email: 'prestashop_wishlist_create_user@example.com',
+      password: 'ShopPass123!',
+    },
+    wishlistRename: {
+      email: 'prestashop_wishlist_rename_user@example.com',
+      password: 'ShopPass123!',
+    },
+    wishlistDelete: {
+      email: 'prestashop_wishlist_delete_user@example.com',
+      password: 'ShopPass123!',
+    },
+    wishlistRemove: {
+      email: 'prestashop_wishlist_remove_user@example.com',
+      password: 'ShopPass123!',
+    },
+    wishlistCart: {
+      email: 'prestashop_wishlist_cart_user@example.com',
+      password: 'ShopPass123!',
+    },
   },
   address: {
     alias: 'Home',
     newAlias: 'Office',
+    firstName: 'Store',
+    lastName: 'User',
     address1: '1 Commerce Road',
     updatedAddress1: '88 Market Street',
     postalCode: '200000',
@@ -279,9 +387,9 @@ export async function productCard(page: Page, name: string): Promise<Locator> {
   return page.getByText(pattern).first();
 }
 
-export async function openDefaultProductDetail(page: Page): Promise<void> {
+export async function openProductDetail(page: Page, product: ProductFixture): Promise<void> {
   await openCategoryPage(page);
-  await clickFirstAvailable(page, [[FIXTURES.product.name]]);
+  await clickFirstAvailable(page, [[product.name]]);
 }
 
 export async function ensureWishlistPrompt(page: Page): Promise<void> {
@@ -297,30 +405,32 @@ export async function openSignIn(page: Page): Promise<void> {
   await clickFirstAvailable(page, [[/sign in/i, /login/i]]);
 }
 
-export async function login(page: Page): Promise<void> {
+export async function login(page: Page, account: AccountFixture = FIXTURES.accounts.login): Promise<void> {
   await openSignIn(page);
-  await fillField(page, [/email/i], FIXTURES.account.email);
-  await fillField(page, [/password/i], FIXTURES.account.password);
+  await fillField(page, [/email/i], account.email);
+  await fillField(page, [/password/i], account.password);
   await clickFirstAvailable(page, [[/sign in/i]]);
 }
 
-export async function openMyAccount(page: Page): Promise<void> {
-  await login(page);
-  await clickFirstAvailable(page, [[/my account/i, new RegExp(FIXTURES.account.firstName, 'i')]]);
+export async function openMyAccount(page: Page, account: AccountFixture = FIXTURES.accounts.login): Promise<void> {
+  await login(page, account);
+  const accountEntry: Match[] = [/my account/i];
+  if (account.firstName) accountEntry.push(new RegExp(account.firstName, 'i'));
+  await clickFirstAvailable(page, accountEntry);
 }
 
-export async function openAddressBook(page: Page): Promise<void> {
-  await openMyAccount(page);
+export async function openAddressBook(page: Page, account: AccountFixture = FIXTURES.accounts.login): Promise<void> {
+  await openMyAccount(page, account);
   await clickFirstAvailable(page, [[/addresses/i]]);
 }
 
-export async function openOrderHistory(page: Page): Promise<void> {
-  await openMyAccount(page);
+export async function openOrderHistory(page: Page, account: AccountFixture = FIXTURES.accounts.login): Promise<void> {
+  await openMyAccount(page, account);
   await clickFirstAvailable(page, [[/order history and details/i, /orders/i]]);
 }
 
-export async function openWishlists(page: Page): Promise<void> {
-  await openMyAccount(page);
+export async function openWishlists(page: Page, account: AccountFixture = FIXTURES.accounts.login): Promise<void> {
+  await openMyAccount(page, account);
   await clickFirstAvailable(page, [[/wishlist/i]]);
 }
 
