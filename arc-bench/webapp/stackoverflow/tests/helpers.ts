@@ -4,6 +4,16 @@ import { expect, Locator, Page } from '@playwright/test';
 type Scope = Page | Locator;
 type Match = string | RegExp | Array<string | RegExp>;
 
+export type AccountFixture = {
+  email: string;
+  password: string;
+  displayName: string;
+};
+
+export type QuestionFixture = {
+  title: string;
+};
+
 export const FIXTURES = {
   auth: {
     email: 'stack_user@example.com',
@@ -11,8 +21,126 @@ export const FIXTURES = {
     invalidEmail: 'invalid-email-format',
     unknownEmail: 'unknown_user@example.com',
     wrongPassword: 'WrongPassword123!',
-    newEmail: 'new_stack_user@example.com',
+    signupEmail: 'new_stack_user@example.com',
+    weakPasswordEmail: 'weak_password_candidate@example.com',
     weakPassword: 'short',
+  },
+  accounts: {
+    readonly: {
+      email: 'stack_user@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    activity: {
+      email: 'activity_user@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    profileEditor: {
+      email: 'profile_editor@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    questionCreator: {
+      email: 'question_creator@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    questionEditor: {
+      email: 'question_editor@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    questionDeleter: {
+      email: 'question_deleter@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    questionUpvoter: {
+      email: 'question_upvoter@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    questionDownvoter: {
+      email: 'question_downvoter@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    answerSubmitter: {
+      email: 'answer_submitter@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    answerVoter: {
+      email: 'answer_voter@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    answerAcceptOwner: {
+      email: 'answer_accept_owner@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    answerEditUser: {
+      email: 'answer_edit_user@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    answerValidationUser: {
+      email: 'answer_validation_user@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    answerDeleteUser: {
+      email: 'answer_delete_user@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    questionCommentUser: {
+      email: 'question_comment_user@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    commentEditUser: {
+      email: 'comment_edit_user@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    commentDeleteUser: {
+      email: 'comment_delete_user@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    commentVoteUser: {
+      email: 'comment_vote_user@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    answerCommentUser: {
+      email: 'answer_comment_user@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    commentReplyUser: {
+      email: 'comment_reply_user@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    tagWatcher: {
+      email: 'tag_watcher@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    filterUser: {
+      email: 'filter_user@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
+    badgeUser: {
+      email: 'badge_user@example.com',
+      password: 'Password123!',
+      displayName: 'Stack User',
+    },
   },
   profile: {
     displayName: 'Stack User',
@@ -25,14 +153,34 @@ export const FIXTURES = {
     github: 'github.com/example',
   },
   question: {
-    listTitle: 'How can I safely retry an idempotent HTTP request in Node.js?',
-    secondaryTitle: 'Why does Python close over loop variables?',
     newTitle: 'How can I safely retry an idempotent HTTP request in Node.js without duplicating side effects?',
     shortTitle: 'Short title',
     body: 'I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?',
     updatedBody: 'Updated question body that explains the current retry approach, failure modes, and what has already been tested in production environments.',
     summary: 'Clarified retry requirements and added implementation context.',
     tags: ['node.js', 'http', 'retry'],
+  },
+  questions: {
+    detail: { title: 'How can I safely retry an idempotent HTTP request in Node.js?' },
+    editPreview: { title: 'SO Question Edit Preview' },
+    editSave: { title: 'SO Question Edit Save' },
+    deletable: { title: 'SO Deletable Question' },
+    upvote: { title: 'SO Upvote Question' },
+    downvote: { title: 'SO Downvote Question' },
+    answerSubmission: { title: 'SO Answer Submission Question' },
+    answerVoting: { title: 'SO Answer Voting Question' },
+    acceptedAnswer: { title: 'SO Accepted Answer Question' },
+    answerSorting: { title: 'SO Answer Sorting Question' },
+    successfulAnswerEdit: { title: 'SO Successful Answer Edit Question' },
+    answerValidation: { title: 'SO Answer Validation Question' },
+    answerDelete: { title: 'SO Answer Delete Question' },
+    questionComment: { title: 'SO Question Comment Question' },
+    expandedComments: { title: 'SO Expanded Comment Question' },
+    commentVote: { title: 'SO Comment Vote Question' },
+    commentReply: { title: 'SO Comment Reply Question' },
+    commentEdit: { title: 'SO Comment Edit Question' },
+    commentDelete: { title: 'SO Comment Delete Question' },
+    answerComment: { title: 'SO Answer Comment Question' },
   },
   answer: {
     body: 'Use exponential backoff together with an idempotency key so duplicate requests can be safely retried without creating duplicate side effects in downstream services.',
@@ -47,6 +195,9 @@ export const FIXTURES = {
   tags: {
     primary: 'python',
     secondary: 'javascript',
+  },
+  search: {
+    query: 'react state',
   },
   filters: {
     customName: 'Python unanswered filter',
@@ -183,6 +334,35 @@ export async function expectTextAbsent(scope: Scope, value: Match): Promise<void
   await expect(target(scope).getByText(patterns[0])).toHaveCount(0);
 }
 
+async function targetCard(page: Page, selectors: string[]): Promise<Locator> {
+  return firstVisible([
+    ...selectors.map((selector) => page.locator(selector).first()),
+    page.getByRole('article').first(),
+  ]);
+}
+
+export async function clickAnswerAction(page: Page, value: Match): Promise<void> {
+  const answer = await targetCard(page, [
+    '[data-answer-id]',
+    '[data-answer]',
+    '.answer',
+    '.answer-card',
+    '.answer-item',
+  ]);
+  await clickFirstAvailable(answer, [value]);
+}
+
+export async function clickCommentAction(page: Page, value: Match): Promise<void> {
+  const comment = await targetCard(page, [
+    '[data-comment-id]',
+    '[data-comment]',
+    '.comment',
+    '.comment-item',
+    '.comment-card',
+  ]);
+  await clickFirstAvailable(comment, [value]);
+}
+
 export async function fillField(scope: Scope, labelOrPlaceholder: Match, value: string): Promise<void> {
   const locator = await resolveField(scope, labelOrPlaceholder);
   await locator.fill(value);
@@ -248,16 +428,16 @@ export async function openSignupPage(page: Page): Promise<void> {
   await clickFirstAvailable(page, [[/^sign up$/i]]);
 }
 
-export async function login(page: Page): Promise<void> {
+export async function login(page: Page, account: AccountFixture = FIXTURES.accounts.readonly): Promise<void> {
   await openLoginPage(page);
-  await fillField(page, [/email/i], FIXTURES.auth.email);
-  await fillField(page, [/password/i], FIXTURES.auth.password);
+  await fillField(page, [/email/i], account.email);
+  await fillField(page, [/password/i], account.password);
   await clickFirstAvailable(page, [[/^log in$/i, /^login$/i]]);
 }
 
-export async function openProfile(page: Page): Promise<void> {
-  await login(page);
-  await clickFirstAvailable(page, [[/profile/i, /stack user/i]]);
+export async function openProfile(page: Page, account: AccountFixture = FIXTURES.accounts.readonly): Promise<void> {
+  await login(page, account);
+  await clickFirstAvailable(page, [[/profile/i, new RegExp(escapeRegExp(account.displayName), 'i')]]);
 }
 
 export async function openQuestionList(page: Page): Promise<void> {
@@ -265,13 +445,13 @@ export async function openQuestionList(page: Page): Promise<void> {
   await clickFirstAvailable(page, [[/^questions$/i]]);
 }
 
-export async function openQuestionDetail(page: Page): Promise<void> {
+export async function openQuestionDetail(page: Page, question: QuestionFixture = FIXTURES.questions.detail): Promise<void> {
   await openQuestionList(page);
-  await clickFirstAvailable(page, [[FIXTURES.question.listTitle]]);
+  await clickFirstAvailable(page, [[question.title]]);
 }
 
-export async function openAskQuestion(page: Page): Promise<void> {
-  await login(page);
+export async function openAskQuestion(page: Page, account: AccountFixture = FIXTURES.accounts.readonly): Promise<void> {
+  await login(page, account);
   await clickFirstAvailable(page, [[/ask question/i]]);
 }
 
@@ -279,15 +459,15 @@ export async function fillMarkdownBody(scope: Scope, value: string): Promise<voi
   await fillField(scope, [/body/i, /markdown/i, /text/i], value);
 }
 
-export async function openQuestionEdit(page: Page): Promise<void> {
-  await login(page);
-  await openQuestionDetail(page);
+export async function openQuestionEdit(page: Page, account: AccountFixture, question: QuestionFixture): Promise<void> {
+  await login(page, account);
+  await openQuestionDetail(page, question);
   await clickFirstAvailable(page, [[/^edit$/i]]);
 }
 
-export async function openAnswerEditor(page: Page): Promise<void> {
-  await login(page);
-  await openQuestionDetail(page);
+export async function openAnswerEditor(page: Page, account: AccountFixture, question: QuestionFixture): Promise<void> {
+  await login(page, account);
+  await openQuestionDetail(page, question);
   await clickFirstAvailable(page, [[/your answer/i, /answer/i]]);
 }
 
@@ -296,12 +476,12 @@ export async function openTagsPage(page: Page): Promise<void> {
   await clickFirstAvailable(page, [[/^tags$/i]]);
 }
 
-export async function openTagDetail(page: Page): Promise<void> {
+export async function openTagDetail(page: Page, tag: string = FIXTURES.tags.primary): Promise<void> {
   await openTagsPage(page);
-  await clickFirstAvailable(page, [[FIXTURES.tags.primary]]);
+  await clickFirstAvailable(page, [[tag]]);
 }
 
-export async function openActivityTab(page: Page): Promise<void> {
-  await openProfile(page);
+export async function openActivityTab(page: Page, account: AccountFixture = FIXTURES.accounts.activity): Promise<void> {
+  await openProfile(page, account);
   await clickFirstAvailable(page, [[/^activity$/i]]);
 }

@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-2.4.2
-// fixtures: public_homepage, registered_user
+// fixtures: public_homepage
 
 test('REQ-2.4.2: Empty Credentials', async ({ page }) => {
   await h.openLoginPage(page);

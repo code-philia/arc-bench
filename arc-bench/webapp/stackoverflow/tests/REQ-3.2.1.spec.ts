@@ -2,10 +2,10 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-3.2.1
-// fixtures: registered_user, ask_question_state
+// fixtures: accounts.questionCreator, tags.catalog
 
 test('REQ-3.2.1: Create New Question', async ({ page }) => {
-  await h.openAskQuestion(page);
+  await h.openAskQuestion(page, h.FIXTURES.accounts.questionCreator);
   await h.expectTextsVisible(page, [/ask question/i, /title/i, /body/i, /tags/i]);
   await h.fillField(page, [/title/i], h.FIXTURES.question.newTitle);
   await h.expectTextsVisible(page, [/character/i, /title/i]);

@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-2.4.3
-// fixtures: public_homepage, registered_user
+// fixtures: public_homepage
 
 test('REQ-2.4.3: Invalid Email Format', async ({ page }) => {
   await h.openLoginPage(page);
