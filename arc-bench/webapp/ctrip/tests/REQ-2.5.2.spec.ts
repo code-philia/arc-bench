@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-2.5.2
-// fixtures: public_homepage, sms_login_account
+// fixtures: public_homepage
 
 test('REQ-2.5.2: Exception: Mobile Number Missing', async ({ page }) => {
   await h.ensureCodeLogin(page);
