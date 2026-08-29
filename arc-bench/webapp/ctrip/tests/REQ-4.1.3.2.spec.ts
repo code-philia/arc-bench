@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-4.1.3.2
-// fixtures: booking_user, booking_page_dataset
+// fixtures: booking_page_dataset
 
 test('REQ-4.1.3.2: Exception: Invalid ID Number Format', async ({ page }) => {
   await h.openBookingPage(page);

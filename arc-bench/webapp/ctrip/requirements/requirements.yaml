@@ -1,7 +1,7 @@
 id: ROOT
 name: Ctrip Travel System
 type: FOLDER
-description: 'A one-stop travel service platform that provides booking services for hotels, flights, tour packages, and related travel services. This requirement set focuses on user authentication and account management. Reference: Homepage ![image](./reference/index.jpg) This workspace includes seeded travel data used by the scenarios, including public_homepage, registration_candidate, registered_account, sms_login_account, flight_search_home, flight_search_history, flight_result_dataset, flight_no_result_route, booking_page_dataset, booking_user, order_center_user, order_center_dataset, personal_center_user, profile_user, security_profile, phone_binding_state, email_binding_state, traveler_records, address_records, contact_records, invoice_title_records, reimbursement_user, reimbursement_orders, airport_guide_catalog, airport_detail_dataset, and flight_status_dataset. These are ordinary product records used by the requirements, not a separate fixture DSL.'
+description: 'A one-stop travel service platform that provides booking services for hotels, flights, tour packages, and related travel services. This requirement set focuses on user authentication and account management. Reference: Homepage ![image](./reference/index.jpg)'
 dependencies: []
 children:
 - id: REQ-0
@@ -2706,3 +2706,105 @@ children:
           content: Click “国际机场大全”
         - keyword: THEN
           content: Navigate to the Airport Guide home (REQ-9) and automatically focus on the “国际/中国港澳台地区” category tab.
+data:
+  - category: Test Environment Seed Data
+    items:
+      - 'The current date in the test environment is fixed at 2026-07-19.'
+  - category: Account and Profile Seed Data
+    items:
+      - 'The system contains a verified account with username "ctrip_user", email "ctrip_user@example.com", mobile number "13800000010", and password "Travel1234" for stable password-login and logout flows.'
+      - 'The system contains a separate verified account with email "ctrip_sms_user@example.com", mobile number "13800000011", and password "Travel1234" for successful SMS login; the valid verification code is "123456".'
+      - 'The system contains a separate verified account with email "ctrip_sms_missing_code@example.com", mobile number "13800000041", and password "Travel1234" for the missing-verification-code login validation; the valid verification code is "123456".'
+      - 'The system contains a separate verified account with email "ctrip_sms_incorrect_code@example.com", mobile number "13800000042", and password "Travel1234" for the incorrect-verification-code login validation; the valid verification code is "123456".'
+      - 'The system contains a separate verified account with email "ctrip_sms_agreement@example.com", mobile number "13800000043", and password "Travel1234" for the agreement-not-accepted login validation; the valid verification code is "123456".'
+      - 'The system contains a separate verified account with email "ctrip_profile_read@example.com", mobile number "13800000013", and password "Travel1234" for profile and security read-only flows.'
+      - 'The system contains a separate verified account with email "ctrip_profile_edit@example.com", mobile number "13800000015", and password "Travel1234" for the profile-edit flow.'
+      - 'The system contains a separate verified account with email "ctrip_password_change@example.com", mobile number "13800000016", and password "Travel1234" for the password-change flow.'
+      - 'The system contains a separate verified account with email "ctrip_phone_binding@example.com", mobile number "13800000018", and password "Travel1234" for the phone-binding flow.'
+      - 'The system contains a separate verified account with email "ctrip_email_binding@example.com", mobile number "13800000019", and password "Travel1234" for the email-binding flow.'
+      - 'The system contains a separate verified account with email "ctrip_order_read@example.com", mobile number "13800000021", and password "Travel1234" for stable read-only order-center flows.'
+      - 'The system contains a separate verified account with email "ctrip_order_cancel@example.com", mobile number "13800000022", and password "Travel1234" for cancelling an independent pending-payment order.'
+      - 'The system contains a separate verified account with email "ctrip_personal_read@example.com", mobile number "13800000023", and password "Travel1234" for stable read-only personal-center flows.'
+      - 'The system contains a separate verified account with email "ctrip_traveler_create@example.com", mobile number "13800000024", and password "Travel1234" for traveler creation and required-field validation.'
+      - 'The system contains a separate verified account with email "ctrip_traveler_delete@example.com", mobile number "13800000025", and password "Travel1234" for single traveler deletion.'
+      - 'The system contains a separate verified account with email "ctrip_traveler_batch@example.com", mobile number "13800000026", and password "Travel1234" for batch traveler deletion.'
+      - 'The system contains a separate verified account with email "ctrip_address_create@example.com", mobile number "13800000027", and password "Travel1234" for address creation.'
+      - 'The system contains a separate verified account with email "ctrip_address_delete@example.com", mobile number "13800000028", and password "Travel1234" for single address deletion.'
+      - 'The system contains a separate verified account with email "ctrip_address_batch@example.com", mobile number "13800000029", and password "Travel1234" for batch address deletion.'
+      - 'The system contains a separate verified account with email "ctrip_contact_search@example.com", mobile number "13800000030", and password "Travel1234" for contact search.'
+      - 'The system contains a separate verified account with email "ctrip_contact_batch_1@example.com", mobile number "13800000031", and password "Travel1234" for the first contact batch-deletion dataset.'
+      - 'The system contains a separate verified account with email "ctrip_contact_create@example.com", mobile number "13800000032", and password "Travel1234" for default-contact creation.'
+      - 'The system contains a separate verified account with email "ctrip_contact_delete@example.com", mobile number "13800000033", and password "Travel1234" for single contact deletion.'
+      - 'The system contains a separate verified account with email "ctrip_contact_batch_2@example.com", mobile number "13800000034", and password "Travel1234" for the second contact batch-deletion dataset.'
+      - 'The system contains a separate verified account with email "ctrip_invoice_search@example.com", mobile number "13800000035", and password "Travel1234" for invoice-title search.'
+      - 'The system contains a separate verified account with email "ctrip_invoice_create@example.com", mobile number "13800000036", and password "Travel1234" for company and special VAT invoice-title creation.'
+      - 'The system contains a separate verified account with email "ctrip_invoice_delete@example.com", mobile number "13800000037", and password "Travel1234" for single invoice-title deletion.'
+      - 'The system contains a separate verified account with email "ctrip_invoice_batch@example.com", mobile number "13800000038", and password "Travel1234" for batch invoice-title deletion.'
+      - 'The system contains a separate verified account with email "ctrip_voucher_read@example.com", mobile number "13800000039", and password "Travel1234" for reimbursement-voucher read-only flows.'
+  - category: Flight Search Seed Data
+    items:
+      - 'The homepage contains a usable flight quick-search form with one-way, round-trip, multi-city, city, date, passenger-type, and cabin-class controls.'
+      - 'The city directory contains Chengdu (CTU), Guangzhou (CAN), Shanghai, and Beijing; the hot-city list includes Chengdu; and the GHIJ pinyin group includes Guangzhou.'
+      - 'The date picker displays daily fare information, permits the future dates used by the search scenarios, disables dates earlier than today, and prevents a return date earlier than the departure date.'
+      - 'The system contains a reusable search-history item labeled "成都 - 广州" that restores a valid Chengdu-to-Guangzhou search.'
+      - 'The Chengdu-to-Guangzhou flight result dataset contains multiple flights with prices, cabin classes, departure times, airlines, nonstop/stopover attributes, on-time rates, baggage information, and refund/change rules.'
+      - 'The Chengdu-to-Guangzhou result dataset contains nearby-date and next-week fare data, including a low-price date labeled "¥320", and supports the more-dates calendar view.'
+      - 'The Chengdu-to-Guangzhou result dataset contains at least one China Southern nonstop flight and other flights that can be excluded by the combined filter.'
+      - 'At least one flight in the result dataset has multiple fare rows, including economy class, and can be expanded, collapsed, and booked.'
+      - 'The route from Beihai to the test destination "火星城" has no matching flight results for the no-result search scenario.'
+  - category: Booking and Payment Seed Data
+    items:
+      - 'The standard bookable flight exposes a booking page with Civil Aviation Administration reminders about power banks and baggage, frequent passengers including "张三" and "李四", manual passenger and contact forms, adult fare and tax breakdowns, and a visible order total.'
+      - 'The standard booking page contains selectable combo insurance with coverage and claim terms, free baggage allowance, extra baggage options, airport transfer options with estimated prices, and airport lounge services.'
+      - 'The standard booking page contains at least one supported payment method such as Alipay, WeChat Pay, or bank-card payment, and supports simulated payment success.'
+      - 'The payment-pending flow uses an independent purchasable flight and sufficient inventory so that submitting the booking creates a pending-payment order.'
+      - 'The payment-success flow uses a different independent purchasable flight and sufficient inventory so that submitting the booking can be paid successfully.'
+  - category: Order Center Seed Data
+    items:
+      - 'The read-only order-center account has a stable order dataset with an all-orders view, a pending-payment order showing a "去支付" action, a pending-review order or equivalent pending-review state, order dates, order numbers, itineraries, flight numbers, totals, and statuses.'
+      - 'The read-only order dataset contains the order number "CTRIP20260721001" for exact order-number search.'
+      - 'The read-only order dataset contains an order detail view with flight itinerary information and refund/change rules.'
+      - 'The cancellation account has a separate pending-payment order with a countdown, a "取消订单" action, and a state that can transition to closed after confirmation.'
+  - category: Personal Center Seed Data
+    items:
+      - 'The read-only personal-center account exposes the common-information entries for travelers, addresses, contacts, and reimbursement receipts.'
+      - 'The read-only traveler dataset contains a record named "李四" and supports name search; searching for a nonexistent name returns an empty result.'
+      - 'The single-delete traveler account has at least one removable traveler record.'
+      - 'The batch-delete traveler account has at least two removable traveler records.'
+      - 'The read-only address dataset contains an address in Shanghai with recipient, region, and detailed address fields.'
+      - 'The single-delete address account has at least one removable address.'
+      - 'The batch-delete address account has at least two removable addresses.'
+      - 'The contact-search account contains a contact named "张三" that can be found by name.'
+      - 'The REQ-5.5.1.2 batch-delete account has at least two removable contact records.'
+      - 'The single-delete contact account has at least one removable contact record.'
+      - 'The REQ-5.5.3.2 batch-delete account has a different set of at least two removable contact records.'
+      - 'The invoice-search account contains the company invoice title "上海示例科技有限公司" with taxpayer identification number "91310000123456789A".'
+      - 'The single-delete invoice account has at least one removable invoice-title record.'
+      - 'The batch-delete invoice account has at least two removable invoice-title records.'
+  - category: Profile and Account Security Seed Data
+    items:
+      - 'The profile-read account displays a masked mobile number and masked email address together with nickname, real name, gender, and date-of-birth fields.'
+      - 'The profile-edit account has existing profile values and accepts the updated nickname used by the profile-edit test.'
+      - 'The password-change account accepts "Travel1234" as the current password and requires re-login after a successful password change.'
+      - 'The phone-binding account has an existing bound phone and can send a verification code after a new phone number is entered.'
+      - 'The email-binding account has an existing bound email displayed in masked form, can send a verification code before entering the new-email step, and accepts verification code "123456".'
+  - category: Flight Status Seed Data
+    items:
+      - 'The flight-status service contains flight "JD5162" with airline, origin, destination, flight status, check-in counter, boarding gate, and baggage-carousel details.'
+      - 'The flight-status service contains a Shanghai-to-Beijing route result list with airline, flight number, scheduled departure/arrival, and status fields.'
+      - 'The flight-status history-use state contains a selectable history entry for "JD5162".'
+      - 'The flight-status history-clear state contains a separate selectable history entry for "MU5234" before the test clears it.'
+  - category: Reimbursement Seed Data
+    items:
+      - 'The reimbursement-voucher service contains the pending, in-progress, and completed tabs and a completed historical-order record within the supported one-year range.'
+      - 'The reimbursement service supports loading additional historical orders for the one-year order lookup.'
+  - category: Airport Guide Seed Data
+    items:
+      - 'The more-services menu contains entries for Airport Guide, Domestic Airport Directory, International Airport Directory, and Flight Status.'
+      - 'The airport guide home lists popular airports including Beijing Capital, Shanghai Pudong, and Guangzhou Baiyun.'
+      - 'The domestic airport index under letter "C" includes Chengdu, Chongqing, and Changchun.'
+      - 'The airport guide home contains a Beijing weather card with today-temperature data and a "乘机流程" entry.'
+      - 'The Beijing Capital Airport detail dataset contains overview text including its location, runway information, and "中国第一国门".'
+      - 'The Beijing Capital Airport transportation dataset contains city-bus routes, stops, first and last departure times, and headway information.'
+      - 'The Beijing Capital Airport phone dataset contains an airport phone section and a medical first-aid center number beginning with "010-".'
+      - 'The airport directory supports focusing the guide on the "国内机场" and "国际/中国港澳台地区" categories.'

@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-3.5.2.1: Switch to a Nearby Date', async ({ page }) => {
   await h.openFlightResults(page);
-  await h.clickFirstAvailable(page, [[/次日/, /附近日期/, /next day/i], [/2026-07-22/]]);
+  await h.clickFirstAvailable(page, [[/次日/, /附近日期/, /next day/i], [h.FIXTURES.flightSearch.nearbyDate]]);
   await h.expectFlightResults(page);
 });

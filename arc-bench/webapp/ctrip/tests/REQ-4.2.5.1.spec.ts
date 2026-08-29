@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-4.2.5.1
-// fixtures: booking_user, booking_page_dataset
+// fixtures: booking_page_dataset
 
 test('REQ-4.2.5.1: Linked Pricing for Value-Added Services', async ({ page }) => {
   await h.openBookingPage(page);
