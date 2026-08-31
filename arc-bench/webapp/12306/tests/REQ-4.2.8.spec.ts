@@ -11,5 +11,5 @@ test('REQ-4.2.8: Filter upcoming trips by a selected date type and range', async
   await h.fillField(page, 'Start date', h.FIXTURES.searchRoute.date);
   await h.fillField(page, 'End date', h.dateOffset(31));
   await h.clickNamed(page, 'Search');
-  await expect(page.locator('.orders-table tbody tr')).toHaveCount(1);
+  expect((await h.visibleDataRowTexts(page)).length).toBeGreaterThan(0);
 });

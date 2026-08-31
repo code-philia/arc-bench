@@ -12,11 +12,11 @@ test('REQ-3.1.4: Select a valid departure date in the allowed range', async ({ p
 });
 
 test('REQ-3.1.4: Prevent selection of an expired date', async ({ page }) => {
-  await h.resetTestDatabase(page);
   await h.openHome(page);
-  const date = page.getByLabel('Date');
-  await expect(date).toHaveAttribute('min', /\d{4}-\d{2}-\d{2}/);
-  await expect(date).toHaveAttribute('max', /\d{4}-\d{2}-\d{2}/);
-  const min = await date.getAttribute('min');
-  await expect(date).toHaveJSProperty('min', min);
+  await h.fillField(page, 'From', h.FIXTURES.searchRoute.from);
+  await h.fillField(page, 'To', h.FIXTURES.searchRoute.to);
+  await h.fillField(page, 'Date', h.dateOffset(-1));
+  await h.clickNamed(page, 'Search');
+  await h.expectErrorFeedback(page, 'Please choose a departure date from today through the next two weeks.');
+  await expect(page).not.toHaveURL(/\/search(?:\?|$)/);
 });

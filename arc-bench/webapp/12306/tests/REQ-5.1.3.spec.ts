@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-5.1.3: Open the registration page from the quick login form', async ({ page }) => {
   await h.openBookingForm(page, false);
-  await h.clickNamed(page, /Register/i);
+  await h.clickNamed(page, /No account yet\? Register now\./i);
   await h.expectRegistrationForm(page);
 });

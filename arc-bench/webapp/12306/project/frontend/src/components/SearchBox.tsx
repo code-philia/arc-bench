@@ -50,13 +50,17 @@ export default function SearchBox({
 
   const update = (key: keyof SearchValues, value: string) => setValues((prev) => ({ ...prev, [key]: value }));
   const isValidCity = (value: string) => cities.some((city) => normalizeCity(value).toLowerCase() === city.toLowerCase() || value.includes(cityLabels[city])) || Object.keys(stationCities).some((station) => normalizeCity(value).toLowerCase() === stationCities[station].toLowerCase() && value.toLowerCase().includes(station.toLowerCase()));
+  const allowedDates = () => Array.from({ length: 15 }, (_, i) => { const d = new Date(today); d.setDate(today.getDate() + i); return iso(d); });
+  const dates = allowedDates();
   const submit = () => {
+    const minDate = dates[0];
+    const maxDate = dates[dates.length - 1];
     if (!values.from) return setMessage('Please enter a valid departure place.');
     if (!values.to) return setMessage('Please enter a valid arrival place.');
+    if (!values.date || values.date < minDate || values.date > maxDate) return setMessage('Please choose a departure date from today through the next two weeks.');
     navigate(`/search?from=${encodeURIComponent(normalizeCity(values.from))}&to=${encodeURIComponent(normalizeCity(values.to))}&date=${values.date}`);
   };
   const choose = (item: any) => { update(active!, `${item[0]} (${item[1]})`); setActive(null); };
-  const dates = Array.from({ length: 15 }, (_, i) => { const d = new Date(today); d.setDate(today.getDate() + i); return iso(d); });
 
   return <div className={`search-box ${compact ? 'compact' : ''}`}>
     {!compact && <div className="service-note">* The 12306.cn website provides information query and ticket refund services 24 hours a day, and ticket sales and endorsement services from 5:00 to 1:00 the next day.</div>}

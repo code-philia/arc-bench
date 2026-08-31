@@ -15,7 +15,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Initialize the database before reporting the service as ready.
-const { closeDb, initializeDatabase, resetDatabaseFile } = require('./database/init_db');
+const { initializeDatabase } = require('./database/init_db');
 const seedDatabase = require('./database/seed_db');
 const startupReady = initializeDatabase().then(() => seedDatabase()).catch((error) => {
   console.error('Database seed failed:', error);
@@ -30,19 +30,6 @@ app.get('/api/health', async (req, res) => {
     return res.status(503).json({ code: 503, message: 'Backend initialization failed' });
   }
   res.json({ code: 200, message: 'Backend Ready' });
-});
-app.post('/api/test/reset', async (req, res) => {
-  if (process.env.ARC_TEST_MODE !== '1') return res.status(404).end();
-  try {
-    await startupReady;
-    await closeDb();
-    await resetDatabaseFile();
-    await initializeDatabase();
-    await seedDatabase();
-    res.json({ message: 'Test database reset.' });
-  } catch (error) {
-    res.status(500).json({ message: 'Test database reset failed.' });
-  }
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/search', searchRoutes);

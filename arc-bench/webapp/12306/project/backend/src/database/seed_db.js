@@ -18,10 +18,24 @@ async function seedDatabase() {
       ['registered_user', 'registered_user@example.com', '13800000010', 'Password123!', 'Registered Traveler', 'P20260010'],
       ['personal_center_user', 'personal_center_user@example.com', '13800000020', 'Password123!', 'Personal Center User', 'P20260020'],
       ['profile_user', 'profile_user@example.com', '13800000030', 'Password123!', 'Profile User', 'P20260030'],
+      ['profile_essential_user', 'profile_essential_user@example.com', '13800000133', 'Password123!', 'Profile Essential User', 'P20260133'],
+      ['security_password_user', 'security_password_user@example.com', '13800000131', 'Password123!', 'Security Password User', 'P20260131'],
+      ['profile_contact_user', 'profile_contact_user@example.com', '13800000132', 'Password123!', 'Profile Contact User', 'P20260132'],
       ['passenger_manager_user', 'passenger_manager_user@example.com', '13800000040', 'Password123!', 'Passenger Manager', 'P20260040'],
       ['bookable_user', 'bookable_user@example.com', '13800000050', 'Password123!', 'Bookable User', 'P20260050'],
+      ['booking_submit_user', 'booking_submit_user@example.com', '13800000201', 'Password123!', 'Booking Submit User', 'P20260201'],
+      ['booking_confirm_user', 'booking_confirm_user@example.com', '13800000202', 'Password123!', 'Booking Confirm User', 'P20260202'],
+      ['booking_edit_user', 'booking_edit_user@example.com', '13800000203', 'Password123!', 'Booking Edit User', 'P20260203'],
+      ['booking_payment_user', 'booking_payment_user@example.com', '13800000204', 'Password123!', 'Booking Payment User', 'P20260204'],
+      ['booking_cancel_user', 'booking_cancel_user@example.com', '13800000205', 'Password123!', 'Booking Cancel User', 'P20260205'],
+      ['booking_paid_user', 'booking_paid_user@example.com', '13800000206', 'Password123!', 'Booking Paid User', 'P20260206'],
+      ['booking_unpaid_user', 'booking_unpaid_user@example.com', '13800000207', 'Password123!', 'Booking Unpaid User', 'P20260207'],
+      ['booking_upcoming_user', 'booking_upcoming_user@example.com', '13800000208', 'Password123!', 'Booking Upcoming User', 'P20260208'],
+      ['booking_cancelled_user', 'booking_cancelled_user@example.com', '13800000209', 'Password123!', 'Booking Cancelled User', 'P20260209'],
       ['orders_empty_user', 'orders_empty_user@example.com', null, 'Password123!', 'Orders Empty User', 'P20260060'],
       ['orders_unpaid_user', 'orders_unpaid_user@example.com', null, 'Password123!', 'Orders Unpaid User', 'P20260070'],
+      ['orders_unpaid_dismiss_user', 'orders_unpaid_dismiss_user@example.com', null, 'Password123!', 'Orders Unpaid Dismiss User', 'P20260301'],
+      ['orders_refund_user', 'orders_refund_user@example.com', null, 'Password123!', 'Orders Refund User', 'P20260302'],
       ['orders_upcoming_user', 'orders_upcoming_user@example.com', null, 'Password123!', 'Orders Upcoming User', 'P20260080'],
       ['orders_history_user', 'orders_history_user@example.com', null, 'Password123!', 'Orders History User', 'P20260090'],
       ['orders_cancelled_user', 'orders_cancelled_user@example.com', null, 'Password123!', 'Orders Cancelled User', 'P20260100'],
@@ -49,8 +63,11 @@ async function seedDatabase() {
       (user_id,name,passport_number,nationality,passport_expiration_date,birth_date,gender,email,mobile,passenger_type,is_owner)
       VALUES (?,?,?,?,?,?,?,?,?,?,0)`, [owner.id, ...passenger]);
     const deletablePassengers = [
+      ['Delete Passenger Confirm', 'P20269995', 'China', '2028-05-31', '1993-07-16', 'Female', 'delete.confirm@example.com', '13800000045', 'Adult'],
       ['Delete Passenger One', 'P20269997', 'China', '2028-06-30', '1995-03-12', 'Male', 'delete.one@example.com', '13800000041', 'Adult'],
       ['Delete Passenger Two', 'P20269998', 'China', '2029-08-31', '1998-09-23', 'Female', 'delete.two@example.com', '13800000042', 'Adult'],
+      ['Delete Passenger Three', 'P20269993', 'China', '2029-09-30', '1997-10-14', 'Male', 'delete.three@example.com', '13800000046', 'Adult'],
+      ['Delete Passenger Four', 'P20269994', 'China', '2030-10-31', '1996-11-15', 'Female', 'delete.four@example.com', '13800000047', 'Adult'],
     ];
     for (const deletable of deletablePassengers) {
       await run('DELETE FROM passengers WHERE passport_number=?', [deletable[1]]);
@@ -70,6 +87,17 @@ async function seedDatabase() {
     await run(`INSERT OR IGNORE INTO passengers
       (user_id,name,passport_number,nationality,passport_expiration_date,birth_date,gender,email,mobile,passenger_type,is_owner)
       VALUES (?,?,?,?,?,?,?,?,?,?,0)`, [bookable.id, 'Bookable Companion', 'P20260051', 'China', '2030-12-31', '1992-02-02', 'Female', 'bookable.companion@example.com', '13800000051', 'Adult']);
+    const isolatedBookingUsers = [
+      'booking_submit_user', 'booking_confirm_user', 'booking_edit_user',
+      'booking_payment_user', 'booking_cancel_user', 'booking_paid_user',
+      'booking_unpaid_user', 'booking_upcoming_user', 'booking_cancelled_user',
+    ];
+    for (const username of isolatedBookingUsers) {
+      const bookingUser = await get('SELECT id,name,passport_number,email,mobile FROM users WHERE username=?', [username]);
+      await run(`INSERT OR IGNORE INTO passengers
+        (user_id,name,passport_number,nationality,passport_expiration_date,birth_date,gender,email,mobile,passenger_type,is_owner)
+        VALUES (?,?,?,?,?,?,?,?,?,?,1)`, [bookingUser.id, bookingUser.name, bookingUser.passport_number, 'China', '2030-12-31', '1990-01-01', 'Male', bookingUser.email, bookingUser.mobile, 'Adult']);
+    }
     const stations = [
       ['Shanghai', 'Shanghai'], ['Shanghai', 'Shanghai Hongqiao'], ['Beijing', 'Beijing'], ['Beijing', 'Beijing South'],
       ['Yancheng', 'Yancheng'], ['Lhasa', 'Lhasa'],
@@ -92,7 +120,7 @@ async function seedDatabase() {
     for (const item of guideItems) await run('INSERT OR IGNORE INTO guide_items (category,question,detail) VALUES (?,?,?)', item);
     const managedTrainNumbers = ['G532', 'G548', 'G2', 'G4', 'T110', 'G101', 'G102', 'G103', 'T109', 'G1001', 'G1001-H', 'D2136', 'Z165', 'G1818', 'Z164'];
     await run(`DELETE FROM orders WHERE user_id IN (
-      SELECT id FROM users WHERE username IN ('orders_empty_user','orders_unpaid_user','orders_upcoming_user','orders_history_user','orders_cancelled_user','bookable_user')
+      SELECT id FROM users WHERE username IN ('orders_empty_user','orders_unpaid_user','orders_unpaid_dismiss_user','orders_refund_user','orders_upcoming_user','orders_history_user','orders_cancelled_user','bookable_user','booking_submit_user','booking_confirm_user','booking_edit_user','booking_payment_user','booking_cancel_user','booking_paid_user','booking_unpaid_user','booking_upcoming_user','booking_cancelled_user')
     )`);
     await run(`DELETE FROM trains WHERE train_no IN (${managedTrainNumbers.map(() => '?').join(',')})`, managedTrainNumbers);
     await run("DELETE FROM trains WHERE from_city='Yancheng' AND to_city='Lhasa'");
@@ -119,11 +147,11 @@ async function seedDatabase() {
         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, train);
     }
     const usersWithOrders = {
-      orders_unpaid_user: 'unpaid', orders_upcoming_user: 'paid', orders_history_user: 'refunded', orders_cancelled_user: 'cancelled',
+      orders_unpaid_user: 'unpaid', orders_unpaid_dismiss_user: 'unpaid', orders_refund_user: 'paid', orders_upcoming_user: 'paid', orders_history_user: 'refunded', orders_cancelled_user: 'cancelled',
     };
     for (const [username, status] of Object.entries(usersWithOrders)) {
       const user = await get('SELECT id FROM users WHERE username=?', [username]);
-      const trainNo = username === 'orders_upcoming_user' ? 'G1001' : username === 'orders_history_user' ? 'G1001-H' : 'G532';
+      const trainNo = username === 'orders_upcoming_user' || username === 'orders_refund_user' ? 'G1001' : username === 'orders_history_user' ? 'G1001-H' : 'G532';
       const train = await get('SELECT id FROM trains WHERE train_no=?', [trainNo]);
       const totalPrice = 576;
       const refundDeadline = status === 'paid' ? `${upcomingDate}T06:50:00` : null;

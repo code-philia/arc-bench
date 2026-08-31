@@ -7,5 +7,5 @@ import * as h from './helpers';
 test('REQ-6.1.1: Open the travel guide page from the navigation bar', async ({ page }) => {
   await h.openTravelGuide(page);
   await h.expectTextsVisible(page, ['Ticketing', 'Endorsement and refund', 'Miscellaneous']);
-  await expect(page.locator('[data-question="How to book tickets online?"]')).toBeVisible();
+  await expect(page.getByText('How to book tickets online?', { exact: false }).first()).toBeVisible();
 });

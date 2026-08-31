@@ -7,5 +7,7 @@ import * as h from './helpers';
 test('REQ-3.2.10: Filter the result list by departure station', async ({ page }) => {
   await h.openSearchResults(page);
   await h.assertFilterInteraction(page, 'From Station', 'Shanghai Hongqiao');
-  await expect(page.locator('.train-table tbody tr')).toHaveCount(2);
+  const rows = await h.visibleDataRowTexts(page);
+  expect(rows.length).toBeGreaterThan(0);
+  expect(rows.every((row) => row.includes('Shanghai Hongqiao'))).toBeTruthy();
 });

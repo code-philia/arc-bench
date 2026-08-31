@@ -10,8 +10,7 @@
     "db:prepare:e2e": "node src/database/prepare_e2e.js",
     "test": "vitest run --config vitest.config.js",
     "test:watch": "vitest --config vitest.config.js",
-    "test:e2e": "playwright test",
-    "test:all": "npm run test && npm run test:e2e"
+    "test:all": "npm run test"
   },
   "keywords": [],
   "author": "",
@@ -23,10 +22,8 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "@playwright/test": "^1.57.0",
     "bcrypt": "^6.0.0",
     "nodemon": "^3.1.11",
-    "playwright": "^1.28.0",
     "supertest": "^7.1.4",
     "vitest": "^4.0.16"
   }

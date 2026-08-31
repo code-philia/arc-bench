@@ -18,6 +18,10 @@ const cityLabels: Record<string, string> = {
   Hangzhou: '杭州',
   Chengdu: '成都',
 };
+const stationLabels: Record<string, string> = {
+  Shanghaihongqiao: 'Shanghai Hongqiao',
+  Beijingnan: 'Beijing South',
+};
 
 export default function SearchPage() {
   const location = useLocation();
@@ -118,7 +122,7 @@ function TrainTable({ trains, toggleSort, book }: { trains: any[]; toggleSort: (
 
 function TrainRow({ train, book }: { train: any; book: (train: any, seatType: string) => void }) {
   const seats = [['business-class seat', train.business_price, train.business_seats, 'Business-class seat'], ['first-class seat', train.first_price, train.first_seats, 'First-class seat'], ['second-class seat', train.second_price, train.second_seats, 'Second-class seat'], ['standing ticket', train.standing_price, train.standing_seats, 'Standing ticket']];
-  return <tr><td><a href="#booking">{train.train_no}</a><small>{train.from_station}</small></td><td><b>{train.departure_time}</b></td><td>{Math.floor(train.duration_minutes / 60)}h{train.duration_minutes % 60}m</td><td><b>{train.arrival_time}</b><small>{train.to_station}</small></td><td>{seats.map(([name, price, remaining, seatType]) => <div className="price-line" key={String(name)}><span>{name} <b>￥{Number(price).toFixed(1)}</b></span><button className="book-button" disabled={!remaining} onClick={() => book(train, String(seatType))}>{remaining ? 'Book' : 'Sold out'}</button></div>)}</td></tr>;
+  return <tr><td><a href="#booking">{train.train_no}</a><small>{stationLabels[train.from_station] || train.from_station}</small></td><td><b>{train.departure_time}</b></td><td>{Math.floor(train.duration_minutes / 60)}h{train.duration_minutes % 60}m</td><td><b>{train.arrival_time}</b><small>{stationLabels[train.to_station] || train.to_station}</small></td><td>{seats.map(([name, price, remaining, seatType]) => <div className="price-line" key={String(name)}><span>{name} <b>￥{Number(price).toFixed(1)}</b></span><button className="book-button" disabled={!remaining} onClick={() => book(train, String(seatType))}>{remaining ? 'Book' : 'Sold out'}</button></div>)}</td></tr>;
 }
 
 function EmptyResults() { return <div className="empty-results"><img src="/assets/empty.png" alt="" /><h2>0 results</h2><p>sorry, according to your inquiry condition, there is no train at present.</p></div>; }

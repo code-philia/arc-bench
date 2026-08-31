@@ -108,7 +108,7 @@ function GuideDropdown() {
 }
 
 export function Panel({ title, children, className = '' }: { title?: string; children: ReactNode; className?: string }) {
-  return <section className={`panel ${className}`}>{title && <h2 className="panel-title">{title}</h2>}{children}</section>;
+  return <section className={`panel ${className}`} aria-label={title}>{title && <h2 className="panel-title">{title}</h2>}{children}</section>;
 }
 
 export function Feedback({ message, error = false }: { message: string; error?: boolean }) {

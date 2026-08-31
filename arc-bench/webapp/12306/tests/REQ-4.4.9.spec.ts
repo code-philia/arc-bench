@@ -17,12 +17,11 @@ test('REQ-4.4.9: Confirm batch deletion of selected passengers', async ({ page }
 });
 
 test('REQ-4.4.9: Cancel batch deletion of selected passengers', async ({ page }) => {
-  await h.resetTestDatabase(page);
   await h.openMyPassengers(page);
-  await page.getByRole('row', { name: /Delete Passenger One/ }).getByRole('checkbox').check();
-  await page.getByRole('row', { name: /Delete Passenger Two/ }).getByRole('checkbox').check();
+  await page.getByRole('row', { name: /Delete Passenger Three/ }).getByRole('checkbox').check();
+  await page.getByRole('row', { name: /Delete Passenger Four/ }).getByRole('checkbox').check();
   await h.clickNamed(page, 'Batch deletion');
   await h.expectDialog(page, 'Are you sure you want to delete the selected passengers?');
   await page.getByRole('button', { name: 'Cancel', exact: true }).last().click();
-  await h.expectTextsVisible(page, ['Delete Passenger One', 'Delete Passenger Two']);
+  await h.expectTextsVisible(page, ['Delete Passenger Three', 'Delete Passenger Four']);
 });

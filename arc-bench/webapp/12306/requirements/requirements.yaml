@@ -519,7 +519,7 @@ children:
           - id: REQ-3.1.4
             name: Choose departure date
             type: ATOMIC
-            description: 'Allow the user to click the departure date input labeled "Date", open a date picker, choose one departure date, and fill the input with the selected date. The date picker only allows dates from the current day through the next two weeks. Expired dates cannot be selected. ![image](./reference/date-selector.png)'
+            description: 'Allow the user to click the departure date input labeled "Date", open a date picker, choose one departure date, and fill the input with the selected date. The date picker only allows dates from the current day through the next two weeks. Expired dates cannot be selected, and manually submitted dates outside this range show "Please choose a departure date from today through the next two weeks." ![image](./reference/date-selector.png)'
             dependencies:
               - REQ-3.1.1
             scenarios:
@@ -536,9 +536,9 @@ children:
                   - keyword: GIVEN
                     content: 'The user is on the home page search module with the date picker open.'
                   - keyword: WHEN
-                    content: 'Try to click a date earlier than the current day or outside the next two weeks.'
+                    content: 'Try to select or submit a date earlier than the current day or outside the next two weeks.'
                   - keyword: THEN
-                    content: 'The expired date cannot be selected.'
+                    content: 'The expired date is not accepted, and the page shows "Please choose a departure date from today through the next two weeks.".'
           - id: REQ-3.1.5
             name: Search tickets with valid quick search conditions
             type: ATOMIC

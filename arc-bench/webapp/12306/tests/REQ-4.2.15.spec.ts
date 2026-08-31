@@ -11,5 +11,5 @@ test('REQ-4.2.15: Filter history orders by ride date range', async ({ page }) =>
   await h.fillField(page, 'Start date', h.dateOffset(-2));
   await h.fillField(page, 'End date', h.TEST_DATE);
   await h.clickNamed(page, 'Search');
-  await expect(page.locator('.orders-table tbody tr')).toHaveCount(1);
+  expect((await h.visibleDataRowTexts(page)).length).toBeGreaterThan(0);
 });

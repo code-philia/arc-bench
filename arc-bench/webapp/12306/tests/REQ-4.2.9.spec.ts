@@ -13,7 +13,6 @@ test('REQ-4.2.9: Search upcoming trips with a valid keyword', async ({ page }) =
 });
 
 test('REQ-4.2.9: Reject an invalid upcoming trips search condition', async ({ page }) => {
-  await h.resetTestDatabase(page);
   await h.openTicketOrders(page, h.FIXTURES.ordersUpcomingUser);
   await h.clickNamed(page, 'Upcoming trips');
   await h.fillField(page, 'Order number/train number/name', h.FIXTURES.orderKeyword);
