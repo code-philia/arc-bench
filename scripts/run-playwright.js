@@ -78,7 +78,9 @@ function parseTargetUrls(value) {
   if (!value.includes('=')) return { '*': value };
 
   return value.split(',').reduce((map, item) => {
-    const [name, url] = item.split('=');
+    const separatorIndex = item.indexOf('=');
+    const name = separatorIndex >= 0 ? item.slice(0, separatorIndex) : '';
+    const url = separatorIndex >= 0 ? item.slice(separatorIndex + 1) : '';
     if (!name || !url) throw new Error(`Invalid target URL mapping: ${item}`);
     map[name.trim()] = url.trim();
     return map;
@@ -96,11 +98,18 @@ function resolveApps(selection) {
 function runForApp(appName, options, targetUrls) {
   const app = appConfig[appName];
   const targetUrl = targetUrls[appName] || targetUrls['*'] || app.targetUrl || defaultTargetUrl;
+  const outputRoot = process.env.PLAYWRIGHT_OUTPUT_ROOT || '';
+  const reportRoot = process.env.PLAYWRIGHT_REPORT_ROOT || '';
   const env = {
     ...process.env,
     ARC_APP: appName,
     TARGET_URL: targetUrl,
-    PLAYWRIGHT_OUTPUT_DIR: path.join('test-results', appName),
+    PLAYWRIGHT_OUTPUT_DIR: outputRoot
+      ? path.join(outputRoot, appName, 'test-results')
+      : process.env.PLAYWRIGHT_OUTPUT_DIR || path.join('test-results', appName),
+    PLAYWRIGHT_REPORT_DIR: reportRoot
+      ? path.join(reportRoot, appName, 'playwright-report')
+      : process.env.PLAYWRIGHT_REPORT_DIR || 'playwright-report',
   };
   if (options.workers) env.PLAYWRIGHT_WORKERS = options.workers;
   if (options.timeout) env.PLAYWRIGHT_TEST_TIMEOUT = options.timeout;

@@ -9,11 +9,12 @@
     "reference:12306": "node scripts/run-reference-docker.js --app 12306",
     "reference:all": "node scripts/run-reference-docker.js --app all",
     "test": "node scripts/run-playwright.js",
+    "test:docker": "node scripts/run-test-docker.js",
     "test:app": "node scripts/run-playwright.js --app",
     "test:all": "node scripts/run-playwright.js --app all",
     "test:install": "playwright install"
   },
   "devDependencies": {
-    "@playwright/test": "^1.54.0"
+    "@playwright/test": "1.61.1"
   }
 }

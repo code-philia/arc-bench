@@ -3,6 +3,7 @@ FROM ${BASE_IMAGE}
 
 ENV PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
     VIRTUAL_ENV=/opt/venv \
     ARC_RUNTIME_PORT=3301 \
     PATH=/opt/venv/bin:$PATH
@@ -20,7 +21,9 @@ RUN apt-get update \
 WORKDIR /opt/arc
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci \
+    && node node_modules/@playwright/test/cli.js install chromium chromium-headless-shell \
+    && node -e "const { chromium } = require('@playwright/test'); (async () => { const browser = await chromium.launch(); await browser.close(); })().catch((error) => { console.error(error); process.exit(1); });"
 
 COPY agentic-requirement-compiler/ ./agentic-requirement-compiler/
 RUN python3 -m pip install --break-system-packages --no-cache-dir uv \

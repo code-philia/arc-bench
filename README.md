@@ -19,9 +19,11 @@ contains:
   runner;
 - `Dockerfile`: an optional containerized benchmark execution environment.
 
-The benchmark itself is generator-agnostic: any method can consume the
-requirements, produce a web application, start it locally, and run the provided
-tests against the application URL.
+The benchmark itself is generator-agnostic. Any implementation, whether it is
+produced by a generator or written as a reference implementation, is responsible
+for starting successfully, initializing the data required by the requirements,
+and exposing one entry URL. The benchmark runner is responsible only for
+running the selected app's tests against that URL.
 
 ## 📊 Benchmark Applications
 
@@ -44,8 +46,8 @@ The benchmark usage is independent of any particular generation method:
 ```text
 arc-bench/webapp/<app>/requirements/
   -> generate a runnable web application with a chosen method
-  -> start the generated application
-  -> run arc-bench/webapp/<app>/tests/ against the application URL
+  -> the implementation starts, initializes required data, and exposes an entry URL
+  -> run arc-bench/webapp/<app>/tests/ against that URL
 ```
 
 Install the local test runner when running tests directly on the host:
@@ -61,10 +63,40 @@ Run one benchmark application's tests against a running application:
 npm run test -- --app bookstack --target-url http://127.0.0.1:3301
 ```
 
+If the application is already deployed and you only have an entry URL, pass the
+URL with `--target-url`. The runner uses that URL as Playwright's `baseURL`.
+No environment variables are required for this path.
+
+```bash
+npm run test -- --app bookstack --target-url https://your-app.example.com
+```
+
+To run the same tests inside the Docker benchmark environment, use:
+
+```bash
+npm run test:docker -- --app bookstack --target-url https://your-app.example.com
+```
+
+When the application is running on the host machine, a localhost URL must be
+reachable from inside Docker. The npm wrapper rewrites `localhost`,
+`127.0.0.1`, and `0.0.0.0` to `host.docker.internal` for the container:
+
+```bash
+npm run test:docker -- --app bookstack --target-url http://127.0.0.1:3301
+```
+
+Docker test outputs are exported to:
+
+```text
+docker-output/test/<app>/
+|-- test-results/
+`-- playwright-report/
+```
+
 The Docker image in this repository provides a benchmark execution environment:
-Node.js, Playwright browsers, the test runner, and benchmark files. Application
-source code is imported at runtime, then installed, started, and tested inside
-the container.
+Node.js, Playwright browsers, the benchmark runner, and benchmark files. For an
+already-running implementation, the Docker test command only needs the selected
+app and the entry URL.
 
 ## 🧪 Reference Implementation Testing
 
@@ -74,7 +106,9 @@ Reference implementations can be placed under:
 arc-bench/webapp/<app>/project/
 ```
 The reference app must listen on `PORT` and expose a health endpoint at
-`/api/health`.
+`/api/health`. It must initialize the database or other seed data required by
+the requirements during startup. It does not own or execute the benchmark E2E
+tests.
 
 ### Run Reference Implementation
 
@@ -85,8 +119,17 @@ runner:
 npm run docker:build
 ```
 
-Run the `12306` reference implementation in Docker and execute its benchmark
-tests:
+The image prepares the benchmark test environment and the Playwright Chromium
+browser cache used by the benchmark runner. It does not include reference
+implementation source code or reference `node_modules`.
+
+If a run reports a missing path such as
+`/ms-playwright/chromium_headless_shell-xxxx/...`, rebuild the image. That error
+means the image's browser cache does not match the benchmark runner's
+`@playwright/test` version.
+
+Run the `12306` reference implementation in Docker, then execute the benchmark
+tests against the URL exposed inside the container:
 
 ```bash
 npm run reference -- --app 12306
@@ -96,6 +139,24 @@ Equivalent shorthand:
 
 ```bash
 npm run reference:12306
+```
+
+This command does not require manually setting `PORT`, `TARGET_URL`,
+`PLAYWRIGHT_BASE_URL`, or `ARC_TEST_DATE`. The wrapper chooses the container
+port, starts the reference implementation, and calls the benchmark runner with
+the resulting URL.
+
+The reference flow performs the following steps in one fresh container:
+
+```text
+mount arc-bench/webapp/12306/project/
+mount arc-bench/webapp/12306/tests/
+  -> copy source to /workspaces/reference/12306/project
+  -> install dependencies inside the Linux container
+  -> build the frontend if package.json defines `build`
+  -> start the reference backend on PORT=3301
+  -> wait for http://127.0.0.1:3301/api/health
+  -> run `npm run test -- --app 12306 --target-url http://127.0.0.1:3301`
 ```
 
 ## 🧩 ARC Baseline Reproduction Flow
