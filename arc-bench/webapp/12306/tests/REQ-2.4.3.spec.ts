@@ -11,7 +11,7 @@ test('REQ-2.4.3: Complete a valid password reset', async ({ page }) => {
   await h.fillForgotPasswordStepTwo(page, h.FIXTURES.resetUser.newPassword, h.FIXTURES.resetUser.newPassword);
   await h.clickNamed(page, 'submit');
   await h.expectSuccessFeedback(page);
-  await page.goto('/login');
+  await h.openLoginPage(page);
   await h.fillLoginForm(page, h.FIXTURES.resetUser.email, h.FIXTURES.resetUser.newPassword);
   await h.clickNamed(page, 'LOGIN');
   await expect(page.getByRole('button', { name: /sign out/i })).toBeVisible();

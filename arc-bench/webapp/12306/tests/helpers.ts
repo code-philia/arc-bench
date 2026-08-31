@@ -1,14 +1,4 @@
-import { expect, Locator, Page, test } from '@playwright/test';
-
-test.beforeEach(async ({ request }) => {
-  const response = await request.post('/api/test/reset');
-  expect(response.ok()).toBeTruthy();
-});
-
-export async function resetTestDatabase(page: Page): Promise<void> {
-  const response = await page.request.post('/api/test/reset');
-  expect(response.ok()).toBeTruthy();
-}
+import { expect, Locator, Page } from '@playwright/test';
 
 export const TEST_DATE = process.env.ARC_TEST_DATE || new Date().toISOString().slice(0, 10);
 
@@ -116,6 +106,27 @@ export const FIXTURES = {
     newEmail: 'profile_user_next@example.com',
     newMobile: '13800000031',
   },
+  profileContactUser: {
+    username: 'profile_contact_user',
+    email: 'profile_contact_user@example.com',
+    mobile: '13800000132',
+    password: 'Password123!',
+    newEmail: 'profile_contact_next@example.com',
+  },
+  profileEssentialUser: {
+    username: 'profile_essential_user',
+    email: 'profile_essential_user@example.com',
+    mobile: '13800000133',
+    password: 'Password123!',
+    newPassword: 'Password123!X',
+  },
+  securityPasswordUser: {
+    username: 'security_password_user',
+    email: 'security_password_user@example.com',
+    mobile: '13800000131',
+    password: 'Password123!',
+    newPassword: 'Password123!X',
+  },
   passenger: {
     name: 'Passenger Example',
     passportNumber: 'P20269999',
@@ -148,6 +159,25 @@ export const FIXTURES = {
     email: 'bookable_user@example.com',
     password: 'Password123!',
   },
+  bookingSubmitUser: { username: 'booking_submit_user', password: 'Password123!' },
+  bookingConfirmUser: { username: 'booking_confirm_user', password: 'Password123!' },
+  bookingEditUser: { username: 'booking_edit_user', password: 'Password123!' },
+  bookingPaymentUser: { username: 'booking_payment_user', password: 'Password123!' },
+  bookingCancelUser: { username: 'booking_cancel_user', password: 'Password123!' },
+  bookingPaidUser: { username: 'booking_paid_user', password: 'Password123!' },
+  bookingUnpaidUser: { username: 'booking_unpaid_user', password: 'Password123!' },
+  bookingUpcomingUser: { username: 'booking_upcoming_user', password: 'Password123!' },
+  bookingCancelledUser: { username: 'booking_cancelled_user', password: 'Password123!' },
+  ordersUnpaidDismissUser: {
+    username: 'orders_unpaid_dismiss_user',
+    email: 'orders_unpaid_dismiss_user@example.com',
+    password: 'Password123!',
+  },
+  ordersRefundUser: {
+    username: 'orders_refund_user',
+    email: 'orders_refund_user@example.com',
+    password: 'Password123!',
+  },
   searchRoute: {
     from: 'Shanghai',
     to: 'Beijing',
@@ -169,12 +199,36 @@ export const FIXTURES = {
   orderKeyword: 'G1001',
 } as const;
 
+export type RegistrationData = {
+  name: string;
+  passportNumber: string;
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  nationality: string;
+  passportExpirationDate: string;
+  birthDate: string;
+  gender: string;
+  mobile: string;
+};
+
 type NamedAccount = {
   username?: string;
   email?: string;
   mobile?: string;
   password: string;
 };
+
+export function makeUniqueRegistrationData(): RegistrationData {
+  const suffix = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+  return {
+    ...FIXTURES.registration,
+    passportNumber: `P${suffix.toUpperCase()}`,
+    username: `traveler_${suffix}`,
+    email: `traveler_${suffix}@example.com`,
+  };
+}
 
 function escapeRegExp(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -206,7 +260,7 @@ export async function openHome(page: Page): Promise<void> {
 export async function clickNamed(page: Page, value: string | RegExp): Promise<void> {
   const name = toPattern(value);
   if (value instanceof RegExp && value.source === 'book') {
-    const bookButton = page.locator('.book-button:not(:disabled)').first();
+    const bookButton = page.getByRole('button', { name: /^Book$/i }).first();
     await bookButton.click();
     return;
   }
@@ -218,29 +272,12 @@ export async function clickNamed(page: Page, value: string | RegExp): Promise<vo
     }
   }
   if (typeof value === 'string' && value.startsWith('Search by ')) {
-    await page.locator('select[aria-label="Order date type"]').selectOption({ label: value });
+    await page.getByRole('combobox', { name: /date type/i }).selectOption({ label: value });
     return;
   }
   if (typeof value === 'string' && /^\d{2}:\d{2}-\d{2}:\d{2}$/.test(value)) {
-    await page.locator('select[aria-label="Departure time"]').selectOption({ label: value });
+    await page.getByRole('combobox', { name: /departure time/i }).selectOption({ label: value });
     return;
-  }
-  if (typeof value === 'string' && ['Login password', 'Security mailbox', 'Mobile number'].includes(value)) {
-    await page.locator('.security-view').getByRole('button', { name: value, exact: true }).click();
-    return;
-  }
-  const modal = page.locator('.modal-backdrop');
-  if (await modal.count()) {
-    const modalTarget = modal.getByRole('link', { name }).first();
-    if (await modalTarget.count()) {
-      await modalTarget.click();
-      return;
-    }
-    const modalButton = modal.getByRole('button', { name }).first();
-    if (await modalButton.count()) {
-      await modalButton.click();
-      return;
-    }
   }
   const locator = await firstVisible([
     page.getByRole('button', { name }),
@@ -260,11 +297,6 @@ export async function hoverNamed(page: Page, value: string | RegExp): Promise<vo
     page.getByRole('link', { name }),
     page.getByText(name),
   ]);
-  const menu = locator.locator('xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " nav-menu ")]').first();
-  if (await menu.count()) {
-    await menu.hover();
-    return;
-  }
   await locator.hover();
 }
 
@@ -375,28 +407,34 @@ export async function expectRegistrationForm(page: Page): Promise<void> {
   ]);
 }
 
-export async function fillRegistrationForm(page: Page, variant: 'valid' | 'duplicatePassport' | 'duplicateUsername' | 'mismatch' | 'invalidEmail' | 'missing' | 'noAgreement'): Promise<void> {
+export async function fillRegistrationForm(
+  page: Page,
+  variant: 'valid' | 'duplicatePassport' | 'duplicateUsername' | 'mismatch' | 'invalidEmail' | 'missing' | 'noAgreement',
+  overrides: Partial<RegistrationData> = {},
+): Promise<RegistrationData> {
   const source =
     variant === 'duplicatePassport'
       ? FIXTURES.duplicatePassport
       : variant === 'duplicateUsername'
         ? FIXTURES.duplicateUsername
         : FIXTURES.registration;
+  const data = { ...source, ...overrides };
   if (variant !== 'missing') {
-    await selectOption(page, 'Nationality', source.nationality);
-    await fillField(page, 'Name', source.name);
-    await fillField(page, 'Passport number', source.passportNumber);
-    await fillField(page, 'Passport expiration date', source.passportExpirationDate);
-    await fillField(page, 'Date of birth', source.birthDate);
-    await selectRadio(page, source.gender);
-    await fillField(page, 'Username', source.username);
-    await fillField(page, 'Email address', variant === 'invalidEmail' ? 'invalid-email' : source.email);
+    await selectOption(page, 'Nationality', data.nationality);
+    await fillField(page, 'Name', data.name);
+    await fillField(page, 'Passport number', data.passportNumber);
+    await fillField(page, 'Passport expiration date', data.passportExpirationDate);
+    await fillField(page, 'Date of birth', data.birthDate);
+    await selectRadio(page, data.gender);
+    await fillField(page, 'Username', data.username);
+    await fillField(page, 'Email address', variant === 'invalidEmail' ? 'invalid-email' : data.email);
   }
-  await fillField(page, 'Password', source.password);
-  await fillField(page, 'Confirm Password', variant === 'mismatch' ? 'Password123!Mismatch' : source.confirmPassword);
+  await fillField(page, 'Password', data.password);
+  await fillField(page, 'Confirm Password', variant === 'mismatch' ? 'Password123!Mismatch' : data.confirmPassword);
   if (variant !== 'noAgreement') {
     await setCheckboxByText(page, 'I have read and agree', true);
   }
+  return data;
 }
 
 export async function openLoginPage(page: Page): Promise<void> {
@@ -418,11 +456,17 @@ export async function loginAs(page: Page, account: NamedAccount = FIXTURES.regis
   const accountValue = account.username ?? account.email ?? account.mobile ?? '';
   await fillLoginForm(page, accountValue, account.password);
   await clickNamed(page, 'LOGIN');
-  await page.waitForURL(/\/$/);
+  await expect(page.getByRole('button', { name: /sign out/i })).toBeVisible();
 }
 
 export async function logout(page: Page): Promise<void> {
   await clickNamed(page, /sign out/i);
+}
+
+export async function signOutAndOpenLogin(page: Page): Promise<void> {
+  await logout(page);
+  await clickNamed(page, /login/i);
+  await expectLoginForm(page);
 }
 
 export async function openForgotPasswordPage(page: Page): Promise<void> {
@@ -435,13 +479,13 @@ export async function expectForgotPasswordPage(page: Page): Promise<void> {
 }
 
 export async function fillForgotPasswordStepOne(page: Page, email: string, idNumber: string): Promise<void> {
-  await page.locator('input[aria-label="Email"]').fill(email);
-  await page.locator('input[aria-label="ID number"]').fill(idNumber);
+  await fillField(page, 'Email', email);
+  await fillField(page, 'ID number', idNumber);
 }
 
 export async function fillForgotPasswordStepTwo(page: Page, password: string, confirmPassword: string): Promise<void> {
-  await page.locator('input[aria-label="New password"]').fill(password);
-  await page.locator('input[aria-label="Confirm new password"]').fill(confirmPassword);
+  await fillField(page, 'New password', password);
+  await fillField(page, 'Confirm new password', confirmPassword);
 }
 
 export async function expectQuickSearch(page: Page): Promise<void> {
@@ -475,71 +519,92 @@ export async function openPersonalCenter(page: Page, account: NamedAccount = FIX
 
 export async function openTicketOrders(page: Page, account: NamedAccount = FIXTURES.personalCenterUser): Promise<void> {
   await openPersonalCenter(page, account);
-  await clickNamed(page, /order center/i);
+  await clickNamed(page, /^order center$/i);
   await clickNamed(page, /ticket orders/i);
 }
 
-export async function openUserInformation(page: Page): Promise<void> {
-  await openPersonalCenter(page, FIXTURES.profileUser);
-  await page.locator('.center-menu details').filter({ hasText: 'Personal' }).locator('summary').click();
-  await page.locator('.center-menu a').filter({ hasText: /^User information$/i }).click();
+export async function openUserInformation(page: Page, account: NamedAccount = FIXTURES.profileUser): Promise<void> {
+  await openPersonalCenter(page, account);
+  await clickNamed(page, /^Personal$/i);
+  await clickNamed(page, 'User information');
 }
 
-export async function openAccountSecurity(page: Page): Promise<void> {
-  await openPersonalCenter(page, FIXTURES.profileUser);
-  await page.locator('.center-menu details').filter({ hasText: 'Personal' }).locator('summary').click();
-  await page.locator('.center-menu a').filter({ hasText: /^Account security$/i }).click();
+export async function openAccountSecurity(page: Page, account: NamedAccount = FIXTURES.profileUser): Promise<void> {
+  await openPersonalCenter(page, account);
+  await clickNamed(page, /^Personal$/i);
+  await clickNamed(page, 'Account security');
 }
 
-export async function openMyPassengers(page: Page): Promise<void> {
-  await openPersonalCenter(page, FIXTURES.passengerManagerUser);
-  await page.locator('.center-menu details').filter({ hasText: 'Information management' }).locator('summary').click();
-  await page.locator('.center-menu a').filter({ hasText: /^My passengers$/i }).click();
+export async function openSecurityForm(page: Page, section: string, field: string): Promise<void> {
+  const visibleField = () => firstVisible([
+    page.getByLabel(toPattern(field)),
+    page.getByPlaceholder(toPattern(field)),
+    page.getByRole('textbox', { name: toPattern(field) }),
+  ]);
+  await clickNamed(page, section);
+  let control = await visibleField();
+  if (!await control.isVisible()) {
+    await clickNamed(page, section);
+    control = await visibleField();
+  }
+  await expect(control).toBeVisible();
 }
 
-export async function openBookingForm(page: Page, authenticated: boolean): Promise<void> {
+export async function openMyPassengers(page: Page, account: NamedAccount = FIXTURES.passengerManagerUser): Promise<void> {
+  await openPersonalCenter(page, account);
+  await clickNamed(page, /^Information management$/i);
+  await clickNamed(page, 'My passengers');
+}
+
+export async function openBookingForm(
+  page: Page,
+  authenticated: boolean,
+  account: NamedAccount = FIXTURES.bookableUser,
+): Promise<void> {
   if (authenticated) {
-    await loginAs(page, FIXTURES.bookableUser);
+    await loginAs(page, account);
   }
   await openSearchResults(page);
   await clickNamed(page, /book/i);
 }
 
 export async function selectPassengerForBooking(page: Page): Promise<void> {
-  const checkbox = page.locator('.passenger-picker input[type="checkbox"]').first();
+  const checkbox = page.getByRole('checkbox').first();
   await checkbox.check();
   await expect(checkbox).toBeChecked();
 }
 
 export async function fillPassengerForm(page: Page, overrides: Record<string, string> = {}): Promise<void> {
   const passenger = { ...FIXTURES.newPassenger, ...overrides };
-  const modal = page.locator('.form-modal');
-  await modal.getByLabel('Nationality').selectOption({ label: passenger.nationality });
-  await modal.getByLabel('Name', { exact: true }).fill(passenger.name);
-  await modal.getByLabel('Passport number').fill(passenger.passportNumber);
-  await modal.getByLabel('Passport expiration date').fill(passenger.passportExpirationDate);
-  await modal.getByLabel('Date of birth').fill(passenger.birthDate);
-  await modal.getByRole('radio', { name: passenger.gender, exact: true }).check();
-  await modal.getByLabel('Email address').fill(passenger.email);
-  await modal.getByLabel('Mobile number').fill(passenger.mobile);
-  await modal.getByLabel('Passenger type').selectOption({ label: passenger.passengerType });
+  const form = page.getByRole('dialog', { name: 'Add new passengers' });
+  await form.getByLabel('Nationality').selectOption({ label: passenger.nationality });
+  await form.getByLabel('Name', { exact: true }).fill(passenger.name);
+  await form.getByLabel('Passport number').fill(passenger.passportNumber);
+  await form.getByLabel('Passport expiration date').fill(passenger.passportExpirationDate);
+  await form.getByLabel('Date of birth').fill(passenger.birthDate);
+  await form.getByRole('radio', { name: passenger.gender, exact: true }).check();
+  await form.getByLabel('Email address').fill(passenger.email);
+  await form.getByLabel('Mobile number').fill(passenger.mobile);
+  await form.getByLabel('Passenger type').selectOption({ label: passenger.passengerType });
 }
 
-export async function reachPaymentPage(page: Page): Promise<void> {
-  await openBookingForm(page, true);
+export async function reachPaymentPage(page: Page, account: NamedAccount = FIXTURES.bookableUser): Promise<void> {
+  await openBookingForm(page, true, account);
   await selectPassengerForBooking(page);
   await clickNamed(page, /place order/i);
-  await page.locator('.confirm-modal').getByRole('button', { name: 'Confirm', exact: true }).click();
-  await page.waitForURL(/\/payment\?order=/);
+  await clickDialogAction(page, 'Please confirm the following information.', 'Confirm');
+  await expectTextsVisible(page, ['Seats are locked', 'Order details']);
+}
+
+export async function openTicketOrdersFromCurrentPage(page: Page): Promise<void> {
+  await clickNamed(page, /my 12306/i);
+  await clickNamed(page, /^order center$/i);
+  await clickNamed(page, /ticket orders/i);
 }
 
 export async function openTravelGuide(page: Page): Promise<void> {
   await openHome(page);
   await clickNamed(page, /travel guide/i);
-}
-
-export async function assertUrlChanged(page: Page): Promise<void> {
-  await expect(page).not.toHaveURL(/\/$/);
 }
 
 export async function assertResultsPage(page: Page): Promise<void> {
@@ -554,33 +619,61 @@ export async function assertResultsPage(page: Page): Promise<void> {
   ]);
 }
 
+export async function visibleDataRowTexts(page: Page): Promise<string[]> {
+  const rows = page.getByRole('row');
+  const texts: string[] = [];
+  for (let index = 0; index < await rows.count(); index += 1) {
+    const row = rows.nth(index);
+    if (await row.isVisible() && await row.getByRole('cell').count()) {
+      texts.push((await row.innerText()).trim());
+    }
+  }
+  return texts;
+}
+
+async function visibleDataColumnValues(page: Page, column: number): Promise<Array<string | number>> {
+  const rows = page.getByRole('row');
+  const values: Array<string | number> = [];
+  for (let index = 0; index < await rows.count(); index += 1) {
+    const cells = rows.nth(index).getByRole('cell');
+    if (await cells.count() <= column || !await rows.nth(index).isVisible()) continue;
+    const text = (await cells.nth(column).innerText()).trim();
+    const duration = text.match(/(\d+)h(\d+)m/i);
+    values.push(duration ? Number(duration[1]) * 60 + Number(duration[2]) : text.replace(/\s+/g, ''));
+  }
+  return values;
+}
+
 export async function assertSortToggle(page: Page, headerText: string): Promise<void> {
   const column = headerText === 'Departure Time' ? 1 : headerText === 'Travel time' ? 2 : 3;
-  const values = async () => (await page.locator('.train-table tbody tr').evaluateAll((rows, index) => rows.map((row) => {
-    const text = row.querySelectorAll('td')[index as number]?.textContent?.trim() || '';
-    const duration = text.match(/(\d+)h(\d+)m/);
-    if (duration) return Number(duration[1]) * 60 + Number(duration[2]);
-    return text.replace(/\s+/g, '');
-  }), column));
   const sortButton = page.getByRole('button', { name: toPattern(headerText) });
   await sortButton.click();
-  const ascending = await values();
+  const ascending = await visibleDataColumnValues(page, column);
   expect(ascending).toEqual([...ascending].sort((a, b) => typeof a === 'number' && typeof b === 'number' ? a - b : String(a).localeCompare(String(b))));
   await sortButton.click();
-  const descending = await values();
+  const descending = await visibleDataColumnValues(page, column);
   expect(descending).toEqual([...descending].sort((a, b) => typeof a === 'number' && typeof b === 'number' ? b - a : String(b).localeCompare(String(a))));
 }
 
 export async function assertTransferSortToggle(page: Page, headerText: string): Promise<void> {
-  const attribute = headerText === 'Departure Time' ? 'data-departure' : headerText === 'Travel time' ? 'data-travel' : 'data-arrival';
-  const value = async () => page.locator('.transfer-plan').evaluateAll((plans, name) => plans.map((plan) => plan.getAttribute(name as string) || ''), attribute);
+  const values = async () => {
+    const plans = page.getByRole('article');
+    const result: Array<string | number> = [];
+    for (let index = 0; index < await plans.count(); index += 1) {
+      const text = await plans.nth(index).innerText();
+      const times = [...text.matchAll(/\b(\d{2}:\d{2})\b/g)].map((match) => match[1]);
+      const duration = text.match(/Total travel time:\s*(\d+)\s*minutes/i);
+      result.push(headerText === 'Departure Time' ? times[0] : headerText === 'Arrival Time' ? times.at(-1) || '' : Number(duration?.[1] || 0));
+    }
+    return result;
+  };
   const sortButton = page.getByRole('button', { name: toPattern(headerText) });
   await sortButton.click();
-  const ascending = await value();
-  const compare = (a: string, b: string) => Number.isNaN(Number(a)) ? a.localeCompare(b) : Number(a) - Number(b);
+  const ascending = await values();
+  const compare = (a: string | number, b: string | number) => typeof a === 'number' && typeof b === 'number' ? a - b : String(a).localeCompare(String(b));
   expect(ascending).toEqual([...ascending].sort(compare));
   await sortButton.click();
-  const descending = await value();
+  const descending = await values();
   expect(descending).toEqual([...descending].sort((a, b) => compare(b, a)));
 }
 
@@ -588,13 +681,24 @@ export async function expectDialog(page: Page, title: string): Promise<void> {
   await expect(page.getByRole('heading', { name: toPattern(title) })).toBeVisible();
 }
 
+export async function clickDialogAction(page: Page, title: string, action: string): Promise<void> {
+  const dialog = page.getByRole('dialog', { name: toPattern(title) });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: toPattern(action) }).click();
+}
+
 export async function assertFilterInteraction(page: Page, sectionText: string, optionText: string): Promise<void> {
   await expectTextsVisible(page, [sectionText]);
-  await clickNamed(page, optionText);
-  const select = page.locator('select').filter({ hasText: optionText });
-  if (await select.count()) {
-    await expect(select.first()).toHaveValue(optionText);
-    return;
+  const controls = page.getByRole('combobox');
+  for (let index = 0; index < await controls.count(); index += 1) {
+    const control = controls.nth(index);
+    const options = await control.getByRole('option').allTextContents();
+    if (options.some((option) => option.trim() === optionText)) {
+      await control.selectOption({ label: optionText });
+      await expect(control).toHaveValue(optionText);
+      return;
+    }
   }
+  await clickNamed(page, optionText);
   await expectTextsVisible(page, [optionText]);
 }

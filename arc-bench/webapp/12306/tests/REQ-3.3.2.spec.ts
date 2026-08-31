@@ -6,7 +6,12 @@ import * as h from './helpers';
 
 test('REQ-3.3.2: Display detailed information for each transfer plan', async ({ page }) => {
   await h.openTransferResults(page);
-  await expect(page.locator('.transfer-plan')).toHaveCount(2);
   await h.expectTextsVisible(page, ['Yancheng', 'Lhasa', 'Transfer waiting', 'Book']);
-  await expect(page.locator('.transfer-plan').first()).toContainText(/D2136|G1818/);
+  const plans = page.getByRole('article');
+  expect(await plans.count()).toBeGreaterThan(0);
+  for (let index = 0; index < await plans.count(); index += 1) {
+    await expect(plans.nth(index)).toContainText(/Transfer waiting/i);
+    await expect(plans.nth(index)).toContainText(/Total travel time:\s*\d+\s*minutes/i);
+    await expect(plans.nth(index).getByRole('button', { name: /^Book$/i })).toBeVisible();
+  }
 });

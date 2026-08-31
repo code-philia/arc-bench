@@ -7,6 +7,5 @@ import * as h from './helpers';
 test('REQ-6.3.2: Open the travel guide page from the quick guide more link', async ({ page }) => {
   await h.openHome(page);
   await h.clickNamed(page, /^More$/i);
-  await h.expectTextsVisible(page, ['Ticketing']);
-  await expect(page.locator('.guide-tabs button.active')).toHaveText('Ticketing');
+  await h.expectTextsVisible(page, ['Ticketing', 'How to book tickets online?']);
 });

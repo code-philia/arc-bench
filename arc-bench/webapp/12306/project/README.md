@@ -5,7 +5,7 @@ This template is a single-port web application. The frontend is built with Vite 
 ## Project Layout
 
 - `frontend/`: React, Vite, Tailwind, Vitest, and frontend tests.
-- `backend/`: Express, SQLite runtime helpers, backend Vitest tests, and Playwright E2E tests.
+- `backend/`: Express, SQLite runtime helpers, and backend Vitest tests.
 - `backend/src/app.js`: Express app, `/api/health`, static frontend hosting, and SPA fallback.
 - `backend/src/index.js`: Backend process entrypoint.
 
@@ -80,24 +80,20 @@ cd backend
 npm run test
 ```
 
-Backend E2E tests use Playwright and live under `backend/test-e2e`:
-
-```bash
-cd backend
-npm run test:e2e
-```
-
-Run backend Vitest tests followed by E2E tests:
+Run backend Vitest tests:
 
 ```bash
 cd backend
 npm run test:all
 ```
 
+Benchmark E2E tests are not owned by this reference implementation. Start the
+application, expose its entry URL, and run the benchmark tests from the
+`arc-bench` repository root.
+
 ## Database Notes
 
 - Runtime database helpers live under `backend/src/database`.
 - The default database file is `database.db`, unless `ARC_DB_FILE` or `DATABASE_FILE` is set.
-- Test helpers create isolated SQLite files under `.arc-test-db`.
 - `npm run db:seed` runs the template seed entrypoint.
-- `npm run db:prepare:e2e` prepares an isolated E2E database.
+- The application initializes and seeds the runtime database during startup.

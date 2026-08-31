@@ -7,5 +7,7 @@ import * as h from './helpers';
 test('REQ-3.2.12: Filter the result list by departure time range', async ({ page }) => {
   await h.openSearchResults(page);
   await h.assertFilterInteraction(page, 'Departure time', '06:00-12:00');
-  await expect(page.locator('.train-table tbody tr')).toHaveCount(2);
+  const rows = await h.visibleDataRowTexts(page);
+  expect(rows.length).toBeGreaterThan(0);
+  expect(rows.every((row) => /\b(?:0[6-9]|1[01]):\d{2}\b/.test(row))).toBeTruthy();
 });

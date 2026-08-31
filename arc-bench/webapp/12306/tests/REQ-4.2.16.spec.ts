@@ -13,7 +13,6 @@ test('REQ-4.2.16: Search history orders with a valid keyword', async ({ page }) 
 });
 
 test('REQ-4.2.16: Reject an invalid history orders search condition', async ({ page }) => {
-  await h.resetTestDatabase(page);
   await h.openTicketOrders(page, h.FIXTURES.ordersHistoryUser);
   await h.clickNamed(page, 'History orders');
   await h.fillField(page, 'Order number/train number/name', '***');
