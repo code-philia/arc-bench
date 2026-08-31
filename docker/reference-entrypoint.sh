@@ -11,14 +11,12 @@ RESULT_ROOT="${EXPORT_ROOT%/}/reference/${APP_NAME}"
 WORKSPACE_ROOT="/workspaces/reference"
 APP_ROOT="${WORKSPACE_ROOT}/${APP_NAME}"
 PROJECT_WORKSPACE="${APP_ROOT}/project"
-TEST_WORKSPACE="${APP_ROOT}/tests"
 SETUP_LOG="${RESULT_ROOT}/logs/setup.log"
 APP_LOG="${RESULT_ROOT}/logs/app.log"
 TEST_LOG="${RESULT_ROOT}/logs/test.log"
 HEALTH_PATH="${ARC_HEALTH_PATH:-/api/health}"
 START_TIMEOUT="${ARC_START_TIMEOUT_SECONDS:-60}"
 REFERENCE_TEST_TIMEOUT="${ARC_REFERENCE_TEST_TIMEOUT:-15000}"
-REFERENCE_REPORTER="${ARC_REFERENCE_REPORTER:-line}"
 BASE_URL="http://127.0.0.1:${APP_PORT}"
 SERVER_PID=""
 APP_PROJECT_DIR=""
@@ -96,8 +94,8 @@ target_url=${BASE_URL}
 source_project=${APP_PROJECT_DIR}
 source_tests=${APP_TEST_DIR}
 workspace=${PROJECT_WORKSPACE}
-test_results_dir=test-results/
-playwright_report_dir=playwright-report/
+test_results_dir=${RESULT_ROOT}/test-results/
+playwright_report_dir=${RESULT_ROOT}/playwright-report/
 EOF
 }
 
@@ -154,23 +152,13 @@ copy_project_source() {
       --exclude='./node_modules' \
       --exclude='./frontend/node_modules' \
       --exclude='./backend/node_modules' \
+      --exclude='./database.db' \
+      --exclude='./frontend/database.db' \
+      --exclude='./backend/database.db' \
+      --exclude='*.sqlite' \
+      --exclude='*.sqlite3' \
       -cf - .
   ) | (cd "${target}" && tar -xf -)
-}
-
-install_playwright_browser_if_present() {
-  local dir="$1"
-  if [[ ! -f "${dir}/package.json" ]]; then
-    return 0
-  fi
-
-  if [[ -f "${dir}/node_modules/@playwright/test/cli.js" ]]; then
-    (cd "${dir}" && node node_modules/@playwright/test/cli.js install chromium)
-  fi
-
-  if [[ -f "${dir}/node_modules/playwright/cli.js" ]]; then
-    (cd "${dir}" && node node_modules/playwright/cli.js install chromium)
-  fi
 }
 
 copy_artifacts() {
@@ -192,14 +180,10 @@ echo "[ARC-Bench Reference] Preparing ${APP_NAME} reference project"
 set +e
 {
   copy_project_source "${SOURCE_PROJECT}" "${PROJECT_WORKSPACE}"
-  mkdir -p "${TEST_WORKSPACE}"
-  cp -a "${SOURCE_TESTS}/." "${TEST_WORKSPACE}/"
 
   install_node_project "${PROJECT_WORKSPACE}"
   install_node_project "${PROJECT_WORKSPACE}/frontend"
   install_node_project "${PROJECT_WORKSPACE}/backend"
-  install_playwright_browser_if_present "${PROJECT_WORKSPACE}"
-  install_playwright_browser_if_present "${PROJECT_WORKSPACE}/backend"
   run_build_if_present "${PROJECT_WORKSPACE}"
   run_build_if_present "${PROJECT_WORKSPACE}/frontend"
 } > "${SETUP_LOG}" 2>&1
@@ -210,24 +194,6 @@ if [[ "${setup_status}" -ne 0 ]]; then
   echo "[ARC-Bench Reference] Reference setup failed. See ${SETUP_LOG}" >&2
   write_summary "${setup_status}" "not-started" "not-run"
   exit "${setup_status}"
-fi
-
-if [[ -f "${PROJECT_WORKSPACE}/backend/playwright.config.js" ]]; then
-  echo "[ARC-Bench Reference] Running project Playwright config for ${APP_NAME}"
-  set +e
-  (
-    cd "${PROJECT_WORKSPACE}/backend"
-    PLAYWRIGHT_BASE_URL="${BASE_URL}" \
-      npx playwright test \
-        --config playwright.config.js \
-        --timeout="${REFERENCE_TEST_TIMEOUT}" \
-        --reporter="${REFERENCE_REPORTER}"
-  ) 2>&1 | tee "${TEST_LOG}"
-  test_status=${PIPESTATUS[0]}
-  set -e
-  copy_artifacts "${PROJECT_WORKSPACE}/backend"
-  write_summary "${setup_status}" "managed-by-playwright" "${test_status}"
-  exit "${test_status}"
 fi
 
 if [[ -f "${PROJECT_WORKSPACE}/backend/package.json" ]]; then
@@ -243,7 +209,7 @@ fi
 echo "[ARC-Bench Reference] Starting ${APP_NAME} reference application on port ${APP_PORT}"
 (
   cd "${START_DIR}"
-  PORT="${APP_PORT}" npm run start
+  ARC_DB_FILE="${APP_ROOT}/runtime/database.db" PORT="${APP_PORT}" npm run start
 ) > "${APP_LOG}" 2>&1 &
 SERVER_PID=$!
 
@@ -267,7 +233,10 @@ fi
 
 echo "[ARC-Bench Reference] Running benchmark tests for ${APP_NAME}"
 set +e
-TARGET_URL="${BASE_URL}" npm run test -- --app "${APP_NAME}" 2>&1 | tee "${TEST_LOG}"
+PLAYWRIGHT_OUTPUT_ROOT="${EXPORT_ROOT%/}/reference" \
+PLAYWRIGHT_REPORT_ROOT="${EXPORT_ROOT%/}/reference" \
+TARGET_URL="${BASE_URL}" \
+  npm run test -- --app "${APP_NAME}" --target-url "${BASE_URL}" --timeout "${REFERENCE_TEST_TIMEOUT}" 2>&1 | tee "${TEST_LOG}"
 test_status=${PIPESTATUS[0]}
 set -e
 

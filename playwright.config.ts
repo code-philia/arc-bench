@@ -18,7 +18,7 @@ export default defineConfig({
   workers,
   reporter: [
     ['list'],
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['html', { outputFolder: process.env.PLAYWRIGHT_REPORT_DIR || 'playwright-report', open: 'never' }],
   ],
   outputDir: process.env.PLAYWRIGHT_OUTPUT_DIR || 'test-results',
   use: {

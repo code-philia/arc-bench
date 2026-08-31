@@ -22,7 +22,6 @@ Options:
   --env-file <path>            Optional env file for database or runtime variables.
   --env <key=value>            Additional Docker environment variable. Repeatable.
   --timeout <ms>               Playwright test timeout. Defaults to 15000.
-  --reporter <name>            Playwright reporter. Defaults to line.
   --help                       Show this help.
 
 Examples:
@@ -47,7 +46,6 @@ function parseArgs(argv) {
     runtimePort: process.env.ARC_RUNTIME_PORT || '3301',
     envFile: process.env.ENV_FILE || '',
     timeout: process.env.ARC_REFERENCE_TEST_TIMEOUT || '15000',
-    reporter: process.env.ARC_REFERENCE_REPORTER || 'line',
     env: [],
   };
 
@@ -61,7 +59,6 @@ function parseArgs(argv) {
     else if (arg === '--env-file') options.envFile = takeValue(argv, index++, arg);
     else if (arg === '--env' || arg === '-e') options.env.push(takeValue(argv, index++, arg));
     else if (arg === '--timeout') options.timeout = takeValue(argv, index++, arg);
-    else if (arg === '--reporter') options.reporter = takeValue(argv, index++, arg);
     else if (!arg.startsWith('--') && options.app === '12306') options.app = arg;
     else throw new Error(`Unknown option: ${arg}`);
   }
@@ -69,10 +66,24 @@ function parseArgs(argv) {
   return options;
 }
 
+function hasReferenceProject(appName) {
+  const projectPath = resolveProjectDir(appName);
+  return fs.existsSync(projectPath) && fs.statSync(projectPath).isDirectory();
+}
+
 function resolveApps(selection) {
-  if (selection === 'all') return appNames;
+  if (selection === 'all') {
+    const availableApps = appNames.filter(hasReferenceProject);
+    if (availableApps.length === 0) {
+      throw new Error('No reference projects found under arc-bench/webapp/<app>/project');
+    }
+    return availableApps;
+  }
   if (!appConfig[selection]) {
     throw new Error(`Unknown app "${selection}". Supported apps: ${appNames.join(', ')}`);
+  }
+  if (!hasReferenceProject(selection)) {
+    throw new Error(`Reference project not found for ${selection}: ${resolveProjectDir(selection)}`);
   }
   return [selection];
 }
@@ -82,12 +93,21 @@ function resolveProjectDir(appName) {
   return path.resolve(rootDir, configured);
 }
 
+function resolveTestDir(appName) {
+  const configured = appConfig[appName].testDir || `arc-bench/webapp/${appName}/tests`;
+  return {
+    hostPath: path.resolve(rootDir, configured),
+    containerPath: `/opt/arc/${configured.replace(/\\/g, '/')}`,
+  };
+}
+
 function runReferenceApp(appName, options) {
   const outputPath = path.resolve(rootDir, options.outputDir);
   const projectPath = resolveProjectDir(appName);
+  const testDir = resolveTestDir(appName);
 
-  if (!fs.existsSync(projectPath) || !fs.statSync(projectPath).isDirectory()) {
-    throw new Error(`Reference project not found for ${appName}: ${projectPath}`);
+  if (!fs.existsSync(testDir.hostPath) || !fs.statSync(testDir.hostPath).isDirectory()) {
+    throw new Error(`Benchmark test directory not found for ${appName}: ${testDir.hostPath}`);
   }
   fs.mkdirSync(outputPath, { recursive: true });
 
@@ -98,12 +118,12 @@ function runReferenceApp(appName, options) {
     `type=bind,source=${outputPath},target=/export`,
     '--mount',
     `type=bind,source=${projectPath},target=/opt/arc/arc-bench/webapp/${appName}/project,readonly`,
+    '--mount',
+    `type=bind,source=${testDir.hostPath},target=${testDir.containerPath},readonly`,
     '-e',
     `ARC_RUNTIME_PORT=${options.runtimePort}`,
     '-e',
     `ARC_REFERENCE_TEST_TIMEOUT=${options.timeout}`,
-    '-e',
-    `ARC_REFERENCE_REPORTER=${options.reporter}`,
     '--entrypoint',
     '/usr/local/bin/arc-reference-entrypoint',
   ];
