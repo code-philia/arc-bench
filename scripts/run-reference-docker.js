@@ -149,6 +149,7 @@ function runDocker(dockerArgs, containerName) {
       detached: process.platform !== 'win32',
     });
     let interrupted = false;
+    let interruptionSignal;
     let settled = false;
     let stopper;
     let forceTimer;
@@ -174,6 +175,7 @@ function runDocker(dockerArgs, containerName) {
         return;
       }
       interrupted = true;
+      interruptionSignal = signal;
       console.error(`[ARC-Bench] Forwarding ${signal} and stopping ${containerName}`);
       stopper = stopContainer(containerName);
       forceTimer = setTimeout(() => stopProcess(child, 'SIGKILL'), 9000);
@@ -190,7 +192,7 @@ function runDocker(dockerArgs, containerName) {
       finish(1);
     });
     child.once('close', (code, signal) => {
-      if (interrupted) finish(signalExitCode(signal || 'SIGTERM'));
+      if (interrupted) finish(signalExitCode(interruptionSignal || signal || 'SIGTERM'));
       else finish(typeof code === 'number' ? code : signalExitCode(signal));
     });
   });
