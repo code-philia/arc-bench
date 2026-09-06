@@ -155,15 +155,16 @@ function runDocker(dockerArgs, containerName) {
 
     const cleanup = () => {
       if (forceTimer) clearTimeout(forceTimer);
-      process.off('SIGINT', onSignal);
-      process.off('SIGTERM', onSignal);
+      process.off('SIGINT', onSigint);
+      process.off('SIGTERM', onSigterm);
+      process.off('SIGHUP', onSighup);
     };
 
     const finish = (status) => {
       if (settled) return;
       settled = true;
       cleanup();
-      resolve(status);
+      resolve({ status, interrupted });
     };
 
     const onSignal = (signal) => {
@@ -178,8 +179,12 @@ function runDocker(dockerArgs, containerName) {
       forceTimer = setTimeout(() => stopProcess(child, 'SIGKILL'), 9000);
     };
 
-    process.once('SIGINT', onSignal);
-    process.once('SIGTERM', onSignal);
+    const onSigint = () => onSignal('SIGINT');
+    const onSigterm = () => onSignal('SIGTERM');
+    const onSighup = () => onSignal('SIGHUP');
+    process.once('SIGINT', onSigint);
+    process.once('SIGTERM', onSigterm);
+    process.once('SIGHUP', onSighup);
     child.once('error', (error) => {
       console.error(`[ARC-Bench] Could not start Docker: ${error.message}`);
       finish(1);
@@ -261,8 +266,9 @@ async function main() {
   const selectedApps = resolveApps(options.app);
   let exitCode = 0;
   for (const appName of selectedApps) {
-    const status = await runReferenceApp(appName, options);
-    if (status !== 0) exitCode = status;
+    const result = await runReferenceApp(appName, options);
+    if (result.status !== 0) exitCode = result.status;
+    if (result.interrupted) break;
   }
   process.exit(exitCode);
 }

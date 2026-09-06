@@ -124,8 +124,22 @@ function signalExitCode(signal) {
 function signalProcessTree(child, signal) {
   if (!child || !child.pid) return;
   try {
-    if (process.platform === 'win32') child.kill(signal);
-    else process.kill(-child.pid, signal);
+    if (process.platform === 'win32') {
+      const taskkillArgs = ['/PID', String(child.pid), '/T'];
+      if (signal === 'SIGKILL') taskkillArgs.push('/F');
+      const taskkill = spawn('taskkill', taskkillArgs, {
+        stdio: 'ignore',
+        windowsHide: true,
+      });
+      taskkill.once('error', (error) => {
+        if (error.code !== 'ESRCH') {
+          console.error(`[ARC] Could not terminate the Playwright process tree: ${error.message}`);
+        }
+      });
+      taskkill.unref();
+    } else {
+      process.kill(-child.pid, signal);
+    }
   } catch (error) {
     if (error.code !== 'ESRCH') {
       console.error(`[ARC] Could not send ${signal} to Playwright process tree: ${error.message}`);
@@ -152,15 +166,16 @@ function runPlaywrightProcess(args, env, { timeoutMs, terminationGraceMs }) {
     const cleanup = () => {
       if (timeoutHandle) clearTimeout(timeoutHandle);
       if (forceKillHandle) clearTimeout(forceKillHandle);
-      process.off('SIGINT', onSignal);
-      process.off('SIGTERM', onSignal);
+      process.off('SIGINT', onSigint);
+      process.off('SIGTERM', onSigterm);
+      process.off('SIGHUP', onSighup);
     };
 
     const finish = (status) => {
       if (settled) return;
       settled = true;
       cleanup();
-      resolve(status);
+      resolve({ status, interrupted });
     };
 
     const stop = ({ timeout = false, signal = 'SIGTERM' } = {}) => {
@@ -181,8 +196,12 @@ function runPlaywrightProcess(args, env, { timeoutMs, terminationGraceMs }) {
     };
 
     const onSignal = (signal) => stop({ signal });
-    process.once('SIGINT', onSignal);
-    process.once('SIGTERM', onSignal);
+    const onSigint = () => onSignal('SIGINT');
+    const onSigterm = () => onSignal('SIGTERM');
+    const onSighup = () => onSignal('SIGHUP');
+    process.once('SIGINT', onSigint);
+    process.once('SIGTERM', onSigterm);
+    process.once('SIGHUP', onSighup);
 
     child.once('error', (error) => {
       console.error(`[ARC] Could not start Playwright: ${error.message}`);
@@ -255,8 +274,9 @@ async function main() {
   let exitCode = 0;
 
   for (const appName of selectedApps) {
-    const status = await runForApp(appName, options, targetUrls);
-    if (status !== 0) exitCode = status;
+    const result = await runForApp(appName, options, targetUrls);
+    if (result.status !== 0) exitCode = result.status;
+    if (result.interrupted) break;
   }
 
   process.exit(exitCode);
