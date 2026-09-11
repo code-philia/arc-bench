@@ -2,20 +2,16 @@ import { defineConfig, devices } from '@playwright/test';
 
 const testTimeout = Number(process.env.PLAYWRIGHT_TEST_TIMEOUT || 60_000);
 const expectTimeout = Number(process.env.PLAYWRIGHT_EXPECT_TIMEOUT || 10_000);
-const workers = process.env.PLAYWRIGHT_WORKERS
-  ? Number(process.env.PLAYWRIGHT_WORKERS)
-  : undefined;
-
 export default defineConfig({
   testDir: './arc-bench/webapp',
   timeout: testTimeout,
   expect: {
     timeout: expectTimeout,
   },
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
-  workers,
+  workers: 1,
   reporter: [
     ['list'],
     ['html', { outputFolder: process.env.PLAYWRIGHT_REPORT_DIR || 'playwright-report', open: 'never' }],

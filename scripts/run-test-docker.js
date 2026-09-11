@@ -18,7 +18,6 @@ Options:
   --target-url <url|mapping>   Target URL. For all apps, use app=url,app=url.
   --image <name>               Docker image name. Defaults to arc-reproduction:latest.
   --output-dir <path>          Host output directory. Defaults to docker-output.
-  --workers <n>                Playwright worker count.
   --timeout <ms>               Per-test timeout.
   --expect-timeout <ms>        Assertion timeout.
   --headed                     Run browsers headed.
@@ -59,7 +58,7 @@ function parseArgs(argv) {
     else if (arg === '--image') options.image = takeValue(argv, index++, arg);
     else if (arg === '--output-dir') options.outputDir = takeValue(argv, index++, arg);
     else if (arg === '--env' || arg === '-e') options.env.push(takeValue(argv, index++, arg));
-    else if (['--workers', '--timeout', '--expect-timeout', '--project', '--grep'].includes(arg)) {
+    else if (['--timeout', '--expect-timeout', '--project', '--grep'].includes(arg)) {
       options.forwarded.push(arg, takeValue(argv, index++, arg));
     } else if (arg === '--headed') {
       options.forwarded.push(arg);
