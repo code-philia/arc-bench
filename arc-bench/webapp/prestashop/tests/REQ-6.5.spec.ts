@@ -6,9 +6,7 @@ import * as h from './helpers';
 
 test('REQ-6.5: Payment Step', async ({ page }) => {
   await h.login(page, h.FIXTURES.accounts.checkoutInvoice);
-  await h.openProductDetail(page, h.FIXTURES.products.checkoutStep);
-  await h.addProductToCart(page);
-  await h.clickFirstAvailable(page, [[/proceed to checkout/i]]);
+  await h.startCheckoutWithProduct(page, h.FIXTURES.products.checkoutStep);
   await h.clickFirstAvailable(page, [[/continue/i, /shipping/i]]);
   await h.clickFirstAvailable(page, [[/continue/i, /payment/i]]);
   await h.expectTextsVisible(page, [/payment/i, /bank wire|check/i]);

@@ -13,5 +13,7 @@ test('REQ-2.7.4: Assign default label when creating note', async ({ page }) => {
   await h.fillField(page, [/title/i], h.FIXTURES.notes.reminderCreatedTitle);
   await h.fillField(page, [/take a note/i, /note/i, /content/i], 'Prepare reminders note');
   await h.closeEditor(page);
-  await h.expectTextsVisible(page, [h.FIXTURES.labels.default]);
+  await h.openSidebar(page);
+  await h.clickNamed(page, h.FIXTURES.labels.default);
+  await h.expectNoteVisible(page, h.FIXTURES.notes.reminderCreatedTitle);
 });

@@ -6,6 +6,7 @@ import * as h from './helpers';
 
 test('REQ-3.2.14: Enter the results page from the navigation dropdown', async ({ page }) => {
   await h.openHome(page);
-  await h.clickNamed(page, /Booking/i);
-  await h.assertResultsPage(page);
+  await h.hoverNamed(page, /Booking/i);
+  await h.clickNamed(page, 'Tickets');
+  await h.assertDefaultResultsPage(page);
 });

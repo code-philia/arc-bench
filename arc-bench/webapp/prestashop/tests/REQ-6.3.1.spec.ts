@@ -6,9 +6,7 @@ import * as h from './helpers';
 
 test('REQ-6.3.1: Select Existing Address', async ({ page }) => {
   await h.login(page, h.FIXTURES.accounts.checkoutExistingAddress);
-  await h.openProductDetail(page, h.FIXTURES.products.checkoutStep);
-  await h.addProductToCart(page);
-  await h.clickFirstAvailable(page, [[/proceed to checkout/i]]);
+  await h.startCheckoutWithProduct(page, h.FIXTURES.products.checkoutStep);
   await h.clickFirstAvailable(page, [[/continue/i, /addresses/i]]);
   await h.expectTextsVisible(page, [h.FIXTURES.address.alias, /selected|address/i]);
 });

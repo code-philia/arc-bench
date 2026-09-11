@@ -345,12 +345,36 @@ export async function expectFieldValue(scope: Scope, field: Match, expected: Mat
   }
 }
 
-export async function expectUrlIncludes(page: Page, pattern: RegExp): Promise<void> {
-  await expect(page).toHaveURL(pattern);
-}
-
 export async function expectHome(page: Page): Promise<void> {
   await expectTextsVisible(page, [/search/i, /sign in/i, /cart/i]);
+}
+
+export async function expectCartCount(page: Page): Promise<void> {
+  const cart = await firstVisible([
+    page.getByRole('link', { name: /cart/i }),
+    page.getByRole('button', { name: /cart/i }),
+  ]);
+  await expect(cart).toBeVisible();
+  await expect(cart).toContainText(/\d+/);
+}
+
+export async function carousel(page: Page): Promise<Locator> {
+  return firstVisible([
+    page.getByRole('region', { name: /carousel/i }),
+    page.getByRole('group', { name: /carousel/i }),
+    page.getByLabel(/carousel/i),
+  ]);
+}
+
+export async function expectCarouselToChange(page: Page, action?: () => Promise<void>): Promise<void> {
+  const targetCarousel = await carousel(page);
+  await expect(targetCarousel).toBeVisible();
+  const before = await targetCarousel.screenshot();
+  if (action) await action();
+  await expect.poll(async () => {
+    const after = await targetCarousel.screenshot();
+    return !after.equals(before);
+  }, { timeout: 7_000, intervals: [250, 500, 1_000] }).toBe(true);
 }
 
 export async function openCategoryMenu(page: Page): Promise<void> {
@@ -368,23 +392,6 @@ export async function openSearchResults(page: Page): Promise<void> {
   await clickFirstAvailable(page, [[/search/i]]);
   await fillField(page, [/search/i], FIXTURES.catalog.searchKeyword);
   await pressEnter(page, [/search/i]);
-}
-
-export async function productCard(page: Page, name: string): Promise<Locator> {
-  const pattern = new RegExp(escapeRegExp(name), 'i');
-  for (const locator of [
-    page.getByRole('article').filter({ has: page.getByText(pattern) }),
-    page.getByRole('listitem').filter({ has: page.getByText(pattern) }),
-    page.locator('main').locator('div').filter({ has: page.getByText(pattern) }),
-  ]) {
-    const candidate = locator.first();
-    try {
-      if (await candidate.isVisible({ timeout: 300 })) return candidate;
-    } catch {
-      // continue
-    }
-  }
-  return page.getByText(pattern).first();
 }
 
 export async function openProductDetail(page: Page, product: ProductFixture): Promise<void> {
@@ -440,6 +447,19 @@ export async function setProductQuantity(page: Page, quantity: string): Promise<
 
 export async function addProductToCart(page: Page): Promise<void> {
   await clickFirstAvailable(page, [[/add to cart/i]]);
+}
+
+export async function openCartWithProduct(page: Page, product: ProductFixture): Promise<void> {
+  await openProductDetail(page, product);
+  await addProductToCart(page);
+  await clickFirstAvailable(page, [[/proceed to checkout/i]]);
+  await expectTextsVisible(page, [/shopping cart|cart summary|your cart/i]);
+}
+
+export async function startCheckoutWithProduct(page: Page, product: ProductFixture): Promise<void> {
+  await openCartWithProduct(page, product);
+  await clickFirstAvailable(page, [[/proceed to checkout/i]]);
+  await expectTextsVisible(page, [/personal information|checkout/i]);
 }
 
 export async function awaitDownload(action: () => Promise<void>, page: Page): Promise<Download> {

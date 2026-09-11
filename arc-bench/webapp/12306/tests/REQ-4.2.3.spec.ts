@@ -8,5 +8,5 @@ test('REQ-4.2.3: Open the default ticket search from the empty uncompleted order
   await h.openTicketOrders(page, h.FIXTURES.ordersEmptyUser);
   await h.clickNamed(page, 'Uncompleted orders');
   await h.clickNamed(page, 'You can book your tickets and plan your trips.');
-  await h.expectQuickSearch(page);
+  await h.assertDefaultResultsPage(page);
 });

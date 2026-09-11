@@ -10,5 +10,5 @@ test('REQ-5.4: Add Comment on Answer', async ({ page }) => {
   await h.clickAnswerAction(page, [/add a comment/i]);
   await h.fillField(page, [/comment/i], h.FIXTURES.comment.body);
   await h.pressEnter(page, [/comment/i]);
-  await h.expectTextsVisible(page, [/stack user/i, /timestamp|comment/i]);
+  await h.expectTextsVisible(page, [h.FIXTURES.comment.body, /stack user/i]);
 });

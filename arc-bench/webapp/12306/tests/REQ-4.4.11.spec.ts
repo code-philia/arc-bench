@@ -8,7 +8,9 @@ test('REQ-4.4.11: Clear the passenger search results', async ({ page }) => {
   await h.openMyPassengers(page);
   await h.fillField(page, 'Name', h.FIXTURES.passenger.name);
   await h.clickNamed(page, 'Search');
-  await h.clickNamed(page, '×');
+  const filteredRowCount = await page.getByRole('row').count();
+  await h.clickNamed(page, /clear|×/i);
   await expect(page.getByLabel('Name')).toHaveValue('');
-  await h.expectTextsVisible(page, ['Passenger Example', 'Delete Passenger One', 'Delete Passenger Two']);
+  await h.expectTextsVisible(page, ['Passenger Example']);
+  await expect.poll(() => page.getByRole('row').count()).toBeGreaterThan(filteredRowCount);
 });

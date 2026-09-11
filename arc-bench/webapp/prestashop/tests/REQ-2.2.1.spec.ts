@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-2.2.1
@@ -6,5 +6,5 @@ import * as h from './helpers';
 
 test('REQ-2.2.1: Carousel Auto Switch', async ({ page }) => {
   await h.openHome(page);
-  await h.expectTextsVisible(page, [/carousel/i, /slide/i]);
+  await h.expectCarouselToChange(page);
 });

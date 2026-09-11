@@ -221,7 +221,7 @@ type NamedAccount = {
 };
 
 export function makeUniqueRegistrationData(): RegistrationData {
-  const suffix = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+  const suffix = `${Date.now().toString(36).slice(-6)}${Math.random().toString(36).slice(2, 4)}`;
   return {
     ...FIXTURES.registration,
     passportNumber: `P${suffix.toUpperCase()}`,
@@ -556,6 +556,16 @@ export async function openMyPassengers(page: Page, account: NamedAccount = FIXTU
   await clickNamed(page, 'My passengers');
 }
 
+export function deletablePassengerRows(page: Page): Locator {
+  return page.getByRole('row').filter({
+    has: page.getByRole('button', { name: 'Delete', exact: true }),
+  });
+}
+
+export async function passengerName(row: Locator): Promise<string> {
+  return (await row.getByRole('cell').nth(1).innerText()).trim();
+}
+
 export async function openBookingForm(
   page: Page,
   authenticated: boolean,
@@ -617,6 +627,13 @@ export async function assertResultsPage(page: Page): Promise<void> {
     'Price',
     'Filter',
   ]);
+}
+
+export async function assertDefaultResultsPage(page: Page): Promise<void> {
+  await assertResultsPage(page);
+  await expect(page.getByLabel('From')).toHaveValue(/Beijing/i);
+  await expect(page.getByLabel('To')).toHaveValue(/Shanghai/i);
+  await expect(page.getByLabel('Date')).toHaveValue(TEST_DATE);
 }
 
 export async function visibleDataRowTexts(page: Page): Promise<string[]> {

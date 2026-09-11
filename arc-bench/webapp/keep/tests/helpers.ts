@@ -196,31 +196,32 @@ export async function expectHomePage(page: Page): Promise<void> {
   await expectTextsVisible(page, [/take a note/i, /search/i]);
 }
 
-function candidateNoteContainers(scope: Scope): Locator[] {
-  const t = target(scope);
-  return [
-    t.getByRole('article'),
-    t.getByRole('listitem'),
-    t.getByRole('group'),
-    t.locator('main').locator('div'),
-  ];
-}
-
 export async function noteCard(scope: Scope, text: string | RegExp): Promise<Locator> {
   const pattern = text instanceof RegExp ? text : new RegExp(escapeRegExp(text), 'i');
-  for (const container of candidateNoteContainers(scope)) {
-    const candidate = container.filter({ has: target(scope).getByText(pattern) }).first();
-    try {
-      if (await candidate.isVisible({ timeout: 300 })) return candidate;
-    } catch {
-      // continue
-    }
-  }
   return target(scope).getByText(pattern).first();
 }
 
 export async function expectNoteVisible(page: Page, titleOrText: string | RegExp): Promise<void> {
   await expect(await noteCard(page, titleOrText)).toBeVisible();
+}
+
+export async function noteVisualSnapshot(page: Page, titleOrText: string | RegExp): Promise<Buffer> {
+  const title = await noteCard(page, titleOrText);
+  await expect(title).toBeVisible();
+  const box = await title.boundingBox();
+  const viewport = page.viewportSize();
+  if (!box || !viewport) throw new Error('The visible note could not be captured');
+  const padding = 24;
+  const x = Math.max(0, box.x - padding);
+  const y = Math.max(0, box.y - padding);
+  return page.screenshot({
+    clip: {
+      x,
+      y,
+      width: Math.min(viewport.width - x, box.width + padding * 2),
+      height: Math.min(viewport.height - y, box.height + padding * 2),
+    },
+  });
 }
 
 export async function openNote(page: Page, titleOrText: string | RegExp): Promise<void> {
@@ -253,9 +254,8 @@ export async function createNote(page: Page, title: string, content: string): Pr
 }
 
 export async function openMoreOptionsForNote(page: Page, titleOrText: string | RegExp): Promise<void> {
-  const card = await noteCard(page, titleOrText);
-  await hoverNamed(card, [titleOrText]);
-  await clickFirstAvailable(card, [[/more/i, /options/i, /menu/i]]);
+  await hoverNamed(page, [titleOrText]);
+  await clickFirstAvailable(page, [[/more/i, /options/i, /menu/i]]);
 }
 
 export async function deleteNote(page: Page, title: string): Promise<void> {
@@ -264,9 +264,8 @@ export async function deleteNote(page: Page, title: string): Promise<void> {
 }
 
 export async function archiveNote(page: Page, title: string): Promise<void> {
-  const card = await noteCard(page, title);
-  await hoverNamed(card, [title]);
-  await clickFirstAvailable(card, [[/archive/i]]);
+  await hoverNamed(page, [title]);
+  await clickFirstAvailable(page, [[/archive/i]]);
 }
 
 export async function openTrash(page: Page): Promise<void> {
@@ -280,15 +279,13 @@ export async function openArchive(page: Page): Promise<void> {
 }
 
 export async function unarchiveNote(page: Page, title: string): Promise<void> {
-  const card = await noteCard(page, title);
-  await hoverNamed(card, [title]);
-  await clickFirstAvailable(card, [[/unarchive/i, /archive/i]]);
+  await hoverNamed(page, [title]);
+  await clickFirstAvailable(page, [[/unarchive/i, /archive/i]]);
 }
 
 export async function changeNoteColor(page: Page, title: string): Promise<void> {
-  const card = await noteCard(page, title);
-  await hoverNamed(card, [title]);
-  await clickFirstAvailable(card, [[/background options/i, /color/i]]);
+  await hoverNamed(page, [title]);
+  await clickFirstAvailable(page, [[/background options/i, /color/i]]);
   await clickFirstAvailable(page, [[/light green/i, /green/i]]);
 }
 
@@ -318,15 +315,13 @@ export async function setLabel(page: Page, label: string, checked: boolean): Pro
 }
 
 export async function pinNote(page: Page, title: string): Promise<void> {
-  const card = await noteCard(page, title);
-  await hoverNamed(card, [title]);
-  await clickFirstAvailable(card, [[/pin/i]]);
+  await hoverNamed(page, [title]);
+  await clickFirstAvailable(page, [[/pin/i]]);
 }
 
 export async function unpinNote(page: Page, title: string): Promise<void> {
-  const card = await noteCard(page, title);
-  await hoverNamed(card, [title]);
-  await clickFirstAvailable(card, [[/unpin/i, /pin/i]]);
+  await hoverNamed(page, [title]);
+  await clickFirstAvailable(page, [[/unpin/i, /pin/i]]);
 }
 
 export async function search(page: Page, keyword: string): Promise<void> {
