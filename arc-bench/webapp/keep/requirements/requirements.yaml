@@ -1,7 +1,7 @@
 id: ROOT
 name: Keep
 type: FOLDER
-description: Note management system for creating, organizing, searching, and configuring personal notes. This workspace includes seeded note data used by the scenarios, including public home-page content, notes overview content, deletable notes, editable notes, archivable notes, colorable notes, label catalogs, labeled notes, label-filtered notes, pinnable notes, searchable notes, and settings state. These are ordinary product records used by the requirements, not a separate fixture DSL.
+description: 'Note management system for creating, organizing, searching, and configuring personal notes.'
 dependencies: []
 children:
   - id: REQ-1
@@ -34,7 +34,7 @@ children:
       - id: REQ-2.1
         name: Note Listing
         type: ATOMIC
-        description: Display the notes list on the home page with pinned notes shown separately from unpinned notes.
+        description: 'Display the notes list on the home page with pinned notes shown separately from unpinned notes. The system contains a pinned note titled "Sprint goals". The system contains a regular note titled "Groceries".'
         dependencies:
           - REQ-1.1
         scenarios:
@@ -71,7 +71,7 @@ children:
           - id: REQ-2.3.1
             name: Delete
             type: ATOMIC
-            description: 'Delete a note from the note actions menu without an extra confirmation dialog. Dropdown image: ![image](./reference/note_more_options_dropdown.png)'
+            description: 'Delete a note from the note actions menu without an extra confirmation dialog. Dropdown image: ![image](./reference/note_more_options_dropdown.png) The system contains a deletable regular note titled "Delete me 2.3.1".'
             dependencies:
               - REQ-2.2
             scenarios:
@@ -86,7 +86,7 @@ children:
           - id: REQ-2.3.2
             name: Notification and Undo
             type: ATOMIC
-            description: 'Show a delete notification with an Undo action after a note is deleted, allow recovery through Undo, and allow the notification to dismiss automatically or be closed manually. Reference image for notification: ![image](./reference/note_delete_notification.png)'
+            description: 'Show a delete notification with an Undo action after a note is deleted, allow recovery through Undo, and allow the notification to dismiss automatically or be closed manually. Reference image for notification: ![image](./reference/note_delete_notification.png) The system contains a deletable regular note titled "Delete me 2.3.2".'
             dependencies:
               - REQ-2.3.1
             scenarios:
@@ -101,7 +101,7 @@ children:
           - id: REQ-2.3.3
             name: Trash list
             type: ATOMIC
-            description: 'Open the Trash view from the sidebar and display deleted notes, with support for emptying trash and automatic deletion after seven days. Reference image: ![image](./reference/trash_list.png)'
+            description: 'Open the Trash view from the sidebar and display deleted notes, with support for emptying trash and automatic deletion after seven days. Reference image: ![image](./reference/trash_list.png) The system contains a deletable regular note titled "Delete me 2.3.3".'
             dependencies:
               - REQ-2.3.1
             scenarios:
@@ -116,7 +116,7 @@ children:
       - id: REQ-2.4
         name: Update Note
         type: ATOMIC
-        description: 'Edit the content of an existing note and persist the updated note after the editor is closed. Reference image: ![image](./reference/note_editing.png)'
+        description: 'Edit the content of an existing note and persist the updated note after the editor is closed. Reference image: ![image](./reference/note_editing.png) The system contains a note titled "Project ideas" with the initial content "Initial editable content".'
         dependencies:
           - REQ-2.2
         scenarios:
@@ -138,7 +138,7 @@ children:
           - id: REQ-2.5.1
             name: Archive
             type: ATOMIC
-            description: 'Archive a note from the note actions area and show an Undo notification. Reference image: ![image](./reference/archive_button.png)'
+            description: 'Archive a note from the note actions area and show an Undo notification. Reference image: ![image](./reference/archive_button.png) The system contains an active note titled "Travel plans 2.5.1".'
             dependencies:
               - REQ-2.2
             scenarios:
@@ -153,7 +153,7 @@ children:
           - id: REQ-2.5.2
             name: Archive Undo
             type: ATOMIC
-            description: Restore an archived note by using the Undo action from the archive notification.
+            description: 'Restore an archived note by using the Undo action from the archive notification. The system contains an active note titled "Travel plans 2.5.2".'
             dependencies:
               - REQ-2.5.1
             scenarios:
@@ -168,7 +168,7 @@ children:
           - id: REQ-2.5.3
             name: Show archived notes
             type: ATOMIC
-            description: 'Open the Archived view from the sidebar and display all archived notes. Reference image: ![image](./reference/archived_notes_page.png)'
+            description: 'Open the Archived view from the sidebar and display all archived notes. Reference image: ![image](./reference/archived_notes_page.png) The system contains an active note titled "Travel plans 2.5.3".'
             dependencies:
               - REQ-2.5.1
             scenarios:
@@ -183,7 +183,7 @@ children:
           - id: REQ-2.5.4
             name: Unarchive
             type: ATOMIC
-            description: 'Restore an archived note from the archived notes list. Reference image: ![image](./reference/unarchive_button.png)'
+            description: 'Restore an archived note from the archived notes list. Reference image: ![image](./reference/unarchive_button.png) The system contains an active note titled "Travel plans 2.5.4".'
             dependencies:
               - REQ-2.5.3
             scenarios:
@@ -205,7 +205,7 @@ children:
           - id: REQ-2.6.1
             name: Change note color
             type: ATOMIC
-            description: Change the color of an existing note.
+            description: 'Change the color of an existing note. The system contains a regular note titled "Garden tasks existing".'
             dependencies:
               - REQ-2.2
             scenarios:
@@ -235,14 +235,14 @@ children:
       - id: REQ-2.7
         name: Labels Management
         type: FOLDER
-        description: Allow users to assign labels to notes, manage labels, and filter notes by label.
+        description: 'Allow users to assign labels to notes, manage labels, and filter notes by label. The system contains the label "Work".'
         dependencies:
           - REQ-2.2
         children:
           - id: REQ-2.7.1
             name: Assign label to a note
             type: ATOMIC
-            description: 'Assign one or more labels to an existing note. Reference image: ![image](./reference/assign_label_to_note.png)'
+            description: 'Assign one or more labels to an existing note. Reference image: ![image](./reference/assign_label_to_note.png) The system contains a regular note titled "Team retro add label" without the "Work" label.'
             dependencies:
               - REQ-2.2
             scenarios:
@@ -253,11 +253,11 @@ children:
                   - keyword: WHEN
                     content: Open More options, choose "Change labels", and select a label.
                   - keyword: THEN
-                    content: The selected label is assigned to the note and displayed on the note.
+                    content: The selected label is assigned to the note and displayed on the note; selecting that label in the sidebar shows the note in the filtered list.
           - id: REQ-2.7.2
             name: Remove label from a note
             type: ATOMIC
-            description: Remove an assigned label from a note.
+            description: 'Remove an assigned label from a note. The system contains a regular note titled "Team retro remove label" with the "Work" label.'
             dependencies:
               - REQ-2.7.1
             scenarios:
@@ -268,11 +268,11 @@ children:
                   - keyword: WHEN
                     content: Open More options, choose "Change labels", and clear the selected label.
                   - keyword: THEN
-                    content: The label is removed from the note.
+                    content: The label is removed from the note; selecting that label in the sidebar no longer shows the note in the filtered list.
           - id: REQ-2.7.3
             name: Default label
             type: ATOMIC
-            description: Provide "Reminders" as a default label in the label list.
+            description: 'Provide "Reminders" as a default label in the label list. The system contains the default label "Reminders".'
             dependencies: []
             scenarios:
               - name: Default label
@@ -297,11 +297,11 @@ children:
                   - keyword: WHEN
                     content: Choose the "Reminders" label, enter a title and content, and close the editor.
                   - keyword: THEN
-                    content: The created note is saved with the "Reminders" label.
+                    content: The created note is saved with the "Reminders" label and appears when "Reminders" is selected in the sidebar.
           - id: REQ-2.7.5
             name: Edit labels
             type: ATOMIC
-            description: 'Create, rename, and delete labels from the label management list. Reference image: ![image](./reference/manage_labels.png)'
+            description: 'Create, rename, and delete labels from the label management list. Reference image: ![image](./reference/manage_labels.png) The system contains a separate editable label named "Work editable".'
             dependencies:
               - REQ-2.7.1
             scenarios:
@@ -323,7 +323,7 @@ children:
               - id: REQ-2.7.6.1
                 name: View list filtered by label
                 type: ATOMIC
-                description: Filter the notes list by a selected label.
+                description: 'Filter the notes list by a selected label. The system contains a regular note titled "Design review" with the "Work" label. The system contains a regular note titled "Movie list" without the "Work" or "Reminders" label.'
                 dependencies:
                   - REQ-2.7.1
                 scenarios:
@@ -338,7 +338,7 @@ children:
               - id: REQ-2.7.6.2
                 name: View all notes
                 type: ATOMIC
-                description: Return from a label-filtered view to the full notes list.
+                description: 'Return from a label-filtered view to the full notes list. The system contains a regular note titled "Movie list" without the "Work" or "Reminders" label.'
                 dependencies:
                   - REQ-2.7.6.1
                 scenarios:
@@ -353,7 +353,7 @@ children:
               - id: REQ-2.7.6.3
                 name: View Reminders
                 type: ATOMIC
-                description: Filter the notes list by the default "Reminders" label.
+                description: 'Filter the notes list by the default "Reminders" label. The system contains a regular note titled "Call dentist existing" with the "Reminders" label. The system contains a regular note titled "Movie list" without the "Work" or "Reminders" label.'
                 dependencies:
                   - REQ-2.7.3
                 scenarios:
@@ -375,7 +375,7 @@ children:
           - id: REQ-2.8.1
             name: Pin note
             type: ATOMIC
-            description: 'Pin an existing note from the note card. Reference image: ![image](./reference/pin_button.png)'
+            description: 'Pin an existing note from the note card. Reference image: ![image](./reference/pin_button.png) The system contains a regular note titled "Meeting agenda 2.8.1" that is not pinned.'
             dependencies:
               - REQ-2.2
             scenarios:
@@ -390,7 +390,7 @@ children:
           - id: REQ-2.8.2
             name: Unpin note
             type: ATOMIC
-            description: Remove the pinned state from a pinned note.
+            description: 'Remove the pinned state from a pinned note. The system contains a regular note titled "Meeting agenda 2.8.2" that is not pinned.'
             dependencies:
               - REQ-2.8.1
             scenarios:
@@ -427,7 +427,7 @@ children:
       - id: REQ-3.1
         name: Initial suggested filters
         type: ATOMIC
-        description: 'Show suggested search filters after the search bar is focused and filter the notes list when one is selected. Image reference: ![image](./reference/search_suggested_filters.png)'
+        description: 'Show suggested search filters after the search bar is focused and filter the notes list when one is selected. Image reference: ![image](./reference/search_suggested_filters.png) The system contains a regular note titled "Call dentist existing" with the "Reminders" label.'
         dependencies:
           - REQ-1.1
         scenarios:
@@ -442,7 +442,7 @@ children:
       - id: REQ-3.2
         name: Search by keyword
         type: ATOMIC
-        description: 'Search notes by keyword and highlight matching text in the results. Image reference: ![image](./reference/search_keyword.png)'
+        description: 'Search notes by keyword and highlight matching text in the results. Image reference: ![image](./reference/search_keyword.png) The system contains a note titled "Study schedule" whose title or content contains the keyword "st".'
         dependencies:
           - REQ-3.1
         scenarios:
@@ -565,30 +565,3 @@ children:
                 content: Click the sidebar collapse control and then click it again.
               - keyword: THEN
                 content: The sidebar first collapses to an icon-only view and then expands to show both icons and labels again.
-data:
-  - category: Note Seed Data
-    items:
-      - 'The system contains a pinned note titled "Sprint goals".'
-      - 'The system contains a regular note titled "Groceries".'
-      - 'The system contains a deletable regular note titled "Delete me 2.3.1".'
-      - 'The system contains a deletable regular note titled "Delete me 2.3.2".'
-      - 'The system contains a deletable regular note titled "Delete me 2.3.3".'
-      - 'The system contains a note titled "Project ideas" with the initial content "Initial editable content".'
-      - 'The system contains an active note titled "Travel plans 2.5.1".'
-      - 'The system contains an active note titled "Travel plans 2.5.2".'
-      - 'The system contains an active note titled "Travel plans 2.5.3".'
-      - 'The system contains an active note titled "Travel plans 2.5.4".'
-      - 'The system contains a regular note titled "Garden tasks existing".'
-      - 'The system contains a regular note titled "Team retro add label" without the "Work" label.'
-      - 'The system contains a regular note titled "Team retro remove label" with the "Work" label.'
-      - 'The system contains a regular note titled "Design review" with the "Work" label.'
-      - 'The system contains a regular note titled "Call dentist existing" with the "Reminders" label.'
-      - 'The system contains a regular note titled "Movie list" without the "Work" or "Reminders" label.'
-      - 'The system contains a regular note titled "Meeting agenda 2.8.1" that is not pinned.'
-      - 'The system contains a regular note titled "Meeting agenda 2.8.2" that is not pinned.'
-      - 'The system contains a note titled "Study schedule" whose title or content contains the keyword "st".'
-  - category: Label Seed Data
-    items:
-      - 'The system contains the default label "Reminders".'
-      - 'The system contains the label "Work".'
-      - 'The system contains a separate editable label named "Work editable".'
