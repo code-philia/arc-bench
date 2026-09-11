@@ -6,7 +6,7 @@ import * as h from './helpers';
 
 test('REQ-2.7.2: Remove label from a note', async ({ page }) => {
   await h.openHome(page);
-  await h.openLabelDialogForNote(page, h.FIXTURES.notes.labelTitle);
+  await h.openLabelDialogForNote(page, h.FIXTURES.notes.labelRemoveTitle);
   await h.setLabel(page, h.FIXTURES.labels.work, false);
   await h.closeEditor(page);
   await h.expectTextAbsent(page, h.FIXTURES.labels.work);

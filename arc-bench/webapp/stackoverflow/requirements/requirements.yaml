@@ -1367,3 +1367,72 @@ children:
         content: Click "Responses" in the activity sidebar
       - keyword: THEN
         content: Display a list of comments/replies linked to their respective parent posts.
+data:
+  - category: Account and Profile Seed Data
+    items:
+      - 'The system contains a verified account with email "stack_user@example.com", password "Password123!", and display name "Stack User" for stable authenticated read-only flows.'
+      - 'The system contains a separate verified account with email "activity_user@example.com", password "Password123!", display name "Stack User", and permission to view reputation and activity data.'
+      - 'The system contains a separate verified account with email "profile_editor@example.com", password "Password123!", and an editable public profile.'
+      - 'The system contains a separate verified account with email "question_creator@example.com" and password "Password123!" that can create questions.'
+      - 'The system contains a separate verified account with email "question_editor@example.com" and password "Password123!" that owns an editable question.'
+      - 'The system contains a separate verified account with email "question_deleter@example.com" and password "Password123!" that owns a deletable question.'
+      - 'The system contains a separate verified account with email "question_upvoter@example.com" and password "Password123!" that has not voted on the dedicated upvote question.'
+      - 'The system contains a separate verified account with email "question_downvoter@example.com" and password "Password123!" that has not voted on the dedicated downvote question.'
+      - 'The system contains a separate verified account with email "answer_submitter@example.com" and password "Password123!" that can publish an answer.'
+      - 'The system contains a separate verified account with email "answer_voter@example.com" and password "Password123!" that has not voted on the dedicated answer-voting question.'
+      - 'The system contains a separate verified account with email "answer_accept_owner@example.com" and password "Password123!" that owns the dedicated accepted-answer question.'
+      - 'The system contains a separate verified account with email "answer_edit_user@example.com" and password "Password123!" that owns the dedicated answer used for a successful edit.'
+      - 'The system contains a separate verified account with email "answer_validation_user@example.com" and password "Password123!" that owns the dedicated answer used for validation and cancel-edit flows.'
+      - 'The system contains a separate verified account with email "answer_delete_user@example.com" and password "Password123!" that owns a separate unaccepted answer that can be deleted.'
+      - 'The system contains a separate verified account with email "question_comment_user@example.com" and password "Password123!" that can publish a question comment.'
+      - 'The system contains a separate verified account with email "comment_edit_user@example.com" and password "Password123!" that owns an editable comment.'
+      - 'The system contains a separate verified account with email "comment_delete_user@example.com" and password "Password123!" that owns a separate deletable comment.'
+      - 'The system contains a separate verified account with email "comment_vote_user@example.com" and password "Password123!" that has not voted on the dedicated comment.'
+      - 'The system contains a separate verified account with email "answer_comment_user@example.com" and password "Password123!" that can publish a comment below an answer.'
+      - 'The system contains a separate verified account with email "comment_reply_user@example.com" and password "Password123!" that can reply to comments.'
+      - 'The system contains a separate verified account with email "tag_watcher@example.com" and password "Password123!" whose initial watched-tags state does not include "python".'
+      - 'The system contains a separate verified account with email "filter_user@example.com" and password "Password123!" that can save custom filters.'
+      - 'The system contains a separate verified account with email "badge_user@example.com", password "Password123!", and a profile eligible to display an earned badge notification.'
+      - 'The system contains a verified account with email "helpful_user@example.com", password "Password123!", and display name "Helpful User" for seeded answer and comment authorship.'
+      - 'The profile for profile_editor@example.com contains valid existing values for display name, full name, location, title, About me, website, X, and GitHub fields before editing.'
+  - category: Homepage and Question Seed Data
+    items:
+      - 'The public homepage and Questions page contain a stable feed of multiple public questions with titles, tags, vote counts, answer counts, and view counts; the feed remains populated if a dedicated mutation-test question is removed.'
+      - 'The Questions page contains each dedicated question record below under a unique title and allows the corresponding test account to open its detail page.'
+      - 'The public question "How can I safely retry an idempotent HTTP request in Node.js?" contains a rendered body about safe Node.js retries, the tags "node.js", "http", and "retry", valid Asked/Modified/Viewed metadata, an author card with avatar, reputation, and badges, and a visible interaction area.'
+      - 'The question "SO Question Edit Preview" is public, owned by question_editor@example.com, and contains existing title, body, and tag values that are editable.'
+      - 'The question "SO Question Edit Save" is public, owned by question_editor@example.com, and has an initial revision that can receive a new saved revision.'
+      - 'The question "SO Deletable Question" is public, owned by question_deleter@example.com, has no answers or important engagement, and can be soft-deleted.'
+      - 'The question "SO Upvote Question" is public, has an initial score of 7, and has no vote from question_upvoter@example.com.'
+      - 'The question "SO Downvote Question" is public, has an initial score of 3, and has no vote from question_downvoter@example.com.'
+  - category: Answer Seed Data
+    items:
+      - 'The question "SO Answer Submission Question" is public, open for answers, and displays a usable Your Answer editor for answer_submitter@example.com.'
+      - 'The question "SO Answer Voting Question" is public and contains a visible, unaccepted answer authored by Helpful User; answer_voter@example.com has not voted on that answer.'
+      - 'The question "SO Accepted Answer Question" is public, owned by answer_accept_owner@example.com, and contains a visible unaccepted answer authored by Helpful User.'
+      - 'The question "SO Successful Answer Edit Question" contains exactly one target answer authored by answer_edit_user@example.com with the initial body "Use exponential backoff together with an idempotency key so duplicate requests can be safely retried without creating duplicate side effects in downstream services.".'
+      - 'The question "SO Answer Validation Question" contains an independently seeded target answer authored by answer_validation_user@example.com with a non-empty body.'
+      - 'The question "SO Answer Delete Question" contains exactly one target answer authored by answer_delete_user@example.com; the answer is not accepted and can be deleted.'
+      - 'The question "SO Answer Sorting Question" is public and contains multiple visible answers so that Highest score, Trending, and Date modified sorting controls can be exercised.'
+  - category: Comment Seed Data
+    items:
+      - 'The question "SO Expanded Comment Question" has more than 5 comments on a visible post, starts with a collapsed comment list, and includes a comment authored by Helpful User.'
+      - 'The question "SO Comment Vote Question" contains exactly one target comment with an initial upvote count of 1; comment_vote_user@example.com has not voted on it.'
+      - 'The question "SO Comment Reply Question" contains a visible comment authored by Helpful User with a Reply action.'
+      - 'The question "SO Comment Edit Question" contains exactly one target comment authored by comment_edit_user@example.com, within the editable time window, with the body "Can you share what you tried so far?".'
+      - 'The question "SO Comment Delete Question" contains exactly one separate target comment authored by comment_delete_user@example.com with the body "Can you share what you tried so far?".'
+      - 'The question "SO Question Comment Question" is public and has a question-level Add a comment action.'
+      - 'The question "SO Answer Comment Question" is public and contains a visible answer with an answer-level comment action.'
+  - category: Tag Seed Data
+    items:
+      - 'The tag catalog contains the public tags "python", "javascript", "node.js", "http", and "retry", each with a description and question count.'
+      - 'The "python" tag has a public tag detail page with tagged questions, tag information, and related tag data.'
+      - 'The tag suggestion data returns "node.js", "http", and "retry" when a user enters "node.js" in the question tag field.'
+  - category: Search and Filter Seed Data
+    items:
+      - 'The public search index contains at least one question whose title, body, or tags contain both "React" and "state", and search suggestions and results can return that question for the query "react state".'
+  - category: Badge and Activity Seed Data
+    items:
+      - 'The badge catalog contains Gold, Silver, and Bronze badge categories and includes the badges "Great Answer" and "Teacher" with descriptions and earn counts.'
+      - 'The badge_user@example.com profile contains an earned Teacher badge or an equivalent badge-earned notification visible on the profile.'
+      - 'The activity_user@example.com profile contains Answers, Questions, and Responses activity, together with reputation records including "answer upvoted", "question upvoted", and visible +10 or +5 changes.'

@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-8.2.2
-// fixtures: badge_catalog
+// fixtures: badge.catalog
 
 test('REQ-8.2.2: View All Badges', async ({ page }) => {
   await h.openHome(page);

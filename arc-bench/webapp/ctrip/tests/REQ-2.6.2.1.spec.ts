@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-2.6.2.1
-// fixtures: public_homepage, registration_candidate
+// fixtures: public_homepage
 
 test('REQ-2.6.2.1: Trigger Registration Agreement', async ({ page }) => {
   await h.beginRegistrationFromLogin(page);

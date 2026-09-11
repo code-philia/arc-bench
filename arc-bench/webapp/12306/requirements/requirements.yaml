@@ -2111,17 +2111,17 @@ data:
   - category: Station, Train, and Transfer Seed Data
     items:
       - 'The station directory contains the valid locations "Shanghai", "Beijing", "Yancheng", and "Lhasa", including the related stations "Shanghai Hongqiao" and "Beijing South".'
-      - 'The Shanghai-to-Beijing route has populated results for the configured test date and the following day, including multiple trains with different train types, departure times, arrival times, travel times, prices, departure stations, arrival stations, and seat availability. The results include G/C/D and Other train types, a train departing from "Shanghai Hongqiao", a train arriving at "Beijing South", a train departing during "06:00-12:00", and seat-class prices and inventory for Business-class seat, First-class seat, Second-class seat, and Standing ticket with both available and unavailable seat classes. The configured test date defaults to the execution date and may be overridden by `ARC_TEST_DATE`.'
+      - 'The Shanghai-to-Beijing route has populated results for 2026-07-21 and 2026-07-22, including multiple trains with different train types, departure times, arrival times, travel times, prices, departure stations, arrival stations, and seat availability. The results include G/C/D and Other train types, a train departing from "Shanghai Hongqiao", a train arriving at "Beijing South", a train departing during "06:00-12:00", and seat-class prices and inventory for Business-class seat, First-class seat, Second-class seat, and Standing ticket with both available and unavailable seat classes.'
       - 'The default Beijing-to-Shanghai route has populated results for the current test date.'
-      - 'The Yancheng-to-Lhasa route on the configured test date has no direct train and has multiple valid transfer plans calculated from seeded segment trains through Xuzhou and Nanjing. Each plan has two train segments, at least 30 minutes of transfer waiting time, departure and arrival times, total travel time, and price.'
+      - 'The Yancheng-to-Lhasa route on 2026-07-22 has no direct train and has multiple valid transfer plans. Each plan has two train segments, a transfer station, waiting time, departure and arrival times, total travel time, and price.'
   - category: Booking and Order Seed Data
     items:
       - 'The orders_empty_user account has an empty order dataset for uncompleted orders, upcoming trips, and history orders.'
       - 'The orders_unpaid_user account has an unpaid order containing train information, passenger information, seat information, price, total price, and an order status that permits payment or cancellation.'
-      - 'The orders_upcoming_user account has a paid upcoming order with a future departure date, an unexpired refund deadline stored with the order, and an order number, train number, or passenger name containing "G1001".'
+      - 'The orders_upcoming_user account has a paid upcoming order with a future departure date, an unexpired refund deadline, and an order number, train number, or passenger name containing "G1001".'
       - 'The orders_history_user account has a historical order containing train information, passenger information, seat information, price, total price, status, and ride date, with an order number, train number, or passenger name containing "G1001".'
       - 'The orders_cancelled_user account has a cancelled order.'
   - category: Travel Guide Seed Data
     items:
-      - 'The seeded travel-guide records contain the categories "Ticketing", "Endorsement and refund", and "Miscellaneous".'
-      - 'The seeded travel-guide records contain the question "How to book tickets online?" under the "Ticketing" category with an accessible question anchor and detail content.'
+      - 'The travel guide contains the categories "Ticketing", "Endorsement and refund", and "Miscellaneous".'
+      - 'The travel guide contains the question "How to book tickets online?" under the "Ticketing" category with an accessible question anchor and detail content.'

@@ -2,10 +2,10 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-2.7
-// fixtures: registered_user, editable_profile
+// fixtures: accounts.profileEditor, profile.editable
 
 test('REQ-2.7: Edit Profile Management', async ({ page }) => {
-  await h.openProfile(page);
+  await h.openProfile(page, h.FIXTURES.accounts.profileEditor);
   await h.clickFirstAvailable(page, [[/edit profile/i]]);
   await h.expectTextsVisible(page, [/edit your profile/i, /display name/i, /about me/i]);
   await h.fillField(page, [/display name/i], h.FIXTURES.profile.updatedDisplayName);
