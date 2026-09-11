@@ -2,10 +2,10 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-3.2.2
-// fixtures: registered_user, ask_question_state
+// fixtures: accounts.questionCreator
 
 test('REQ-3.2.2: Required Field Validation', async ({ page }) => {
-  await h.openAskQuestion(page);
+  await h.openAskQuestion(page, h.FIXTURES.accounts.questionCreator);
   await h.clickFirstAvailable(page, [[/post your question/i]]);
   await h.expectTextsVisible(page, [/title is required/i]);
   await h.fillField(page, [/title/i], h.FIXTURES.question.newTitle);

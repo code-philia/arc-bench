@@ -2,9 +2,9 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-4.2.1
-// fixtures: sample_shelf
+// fixtures: shelf_4_2_1
 
 test('REQ-4.2.1: Enter Shelf Details Page', async ({ page }) => {
-  await h.openShelfDetails(page);
-  await h.expectTextsVisible(page, [h.FIXTURES.shelf.name]);
+  await h.openShelfDetails(page, h.FIXTURES.shelves.details.name);
+  await h.expectTextsVisible(page, [h.FIXTURES.shelves.details.name]);
 });

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-2.3
-// fixtures: public_homepage, popular_products
+// fixtures: public_homepage, products.detail
 
 test('REQ-2.3: Popular Products Section', async ({ page }) => {
   await h.openHome(page);

@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-2.8.1: Pin note', async ({ page }) => {
   await h.openHome(page);
-  await h.pinNote(page, h.FIXTURES.notes.pinTitle);
-  await h.expectTextsVisible(page, [/pinned/i, h.FIXTURES.notes.pinTitle]);
+  await h.pinNote(page, h.FIXTURES.notes.pin231Title);
+  await h.expectTextsVisible(page, [/pinned/i, h.FIXTURES.notes.pin231Title]);
 });

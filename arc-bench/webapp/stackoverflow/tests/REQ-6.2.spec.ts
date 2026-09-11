@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-6.2
-// fixtures: tags_catalog, tagged_questions
+// fixtures: tags.catalog, questions.taggedPython
 
 test('REQ-6.2: Tag Detail Page', async ({ page }) => {
   await h.openTagDetail(page);

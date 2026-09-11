@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-4.2.5.2
-// fixtures: booking_user, booking_page_dataset
+// fixtures: booking_page_dataset
 
 test('REQ-4.2.5.2: Auto Deduction When Removing Services', async ({ page }) => {
   await h.openBookingPage(page);

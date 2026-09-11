@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-2.5.1: Archive', async ({ page }) => {
   await h.openHome(page);
-  await h.archiveNote(page, h.FIXTURES.notes.archiveTitle);
+  await h.archiveNote(page, h.FIXTURES.notes.archive251Title);
   await h.expectTextsVisible(page, [/archived/i, /undo/i]);
 });

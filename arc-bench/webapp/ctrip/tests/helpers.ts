@@ -3,21 +3,56 @@ import { expect, Locator, Page } from '@playwright/test';
 type MatchInput = string | RegExp | Array<string | RegExp>;
 type Scope = Page | Locator;
 
+export type AccountFixture = {
+  email: string;
+  mobile: string;
+  password: string;
+};
+
+export type FlightSearchFixture = {
+  from: string;
+  to: string;
+  date: string;
+};
+
+export type RegistrationFixture = {
+  mobile: string;
+  code: string;
+  password: string;
+  weakPassword?: string;
+};
+
+export type FlightStatusHistoryFixture = {
+  entry: string;
+};
+
 export const FIXTURES = {
+  testDate: '2026-07-19T12:00:00+08:00',
   auth: {
-    username: 'ctrip_user',
-    email: 'ctrip_user@example.com',
-    mobile: '13800000010',
-    password: 'Travel1234',
     newPassword: 'Travel5678',
-    smsMobile: '13800000011',
-    smsCode: '123456',
   },
   registration: {
-    mobile: '13800000012',
-    code: '123456',
-    password: 'Travel1234',
-    weakPassword: '1234567',
+    verification: {
+      mobile: '13800000044',
+      code: '123456',
+      password: 'Travel1234',
+    },
+    success: {
+      mobile: '13800000045',
+      code: '123456',
+      password: 'Travel1234',
+    },
+    mismatch: {
+      mobile: '13800000046',
+      code: '123456',
+      password: 'Travel1234',
+    },
+    weak: {
+      mobile: '13800000047',
+      code: '123456',
+      password: 'Travel1234',
+      weakPassword: '1234567',
+    },
   },
   flightSearch: {
     from: '成都',
@@ -34,6 +69,24 @@ export const FIXTURES = {
     noResultDate: '2026-07-23',
     historyLabel: '成都 - 广州',
     flightNumber: 'JD5162',
+    paymentPending: {
+      from: '成都',
+      to: '广州',
+      date: '2026-07-21',
+    },
+    paymentSuccess: {
+      from: '成都',
+      to: '广州',
+      date: '2026-07-22',
+    },
+  },
+  flightStatus: {
+    historyUse: {
+      entry: 'JD5162',
+    },
+    historyClear: {
+      entry: 'MU5234',
+    },
   },
   booking: {
     travelerName: '张三',
@@ -74,6 +127,158 @@ export const FIXTURES = {
     popular: ['北京首都', '上海浦东', '广州白云'],
     domesticAnchor: '国内机场',
     internationalAnchor: '国际/中国港澳台地区',
+  },
+  accounts: {
+    passwordLogin: {
+      email: 'ctrip_user@example.com',
+      mobile: '13800000010',
+      password: 'Travel1234',
+    },
+    smsLogin: {
+      email: 'ctrip_sms_user@example.com',
+      mobile: '13800000011',
+      password: 'Travel1234',
+      verificationCode: '123456',
+    },
+    smsMissingCode: {
+      email: 'ctrip_sms_missing_code@example.com',
+      mobile: '13800000041',
+      password: 'Travel1234',
+      verificationCode: '123456',
+    },
+    smsIncorrectCode: {
+      email: 'ctrip_sms_incorrect_code@example.com',
+      mobile: '13800000042',
+      password: 'Travel1234',
+      verificationCode: '123456',
+    },
+    smsAgreement: {
+      email: 'ctrip_sms_agreement@example.com',
+      mobile: '13800000043',
+      password: 'Travel1234',
+      verificationCode: '123456',
+    },
+    profileRead: {
+      email: 'ctrip_profile_read@example.com',
+      mobile: '13800000013',
+      password: 'Travel1234',
+    },
+    profileEdit: {
+      email: 'ctrip_profile_edit@example.com',
+      mobile: '13800000015',
+      password: 'Travel1234',
+    },
+    passwordChange: {
+      email: 'ctrip_password_change@example.com',
+      mobile: '13800000016',
+      password: 'Travel1234',
+    },
+    phoneBinding: {
+      email: 'ctrip_phone_binding@example.com',
+      mobile: '13800000018',
+      password: 'Travel1234',
+    },
+    emailBinding: {
+      email: 'ctrip_email_binding@example.com',
+      mobile: '13800000019',
+      password: 'Travel1234',
+      verificationCode: '123456',
+    },
+    orderRead: {
+      email: 'ctrip_order_read@example.com',
+      mobile: '13800000021',
+      password: 'Travel1234',
+    },
+    orderCancel: {
+      email: 'ctrip_order_cancel@example.com',
+      mobile: '13800000022',
+      password: 'Travel1234',
+    },
+    personalRead: {
+      email: 'ctrip_personal_read@example.com',
+      mobile: '13800000023',
+      password: 'Travel1234',
+    },
+    travelerCreate: {
+      email: 'ctrip_traveler_create@example.com',
+      mobile: '13800000024',
+      password: 'Travel1234',
+    },
+    travelerDelete: {
+      email: 'ctrip_traveler_delete@example.com',
+      mobile: '13800000025',
+      password: 'Travel1234',
+    },
+    travelerBatch: {
+      email: 'ctrip_traveler_batch@example.com',
+      mobile: '13800000026',
+      password: 'Travel1234',
+    },
+    addressCreate: {
+      email: 'ctrip_address_create@example.com',
+      mobile: '13800000027',
+      password: 'Travel1234',
+    },
+    addressDelete: {
+      email: 'ctrip_address_delete@example.com',
+      mobile: '13800000028',
+      password: 'Travel1234',
+    },
+    addressBatch: {
+      email: 'ctrip_address_batch@example.com',
+      mobile: '13800000029',
+      password: 'Travel1234',
+    },
+    contactSearch: {
+      email: 'ctrip_contact_search@example.com',
+      mobile: '13800000030',
+      password: 'Travel1234',
+    },
+    contactBatch1: {
+      email: 'ctrip_contact_batch_1@example.com',
+      mobile: '13800000031',
+      password: 'Travel1234',
+    },
+    contactCreate: {
+      email: 'ctrip_contact_create@example.com',
+      mobile: '13800000032',
+      password: 'Travel1234',
+    },
+    contactDelete: {
+      email: 'ctrip_contact_delete@example.com',
+      mobile: '13800000033',
+      password: 'Travel1234',
+    },
+    contactBatch2: {
+      email: 'ctrip_contact_batch_2@example.com',
+      mobile: '13800000034',
+      password: 'Travel1234',
+    },
+    invoiceSearch: {
+      email: 'ctrip_invoice_search@example.com',
+      mobile: '13800000035',
+      password: 'Travel1234',
+    },
+    invoiceCreate: {
+      email: 'ctrip_invoice_create@example.com',
+      mobile: '13800000036',
+      password: 'Travel1234',
+    },
+    invoiceDelete: {
+      email: 'ctrip_invoice_delete@example.com',
+      mobile: '13800000037',
+      password: 'Travel1234',
+    },
+    invoiceBatch: {
+      email: 'ctrip_invoice_batch@example.com',
+      mobile: '13800000038',
+      password: 'Travel1234',
+    },
+    voucherRead: {
+      email: 'ctrip_voucher_read@example.com',
+      mobile: '13800000039',
+      password: 'Travel1234',
+    },
   },
 } as const;
 
@@ -176,6 +381,7 @@ export async function isVisible(scope: Scope, value: MatchInput): Promise<boolea
 }
 
 export async function openHome(page: Page): Promise<void> {
+  await page.clock.setFixedTime(FIXTURES.testDate);
   await page.goto('/');
 }
 
@@ -400,9 +606,9 @@ export async function expectLoggedInState(page: Page): Promise<void> {
   ]);
 }
 
-export async function login(page: Page): Promise<void> {
+export async function login(page: Page, account: AccountFixture = FIXTURES.accounts.passwordLogin): Promise<void> {
   await ensurePasswordLogin(page);
-  await fillPasswordLogin(page, FIXTURES.auth.username, FIXTURES.auth.password, true);
+  await fillPasswordLogin(page, account.email, account.password, true);
   await submitLogin(page);
 }
 
@@ -429,12 +635,15 @@ export async function reachRegistrationVerifyStep(page: Page): Promise<void> {
   ]);
 }
 
-export async function reachRegistrationPasswordStep(page: Page): Promise<void> {
+export async function reachRegistrationPasswordStep(
+  page: Page,
+  registration: RegistrationFixture = FIXTURES.registration.success,
+): Promise<void> {
   await reachRegistrationVerifyStep(page);
-  await fillField(page, [/手机号/, /mobile/i], FIXTURES.registration.mobile);
+  await fillField(page, [/手机号/, /mobile/i], registration.mobile);
   await clickFirstAvailable(page, [[/发送验证码/, /send code/i]]);
   await expectAnyVisible(page, [[/倒计时/, /重新发送/, /countdown/i, /resend/i]]);
-  await fillField(page, [/验证码/, /verification code/i], FIXTURES.registration.code);
+  await fillField(page, [/验证码/, /verification code/i], registration.code);
   await clickFirstAvailable(page, [[/下一步/, /设置密码/, /next/i]]);
   await expectAnyVisible(page, [
     [/设置密码/, /password/i],
@@ -453,15 +662,15 @@ export async function openFlightSearch(page: Page): Promise<void> {
   ]);
 }
 
-export async function fillFlightSearch(page: Page, route = FIXTURES.flightSearch): Promise<void> {
+export async function fillFlightSearch(page: Page, route: FlightSearchFixture = FIXTURES.flightSearch): Promise<void> {
   await fillField(page, [/出发城市/, /出发地/, /from/i, /origin/i], route.from);
   await fillField(page, [/到达城市/, /目的地/, /to/i, /destination/i], route.to);
   await fillField(page, [/出发日期/, /departure date/i], route.date);
 }
 
-export async function openFlightResults(page: Page): Promise<void> {
+export async function openFlightResults(page: Page, route: FlightSearchFixture = FIXTURES.flightSearch): Promise<void> {
   await openFlightSearch(page);
-  await fillFlightSearch(page);
+  await fillFlightSearch(page, route);
   await clickFirstAvailable(page, [[/搜索/, /^search$/i]]);
 }
 
@@ -473,8 +682,8 @@ export async function expectFlightResults(page: Page): Promise<void> {
   ]);
 }
 
-export async function openBookingPage(page: Page): Promise<void> {
-  await openFlightResults(page);
+export async function openBookingPage(page: Page, route: FlightSearchFixture = FIXTURES.flightSearch): Promise<void> {
+  await openFlightResults(page, route);
   await clickIfVisible(page, [/展开/, /更多舱位/, /详情/, /details/i]);
   await clickFirstAvailable(page, [[/预订/, /订/, /book/i]]);
   await expectBookingPage(page);
@@ -488,8 +697,8 @@ export async function expectBookingPage(page: Page): Promise<void> {
   ]);
 }
 
-export async function openPaymentPage(page: Page): Promise<void> {
-  await openBookingPage(page);
+export async function openPaymentPage(page: Page, route: FlightSearchFixture): Promise<void> {
+  await openBookingPage(page, route);
   await clickIfVisible(page, [/张三/, /李四/, /成人/, /adult/i]);
   await clickIfVisible(page, [/已阅读并同意/, /同意/, /agree/i]);
   await clickFirstAvailable(page, [[/提交订单/, /去支付/, /确认订单/, /place order/i, /confirm/i, /next/i]]);
@@ -501,18 +710,18 @@ export async function expectPaymentPage(page: Page): Promise<void> {
   ]);
 }
 
-export async function openUserMenu(page: Page): Promise<void> {
-  await login(page);
+export async function openUserMenu(page: Page, account: AccountFixture = FIXTURES.accounts.passwordLogin): Promise<void> {
+  await login(page, account);
   await hoverIfVisible(page, [/尊敬的/, /我的携程/, /个人中心/, /account/i]);
 }
 
-export async function openOrderCenter(page: Page): Promise<void> {
-  await openUserMenu(page);
+export async function openOrderCenter(page: Page, account: AccountFixture = FIXTURES.accounts.passwordLogin): Promise<void> {
+  await openUserMenu(page, account);
   await clickFirstAvailable(page, [[/订单中心/, /orders/i]]);
 }
 
-export async function openPersonalCenter(page: Page): Promise<void> {
-  await openUserMenu(page);
+export async function openPersonalCenter(page: Page, account: AccountFixture = FIXTURES.accounts.passwordLogin): Promise<void> {
+  await openUserMenu(page, account);
   await clickFirstAvailable(page, [[/个人中心/, /personal center/i]]);
 }
 
@@ -522,50 +731,53 @@ export async function expectPersonalCenter(page: Page): Promise<void> {
   ]);
 }
 
-export async function expandCommonInformation(page: Page): Promise<void> {
-  await openPersonalCenter(page);
+export async function expandCommonInformation(page: Page, account: AccountFixture = FIXTURES.accounts.passwordLogin): Promise<void> {
+  await openPersonalCenter(page, account);
   await clickFirstAvailable(page, [[/常用信息/, /common information/i]]);
 }
 
-export async function openTravelerManager(page: Page): Promise<void> {
-  await expandCommonInformation(page);
+export async function openTravelerManager(page: Page, account: AccountFixture = FIXTURES.accounts.passwordLogin): Promise<void> {
+  await expandCommonInformation(page, account);
   await clickFirstAvailable(page, [[/常用旅客/, /旅客信息/, /traveler/i]]);
 }
 
-export async function openAddressManager(page: Page): Promise<void> {
-  await expandCommonInformation(page);
+export async function openAddressManager(page: Page, account: AccountFixture = FIXTURES.accounts.passwordLogin): Promise<void> {
+  await expandCommonInformation(page, account);
   await clickFirstAvailable(page, [[/常用地址/, /address/i]]);
 }
 
-export async function openContactManager(page: Page): Promise<void> {
-  await expandCommonInformation(page);
+export async function openContactManager(page: Page, account: AccountFixture = FIXTURES.accounts.passwordLogin): Promise<void> {
+  await expandCommonInformation(page, account);
   await clickFirstAvailable(page, [[/常用联系人/, /contact/i]]);
 }
 
-export async function openInvoiceManager(page: Page): Promise<void> {
-  await expandCommonInformation(page);
+export async function openInvoiceManager(page: Page, account: AccountFixture = FIXTURES.accounts.passwordLogin): Promise<void> {
+  await expandCommonInformation(page, account);
   await clickFirstAvailable(page, [[/常用报销凭证/, /发票抬头/, /invoice/i]]);
 }
 
-export async function openProfileOverview(page: Page): Promise<void> {
-  await openPersonalCenter(page);
+export async function openProfileOverview(page: Page, account: AccountFixture = FIXTURES.accounts.passwordLogin): Promise<void> {
+  await openPersonalCenter(page, account);
   await clickIfVisible(page, [/个人资料/, /profile/i]);
 }
 
-export async function openSecurityCenter(page: Page): Promise<void> {
-  await openPersonalCenter(page);
+export async function openSecurityCenter(page: Page, account: AccountFixture = FIXTURES.accounts.passwordLogin): Promise<void> {
+  await openPersonalCenter(page, account);
   await clickFirstAvailable(page, [[/安全中心/, /security center/i]]);
 }
 
-export async function openFlightStatusPage(page: Page): Promise<void> {
+export async function openFlightStatusPage(page: Page, history?: FlightStatusHistoryFixture): Promise<void> {
   await openHome(page);
   await clickIfVisible(page, [/机票/, /航班/, /flights/i]);
   await clickIfVisible(page, [/更多服务/, /more services/i]);
   await clickFirstAvailable(page, [[/航班动态/, /flight status/i]]);
+  if (history) {
+    await expectVisible(page, history.entry);
+  }
 }
 
-export async function openVoucherHome(page: Page): Promise<void> {
-  await login(page);
+export async function openVoucherHome(page: Page, account: AccountFixture = FIXTURES.accounts.voucherRead): Promise<void> {
+  await login(page, account);
   await openHome(page);
   await clickIfVisible(page, [/更多服务/, /more services/i]);
   await clickFirstAvailable(page, [[/报销凭证/, /reimbursement/i, /invoice/i]]);

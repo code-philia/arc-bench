@@ -565,3 +565,30 @@ children:
                 content: Click the sidebar collapse control and then click it again.
               - keyword: THEN
                 content: The sidebar first collapses to an icon-only view and then expands to show both icons and labels again.
+data:
+  - category: Note Seed Data
+    items:
+      - 'The system contains a pinned note titled "Sprint goals".'
+      - 'The system contains a regular note titled "Groceries".'
+      - 'The system contains a deletable regular note titled "Delete me 2.3.1".'
+      - 'The system contains a deletable regular note titled "Delete me 2.3.2".'
+      - 'The system contains a deletable regular note titled "Delete me 2.3.3".'
+      - 'The system contains a note titled "Project ideas" with the initial content "Initial editable content".'
+      - 'The system contains an active note titled "Travel plans 2.5.1".'
+      - 'The system contains an active note titled "Travel plans 2.5.2".'
+      - 'The system contains an active note titled "Travel plans 2.5.3".'
+      - 'The system contains an active note titled "Travel plans 2.5.4".'
+      - 'The system contains a regular note titled "Garden tasks existing".'
+      - 'The system contains a regular note titled "Team retro add label" without the "Work" label.'
+      - 'The system contains a regular note titled "Team retro remove label" with the "Work" label.'
+      - 'The system contains a regular note titled "Design review" with the "Work" label.'
+      - 'The system contains a regular note titled "Call dentist existing" with the "Reminders" label.'
+      - 'The system contains a regular note titled "Movie list" without the "Work" or "Reminders" label.'
+      - 'The system contains a regular note titled "Meeting agenda 2.8.1" that is not pinned.'
+      - 'The system contains a regular note titled "Meeting agenda 2.8.2" that is not pinned.'
+      - 'The system contains a note titled "Study schedule" whose title or content contains the keyword "st".'
+  - category: Label Seed Data
+    items:
+      - 'The system contains the default label "Reminders".'
+      - 'The system contains the label "Work".'
+      - 'The system contains a separate editable label named "Work editable".'
