@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-3.6.1
@@ -7,6 +7,6 @@ import * as h from './helpers';
 test('REQ-3.6.1: Filter by Availability', async ({ page }) => {
   await h.openCategoryPage(page);
   await h.setCheckbox(page, [/in stock/i], true);
-  await h.expectTextsVisible(page, [/in stock/i]);
-  await h.expectUrlIncludes(page, /stock|in-stock|q=/i);
+  await h.expectTextsVisible(page, [h.FIXTURES.catalog.whiteProduct]);
+  await h.expectTextAbsent(page, h.FIXTURES.catalog.blackProduct);
 });

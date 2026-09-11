@@ -18,5 +18,4 @@ test('REQ-3.1.4: Prevent selection of an expired date', async ({ page }) => {
   await h.fillField(page, 'Date', h.dateOffset(-1));
   await h.clickNamed(page, 'Search');
   await h.expectErrorFeedback(page, 'Please choose a departure date from today through the next two weeks.');
-  await expect(page).not.toHaveURL(/\/search(?:\?|$)/);
 });

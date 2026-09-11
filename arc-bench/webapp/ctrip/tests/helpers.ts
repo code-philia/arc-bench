@@ -444,6 +444,34 @@ export async function clickField(scope: Scope, labelOrPlaceholder: MatchInput): 
   await locator.click();
 }
 
+export async function countVisibleNamed(scope: Scope, value: MatchInput): Promise<number> {
+  let count = 0;
+  for (const pattern of toPatterns(value)) {
+    for (const locator of namedLocators(scope, pattern).slice(0, 2)) {
+      for (let index = 0; index < await locator.count(); index += 1) {
+        if (await locator.nth(index).isVisible()) count += 1;
+      }
+    }
+  }
+  return count;
+}
+
+export async function expectFewerVisibleNamed(
+  scope: Scope,
+  value: MatchInput,
+  previousCount: number,
+): Promise<void> {
+  await expect.poll(() => countVisibleNamed(scope, value)).toBeLessThan(previousCount);
+}
+
+export async function expectPastDepartureDateDisabled(page: Page): Promise<void> {
+  const pastDate = await firstVisible([
+    page.getByRole('button', { name: /(^|\D)18(\D|$)/ }),
+  ]);
+  await expect(pastDate).toBeVisible();
+  await expect(pastDate).toBeDisabled();
+}
+
 export async function setCheckbox(scope: Scope, value: MatchInput, checked: boolean): Promise<void> {
   const patterns = toPatterns(value);
   for (const pattern of patterns) {
@@ -466,7 +494,6 @@ export async function setCheckbox(scope: Scope, value: MatchInput, checked: bool
   }
   const locator = await firstVisible([
     target(scope).getByRole('checkbox'),
-    target(scope).locator('input[type="checkbox"]'),
   ]);
   if (checked) {
     await locator.check();

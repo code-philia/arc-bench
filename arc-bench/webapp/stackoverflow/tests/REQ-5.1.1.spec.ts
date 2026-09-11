@@ -11,5 +11,5 @@ test('REQ-5.1.1: Post Comment', async ({ page }) => {
   await h.expectTextsVisible(page, [/comment/i]);
   await h.fillField(page, [/comment/i], h.FIXTURES.comment.body);
   await h.pressEnter(page, [/comment/i]);
-  await h.expectTextsVisible(page, [/stack user/i, /comment/i]);
+  await h.expectTextsVisible(page, [h.FIXTURES.comment.body, /stack user/i]);
 });

@@ -9,5 +9,7 @@ test('REQ-2.7.2: Remove label from a note', async ({ page }) => {
   await h.openLabelDialogForNote(page, h.FIXTURES.notes.labelRemoveTitle);
   await h.setLabel(page, h.FIXTURES.labels.work, false);
   await h.closeEditor(page);
-  await h.expectTextAbsent(page, h.FIXTURES.labels.work);
+  await h.openSidebar(page);
+  await h.clickNamed(page, h.FIXTURES.labels.work);
+  await h.expectTextAbsent(page, h.FIXTURES.notes.labelRemoveTitle);
 });

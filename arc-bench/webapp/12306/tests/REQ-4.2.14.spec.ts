@@ -8,5 +8,5 @@ test('REQ-4.2.14: Open the default ticket search from the empty history orders s
   await h.openTicketOrders(page, h.FIXTURES.ordersEmptyUser);
   await h.clickNamed(page, 'History orders');
   await h.clickNamed(page, 'You can make travel plans through the ticket reservation function.');
-  await h.expectQuickSearch(page);
+  await h.assertDefaultResultsPage(page);
 });

@@ -10,5 +10,5 @@ test('REQ-4.6: Delete Answer', async ({ page }) => {
   await h.clickAnswerAction(page, [/^delete$/i]);
   await h.expectTextsVisible(page, [/consequences|confirm deletion/i]);
   await h.clickFirstAvailable(page, [[/confirm deletion|delete/i]]);
-  await h.expectTextAbsent(page, h.FIXTURES.answer.body);
+  await h.expectTextAbsent(page, h.FIXTURES.answer.deleteBody);
 });

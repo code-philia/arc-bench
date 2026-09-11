@@ -186,6 +186,7 @@ export const FIXTURES = {
     body: 'Use exponential backoff together with an idempotency key so duplicate requests can be safely retried without creating duplicate side effects in downstream services.',
     updatedBody: 'Updated answer body describing exponential backoff, retry budgets, and idempotency keys for safe network retries.',
     summary: 'Expanded answer with retry-budget and idempotency details.',
+    deleteBody: 'This answer is reserved for the answer deletion scenario.',
   },
   comment: {
     body: 'Can you share what you tried so far?',
@@ -235,6 +236,20 @@ async function firstVisible(locators: Locator[]): Promise<Locator> {
     }
   }
   return locators[0].first();
+}
+
+async function lastVisible(locators: Locator[]): Promise<Locator> {
+  for (const locator of locators) {
+    for (let index = await locator.count() - 1; index >= 0; index -= 1) {
+      const candidate = locator.nth(index);
+      try {
+        if (await candidate.isVisible({ timeout: 200 })) return candidate;
+      } catch {
+        // continue
+      }
+    }
+  }
+  return locators[0].last();
 }
 
 function namedLocators(scope: Scope, pattern: RegExp): Locator[] {
@@ -334,33 +349,28 @@ export async function expectTextAbsent(scope: Scope, value: Match): Promise<void
   await expect(target(scope).getByText(patterns[0])).toHaveCount(0);
 }
 
-async function targetCard(page: Page, selectors: string[]): Promise<Locator> {
-  return firstVisible([
-    ...selectors.map((selector) => page.locator(selector).first()),
-    page.getByRole('article').first(),
-  ]);
-}
-
 export async function clickAnswerAction(page: Page, value: Match): Promise<void> {
-  const answer = await targetCard(page, [
-    '[data-answer-id]',
-    '[data-answer]',
-    '.answer',
-    '.answer-card',
-    '.answer-item',
-  ]);
-  await clickFirstAvailable(answer, [value]);
+  const patterns = toPatterns(value);
+  for (const pattern of patterns) {
+    const action = await lastVisible(namedLocators(page, pattern));
+    if (await action.isVisible().catch(() => false)) {
+      await action.click();
+      return;
+    }
+  }
+  await (await lastVisible(namedLocators(page, patterns[0]))).click();
 }
 
 export async function clickCommentAction(page: Page, value: Match): Promise<void> {
-  const comment = await targetCard(page, [
-    '[data-comment-id]',
-    '[data-comment]',
-    '.comment',
-    '.comment-item',
-    '.comment-card',
-  ]);
-  await clickFirstAvailable(comment, [value]);
+  const patterns = toPatterns(value);
+  for (const pattern of patterns) {
+    const action = await lastVisible(namedLocators(page, pattern));
+    if (await action.isVisible().catch(() => false)) {
+      await action.click();
+      return;
+    }
+  }
+  await (await lastVisible(namedLocators(page, patterns[0]))).click();
 }
 
 export async function fillField(scope: Scope, labelOrPlaceholder: Match, value: string): Promise<void> {
@@ -408,10 +418,6 @@ export async function expectFieldValue(scope: Scope, field: Match, expected: Mat
   if (!patterns.some((pattern) => pattern.test(value))) {
     throw new Error(`Expected field value to match ${patterns.map((item) => item.source).join(', ')}, got ${value}`);
   }
-}
-
-export async function expectUrlIncludes(page: Page, pattern: RegExp): Promise<void> {
-  await expect(page).toHaveURL(pattern);
 }
 
 export async function expectHomepage(page: Page): Promise<void> {

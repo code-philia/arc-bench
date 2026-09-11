@@ -6,7 +6,9 @@ import * as h from './helpers';
 
 test('REQ-5.4.3.1: Delete a Single Address', async ({ page }) => {
   await h.openAddressManager(page, h.FIXTURES.accounts.addressDelete);
+  const deleteCount = await h.countVisibleNamed(page, /^(删除|delete)$/i);
   await h.clickFirstAvailable(page, [[/删除/, /delete/i]]);
   await h.confirmDialog(page);
   await h.expectAnyVisible(page, [[/成功/, /deleted/i, /removed/i]]);
+  await h.expectFewerVisibleNamed(page, /^(删除|delete)$/i, deleteCount);
 });

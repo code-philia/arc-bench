@@ -8,5 +8,5 @@ test('REQ-4.3: Accepted Answer Selection', async ({ page }) => {
   await h.login(page, h.FIXTURES.accounts.answerAcceptOwner);
   await h.openQuestionDetail(page, h.FIXTURES.questions.acceptedAnswer);
   await h.clickAnswerAction(page, [/accept answer|accepted/i]);
-  await h.expectTextsVisible(page, [/accepted/i, /green/i]);
+  await h.expectTextsVisible(page, [/accepted answer/i]);
 });

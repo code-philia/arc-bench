@@ -6,7 +6,9 @@ import * as h from './helpers';
 
 test('REQ-5.3.3.1: Delete a Traveler Record', async ({ page }) => {
   await h.openTravelerManager(page, h.FIXTURES.accounts.travelerDelete);
+  const deleteCount = await h.countVisibleNamed(page, /^(删除|delete)$/i);
   await h.clickFirstAvailable(page, [[/删除/, /delete/i]]);
   await h.confirmDialog(page);
   await h.expectAnyVisible(page, [[/成功/, /removed/i, /deleted/i]]);
+  await h.expectFewerVisibleNamed(page, /^(删除|delete)$/i, deleteCount);
 });

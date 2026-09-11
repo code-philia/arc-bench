@@ -7,5 +7,5 @@ import * as h from './helpers';
 test('REQ-3.2.4: Exception: Past-Date Validation', async ({ page }) => {
   await h.openFlightSearch(page);
   await h.clickField(page, [/出发日期/, /departure date/i]);
-  await h.expectAnyVisible(page, [[/日历/, /calendar/i], [/￥/, /¥/]]);
+  await h.expectPastDepartureDateDisabled(page);
 });

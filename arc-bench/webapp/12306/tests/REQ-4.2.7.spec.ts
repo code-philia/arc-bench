@@ -8,5 +8,5 @@ test('REQ-4.2.7: Open the default ticket search from the empty upcoming trips st
   await h.openTicketOrders(page, h.FIXTURES.ordersEmptyUser);
   await h.clickNamed(page, 'Upcoming trips');
   await h.clickNamed(page, 'You can make travel plans through the ticket reservation function.');
-  await h.expectQuickSearch(page);
+  await h.assertDefaultResultsPage(page);
 });

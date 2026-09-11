@@ -6,8 +6,6 @@ import * as h from './helpers';
 
 test('REQ-6.2: Personal Information Step', async ({ page }) => {
   await h.login(page, h.FIXTURES.accounts.checkoutInformation);
-  await h.openProductDetail(page, h.FIXTURES.products.checkoutStep);
-  await h.addProductToCart(page);
-  await h.clickFirstAvailable(page, [[/proceed to checkout/i]]);
+  await h.startCheckoutWithProduct(page, h.FIXTURES.products.checkoutStep);
   await h.expectTextsVisible(page, [/personal information/i, /address/i, /sign in|guest|create account/i]);
 });
