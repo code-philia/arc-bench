@@ -17,10 +17,31 @@ TEST_LOG="${RESULT_ROOT}/logs/test.log"
 HEALTH_PATH="${ARC_HEALTH_PATH:-/api/health}"
 START_TIMEOUT="${ARC_START_TIMEOUT_SECONDS:-60}"
 REFERENCE_TEST_TIMEOUT="${ARC_REFERENCE_TEST_TIMEOUT:-15000}"
+REFERENCE_PROCESS_TIMEOUT="${ARC_REFERENCE_PROCESS_TIMEOUT:-600000}"
+REFERENCE_PROCESS_TERMINATION_GRACE_MS="${ARC_REFERENCE_PROCESS_TERMINATION_GRACE_MS:-5000}"
+REFERENCE_GLOBAL_TIMEOUT="${ARC_REFERENCE_GLOBAL_TIMEOUT:-}"
+REFERENCE_ARTIFACT_COPY_TIMEOUT_SECONDS="${ARC_REFERENCE_ARTIFACT_COPY_TIMEOUT_SECONDS:-30}"
+REFERENCE_TEST_TERMINATION_GRACE_SECONDS="${ARC_REFERENCE_TEST_TERMINATION_GRACE_SECONDS:-5}"
 BASE_URL="http://127.0.0.1:${APP_PORT}"
+SETUP_PID=""
 SERVER_PID=""
+TEST_PID=""
 APP_PROJECT_DIR=""
 APP_TEST_DIR=""
+setup_status="not-run"
+runtime_status="not-run"
+test_status="not-run"
+receipt_status="running"
+termination_reason="none"
+receipt_written=0
+
+if [[ -z "${REFERENCE_GLOBAL_TIMEOUT}" && "${REFERENCE_PROCESS_TIMEOUT}" =~ ^[0-9]+$ ]]; then
+  if (( REFERENCE_PROCESS_TIMEOUT > 30000 )); then
+    REFERENCE_GLOBAL_TIMEOUT=$((REFERENCE_PROCESS_TIMEOUT - 30000))
+  else
+    REFERENCE_GLOBAL_TIMEOUT="${REFERENCE_PROCESS_TIMEOUT}"
+  fi
+fi
 
 usage() {
   cat <<'EOF'
@@ -32,7 +53,7 @@ EOF
   node -e '
     const fs = require("fs");
     const config = JSON.parse(fs.readFileSync("apps.config.json", "utf8"));
-    console.log(`  ${Object.keys(config.apps).join(", ")}`);
+    console.log("  " + Object.keys(config.apps).join(", "));
   ' 2>/dev/null || true
 }
 
@@ -81,9 +102,6 @@ rm -rf "${APP_ROOT}" "${REPO_ROOT}/test-results/${APP_NAME}" "${REPO_ROOT}/playw
 mkdir -p "${APP_ROOT}"
 
 write_summary() {
-  local setup_status="$1"
-  local runtime_status="$2"
-  local test_status="$3"
   cat > "${RESULT_ROOT}/summary.txt" <<EOF
 app=${APP_NAME}
 mode=reference
@@ -96,16 +114,13 @@ source_tests=${APP_TEST_DIR}
 workspace=${PROJECT_WORKSPACE}
 test_results_dir=${RESULT_ROOT}/test-results/
 playwright_report_dir=${RESULT_ROOT}/playwright-report/
+receipt_status=${receipt_status}
+termination_reason=${termination_reason}
+reference_test_timeout_ms=${REFERENCE_TEST_TIMEOUT}
+reference_global_timeout_ms=${REFERENCE_GLOBAL_TIMEOUT:-not-set}
+reference_process_timeout_ms=${REFERENCE_PROCESS_TIMEOUT}
 EOF
 }
-
-cleanup() {
-  if [[ -n "${SERVER_PID}" ]] && kill -0 "${SERVER_PID}" 2>/dev/null; then
-    kill "${SERVER_PID}" 2>/dev/null || true
-    wait "${SERVER_PID}" 2>/dev/null || true
-  fi
-}
-trap cleanup EXIT
 
 has_npm_script() {
   local package_json="$1"
@@ -161,38 +176,127 @@ copy_project_source() {
   ) | (cd "${target}" && tar -xf -)
 }
 
-copy_artifacts() {
-  local base="$1"
-  if [[ -d "${base}/test-results" ]]; then
-    cp -a "${base}/test-results" "${RESULT_ROOT}/test-results"
-  elif [[ -d "${REPO_ROOT}/test-results/${APP_NAME}" ]]; then
-    cp -a "${REPO_ROOT}/test-results/${APP_NAME}" "${RESULT_ROOT}/test-results"
-  fi
-
-  if [[ -d "${base}/playwright-report" ]]; then
-    cp -a "${base}/playwright-report" "${RESULT_ROOT}/playwright-report"
-  elif [[ -d "${REPO_ROOT}/playwright-report" ]]; then
-    cp -a "${REPO_ROOT}/playwright-report" "${RESULT_ROOT}/playwright-report"
-  fi
-}
-
-echo "[ARC-Bench Reference] Preparing ${APP_NAME} reference project"
-set +e
-{
+run_setup() {
+  set -Eeuo pipefail
   copy_project_source "${SOURCE_PROJECT}" "${PROJECT_WORKSPACE}"
-
   install_node_project "${PROJECT_WORKSPACE}"
   install_node_project "${PROJECT_WORKSPACE}/frontend"
   install_node_project "${PROJECT_WORKSPACE}/backend"
   run_build_if_present "${PROJECT_WORKSPACE}"
   run_build_if_present "${PROJECT_WORKSPACE}/frontend"
-} > "${SETUP_LOG}" 2>&1
+}
+
+copy_artifacts() {
+  local base="$1"
+  if [[ -d "${base}/test-results" ]]; then
+    timeout --kill-after=5s "${REFERENCE_ARTIFACT_COPY_TIMEOUT_SECONDS}s" \
+      cp -a "${base}/test-results" "${RESULT_ROOT}/test-results" 2>>"${SETUP_LOG}" || true
+  elif [[ -d "${REPO_ROOT}/test-results/${APP_NAME}" ]]; then
+    timeout --kill-after=5s "${REFERENCE_ARTIFACT_COPY_TIMEOUT_SECONDS}s" \
+      cp -a "${REPO_ROOT}/test-results/${APP_NAME}" "${RESULT_ROOT}/test-results" 2>>"${SETUP_LOG}" || true
+  fi
+
+  if [[ -d "${base}/playwright-report" ]]; then
+    timeout --kill-after=5s "${REFERENCE_ARTIFACT_COPY_TIMEOUT_SECONDS}s" \
+      cp -a "${base}/playwright-report" "${RESULT_ROOT}/playwright-report" 2>>"${SETUP_LOG}" || true
+  elif [[ -d "${REPO_ROOT}/playwright-report" ]]; then
+    timeout --kill-after=5s "${REFERENCE_ARTIFACT_COPY_TIMEOUT_SECONDS}s" \
+      cp -a "${REPO_ROOT}/playwright-report" "${RESULT_ROOT}/playwright-report" 2>>"${SETUP_LOG}" || true
+  fi
+}
+
+stop_process_group() {
+  local pid="$1"
+  if [[ -z "${pid}" ]] || ! kill -0 "${pid}" 2>/dev/null; then
+    return 0
+  fi
+
+  kill -TERM -- "-${pid}" 2>/dev/null || kill -TERM "${pid}" 2>/dev/null || true
+  for _ in $(seq 1 "${REFERENCE_TEST_TERMINATION_GRACE_SECONDS}"); do
+    kill -0 "${pid}" 2>/dev/null || break
+    sleep 1
+  done
+  kill -KILL -- "-${pid}" 2>/dev/null || kill -KILL "${pid}" 2>/dev/null || true
+  wait "${pid}" 2>/dev/null || true
+}
+
+stop_setup() {
+  if [[ -n "${SETUP_PID}" ]]; then
+    stop_process_group "${SETUP_PID}"
+    SETUP_PID=""
+  fi
+}
+
+stop_test() {
+  if [[ -n "${TEST_PID}" ]]; then
+    stop_process_group "${TEST_PID}"
+    TEST_PID=""
+  fi
+}
+
+stop_server() {
+  if [[ -n "${SERVER_PID}" ]]; then
+    stop_process_group "${SERVER_PID}"
+    SERVER_PID=""
+  fi
+}
+
+write_receipt() {
+  if [[ "${receipt_written}" -eq 1 ]]; then
+    return 0
+  fi
+  receipt_written=1
+  mkdir -p "${RESULT_ROOT}/logs"
+  copy_artifacts "${REPO_ROOT}" || true
+  write_summary || true
+}
+
+handle_signal() {
+  local signal_name="$1"
+  local signal_status="$2"
+  receipt_status="interrupted"
+  termination_reason="signal:${signal_name}"
+  test_status="${signal_status}"
+  write_summary || true
+  receipt_written=1
+  stop_setup || true
+  stop_test || true
+  stop_server || true
+  exit "${signal_status}"
+}
+
+cleanup() {
+  set +e
+  stop_setup
+  stop_test
+  stop_server
+  write_receipt
+}
+
+trap 'handle_signal TERM 143' TERM
+trap 'handle_signal INT 130' INT
+trap 'handle_signal HUP 129' HUP
+trap cleanup EXIT
+
+echo "[ARC-Bench Reference] Preparing ${APP_NAME} reference project"
+export -f copy_project_source has_npm_script install_node_project run_build_if_present run_setup
+export SOURCE_PROJECT PROJECT_WORKSPACE
+(
+  exec setsid --wait bash -c run_setup
+) > "${SETUP_LOG}" 2>&1 &
+SETUP_PID=$!
+
+set +e
+wait "${SETUP_PID}"
 setup_status=$?
 set -e
+SETUP_PID=""
 
 if [[ "${setup_status}" -ne 0 ]]; then
   echo "[ARC-Bench Reference] Reference setup failed. See ${SETUP_LOG}" >&2
-  write_summary "${setup_status}" "not-started" "not-run"
+  receipt_status="failed"
+  termination_reason="setup_failed"
+  write_receipt
   exit "${setup_status}"
 fi
 
@@ -202,14 +306,20 @@ elif [[ -f "${PROJECT_WORKSPACE}/package.json" ]]; then
   START_DIR="${PROJECT_WORKSPACE}"
 else
   echo "[ARC-Bench Reference] No runnable package.json found in ${PROJECT_WORKSPACE} or ${PROJECT_WORKSPACE}/backend" >&2
-  write_summary "${setup_status}" "not-started" "not-run"
+  runtime_status="not-started"
+  receipt_status="failed"
+  termination_reason="runtime_package_missing"
+  write_receipt
   exit 2
 fi
 
 echo "[ARC-Bench Reference] Starting ${APP_NAME} reference application on port ${APP_PORT}"
 (
   cd "${START_DIR}"
-  ARC_DB_FILE="${APP_ROOT}/runtime/database.db" PORT="${APP_PORT}" npm run start
+  exec setsid --wait env \
+    ARC_DB_FILE="${APP_ROOT}/runtime/database.db" \
+    PORT="${APP_PORT}" \
+    npm run start
 ) > "${APP_LOG}" 2>&1 &
 SERVER_PID=$!
 
@@ -227,19 +337,51 @@ done
 
 if [[ "${runtime_status}" -ne 0 ]]; then
   echo "[ARC-Bench Reference] Reference application did not become healthy at ${BASE_URL}${HEALTH_PATH}" >&2
-  write_summary "${setup_status}" "${runtime_status}" "not-run"
+  receipt_status="failed"
+  termination_reason="runtime_unhealthy"
+  write_receipt
   exit 1
 fi
 
 echo "[ARC-Bench Reference] Running benchmark tests for ${APP_NAME}"
-set +e
-PLAYWRIGHT_OUTPUT_ROOT="${EXPORT_ROOT%/}/reference" \
-PLAYWRIGHT_REPORT_ROOT="${EXPORT_ROOT%/}/reference" \
-TARGET_URL="${BASE_URL}" \
-  npm run test -- --app "${APP_NAME}" --target-url "${BASE_URL}" --timeout "${REFERENCE_TEST_TIMEOUT}" 2>&1 | tee "${TEST_LOG}"
-test_status=${PIPESTATUS[0]}
-set -e
+test_args=(--app "${APP_NAME}" --target-url "${BASE_URL}" --timeout "${REFERENCE_TEST_TIMEOUT}")
+if [[ -n "${REFERENCE_GLOBAL_TIMEOUT}" ]]; then
+  test_args+=(--global-timeout "${REFERENCE_GLOBAL_TIMEOUT}")
+fi
+if [[ -n "${REFERENCE_PROCESS_TIMEOUT}" ]]; then
+  test_args+=(--process-timeout "${REFERENCE_PROCESS_TIMEOUT}")
+fi
+if [[ -n "${REFERENCE_PROCESS_TERMINATION_GRACE_MS}" ]]; then
+  test_args+=(--process-termination-grace "${REFERENCE_PROCESS_TERMINATION_GRACE_MS}")
+fi
 
-copy_artifacts "${REPO_ROOT}"
-write_summary "${setup_status}" "${runtime_status}" "${test_status}"
+(
+  cd "${REPO_ROOT}"
+  exec setsid --wait env \
+    PLAYWRIGHT_OUTPUT_ROOT="${EXPORT_ROOT%/}/reference" \
+    PLAYWRIGHT_REPORT_ROOT="${EXPORT_ROOT%/}/reference" \
+    TARGET_URL="${BASE_URL}" \
+    npm run test -- "${test_args[@]}"
+) > "${TEST_LOG}" 2>&1 &
+TEST_PID=$!
+
+set +e
+wait "${TEST_PID}"
+test_status=$?
+set -e
+TEST_PID=""
+cat "${TEST_LOG}" || true
+
+if [[ "${test_status}" -eq 124 ]]; then
+  receipt_status="interrupted"
+  termination_reason="playwright_process_timeout"
+elif grep -Eq '^Timed out waiting .* (test suite|teardown)' "${TEST_LOG}" 2>/dev/null; then
+  receipt_status="interrupted"
+  termination_reason="playwright_global_timeout"
+else
+  receipt_status="completed"
+  termination_reason="none"
+fi
+copy_artifacts "${REPO_ROOT}" || true
+write_receipt
 exit "${test_status}"

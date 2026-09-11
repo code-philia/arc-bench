@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { spawnSync } = require('node:child_process');
+const { spawn } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -24,6 +24,9 @@ Options:
   --headed                     Run browsers headed.
   --project <name>             Playwright project name.
   --grep <pattern>             Playwright grep pattern.
+  --process-timeout <ms>       Hard timeout for the Playwright child process.
+  --process-termination-grace <ms>
+                               Grace period before force-killing that process tree.
   --list                       List supported apps.
   --help                       Show this help.
 
@@ -48,6 +51,8 @@ function parseArgs(argv) {
     workers: process.env.PLAYWRIGHT_WORKERS || '',
     timeout: process.env.PLAYWRIGHT_TEST_TIMEOUT || '',
     expectTimeout: process.env.PLAYWRIGHT_EXPECT_TIMEOUT || '',
+    processTimeout: process.env.PLAYWRIGHT_PROCESS_TIMEOUT || '',
+    processTerminationGrace: process.env.PLAYWRIGHT_PROCESS_TERMINATION_GRACE_MS || '5000',
     playwrightArgs: [],
   };
 
@@ -65,6 +70,10 @@ function parseArgs(argv) {
     else if (arg === '--workers') options.workers = takeValue(argv, index++, arg);
     else if (arg === '--timeout') options.timeout = takeValue(argv, index++, arg);
     else if (arg === '--expect-timeout') options.expectTimeout = takeValue(argv, index++, arg);
+    else if (arg === '--process-timeout') options.processTimeout = takeValue(argv, index++, arg);
+    else if (arg === '--process-termination-grace') {
+      options.processTerminationGrace = takeValue(argv, index++, arg);
+    }
     else if (arg === '--project') options.playwrightArgs.push('--project', takeValue(argv, index++, arg));
     else if (arg === '--grep') options.playwrightArgs.push('--grep', takeValue(argv, index++, arg));
     else options.playwrightArgs.push(arg);
@@ -95,7 +104,121 @@ function resolveApps(selection) {
   return [selection];
 }
 
-function runForApp(appName, options, targetUrls) {
+function parseTimeout(value, label, { allowZero = true } = {}) {
+  if (!value) return 0;
+  const timeout = Number(value);
+  if (!Number.isSafeInteger(timeout) || timeout < 0 || (!allowZero && timeout === 0)) {
+    throw new Error(`${label} must be a non-negative integer in milliseconds`);
+  }
+  return timeout;
+}
+
+function signalExitCode(signal) {
+  return {
+    SIGHUP: 129,
+    SIGINT: 130,
+    SIGTERM: 143,
+  }[signal] || 1;
+}
+
+function signalProcessTree(child, signal) {
+  if (!child || !child.pid) return;
+  try {
+    if (process.platform === 'win32') {
+      const taskkillArgs = ['/PID', String(child.pid), '/T'];
+      if (signal === 'SIGKILL') taskkillArgs.push('/F');
+      const taskkill = spawn('taskkill', taskkillArgs, {
+        stdio: 'ignore',
+        windowsHide: true,
+      });
+      taskkill.once('error', (error) => {
+        if (error.code !== 'ESRCH') {
+          console.error(`[ARC] Could not terminate the Playwright process tree: ${error.message}`);
+        }
+      });
+      taskkill.unref();
+    } else {
+      process.kill(-child.pid, signal);
+    }
+  } catch (error) {
+    if (error.code !== 'ESRCH') {
+      console.error(`[ARC] Could not send ${signal} to Playwright process tree: ${error.message}`);
+    }
+  }
+}
+
+function runPlaywrightProcess(args, env, { timeoutMs, terminationGraceMs }) {
+  return new Promise((resolve) => {
+    const child = spawn('npx', args, {
+      cwd: rootDir,
+      env,
+      stdio: 'inherit',
+      shell: process.platform === 'win32',
+      detached: process.platform !== 'win32',
+    });
+    let settled = false;
+    let timedOut = false;
+    let interrupted = false;
+    let terminating = false;
+    let timeoutHandle;
+    let forceKillHandle;
+
+    const cleanup = () => {
+      if (timeoutHandle) clearTimeout(timeoutHandle);
+      if (forceKillHandle) clearTimeout(forceKillHandle);
+      process.off('SIGINT', onSigint);
+      process.off('SIGTERM', onSigterm);
+      process.off('SIGHUP', onSighup);
+    };
+
+    const finish = (status) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve({ status, interrupted });
+    };
+
+    const stop = ({ timeout = false, signal = 'SIGTERM' } = {}) => {
+      if (settled || terminating) return;
+      terminating = true;
+      timedOut = timeout;
+      interrupted = !timeout;
+      if (timeout) {
+        console.error(`[ARC] Playwright process exceeded ${timeoutMs}ms; terminating its process tree`);
+      } else {
+        console.error(`[ARC] Forwarding ${signal} to the Playwright process tree`);
+      }
+      signalProcessTree(child, signal);
+      forceKillHandle = setTimeout(() => {
+        signalProcessTree(child, 'SIGKILL');
+        finish(timeout ? 124 : signalExitCode(signal));
+      }, terminationGraceMs);
+    };
+
+    const onSignal = (signal) => stop({ signal });
+    const onSigint = () => onSignal('SIGINT');
+    const onSigterm = () => onSignal('SIGTERM');
+    const onSighup = () => onSignal('SIGHUP');
+    process.once('SIGINT', onSigint);
+    process.once('SIGTERM', onSigterm);
+    process.once('SIGHUP', onSighup);
+
+    child.once('error', (error) => {
+      console.error(`[ARC] Could not start Playwright: ${error.message}`);
+      finish(1);
+    });
+    child.once('close', (code, signal) => {
+      if (terminating) return;
+      if (timedOut) finish(124);
+      else if (interrupted) finish(signalExitCode(signal || 'SIGTERM'));
+      else finish(typeof code === 'number' ? code : signalExitCode(signal));
+    });
+
+    if (timeoutMs > 0) timeoutHandle = setTimeout(() => stop({ timeout: true }), timeoutMs);
+  });
+}
+
+async function runForApp(appName, options, targetUrls) {
   const app = appConfig[appName];
   const targetUrl = targetUrls[appName] || targetUrls['*'] || app.targetUrl || defaultTargetUrl;
   const outputRoot = process.env.PLAYWRIGHT_OUTPUT_ROOT || '';
@@ -125,16 +248,17 @@ function runForApp(appName, options, targetUrls) {
   ];
 
   console.log(`\n[ARC] Running ${appName} tests against ${targetUrl}`);
-  const result = spawnSync('npx', args, {
-    cwd: rootDir,
-    env,
-    stdio: 'inherit',
-    shell: process.platform === 'win32',
+  return runPlaywrightProcess(args, env, {
+    timeoutMs: parseTimeout(options.processTimeout, '--process-timeout'),
+    terminationGraceMs: parseTimeout(
+      options.processTerminationGrace,
+      '--process-termination-grace',
+      { allowZero: false },
+    ),
   });
-  return result.status || 0;
 }
 
-try {
+async function main() {
   const options = parseArgs(process.argv.slice(2));
   if (options.help) {
     printHelp();
@@ -150,13 +274,16 @@ try {
   let exitCode = 0;
 
   for (const appName of selectedApps) {
-    const status = runForApp(appName, options, targetUrls);
-    if (status !== 0) exitCode = status;
+    const result = await runForApp(appName, options, targetUrls);
+    if (result.status !== 0) exitCode = result.status;
+    if (result.interrupted) break;
   }
 
   process.exit(exitCode);
-} catch (error) {
+}
+
+main().catch((error) => {
   console.error(`[ARC] ${error.message}`);
   console.error('Run `npm run test -- --help` for usage.');
   process.exit(1);
-}
+});
