@@ -1,7 +1,7 @@
 id: ROOT
 name: Train Ticket Booking System
 type: FOLDER
-description: 'A train ticket booking system that provides user authentication, ticket search and booking, order management, and travel information services. This workspace includes ordinary seeded product records used by the scenarios, including public home-page content, registration candidates, traveler accounts, route-search examples, bookable routes, order-center states, passenger records, profile records, and travel-guide content.'
+description: 'A train ticket booking system that provides user authentication, ticket search and booking, order management, and travel information services.'
 dependencies: []
 children:
   - id: REQ-1
@@ -86,7 +86,7 @@ children:
           - id: REQ-2.1.3
             name: Submit valid registration information
             type: ATOMIC
-            description: 'Allow a new user to submit complete and valid registration information, persist the user data, and show a successful registration message.'
+            description: 'Allow a new user to submit complete and valid registration information, persist the user data, and show the successful registration message "Registration successful.".'
             dependencies:
               - REQ-2.1.2
             scenarios:
@@ -97,7 +97,7 @@ children:
                   - keyword: WHEN
                     content: 'Click the "Register" button.'
                   - keyword: THEN
-                    content: 'The system persists the user information and shows a successful registration message.'
+                    content: 'The system persists the user information and shows "Registration successful.".'
           - id: REQ-2.1.4
             name: Block registration with missing required fields
             type: ATOMIC
@@ -116,7 +116,7 @@ children:
           - id: REQ-2.1.5
             name: Block registration with duplicate passport number
             type: ATOMIC
-            description: 'Reject registration when the passport number already exists and show the message "Passport number already exists.".'
+            description: 'Reject registration when the passport number already exists and show the message "Passport number already exists.". The system contains an existing account record with ID number "P20260002".'
             dependencies:
               - REQ-2.1.2
             scenarios:
@@ -131,7 +131,7 @@ children:
           - id: REQ-2.1.6
             name: Block registration with duplicate username
             type: ATOMIC
-            description: 'Reject registration when the username already exists and show the message "Username already exists.".'
+            description: 'Reject registration when the username already exists and show the message "Username already exists.". The system contains an existing account record with username "username_taken".'
             dependencies:
               - REQ-2.1.2
             scenarios:
@@ -191,7 +191,7 @@ children:
       - id: REQ-2.2
         name: User Login
         type: FOLDER
-        description: 'Allow a user to log in with a username, email address, or mobile number and a password.'
+        description: 'Allow a user to log in with a username, email address, or mobile number and a password. The system contains the verified account registered_user with username "registered_user", email "registered_user@example.com", mobile number "13800000010", ID number "P20260010", and password "Password123!".'
         dependencies:
           - REQ-1.1
         children:
@@ -326,7 +326,7 @@ children:
       - id: REQ-2.4
         name: Forgot Password
         type: FOLDER
-        description: 'Allow a user to reset the password by entering the registered email address and ID number, then entering a new password.'
+        description: 'Allow a user to reset the password by entering the registered email address and ID number, then entering a new password. The system contains the verified password-recovery account reset_user with email "reset_user@example.com", ID number "P20260011", and password "Password123!".'
         dependencies:
           - REQ-2.2.2
         children:
@@ -467,7 +467,7 @@ children:
       - id: REQ-3.1
         name: Home Quick Search
         type: FOLDER
-        description: 'Provide a ticket search module on the home page with input placeholders "From", "To", and "Date", and a "Search" button.'
+        description: 'Provide a ticket search module on the home page with input placeholders "From", "To", and "Date", and a "Search" button. The station directory contains the valid locations "Shanghai", "Beijing", "Yancheng", and "Lhasa", including the related stations "Shanghai Hongqiao" and "Beijing South".'
         dependencies:
           - REQ-1.1
         children:
@@ -498,7 +498,15 @@ children:
                   - keyword: GIVEN
                     content: 'The user is on the home page search module and the departure field or arrival field is focused.'
                   - keyword: WHEN
-                    content: 'Type pinyin or Chinese characters in the input field and click one location in the matched list.'
+                    content: 'Type pinyin in the input field and click one location in the matched list.'
+                  - keyword: THEN
+                    content: 'The page shows a matched list with the title "Top destinations" and matching city and station items with pinyin and Chinese names, and the input field is filled with the selected location name.'
+              - name: Select a location by Chinese characters
+                steps:
+                  - keyword: GIVEN
+                    content: 'The user is on the home page search module and the departure field or arrival field is focused.'
+                  - keyword: WHEN
+                    content: 'Type Chinese characters in the input field and click one location in the matched list.'
                   - keyword: THEN
                     content: 'The page shows a matched list with the title "Top destinations" and matching city and station items with pinyin and Chinese names, and the input field is filled with the selected location name.'
           - id: REQ-3.1.3
@@ -589,7 +597,7 @@ children:
       - id: REQ-3.2
         name: Ticket Search Results
         type: FOLDER
-        description: 'Display the ticket search results page below the home page navigation bar, including the search condition inputs, the date-switching bar, the route summary, the result count, the ticket list table, the "Filter" sidebar, and ticket booking buttons. ![image](./reference/search-result.png)'
+        description: 'Display the ticket search results page below the home page navigation bar, including the search condition inputs, the date-switching bar, the route summary, the result count, the ticket list table, the "Filter" sidebar, and ticket booking buttons. ![image](./reference/search-result.png) The Shanghai-to-Beijing route has populated results for the current date and the following day, including multiple trains with different train types, departure times, arrival times, travel times, prices, departure stations, arrival stations, and seat availability. The results include G/C/D and Other train types, a train departing from "Shanghai Hongqiao", a train arriving at "Beijing South", a train departing during "06:00-12:00", and seat-class prices and inventory for Business-class seat, First-class seat, Second-class seat, and Standing ticket with both available and unavailable seat classes. The default Beijing-to-Shanghai route also has populated results for the current date.'
         dependencies:
           - REQ-3.1.5
         children:
@@ -806,7 +814,7 @@ children:
       - id: REQ-3.3
         name: Transfer Journey
         type: FOLDER
-        description: 'Provide transfer plans when there is no direct train and allow the user to view, sort, and book transfer solutions.'
+        description: 'Provide transfer plans when there is no direct train and allow the user to view, sort, and book transfer solutions. The Yancheng-to-Lhasa route on the current date has no direct train and has multiple valid transfer plans. Each plan has two train segments, a transfer station, waiting time, departure and arrival times, total travel time, and price.'
         dependencies:
           - REQ-3.2
         children:
@@ -895,7 +903,7 @@ children:
       - id: REQ-4.1
         name: Personal Center Entry
         type: FOLDER
-        description: 'Control access to the personal center from the top "My 12306" entry and route the user either to the login page or to the personal center home page.'
+        description: 'Control access to the personal center from the top "My 12306" entry and route the user either to the login page or to the personal center home page. The system contains the verified account personal_center_user with username "personal_center_user", email "personal_center_user@example.com", mobile number "13800000020", and password "Password123!".'
         dependencies:
           - REQ-1.1
         children:
@@ -948,7 +956,7 @@ children:
       - id: REQ-4.2
         name: Order Center
         type: FOLDER
-        description: 'Provide a "Ticket orders" page under "Order center" with the tabs "Uncompleted orders", "Upcoming trips", and "History orders". ![image](./reference/ticket-orders.png)'
+        description: 'Provide a "Ticket orders" page under "Order center" with the tabs "Uncompleted orders", "Upcoming trips", and "History orders". ![image](./reference/ticket-orders.png) The orders_empty_user account has no uncompleted orders, upcoming trips, or history orders.'
         dependencies:
           - REQ-4.1.2
         children:
@@ -970,7 +978,7 @@ children:
           - id: REQ-4.2.2
             name: Show empty uncompleted orders state
             type: ATOMIC
-            description: 'When the "Uncompleted orders" tab has no order, show "assets/empty.png" and the text "You don''t have uncompleted orders.". ![image](./reference/ticket-orders.png)'
+            description: 'When the "Uncompleted orders" tab has no order, show "assets/empty.png" and the text "You don''t have uncompleted orders.". ![image](./reference/ticket-orders.png) The system contains the verified account orders_empty_user with username "orders_empty_user", email "orders_empty_user@example.com", and password "Password123!".'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -1001,7 +1009,7 @@ children:
           - id: REQ-4.2.4
             name: View uncompleted orders table
             type: ATOMIC
-            description: 'Display a table in "Uncompleted orders" where each row represents one passenger order, and transfer tickets are grouped together. The table visibly exposes train-detail columns such as "Train No.", "Departure date", "Departure station", and "Arrival station", together with an "Operation" column and the payment action; it may also show passenger, seat, price, status, and total-price details. Each order group is followed by a "Pay" button. ![image](./reference/uncompleted-orders.png)'
+            description: 'Display a table in "Uncompleted orders" where each row represents one passenger order, and transfer tickets are grouped together. The table visibly exposes train-detail columns such as "Train No.", "Departure date", "Departure station", and "Arrival station", together with an "Operation" column and the payment action; it may also show passenger, seat, price, status, and total-price details. Each order group is followed by a "Pay" button. ![image](./reference/uncompleted-orders.png) The system contains the verified account orders_unpaid_user with username "orders_unpaid_user", email "orders_unpaid_user@example.com", and password "Password123!". The orders_unpaid_user account has an unpaid order containing train information, passenger information, seat information, price, total price, and an order status that permits payment or cancellation.'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -1101,7 +1109,7 @@ children:
           - id: REQ-4.2.10
             name: View upcoming trips table
             type: ATOMIC
-            description: 'Display the "Upcoming trips" orders in a table with visible train-detail columns such as "Train No.", "Departure date", "Departure station", and "Arrival station", together with an "Operation" column; passenger, seat, price, status, and total-price details may also be shown. Transfer tickets are grouped together. ![image](./reference/uncompleted-orders.png)'
+            description: 'Display the "Upcoming trips" orders in a table with visible train-detail columns such as "Train No.", "Departure date", "Departure station", and "Arrival station", together with an "Operation" column; passenger, seat, price, status, and total-price details may also be shown. Transfer tickets are grouped together. ![image](./reference/uncompleted-orders.png) The system contains the verified account orders_upcoming_user with username "orders_upcoming_user", email "orders_upcoming_user@example.com", and password "Password123!". The orders_upcoming_user account has a paid upcoming order with a future departure date, an unexpired refund deadline, and an order number, train number, or passenger name containing "G1001".'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -1116,7 +1124,7 @@ children:
           - id: REQ-4.2.11
             name: Refund an upcoming trip
             type: ATOMIC
-            description: 'Allow the user to click the "Refund" button for one upcoming order, submit a refund request before the refund deadline, open the refund page that shows the order and refund information, update the order status to "refunded", and add the refunded order to the history orders.'
+            description: 'Allow the user to click the "Refund" button for one upcoming order, submit a refund request before the refund deadline, open the refund page that shows the order and refund information, update the order status to "refunded", and add the refunded order to the history orders. A verified account named "orders_refund_user" with password "Password123!" has a paid upcoming trip whose refund deadline has not passed.'
             dependencies:
               - REQ-4.2.10
             scenarios:
@@ -1215,7 +1223,7 @@ children:
           - id: REQ-4.2.17
             name: View history orders table
             type: ATOMIC
-            description: 'Display the "History orders" table with the columns "Train Information", "Passenger Information", "Seat Information", "Price", "Status", and "Total Price". Transfer tickets are grouped together. ![image](./reference/uncompleted-orders.png)'
+            description: 'Display the "History orders" table with the columns "Train Information", "Passenger Information", "Seat Information", "Price", "Status", and "Total Price". Transfer tickets are grouped together. ![image](./reference/uncompleted-orders.png) The system contains the verified account orders_history_user with username "orders_history_user", email "orders_history_user@example.com", and password "Password123!". The orders_history_user account has a historical order containing train information, passenger information, seat information, price, total price, status, and ride date, with an order number, train number, or passenger name containing "G1001".'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -1230,7 +1238,7 @@ children:
       - id: REQ-4.3
         name: Personal Information
         type: FOLDER
-        description: 'Provide the "Personal" submenu with the entries "User information", "Account security", and "Verify mobile number".'
+        description: 'Provide the "Personal" submenu with the entries "User information", "Account security", and "Verify mobile number". The system contains the verified account profile_user with username "profile_user", email "profile_user@example.com", mobile number "13800000030", and password "Password123!".'
         dependencies:
           - REQ-4.1.2
         children:
@@ -1252,7 +1260,7 @@ children:
           - id: REQ-4.3.2
             name: Edit essential information
             type: ATOMIC
-            description: 'Allow the user to click the "Edit" button in the "Essential information" section, switch the section to an editable state with the button text changed to "Save", edit "Gender" through the options "Male" and "Female", edit the password through a password input, reject an invalid new password with the message "Please enter a valid password.", and keep the other essential information fields read-only.'
+            description: 'Allow the user to click the "Edit" button in the "Essential information" section, switch the section to an editable state with the button text changed to "Save", edit "Gender" through the options "Male" and "Female", edit the password through a password input, reject an invalid new password with the message "Please enter a valid password.", and keep the other essential information fields read-only. A verified account named "profile_essential_user" with password "Password123!" has editable essential profile information.'
             dependencies:
               - REQ-4.3.1
             scenarios:
@@ -1275,7 +1283,7 @@ children:
           - id: REQ-4.3.3
             name: Edit contact information
             type: ATOMIC
-            description: 'Allow the user to click the "Edit" button in the "Contact information" section, switch the section to an editable state with the button text changed to "Save", edit the "Email" field, and save the updated contact information.'
+            description: 'Allow the user to click the "Edit" button in the "Contact information" section, switch the section to an editable state with the button text changed to "Save", edit the "Email" field, and save the updated contact information. A verified account named "profile_contact_user" with email "profile_contact_user@example.com", mobile number "13800000132", and password "Password123!" has editable contact information.'
             dependencies:
               - REQ-4.3.1
             scenarios:
@@ -1320,7 +1328,7 @@ children:
           - id: REQ-4.3.6
             name: Edit login password from account security page
             type: ATOMIC
-            description: 'Open the password change form from the "Login password" section with the fields "Current password: ", "New password: ", and "Confirm your password: ", and the buttons "Cancel" and "Determine". Reject missing fields with "Please fill in all password fields.", reject an incorrect current password with "Incorrect current password.", reject mismatched new passwords with "New passwords do not match.", and persist the new password and show a successful password change message after valid submission. ![image](./reference/edit-password.png)'
+            description: 'Open the password change form from the "Login password" section with the fields "Current password: ", "New password: ", and "Confirm your password: ", and the buttons "Cancel" and "Determine". Reject missing fields with "Please fill in all password fields.", reject an incorrect current password with "Incorrect current password.", reject mismatched new passwords with "New passwords do not match.", and persist the new password and show a successful password change message after valid submission. ![image](./reference/edit-password.png) A verified account named "security_password_user" with email "security_password_user@example.com", mobile number "13800000131", and password "Password123!" can change its login password.'
             dependencies:
               - REQ-4.3.5
             scenarios:
@@ -1437,7 +1445,7 @@ children:
       - id: REQ-4.4
         name: Information Management
         type: FOLDER
-        description: 'Provide the "Information management" submenu with the "My Passengers" page and passenger maintenance actions.'
+        description: 'Provide the "Information management" submenu with the "My Passengers" page and passenger maintenance actions. The system contains the verified account passenger_manager_user with username "passenger_manager_user", email "passenger_manager_user@example.com", and password "Password123!". The passenger_manager_user account has one default frequent passenger representing the account holder, and that passenger cannot be deleted. The passenger_manager_user account has a passenger named "Passenger Example" with ID number "P20269999", passport expiration date "2027-12-31", date of birth "2000-01-15", nationality "China", gender "Female", email "passenger@example.com", mobile number "13800000040", and passenger type "Adult". The passenger_manager_user account has at least five additional deletable passenger records whose names are visible in the table.'
         dependencies:
           - REQ-4.1.2
         children:
@@ -1708,7 +1716,7 @@ children:
       - id: REQ-5.2
         name: Booking Form
         type: FOLDER
-        description: 'Provide a booking form after the user clicks one "Book" button on the search results page. ![image](./reference/booking-1.png)'
+        description: 'Provide a booking form after the user clicks one "Book" button on the search results page. ![image](./reference/booking-1.png) The system contains the verified account bookable_user with username "bookable_user", email "bookable_user@example.com", and password "Password123!".'
         dependencies:
           - REQ-3.2.2
         children:
@@ -1745,7 +1753,7 @@ children:
           - id: REQ-5.2.3
             name: Select passengers for booking
             type: ATOMIC
-            description: 'Display the passenger section with the title "Passenger Information:" and the user''s frequent passengers. When the user selects one or more passengers, add one booking row per selected passenger and keep the "Place order" action available for submission. The table columns are "Ticket class", "Ticket type", "Name", "ID type", "ID number", "Nationality", and "Operation". The "Ticket class" dropdown contains "Business-class seat", "First-class seat", "Second-class seat", and "Standing ticket". The "Ticket type" dropdown contains "Adult" and "Child". The "Operation" column contains a "Delete" button.'
+            description: 'Display the passenger section with the title "Passenger Information:" and the user''s frequent passengers. When the user selects one or more passengers, add one booking row per selected passenger and keep the "Place order" action available for submission. The table columns are "Ticket class", "Ticket type", "Name", "ID type", "ID number", "Nationality", and "Operation". The "Ticket class" dropdown contains "Business-class seat", "First-class seat", "Second-class seat", and "Standing ticket". The "Ticket type" dropdown contains "Adult" and "Child". The "Operation" column contains a "Delete" button. The bookable_user account has at least one selectable frequent passenger record.'
             dependencies:
               - REQ-5.2.1
               - REQ-4.4.1
@@ -1777,7 +1785,7 @@ children:
           - id: REQ-5.2.5
             name: Submit valid booking information
             type: ATOMIC
-            description: 'Provide the buttons "Previous step" and "Place order" on the booking form page. When the user clicks "Place order" with at least one selected passenger and all selected ticket classes still having available tickets, persist the booking information and show a successful booking message.'
+            description: 'Provide the buttons "Previous step" and "Place order" on the booking form page. When the user clicks "Place order" with at least one selected passenger and all selected ticket classes still having available tickets, persist the booking information and show a successful booking message. A verified account named "booking_submit_user" with password "Password123!" has a selectable passenger and can submit an available booking.'
             dependencies:
               - REQ-5.2.3
             scenarios:
@@ -1829,7 +1837,7 @@ children:
           - id: REQ-5.3.1
             name: Confirm submitted booking information
             type: ATOMIC
-            description: 'After the user submits booking information, open a confirmation dialog with the title "Please confirm the following information.", show the train information and passenger information, and provide the buttons "Confirm" and "Edit". Clicking "Confirm" confirms the order information and shows a successful submission message. Clicking "Edit" returns to the booking information page. ![image](./reference/booking-confirm.png)'
+            description: 'After the user submits booking information, open a confirmation dialog with the title "Please confirm the following information.", show the train information and passenger information, and provide the buttons "Confirm" and "Edit". Clicking "Confirm" confirms the order information and shows a successful submission message. Clicking "Edit" returns to the booking information page. ![image](./reference/booking-confirm.png) Separate verified accounts named "booking_confirm_user" and "booking_edit_user", each with password "Password123!", have a selectable frequent passenger and can book an available Shanghai-to-Beijing train.'
             dependencies:
               - REQ-5.2.5
             scenarios:
@@ -1852,7 +1860,7 @@ children:
           - id: REQ-5.3.2
             name: View payment page
             type: ATOMIC
-            description: 'After the user confirms the order information, open the payment page. The top of the page shows "Seats are locked, Time remained to complete your payment:" with a live 20-minute countdown in the format "MM:SS". The page also shows "Order details" with the same order information as the confirmation page, and the total price in the format "Total: ￥xxxx.xx". ![image](./reference/payment.png)'
+            description: 'After the user confirms the order information, open the payment page. The top of the page shows "Seats are locked, Time remained to complete your payment:" with a live 20-minute countdown in the format "MM:SS". The page also shows "Order details" with the same order information as the confirmation page, and the total price in the format "Total: ￥xxxx.xx". ![image](./reference/payment.png) A verified account named "booking_payment_user" with password "Password123!" has a selectable frequent passenger and can book an available Shanghai-to-Beijing train to reach this page.'
             dependencies:
               - REQ-5.3.1
             scenarios:
@@ -1867,7 +1875,7 @@ children:
           - id: REQ-5.3.3
             name: Cancel order from payment page
             type: ATOMIC
-            description: 'Provide a "Cancel" button on the payment page. Clicking it cancels the order, releases the locked seats, and shows a successful cancellation message.'
+            description: 'Provide a "Cancel" button on the payment page. Clicking it cancels the order, releases the locked seats, and shows a successful cancellation message. A verified account named "booking_cancel_user" with password "Password123!" has a selectable frequent passenger and can create an unpaid Shanghai-to-Beijing order for cancellation.'
             dependencies:
               - REQ-5.3.2
             scenarios:
@@ -1882,7 +1890,7 @@ children:
           - id: REQ-5.3.4
             name: Pay for order from payment page
             type: ATOMIC
-            description: 'Provide a "Pay" button on the payment page. Clicking it simulates a successful payment.'
+            description: 'Provide a "Pay" button on the payment page. Clicking it simulates a successful payment. A verified account named "booking_paid_user" with password "Password123!" has a selectable frequent passenger and can create an unpaid Shanghai-to-Beijing order that can be paid successfully.'
             dependencies:
               - REQ-5.3.2
             scenarios:
@@ -1897,7 +1905,7 @@ children:
           - id: REQ-5.3.5
             name: Show unpaid order in uncompleted orders tab
             type: ATOMIC
-            description: 'When the user reaches the payment page after confirming the order but does not complete payment, set the order status as unpaid and show the order in the "Uncompleted orders" tab of the order center.'
+            description: 'When the user reaches the payment page after confirming the order but does not complete payment, set the order status as unpaid and show the order in the "Uncompleted orders" tab of the order center. A verified account named "booking_unpaid_user" with password "Password123!" has a selectable frequent passenger and can create the unpaid Shanghai-to-Beijing order used by this flow.'
             dependencies:
               - REQ-5.3.2
             scenarios:
@@ -1912,7 +1920,7 @@ children:
           - id: REQ-5.3.6
             name: Show paid order in upcoming trips tab
             type: ATOMIC
-            description: 'When the user completes payment and the travel time has not yet arrived, set the order status as paid and upcoming, and show the order in the "Upcoming trips" tab of the order center.'
+            description: 'When the user completes payment and the travel time has not yet arrived, set the order status as paid and upcoming, and show the order in the "Upcoming trips" tab of the order center. A verified account named "booking_upcoming_user" with password "Password123!" has a selectable frequent passenger and can create and pay for the Shanghai-to-Beijing order used by this flow.'
             dependencies:
               - REQ-5.3.4
             scenarios:
@@ -1927,7 +1935,7 @@ children:
           - id: REQ-5.3.7
             name: Show cancelled order in uncompleted orders tab
             type: ATOMIC
-            description: 'When the user cancels the order from the payment page, set the order status as cancelled and show the order in the "Uncompleted orders" tab of the order center.'
+            description: 'When the user cancels the order from the payment page, set the order status as cancelled and show the order in the "Uncompleted orders" tab of the order center. The verified account "orders_cancelled_user" with email "orders_cancelled_user@example.com" and password "Password123!" has an existing cancelled order. A separate verified account named "booking_cancelled_user" with password "Password123!" has a selectable frequent passenger and can create and cancel the Shanghai-to-Beijing order used by this flow.'
             dependencies:
               - REQ-5.3.3
             scenarios:
@@ -1958,7 +1966,7 @@ children:
           - id: REQ-5.3.9
             name: Cancel order from order center
             type: ATOMIC
-            description: 'Allow the user to click the "Cancel" button for one unpaid order in the "Uncompleted orders" tab, open a confirmation dialog with the text "Are you sure you want to cancel this order?" and the buttons "Cancel" and "Confirm", cancel the order and release the locked seats after clicking "Confirm", or close the dialog without cancelling after clicking "Cancel".'
+            description: 'Allow the user to click the "Cancel" button for one unpaid order in the "Uncompleted orders" tab, open a confirmation dialog with the text "Are you sure you want to cancel this order?" and the buttons "Cancel" and "Confirm", cancel the order and release the locked seats after clicking "Confirm", or close the dialog without cancelling after clicking "Cancel". A verified account named "orders_unpaid_dismiss_user" with password "Password123!" has an unpaid order that can be cancelled from the order center.'
             dependencies:
               - REQ-4.2.4
             scenarios:
@@ -1988,7 +1996,7 @@ children:
       - id: REQ-6.1
         name: Travel Guide Page
         type: FOLDER
-        description: 'Allow the user to open the travel guide page from the home page navigation bar. The page shows three tabs: "Ticketing", "Endorsement and refund", and "Miscellaneous". Each tab shows the corresponding travel guidance content. ![image](./reference/travel-guide.png)'
+        description: 'Allow the user to open the travel guide page from the home page navigation bar. The page shows three tabs: "Ticketing", "Endorsement and refund", and "Miscellaneous". Each tab shows the corresponding travel guidance content. ![image](./reference/travel-guide.png) The travel guide contains the categories "Ticketing", "Endorsement and refund", and "Miscellaneous".'
         dependencies:
           - REQ-1.1
         children:
@@ -2033,7 +2041,7 @@ children:
           - id: REQ-6.2.2
             name: Open travel guide question from dropdown question link
             type: ATOMIC
-            description: 'When the user hovers over "Travel guide" in the navigation bar, show a dropdown containing four question links under each of the categories "Ticketing", "Endorsement and refund", and "Miscellaneous". Clicking one question link navigates to the travel guide page, positions the page on the corresponding category tab, and positions the page on the corresponding question.'
+            description: 'When the user hovers over "Travel guide" in the navigation bar, show a dropdown containing four question links under each of the categories "Ticketing", "Endorsement and refund", and "Miscellaneous". Clicking one question link navigates to the travel guide page, positions the page on the corresponding category tab, and positions the page on the corresponding question. The travel guide contains the question "How to book tickets online?" under the "Ticketing" category with an accessible question anchor and detail content.'
             dependencies:
               - REQ-1.1
               - REQ-6.1.1
@@ -2086,42 +2094,3 @@ children:
                     content: 'Click the "More" link in the "Quick Guide" section.'
                   - keyword: THEN
                     content: 'Navigate to the travel guide page and position the page on the "Ticketing" tab.'
-data:
-  - category: Account Seed Data
-    items:
-      - 'The system contains the verified account registered_user with username "registered_user", email "registered_user@example.com", mobile number "13800000010", ID number "P20260010", and password "Password123!".'
-      - 'The system contains the verified password-recovery account reset_user with email "reset_user@example.com", ID number "P20260011", and password "Password123!".'
-      - 'The system contains the verified account personal_center_user with username "personal_center_user", email "personal_center_user@example.com", mobile number "13800000020", and password "Password123!".'
-      - 'The system contains the verified account profile_user with username "profile_user", email "profile_user@example.com", mobile number "13800000030", and password "Password123!".'
-      - 'The system contains the verified account passenger_manager_user with username "passenger_manager_user", email "passenger_manager_user@example.com", and password "Password123!".'
-      - 'The system contains the verified account bookable_user with username "bookable_user", email "bookable_user@example.com", and password "Password123!".'
-      - 'The system contains the verified account orders_empty_user with username "orders_empty_user", email "orders_empty_user@example.com", and password "Password123!".'
-      - 'The system contains the verified account orders_unpaid_user with username "orders_unpaid_user", email "orders_unpaid_user@example.com", and password "Password123!".'
-      - 'The system contains the verified account orders_upcoming_user with username "orders_upcoming_user", email "orders_upcoming_user@example.com", and password "Password123!".'
-      - 'The system contains the verified account orders_history_user with username "orders_history_user", email "orders_history_user@example.com", and password "Password123!".'
-      - 'The system contains the verified account orders_cancelled_user with username "orders_cancelled_user", email "orders_cancelled_user@example.com", and password "Password123!".'
-      - 'The system contains an existing account record with ID number "P20260002".'
-      - 'The system contains an existing account record with username "username_taken".'
-  - category: Passenger Seed Data
-    items:
-      - 'The passenger_manager_user account has one default frequent passenger representing the account holder, and that passenger cannot be deleted.'
-      - 'The passenger_manager_user account has a passenger named "Passenger Example" with ID number "P20269999", passport expiration date "2027-12-31", date of birth "2000-01-15", nationality "China", gender "Female", email "passenger@example.com", mobile number "13800000040", and passenger type "Adult".'
-      - 'The passenger_manager_user account has at least two additional deletable passenger records.'
-      - 'The bookable_user account has at least one selectable frequent passenger record.'
-  - category: Station, Train, and Transfer Seed Data
-    items:
-      - 'The station directory contains the valid locations "Shanghai", "Beijing", "Yancheng", and "Lhasa", including the related stations "Shanghai Hongqiao" and "Beijing South".'
-      - 'The Shanghai-to-Beijing route has populated results for 2026-07-21 and 2026-07-22, including multiple trains with different train types, departure times, arrival times, travel times, prices, departure stations, arrival stations, and seat availability. The results include G/C/D and Other train types, a train departing from "Shanghai Hongqiao", a train arriving at "Beijing South", a train departing during "06:00-12:00", and seat-class prices and inventory for Business-class seat, First-class seat, Second-class seat, and Standing ticket with both available and unavailable seat classes.'
-      - 'The default Beijing-to-Shanghai route has populated results for the current test date.'
-      - 'The Yancheng-to-Lhasa route on 2026-07-22 has no direct train and has multiple valid transfer plans. Each plan has two train segments, a transfer station, waiting time, departure and arrival times, total travel time, and price.'
-  - category: Booking and Order Seed Data
-    items:
-      - 'The orders_empty_user account has an empty order dataset for uncompleted orders, upcoming trips, and history orders.'
-      - 'The orders_unpaid_user account has an unpaid order containing train information, passenger information, seat information, price, total price, and an order status that permits payment or cancellation.'
-      - 'The orders_upcoming_user account has a paid upcoming order with a future departure date, an unexpired refund deadline, and an order number, train number, or passenger name containing "G1001".'
-      - 'The orders_history_user account has a historical order containing train information, passenger information, seat information, price, total price, status, and ride date, with an order number, train number, or passenger name containing "G1001".'
-      - 'The orders_cancelled_user account has a cancelled order.'
-  - category: Travel Guide Seed Data
-    items:
-      - 'The travel guide contains the categories "Ticketing", "Endorsement and refund", and "Miscellaneous".'
-      - 'The travel guide contains the question "How to book tickets online?" under the "Ticketing" category with an accessible question anchor and detail content.'
