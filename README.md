@@ -63,6 +63,16 @@ Run one benchmark application's tests against a running application:
 npm run test -- --app bookstack --target-url http://127.0.0.1:3301
 ```
 
+Benchmark tests always run sequentially with one Playwright worker. This keeps
+state-changing scenarios deterministic and prevents different requirement
+cases from modifying the same application data concurrently.
+
+The test suites do not call private reset or seed APIs. Before each benchmark
+run, the target implementation must initialize the accounts and domain data
+specified by its requirement package. The reference flow satisfies this
+contract by starting a fresh container and letting the reference application
+initialize its own data before the tests begin.
+
 If the application is already deployed and you only have an entry URL, pass the
 URL with `--target-url`. The runner uses that URL as Playwright's `baseURL`.
 No environment variables are required for this path.
@@ -97,6 +107,18 @@ The Docker image in this repository provides a benchmark execution environment:
 Node.js, Playwright browsers, the benchmark runner, and benchmark files. For an
 already-running implementation, the Docker test command only needs the selected
 app and the entry URL.
+
+After changing requirements, test cases, helpers, or runner configuration, run
+the static benchmark contract audit:
+
+```bash
+npm run test:audit
+```
+
+The audit checks requirement-to-spec ID mapping, scenario-name alignment,
+sequential execution, entry-URL navigation, and the absence of direct API
+access, internal URL assertions, and implementation-specific class or
+data-attribute selectors.
 
 ## 🧪 Reference Implementation Testing
 

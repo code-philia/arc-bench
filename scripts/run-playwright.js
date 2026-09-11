@@ -18,7 +18,6 @@ function printHelp() {
 Options:
   --app <name|all>             App to test. Defaults to all.
   --target-url <url|mapping>   Target URL. For all apps, use app=url,app=url.
-  --workers <n>                Playwright worker count.
   --timeout <ms>               Per-test timeout.
   --expect-timeout <ms>        Assertion timeout.
   --headed                     Run browsers headed.
@@ -32,7 +31,7 @@ Options:
 
 Examples:
   npm run test -- --app bookstack
-  npm run test -- --app bookstack --workers 1 --timeout 90000
+  npm run test -- --app bookstack --timeout 90000
   npm run test -- --app all --target-url http://127.0.0.1:3301`);
 }
 
@@ -48,7 +47,6 @@ function parseArgs(argv) {
   const options = {
     app: process.env.ARC_APP || 'all',
     targetUrl: process.env.TARGET_URL || '',
-    workers: process.env.PLAYWRIGHT_WORKERS || '',
     timeout: process.env.PLAYWRIGHT_TEST_TIMEOUT || '',
     expectTimeout: process.env.PLAYWRIGHT_EXPECT_TIMEOUT || '',
     processTimeout: process.env.PLAYWRIGHT_PROCESS_TIMEOUT || '',
@@ -67,7 +65,6 @@ function parseArgs(argv) {
     else if (arg === '--headed') options.playwrightArgs.push('--headed');
     else if (arg === '--app' || arg === '-a') options.app = takeValue(argv, index++, arg);
     else if (arg === '--target-url' || arg === '--url') options.targetUrl = takeValue(argv, index++, arg);
-    else if (arg === '--workers') options.workers = takeValue(argv, index++, arg);
     else if (arg === '--timeout') options.timeout = takeValue(argv, index++, arg);
     else if (arg === '--expect-timeout') options.expectTimeout = takeValue(argv, index++, arg);
     else if (arg === '--process-timeout') options.processTimeout = takeValue(argv, index++, arg);
@@ -234,7 +231,6 @@ async function runForApp(appName, options, targetUrls) {
       ? path.join(reportRoot, appName, 'playwright-report')
       : process.env.PLAYWRIGHT_REPORT_DIR || 'playwright-report',
   };
-  if (options.workers) env.PLAYWRIGHT_WORKERS = options.workers;
   if (options.timeout) env.PLAYWRIGHT_TEST_TIMEOUT = options.timeout;
   if (options.expectTimeout) env.PLAYWRIGHT_EXPECT_TIMEOUT = options.expectTimeout;
 
@@ -245,6 +241,8 @@ async function runForApp(appName, options, targetUrls) {
     '--config',
     'playwright.config.ts',
     ...options.playwrightArgs,
+    '--workers',
+    '1',
   ];
 
   console.log(`\n[ARC] Running ${appName} tests against ${targetUrl}`);

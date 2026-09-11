@@ -9,6 +9,7 @@
     "reference:12306": "node scripts/run-reference-docker.js --app 12306",
     "reference:all": "node scripts/run-reference-docker.js --app all",
     "test": "node scripts/run-playwright.js",
+    "test:audit": "node scripts/audit-benchmark-tests.js",
     "test:docker": "node scripts/run-test-docker.js",
     "test:app": "node scripts/run-playwright.js --app",
     "test:all": "node scripts/run-playwright.js --app all",
