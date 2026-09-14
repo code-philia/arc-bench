@@ -7,6 +7,6 @@ import * as h from './helpers';
 test('REQ-4.2: Detailed settings', async ({ page }) => {
   await h.openHome(page);
   await h.openSettingsMenu(page);
-  await h.clickFirstAvailable(page, [[/^settings$/i]]);
-  await h.expectTextsVisible(page, [/save/i, /cancel/i, /bottom/i]);
+  await h.openDetailedSettings(page);
+  await h.expectTextsVisible(page, [/^Save$/i, /^Cancel$/i, /Move new notes to the bottom/i]);
 });

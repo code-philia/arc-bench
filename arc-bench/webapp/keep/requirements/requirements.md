@@ -23,7 +23,7 @@ Core note management capability for listing, creating, updating, deleting, archi
 **Dependencies:** REQ-1
 
 ### REQ-2.1 Note Listing
-Display the notes list on the home page with pinned notes shown separately from unpinned notes.
+Display the notes list on the home page with pinned notes shown separately from unpinned notes. Seed data: pinned note "Sprint goals" and regular note "Groceries".
 
 **Dependencies:** REQ-1.1
 
@@ -41,7 +41,7 @@ Create a note from the Take a note form, expand the editor for title and content
 **Scenarios:**
 - Create Note
   - **GIVEN:** User is on the home page.
-  - **WHEN:** Click the "Take a note" form, enter a title and content, and close the editor.
+  - **WHEN:** Click the "Take a note" form, enter a title in the "Title" field and content in the "Note content" field, and click "Close".
   - **THEN:** The note is autosaved, the editor closes, and the note appears in the notes list.
 
 ### REQ-2.3 Delete Note
@@ -50,7 +50,7 @@ Delete notes from the note actions menu and manage the deleted-note recovery flo
 **Dependencies:** REQ-2.2
 
 #### REQ-2.3.1 Delete
-Delete a note from the note actions menu without an extra confirmation dialog. Dropdown image: ![image](./reference/note_more_options_dropdown.png)
+Delete a note from the note actions menu without an extra confirmation dialog. Dropdown image: ![image](./reference/note_more_options_dropdown.png) Seed data: deletable note "Delete me 2.3.1".
 
 **Dependencies:** REQ-2.2
 
@@ -58,10 +58,10 @@ Delete a note from the note actions menu without an extra confirmation dialog. D
 - Delete
   - **GIVEN:** User is on the home page and can see at least one note.
   - **WHEN:** Hover over a note, open More options, and choose "Delete Note".
-  - **THEN:** The note is removed from the main notes list and a delete notification is shown.
+  - **THEN:** The note is removed from the main notes list, a snackbar displays exactly "Note trashed", and an "Undo" action is available.
 
 #### REQ-2.3.2 Notification and Undo
-Show a delete notification with an Undo action after a note is deleted, allow recovery through Undo, and allow the notification to dismiss automatically or be closed manually. Reference image for notification: ![image](./reference/note_delete_notification.png)
+Show a delete notification with an Undo action after a note is deleted, allow recovery through Undo, and allow the notification to dismiss automatically or be closed manually. Reference image for notification: ![image](./reference/note_delete_notification.png) Seed data: deletable note "Delete me 2.3.2".
 
 **Dependencies:** REQ-2.3.1
 
@@ -72,7 +72,7 @@ Show a delete notification with an Undo action after a note is deleted, allow re
   - **THEN:** The note is restored and the page shows an "Action undone" notification.
 
 #### REQ-2.3.3 Trash list
-Open the Trash view from the sidebar and display deleted notes, with support for emptying trash and automatic deletion after seven days. Reference image: ![image](./reference/trash_list.png)
+Open the Trash view from the sidebar and display deleted notes, with support for emptying trash and automatic deletion after seven days. Reference image: ![image](./reference/trash_list.png) Seed data: deletable note "Delete me 2.3.3".
 
 **Dependencies:** REQ-2.3.1
 
@@ -83,7 +83,7 @@ Open the Trash view from the sidebar and display deleted notes, with support for
   - **THEN:** The page displays the list of deleted notes.
 
 ### REQ-2.4 Update Note
-Edit the content of an existing note and persist the updated note after the editor is closed. Reference image: ![image](./reference/note_editing.png)
+Edit the content of an existing note and persist the updated note after the editor is closed. Reference image: ![image](./reference/note_editing.png) Seed data: note "Project ideas" with initial content "Initial editable content".
 
 **Dependencies:** REQ-2.2
 
@@ -99,7 +99,7 @@ Archive and unarchive notes, and show the archived notes list separately from ac
 **Dependencies:** REQ-2.2
 
 #### REQ-2.5.1 Archive
-Archive a note from the note actions area and show an Undo notification. Reference image: ![image](./reference/archive_button.png)
+Archive a note from the note actions area and show an Undo notification. Reference image: ![image](./reference/archive_button.png) Seed data: active note "Travel plans 2.5.1".
 
 **Dependencies:** REQ-2.2
 
@@ -110,7 +110,7 @@ Archive a note from the note actions area and show an Undo notification. Referen
   - **THEN:** The note moves to the archive list and the page shows a notification with an Undo action.
 
 #### REQ-2.5.2 Archive Undo
-Restore an archived note by using the Undo action from the archive notification.
+Restore an archived note by using the Undo action from the archive notification. Seed data: active note "Travel plans 2.5.2".
 
 **Dependencies:** REQ-2.5.1
 
@@ -121,7 +121,7 @@ Restore an archived note by using the Undo action from the archive notification.
   - **THEN:** The note returns to the main notes list.
 
 #### REQ-2.5.3 Show archived notes
-Open the Archived view from the sidebar and display all archived notes. Reference image: ![image](./reference/archived_notes_page.png)
+Open the Archived view from the sidebar and display all archived notes. Reference image: ![image](./reference/archived_notes_page.png) Seed data: active note "Travel plans 2.5.3".
 
 **Dependencies:** REQ-2.5.1
 
@@ -132,7 +132,7 @@ Open the Archived view from the sidebar and display all archived notes. Referenc
   - **THEN:** The page displays the archived notes list.
 
 #### REQ-2.5.4 Unarchive
-Restore an archived note from the archived notes list. Reference image: ![image](./reference/unarchive_button.png)
+Restore an archived note from the archived notes list. Reference image: ![image](./reference/unarchive_button.png) Seed data: active note "Travel plans 2.5.4".
 
 **Dependencies:** REQ-2.5.3
 
@@ -148,7 +148,7 @@ Allow users to apply different background colors to notes during creation and af
 **Dependencies:** REQ-2.2
 
 #### REQ-2.6.1 Change note color
-Change the color of an existing note.
+Change the color of an existing note. Seed data: regular note "Garden tasks existing" with a white background.
 
 **Dependencies:** REQ-2.2
 
@@ -166,8 +166,8 @@ Set the color of a note during note creation.
 **Scenarios:**
 - Choose note color when created
   - **GIVEN:** User has opened the "Take a note" editor.
-  - **WHEN:** Open the color palette, choose a color, enter a title and content, and close the editor.
-  - **THEN:** The created note is saved with the selected color.
+  - **WHEN:** Open the "Change color" palette, choose "Light green", enter a title in the "Title" field and content in the "Note content" field, and click "Close".
+  - **THEN:** The created note is saved with the selected light green background.
 
 ### REQ-2.7 Labels Management
 Allow users to assign labels to notes, manage labels, and filter notes by label.
@@ -175,18 +175,18 @@ Allow users to assign labels to notes, manage labels, and filter notes by label.
 **Dependencies:** REQ-2.2
 
 #### REQ-2.7.1 Assign label to a note
-Assign one or more labels to an existing note. Reference image: ![image](./reference/assign_label_to_note.png)
+Assign one or more labels to an existing note. Reference image: ![image](./reference/assign_label_to_note.png) Seed data: regular note "Team retro add label" without the "Work" label; label "Work".
 
 **Dependencies:** REQ-2.2
 
 **Scenarios:**
 - Assign label to a note
   - **GIVEN:** User is on the home page and can see a note.
-  - **WHEN:** Open More options, choose "Change labels", and select a label.
-  - **THEN:** The selected label is assigned to the note and displayed on the note.
+  - **WHEN:** Open "More options", choose "Change labels", and select the "Work" label.
+  - **THEN:** The "Work" label is assigned to the target note and displayed on that note.
 
 #### REQ-2.7.2 Remove label from a note
-Remove an assigned label from a note.
+Remove an assigned label from a note. Seed data: regular note "Team retro remove label" with the "Work" label; label "Work".
 
 **Dependencies:** REQ-2.7.1
 
@@ -194,10 +194,10 @@ Remove an assigned label from a note.
 - Remove label from a note
   - **GIVEN:** User is on the home page and can see a note that already has a label.
   - **WHEN:** Open More options, choose "Change labels", and clear the selected label.
-  - **THEN:** The label is removed from the note.
+  - **THEN:** The "Work" label is removed from the target note; other notes and the sidebar remain unchanged.
 
 #### REQ-2.7.3 Default label
-Provide "Reminders" as a default label in the label list.
+Provide "Reminders" as a default label in the label list. Seed data: default label "Reminders".
 
 **Dependencies:** None
 
@@ -208,25 +208,25 @@ Provide "Reminders" as a default label in the label list.
   - **THEN:** The labels list includes "Reminders" as a default label with its own icon.
 
 #### REQ-2.7.4 Assign default label when creating note
-Assign the default "Reminders" label during note creation.
+Assign the default "Reminders" label during note creation. Seed data: default label "Reminders".
 
 **Dependencies:** REQ-2.7.3
 
 **Scenarios:**
 - Assign default label when creating note
   - **GIVEN:** User is on the home page and the "Take a note" editor is open.
-  - **WHEN:** Choose the "Reminders" label, enter a title and content, and close the editor.
+  - **WHEN:** Open "More options", choose "Change labels", select the "Reminders" label, enter a title and content, and click "Close".
   - **THEN:** The created note is saved with the "Reminders" label.
 
 #### REQ-2.7.5 Edit labels
-Create, rename, and delete labels from the label management list. Reference image: ![image](./reference/manage_labels.png)
+Create, rename, and delete labels from the label management list. Reference image: ![image](./reference/manage_labels.png) Seed data: editable label "Work editable".
 
 **Dependencies:** REQ-2.7.1
 
 **Scenarios:**
 - Edit labels
   - **GIVEN:** User can see the sidebar.
-  - **WHEN:** Click "Edit Labels", change a label name, and save the update.
+  - **WHEN:** Click "Edit labels", replace "Work editable" with "Projects", and click the Save button for that label.
   - **THEN:** The label list reflects the saved changes.
 
 #### REQ-2.7.6 View by labels
@@ -235,7 +235,7 @@ Show all labels in the sidebar and allow users to filter the notes list by the s
 **Dependencies:** REQ-2.7.1
 
 ##### REQ-2.7.6.1 View list filtered by label
-Filter the notes list by a selected label.
+Filter the notes list by a selected label. Seed data: note "Design review" with the "Work" label and note "Movie list" without the "Work" or "Reminders" label; label "Work".
 
 **Dependencies:** REQ-2.7.1
 
@@ -246,7 +246,7 @@ Filter the notes list by a selected label.
   - **THEN:** The notes list shows only notes that have the selected label.
 
 ##### REQ-2.7.6.2 View all notes
-Return from a label-filtered view to the full notes list.
+Return from a label-filtered view to the full notes list. Seed data: note "Design review" with the "Work" label and note "Movie list" without the "Work" or "Reminders" label; label "Work".
 
 **Dependencies:** REQ-2.7.6.1
 
@@ -257,7 +257,7 @@ Return from a label-filtered view to the full notes list.
   - **THEN:** The notes list shows all notes.
 
 ##### REQ-2.7.6.3 View Reminders
-Filter the notes list by the default "Reminders" label.
+Filter the notes list by the default "Reminders" label. Seed data: note "Call dentist existing" with the "Reminders" label and note "Movie list" without the "Work" or "Reminders" label; label "Reminders".
 
 **Dependencies:** REQ-2.7.3
 
@@ -273,7 +273,7 @@ Allow users to pin frequently used notes to the top of the notes list and unpin 
 **Dependencies:** REQ-2.2
 
 #### REQ-2.8.1 Pin note
-Pin an existing note from the note card. Reference image: ![image](./reference/pin_button.png)
+Pin an existing note from the note card. Reference image: ![image](./reference/pin_button.png) Seed data: regular note "Meeting agenda 2.8.1" that is not pinned.
 
 **Dependencies:** REQ-2.2
 
@@ -284,7 +284,7 @@ Pin an existing note from the note card. Reference image: ![image](./reference/p
   - **THEN:** The pin state is shown and the note appears in the pinned section at the top of the page.
 
 #### REQ-2.8.2 Unpin note
-Remove the pinned state from a pinned note.
+Remove the pinned state from a pinned note. Seed data: regular note "Meeting agenda 2.8.2" that is not pinned.
 
 **Dependencies:** REQ-2.8.1
 
@@ -302,8 +302,8 @@ Create a note in the pinned state.
 **Scenarios:**
 - Pin note when creating it
   - **GIVEN:** User is on the home page and the "Take a note" editor is open.
-  - **WHEN:** Enter a title and content, click the pin button, and close the editor.
-  - **THEN:** The note is created and displayed in the pinned section.
+  - **WHEN:** Enter a title and content, click the "Pin note" button, and click "Close".
+  - **THEN:** The created note is displayed in the Pinned section and has the pinned state.
 
 ## REQ-3 Search
 Allow users to search notes by keywords and supported filters.
@@ -311,18 +311,18 @@ Allow users to search notes by keywords and supported filters.
 **Dependencies:** REQ-2
 
 ### REQ-3.1 Initial suggested filters
-Show suggested search filters after the search bar is focused and filter the notes list when one is selected. Image reference: ![image](./reference/search_suggested_filters.png)
+Show suggested search filters after the search bar is focused and filter the notes list when one is selected. Image reference: ![image](./reference/search_suggested_filters.png) Seed data: note "Call dentist existing" with the "Reminders" label; label "Reminders".
 
 **Dependencies:** REQ-1.1
 
 **Scenarios:**
 - Initial suggested filters
   - **GIVEN:** User is on the home page.
-  - **WHEN:** Click the search bar at the top and choose a suggested filter.
+  - **WHEN:** Click the top search field labeled "Search" and choose a suggested filter.
   - **THEN:** The notes list shows only notes that match the selected filter.
 
 ### REQ-3.2 Search by keyword
-Search notes by keyword and highlight matching text in the results. Image reference: ![image](./reference/search_keyword.png)
+Search notes by keyword and highlight matching text in the results. Image reference: ![image](./reference/search_keyword.png) Seed data: note "Study schedule" whose title or content contains the keyword "st".
 
 **Dependencies:** REQ-3.1
 
@@ -345,7 +345,7 @@ Display the settings options menu from the settings icon. Reference image: ![ima
 **Scenarios:**
 - Setting options list
   - **GIVEN:** User is on the home page.
-  - **WHEN:** Click the settings icon.
+  - **WHEN:** Click the settings icon labeled "Settings".
   - **THEN:** The page displays the list of settings options.
 
 ### REQ-4.2 Detailed settings
@@ -357,7 +357,7 @@ Open the detailed settings page and display configurable application options suc
 - Detailed settings
   - **GIVEN:** User is on the home page and the settings options list is visible.
   - **WHEN:** Click "Settings".
-  - **THEN:** The page focuses on a list of configurable options with save and cancel actions.
+  - **THEN:** The detailed settings page displays "Move new notes to the bottom", "Move checked items to the bottom", "Save", and "Cancel".
 
 ## REQ-5 List View & Grid View
 Allow users to switch between grid view and list view for notes. Reference image for list view: ![image](./reference/list_view.png)
@@ -372,7 +372,7 @@ Switch between list view and grid view from the home page toolbar.
 **Scenarios:**
 - Toggle between list and grid views
   - **GIVEN:** User is on the home page.
-  - **WHEN:** Click the list-view icon and then click the grid-view icon.
+  - **WHEN:** Click the "List view" control and then click the "Grid view" control.
   - **THEN:** The page switches to list view and then switches back to grid view.
 
 ### REQ-5.2 Grid View by default
@@ -410,5 +410,5 @@ Collapse the sidebar to an icon-only view and expand it again from the same cont
 **Scenarios:**
 - Collapsible Sidebar
   - **GIVEN:** The sidebar is expanded.
-  - **WHEN:** Click the sidebar collapse control and then click it again.
+  - **WHEN:** Click the "Toggle sidebar" control and then click it again.
   - **THEN:** The sidebar first collapses to an icon-only view and then expands to show both icons and labels again.

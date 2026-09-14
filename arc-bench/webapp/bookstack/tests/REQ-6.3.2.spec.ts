@@ -7,5 +7,5 @@ import * as h from './helpers';
 test('REQ-6.3.2: Redirect to Page Edit Page', async ({ page }) => {
   await h.openPageReading(page, h.FIXTURES.books.pageEdit.name, h.FIXTURES.books.pageEdit.pageName);
   await h.clickNamed(page, /^Edit$/i);
-  await h.expectTextsVisible(page, [/Save Page/i]);
+  await h.expectTextsVisible(page, [/^Save Page$/i]);
 });

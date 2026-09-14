@@ -7,5 +7,5 @@ import * as h from './helpers';
 test('REQ-8.1: Favorite Items', async ({ page }) => {
   await h.openBookDetailsFromList(page, h.FIXTURES.books.favorite.name);
   await h.clickNamed(page, /^Favorite$/i);
-  await h.expectTextsVisible(page, [/Unfavorite/i]);
+  await h.expectVisible(page, /^Unfavorite$/i);
 });

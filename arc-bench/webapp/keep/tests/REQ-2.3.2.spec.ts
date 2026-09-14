@@ -7,7 +7,7 @@ import * as h from './helpers';
 test('REQ-2.3.2: Notification and Undo', async ({ page }) => {
   await h.openHome(page);
   await h.deleteNote(page, h.FIXTURES.notes.delete232Title);
-  await h.clickFirstAvailable(page, [[/^undo$/i]]);
-  await h.expectTextsVisible(page, [/action undone/i, /undone/i]);
+  await h.clickUndo(page);
+  await h.expectTextsVisible(page, [/^Action undone$/i]);
   await h.expectNoteVisible(page, h.FIXTURES.notes.delete232Title);
 });

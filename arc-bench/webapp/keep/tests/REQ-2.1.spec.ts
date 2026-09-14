@@ -7,5 +7,5 @@ import * as h from './helpers';
 test('REQ-2.1: Note Listing', async ({ page }) => {
   await h.openHome(page);
   await h.expectTextsVisible(page, [h.FIXTURES.notes.pinnedTitle, h.FIXTURES.notes.regularTitle]);
-  await h.expectTextsVisible(page, [/pinned/i, /others|notes/i]);
+  await h.expectTextsVisible(page, [/^Pinned$/i, /^Others$/i]);
 });

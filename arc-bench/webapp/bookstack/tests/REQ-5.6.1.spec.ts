@@ -7,6 +7,6 @@ import * as h from './helpers';
 test('REQ-5.6.1: Fill out and Save Book with Shelf', async ({ page }) => {
   await h.openBookCreationFromShelf(page, h.FIXTURES.books.createFromShelf.shelfName);
   await h.fillBookForm(page, h.FIXTURES.books.createFromShelf, 'create');
-  await h.clickNamed(page, /Save Book/i);
+  await h.clickNamed(page, /^Save Book$/i);
   await h.expectTextsVisible(page, [h.FIXTURES.books.createFromShelf.name, h.FIXTURES.books.createFromShelf.shelfName]);
 });

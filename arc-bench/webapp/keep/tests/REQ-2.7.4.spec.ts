@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-2.7.4
@@ -7,13 +7,13 @@ import * as h from './helpers';
 test('REQ-2.7.4: Assign default label when creating note', async ({ page }) => {
   await h.openHome(page);
   await h.openComposer(page);
-  await h.clickFirstAvailable(page, [[/more/i, /options/i, /menu/i]]);
-  await h.clickFirstAvailable(page, [[/change labels/i, /labels/i]]);
+  const dialog = page.getByRole('dialog', { name: /^Note editor$/i });
+  await dialog.getByRole('button', { name: /^More options$/i }).click();
+  await dialog.getByRole('button', { name: /^Change labels$/i }).click();
   await h.setLabel(page, h.FIXTURES.labels.default, true);
-  await h.fillField(page, [/title/i], h.FIXTURES.notes.reminderCreatedTitle);
-  await h.fillField(page, [/take a note/i, /note/i, /content/i], 'Prepare reminders note');
+  await dialog.getByRole('textbox', { name: /^Title$/i }).fill(h.FIXTURES.notes.reminderCreatedTitle);
+  await dialog.getByRole('textbox', { name: /^Note content$/i }).fill('Prepare reminders note');
   await h.closeEditor(page);
-  await h.openSidebar(page);
-  await h.clickNamed(page, h.FIXTURES.labels.default);
-  await h.expectNoteVisible(page, h.FIXTURES.notes.reminderCreatedTitle);
+  const card = await h.noteCard(page, h.FIXTURES.notes.reminderCreatedTitle);
+  await expect(card).toContainText(h.FIXTURES.labels.default);
 });

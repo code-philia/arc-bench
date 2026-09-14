@@ -5,6 +5,7 @@ import * as h from './helpers';
 // fixtures: book_8_2
 
 test('REQ-8.2: Quick Navigation from Favorites', async ({ page }) => {
+  await h.login(page);
   await h.openBookDetailsFromList(page, h.FIXTURES.books.favoriteNavigation.name);
   await h.clickNamed(page, /^Favorite$/i);
   await h.returnHomeByLogo(page);
