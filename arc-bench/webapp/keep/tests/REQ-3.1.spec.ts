@@ -6,7 +6,7 @@ import * as h from './helpers';
 
 test('REQ-3.1: Initial suggested filters', async ({ page }) => {
   await h.openHome(page);
-  await h.clickFirstAvailable(page, [[/search/i]]);
-  await h.clickFirstAvailable(page, [[h.FIXTURES.labels.default]]);
+  await page.getByRole('textbox', { name: /^Search$/i }).click();
+  await page.getByRole('listbox').getByRole('button', { name: /Reminders$/i }).click();
   await h.expectNoteVisible(page, h.FIXTURES.notes.reminderExistingTitle);
 });

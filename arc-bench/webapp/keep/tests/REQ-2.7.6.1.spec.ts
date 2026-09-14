@@ -7,7 +7,7 @@ import * as h from './helpers';
 test('REQ-2.7.6.1: View list filtered by label', async ({ page }) => {
   await h.openHome(page);
   await h.openSidebar(page);
-  await h.clickFirstAvailable(page, [[h.FIXTURES.labels.work]]);
+  await h.clickSidebarLabel(page, h.FIXTURES.labels.work);
   await h.expectNoteVisible(page, h.FIXTURES.notes.workFilteredTitle);
-  await h.expectTextAbsent(page, h.FIXTURES.notes.otherTitle);
+  await h.expectNoteAbsent(page, h.FIXTURES.notes.otherTitle);
 });

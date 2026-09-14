@@ -7,6 +7,6 @@ import * as h from './helpers';
 test('REQ-6.1.1: Save Page', async ({ page }) => {
   await h.openPageEditor(page, h.FIXTURES.books.pageSave.name);
   await h.fillPageEditor(page, h.FIXTURES.pages.save);
-  await h.clickNamed(page, /Save Page/i);
+  await h.clickNamed(page, /^Save Page$/i);
   await h.expectTextsVisible(page, [h.FIXTURES.pages.save.name]);
 });

@@ -175,7 +175,6 @@ export async function fillField(scope: Scope, labelOrPlaceholder: Match, value: 
   }
   const fallback = await firstVisible([
     target(scope).getByRole('textbox'),
-    target(scope).locator('textarea'),
   ]);
   await fallback.fill(value);
 }
@@ -187,8 +186,8 @@ export async function expectTextAbsent(scope: Scope, value: Match): Promise<void
 }
 
 export async function openSidebar(page: Page): Promise<void> {
-  if (!(await target(page).getByText(/notes/i).first().isVisible().catch(() => false))) {
-    await clickFirstAvailable(page, [[/main menu/i, /menu/i, /sidebar/i]]);
+  if (!(await page.getByRole('complementary').getByRole('button', { name: /^Notes$/i }).isVisible().catch(() => false))) {
+    await page.getByRole('button', { name: /^Toggle sidebar$/i }).click();
   }
 }
 
@@ -196,8 +195,21 @@ export async function expectHomePage(page: Page): Promise<void> {
   await expectTextsVisible(page, [/take a note/i, /search/i]);
 }
 
+function candidateNoteContainers(scope: Scope): Locator[] {
+  const t = target(scope);
+  return [t.getByRole('article')];
+}
+
 export async function noteCard(scope: Scope, text: string | RegExp): Promise<Locator> {
   const pattern = text instanceof RegExp ? text : new RegExp(escapeRegExp(text), 'i');
+  for (const container of candidateNoteContainers(scope)) {
+    const candidate = container.filter({ has: target(scope).getByText(pattern) }).first();
+    try {
+      if (await candidate.isVisible({ timeout: 300 })) return candidate;
+    } catch {
+      // continue
+    }
+  }
   return target(scope).getByText(pattern).first();
 }
 
@@ -205,23 +217,9 @@ export async function expectNoteVisible(page: Page, titleOrText: string | RegExp
   await expect(await noteCard(page, titleOrText)).toBeVisible();
 }
 
-export async function noteVisualSnapshot(page: Page, titleOrText: string | RegExp): Promise<Buffer> {
-  const title = await noteCard(page, titleOrText);
-  await expect(title).toBeVisible();
-  const box = await title.boundingBox();
-  const viewport = page.viewportSize();
-  if (!box || !viewport) throw new Error('The visible note could not be captured');
-  const padding = 24;
-  const x = Math.max(0, box.x - padding);
-  const y = Math.max(0, box.y - padding);
-  return page.screenshot({
-    clip: {
-      x,
-      y,
-      width: Math.min(viewport.width - x, box.width + padding * 2),
-      height: Math.min(viewport.height - y, box.height + padding * 2),
-    },
-  });
+export async function expectNoteAbsent(page: Page, titleOrText: string | RegExp): Promise<void> {
+  const card = await noteCard(page, titleOrText);
+  await expect(card).toHaveCount(0);
 }
 
 export async function openNote(page: Page, titleOrText: string | RegExp): Promise<void> {
@@ -229,23 +227,25 @@ export async function openNote(page: Page, titleOrText: string | RegExp): Promis
 }
 
 export async function openComposer(page: Page): Promise<void> {
-  await clickFirstAvailable(page, [[/take a note/i, /note/i]]);
+  await page.getByRole('button', { name: /^Take a note$/i }).click();
+}
+
+function noteEditor(page: Page): Locator {
+  return page.getByRole('dialog', { name: /^Note editor$/i });
 }
 
 export async function fillComposer(page: Page, title: string, content: string): Promise<void> {
   await openComposer(page);
-  await fillField(page, [/title/i], title);
-  await fillField(page, [/take a note/i, /note/i, /content/i], content);
+  const dialog = noteEditor(page);
+  await dialog.getByRole('textbox', { name: /^Title$/i }).fill(title);
+  await dialog.getByRole('textbox', { name: /^Note content$/i }).fill(content);
 }
 
 export async function closeEditor(page: Page): Promise<void> {
-  try {
-    await clickFirstAvailable(page, [[/close/i, /done/i]]);
-    return;
-  } catch {
-    // continue
+  const dialog = noteEditor(page);
+  if (await dialog.count()) {
+    await dialog.getByRole('button', { name: /^Close$/i }).click();
   }
-  await page.keyboard.press('Escape');
 }
 
 export async function createNote(page: Page, title: string, content: string): Promise<void> {
@@ -254,88 +254,121 @@ export async function createNote(page: Page, title: string, content: string): Pr
 }
 
 export async function openMoreOptionsForNote(page: Page, titleOrText: string | RegExp): Promise<void> {
-  await hoverNamed(page, [titleOrText]);
-  await clickFirstAvailable(page, [[/more/i, /options/i, /menu/i]]);
+  const card = await noteCard(page, titleOrText);
+  await hoverNamed(card, [titleOrText]);
+  await card.getByRole('button', { name: /^More options$/i }).click();
 }
 
 export async function deleteNote(page: Page, title: string): Promise<void> {
-  await openMoreOptionsForNote(page, title);
-  await clickFirstAvailable(page, [[/delete note/i, /^delete$/i, /move to trash/i]]);
+  const card = await noteCard(page, title);
+  await hoverNamed(card, [title]);
+  await card.getByRole('button', { name: /^More options$/i }).click();
+  await card.getByRole('button', { name: /^Delete Note$/i }).click();
 }
 
 export async function archiveNote(page: Page, title: string): Promise<void> {
-  await hoverNamed(page, [title]);
-  await clickFirstAvailable(page, [[/archive/i]]);
+  const card = await noteCard(page, title);
+  await hoverNamed(card, [title]);
+  await card.getByRole('button', { name: /^Archive$/i }).click();
 }
 
 export async function openTrash(page: Page): Promise<void> {
   await openSidebar(page);
-  await clickFirstAvailable(page, [[/^trash$/i]]);
+  await page.getByRole('complementary').getByRole('button', { name: /^Trash$/i }).click();
+}
+
+export async function clickUndo(page: Page): Promise<void> {
+  await page.getByRole('button', { name: /^Undo$/i }).click();
+}
+
+export async function clickSidebarLabel(page: Page, label: string): Promise<void> {
+  await page.getByRole('complementary').getByRole('button', { name: new RegExp(`^${escapeRegExp(label)}$`, 'i') }).click();
 }
 
 export async function openArchive(page: Page): Promise<void> {
   await openSidebar(page);
-  await clickFirstAvailable(page, [[/^archived?$/i, /^archive$/i]]);
+  await page.getByRole('complementary').getByRole('button', { name: /^Archive$/i }).click();
 }
 
 export async function unarchiveNote(page: Page, title: string): Promise<void> {
-  await hoverNamed(page, [title]);
-  await clickFirstAvailable(page, [[/unarchive/i, /archive/i]]);
+  const card = await noteCard(page, title);
+  await hoverNamed(card, [title]);
+  await card.getByRole('button', { name: /^Unarchive$/i }).click();
 }
 
 export async function changeNoteColor(page: Page, title: string): Promise<void> {
-  await hoverNamed(page, [title]);
-  await clickFirstAvailable(page, [[/background options/i, /color/i]]);
-  await clickFirstAvailable(page, [[/light green/i, /green/i]]);
+  const card = await noteCard(page, title);
+  await hoverNamed(card, [title]);
+  await card.getByRole('button', { name: /^Change color$/i }).click();
+  await card.getByRole('button', { name: /^Light green$/i }).click();
 }
 
 export async function chooseColorDuringCreate(page: Page): Promise<void> {
   await openComposer(page);
-  await clickFirstAvailable(page, [[/background options/i, /color/i]]);
-  await clickFirstAvailable(page, [[/light green/i, /green/i]]);
+  const dialog = noteEditor(page);
+  await dialog.getByRole('button', { name: /^Change color$/i }).click();
+  await dialog.getByRole('button', { name: /^Light green$/i }).click();
 }
 
 export async function openLabelDialogForNote(page: Page, title: string): Promise<void> {
-  await openMoreOptionsForNote(page, title);
-  await clickFirstAvailable(page, [[/change labels/i, /labels/i]]);
+  const card = await noteCard(page, title);
+  await hoverNamed(card, [title]);
+  await card.getByRole('button', { name: /^More options$/i }).click();
+  await card.getByRole('button', { name: /^Change labels$/i }).click();
 }
 
 export async function setLabel(page: Page, label: string, checked: boolean): Promise<void> {
-  const checkbox = await resolveNamed(page, [new RegExp(escapeRegExp(label), 'i')]);
-  try {
-    if (checked) {
-      await checkbox.check();
-    } else {
-      await checkbox.uncheck();
-    }
-    return;
-  } catch {
-    await checkbox.click();
-  }
+  const checkbox = noteEditor(page).getByRole('checkbox', {
+    name: new RegExp(`^${escapeRegExp(label)}$`, 'i'),
+  });
+  if (checked) await checkbox.check();
+  else await checkbox.uncheck();
 }
 
 export async function pinNote(page: Page, title: string): Promise<void> {
-  await hoverNamed(page, [title]);
-  await clickFirstAvailable(page, [[/pin/i]]);
+  const card = await noteCard(page, title);
+  await hoverNamed(card, [title]);
+  await card.getByRole('button', { name: /^Pin note$/i }).click();
 }
 
 export async function unpinNote(page: Page, title: string): Promise<void> {
-  await hoverNamed(page, [title]);
-  await clickFirstAvailable(page, [[/unpin/i, /pin/i]]);
+  const card = await noteCard(page, title);
+  await hoverNamed(card, [title]);
+  await card.getByRole('button', { name: /^Unpin note$/i }).click();
 }
 
 export async function search(page: Page, keyword: string): Promise<void> {
-  await fillField(page, [/search/i], keyword);
+  await page.getByRole('textbox', { name: /^Search$/i }).fill(keyword);
 }
 
 export async function openSettingsMenu(page: Page): Promise<void> {
-  await clickFirstAvailable(page, [[/settings/i]]);
+  await page.getByRole('button', { name: /^Settings$/i }).first().click();
+}
+
+export async function openDetailedSettings(page: Page): Promise<void> {
+  await page.getByRole('menu').getByRole('menuitem', { name: /^Settings$/i }).click();
+}
+
+export async function renameLabel(page: Page, currentName: string, newName: string): Promise<void> {
+  const row = page.getByRole('group', { name: new RegExp(`^Label ${escapeRegExp(currentName)}$`, 'i') });
+  await row.getByLabel(new RegExp(`^Label ${escapeRegExp(currentName)}$`, 'i')).fill(newName);
+  await row.getByRole('button', { name: /^Save$/i }).click();
 }
 
 export async function toggleView(page: Page): Promise<void> {
-  await clickFirstAvailable(page, [[/list view/i, /grid view/i]]);
+  const listButton = page.getByRole('button', { name: /^List view$/i });
+  if (await listButton.getAttribute('aria-pressed') === 'true') {
+    await page.getByRole('button', { name: /^Grid view$/i }).click();
+  } else {
+    await page.getByRole('button', { name: /^List view$/i }).click();
+  }
+}
+
+export async function expectGridView(page: Page, listView: boolean): Promise<void> {
+  await expect(page.getByRole('button', { name: /^List view$/i })).toHaveAttribute('aria-pressed', String(listView));
+  await expect(page.getByRole('button', { name: /^Grid view$/i })).toHaveAttribute('aria-pressed', String(!listView));
 }
 
 export async function toggleSidebar(page: Page): Promise<void> {
-  await clickFirstAvailable(page, [[/main menu/i, /menu/i, /sidebar/i]]);
+  await page.getByRole('button', { name: /^Toggle sidebar$/i }).click();
 }

@@ -7,5 +7,6 @@ import * as h from './helpers';
 test('REQ-2.3.1: Delete', async ({ page }) => {
   await h.openHome(page);
   await h.deleteNote(page, h.FIXTURES.notes.delete231Title);
-  await h.expectTextsVisible(page, [/deleted/i, /undo/i]);
+  await h.expectTextsVisible(page, [/^Note trashed$/i, /^Undo$/i]);
+  await h.expectNoteAbsent(page, h.FIXTURES.notes.delete231Title);
 });

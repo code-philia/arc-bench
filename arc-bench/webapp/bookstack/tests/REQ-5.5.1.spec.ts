@@ -7,6 +7,6 @@ import * as h from './helpers';
 test('REQ-5.5.1: Confirm Delete Book', async ({ page }) => {
   await h.openBookDetailsFromList(page, h.FIXTURES.books.deleteConfirm.name);
   await h.clickNamed(page, /^Delete$/i);
-  await h.clickNamed(page, /Confirm|Delete/i);
-  await h.expectTextsVisible(page, [/Books/i]);
+  await h.clickNamed(page, /^Confirm Delete$/i);
+  await h.expectVisible(page, /^Books$/i);
 });

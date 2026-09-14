@@ -5,6 +5,7 @@ import * as h from './helpers';
 // fixtures: shelf_7_1
 
 test('REQ-7.1: Add to Recently Viewed', async ({ page }) => {
+  await h.login(page);
   await h.openShelfDetails(page, h.FIXTURES.shelves.recentlyViewed.name);
   await h.returnHomeByLogo(page);
   await h.expectTextsVisible(page, ['My Recently Viewed', h.FIXTURES.shelves.recentlyViewed.name]);

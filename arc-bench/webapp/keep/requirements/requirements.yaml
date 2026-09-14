@@ -1,7 +1,7 @@
 id: ROOT
 name: Keep
 type: FOLDER
-description: 'Note management system for creating, organizing, searching, and configuring personal notes.'
+description: Note management system for creating, organizing, searching, and configuring personal notes.
 dependencies: []
 children:
   - id: REQ-1
@@ -34,7 +34,7 @@ children:
       - id: REQ-2.1
         name: Note Listing
         type: ATOMIC
-        description: 'Display the notes list on the home page with pinned notes shown separately from unpinned notes. The system contains a pinned note titled "Sprint goals". The system contains a regular note titled "Groceries".'
+        description: 'Display the notes list on the home page with pinned notes shown separately from unpinned notes. Seed data: pinned note "Sprint goals" and regular note "Groceries".'
         dependencies:
           - REQ-1.1
         scenarios:
@@ -58,7 +58,7 @@ children:
               - keyword: GIVEN
                 content: User is on the home page.
               - keyword: WHEN
-                content: Click the "Take a note" form, enter a title and content, and close the editor.
+                content: Click the "Take a note" form, enter a title in the "Title" field and content in the "Note content" field, and click "Close".
               - keyword: THEN
                 content: The note is autosaved, the editor closes, and the note appears in the notes list.
       - id: REQ-2.3
@@ -71,7 +71,7 @@ children:
           - id: REQ-2.3.1
             name: Delete
             type: ATOMIC
-            description: 'Delete a note from the note actions menu without an extra confirmation dialog. Dropdown image: ![image](./reference/note_more_options_dropdown.png) The system contains a deletable regular note titled "Delete me 2.3.1".'
+            description: 'Delete a note from the note actions menu without an extra confirmation dialog. Dropdown image: ![image](./reference/note_more_options_dropdown.png) Seed data: deletable note "Delete me 2.3.1".'
             dependencies:
               - REQ-2.2
             scenarios:
@@ -82,11 +82,11 @@ children:
                   - keyword: WHEN
                     content: Hover over a note, open More options, and choose "Delete Note".
                   - keyword: THEN
-                    content: The note is removed from the main notes list and a delete notification is shown.
+                    content: The note is removed from the main notes list, a snackbar displays exactly "Note trashed", and an "Undo" action is available.
           - id: REQ-2.3.2
             name: Notification and Undo
             type: ATOMIC
-            description: 'Show a delete notification with an Undo action after a note is deleted, allow recovery through Undo, and allow the notification to dismiss automatically or be closed manually. Reference image for notification: ![image](./reference/note_delete_notification.png) The system contains a deletable regular note titled "Delete me 2.3.2".'
+            description: 'Show a delete notification with an Undo action after a note is deleted, allow recovery through Undo, and allow the notification to dismiss automatically or be closed manually. Reference image for notification: ![image](./reference/note_delete_notification.png) Seed data: deletable note "Delete me 2.3.2".'
             dependencies:
               - REQ-2.3.1
             scenarios:
@@ -101,7 +101,7 @@ children:
           - id: REQ-2.3.3
             name: Trash list
             type: ATOMIC
-            description: 'Open the Trash view from the sidebar and display deleted notes, with support for emptying trash and automatic deletion after seven days. Reference image: ![image](./reference/trash_list.png) The system contains a deletable regular note titled "Delete me 2.3.3".'
+            description: 'Open the Trash view from the sidebar and display deleted notes, with support for emptying trash and automatic deletion after seven days. Reference image: ![image](./reference/trash_list.png) Seed data: deletable note "Delete me 2.3.3".'
             dependencies:
               - REQ-2.3.1
             scenarios:
@@ -116,7 +116,7 @@ children:
       - id: REQ-2.4
         name: Update Note
         type: ATOMIC
-        description: 'Edit the content of an existing note and persist the updated note after the editor is closed. Reference image: ![image](./reference/note_editing.png) The system contains a note titled "Project ideas" with the initial content "Initial editable content".'
+        description: 'Edit the content of an existing note and persist the updated note after the editor is closed. Reference image: ![image](./reference/note_editing.png) Seed data: note "Project ideas" with initial content "Initial editable content".'
         dependencies:
           - REQ-2.2
         scenarios:
@@ -138,7 +138,7 @@ children:
           - id: REQ-2.5.1
             name: Archive
             type: ATOMIC
-            description: 'Archive a note from the note actions area and show an Undo notification. Reference image: ![image](./reference/archive_button.png) The system contains an active note titled "Travel plans 2.5.1".'
+            description: 'Archive a note from the note actions area and show an Undo notification. Reference image: ![image](./reference/archive_button.png) Seed data: active note "Travel plans 2.5.1".'
             dependencies:
               - REQ-2.2
             scenarios:
@@ -153,7 +153,7 @@ children:
           - id: REQ-2.5.2
             name: Archive Undo
             type: ATOMIC
-            description: 'Restore an archived note by using the Undo action from the archive notification. The system contains an active note titled "Travel plans 2.5.2".'
+            description: 'Restore an archived note by using the Undo action from the archive notification. Seed data: active note "Travel plans 2.5.2".'
             dependencies:
               - REQ-2.5.1
             scenarios:
@@ -168,7 +168,7 @@ children:
           - id: REQ-2.5.3
             name: Show archived notes
             type: ATOMIC
-            description: 'Open the Archived view from the sidebar and display all archived notes. Reference image: ![image](./reference/archived_notes_page.png) The system contains an active note titled "Travel plans 2.5.3".'
+            description: 'Open the Archived view from the sidebar and display all archived notes. Reference image: ![image](./reference/archived_notes_page.png) Seed data: active note "Travel plans 2.5.3".'
             dependencies:
               - REQ-2.5.1
             scenarios:
@@ -183,7 +183,7 @@ children:
           - id: REQ-2.5.4
             name: Unarchive
             type: ATOMIC
-            description: 'Restore an archived note from the archived notes list. Reference image: ![image](./reference/unarchive_button.png) The system contains an active note titled "Travel plans 2.5.4".'
+            description: 'Restore an archived note from the archived notes list. Reference image: ![image](./reference/unarchive_button.png) Seed data: active note "Travel plans 2.5.4".'
             dependencies:
               - REQ-2.5.3
             scenarios:
@@ -205,7 +205,7 @@ children:
           - id: REQ-2.6.1
             name: Change note color
             type: ATOMIC
-            description: 'Change the color of an existing note. The system contains a regular note titled "Garden tasks existing".'
+            description: 'Change the color of an existing note. Seed data: regular note "Garden tasks existing" with a white background.'
             dependencies:
               - REQ-2.2
             scenarios:
@@ -229,20 +229,20 @@ children:
                   - keyword: GIVEN
                     content: User has opened the "Take a note" editor.
                   - keyword: WHEN
-                    content: Open the color palette, choose a color, enter a title and content, and close the editor.
+                    content: Open the "Change color" palette, choose "Light green", enter a title in the "Title" field and content in the "Note content" field, and click "Close".
                   - keyword: THEN
-                    content: The created note is saved with the selected color.
+                    content: The created note is saved with the selected light green background.
       - id: REQ-2.7
         name: Labels Management
         type: FOLDER
-        description: 'Allow users to assign labels to notes, manage labels, and filter notes by label. The system contains the label "Work".'
+        description: Allow users to assign labels to notes, manage labels, and filter notes by label.
         dependencies:
           - REQ-2.2
         children:
           - id: REQ-2.7.1
             name: Assign label to a note
             type: ATOMIC
-            description: 'Assign one or more labels to an existing note. Reference image: ![image](./reference/assign_label_to_note.png) The system contains a regular note titled "Team retro add label" without the "Work" label.'
+            description: 'Assign one or more labels to an existing note. Reference image: ![image](./reference/assign_label_to_note.png) Seed data: regular note "Team retro add label" without the "Work" label; label "Work".'
             dependencies:
               - REQ-2.2
             scenarios:
@@ -251,13 +251,13 @@ children:
                   - keyword: GIVEN
                     content: User is on the home page and can see a note.
                   - keyword: WHEN
-                    content: Open More options, choose "Change labels", and select a label.
+                    content: Open "More options", choose "Change labels", and select the "Work" label.
                   - keyword: THEN
-                    content: The selected label is assigned to the note and displayed on the note; selecting that label in the sidebar shows the note in the filtered list.
+                    content: The "Work" label is assigned to the target note and displayed on that note.
           - id: REQ-2.7.2
             name: Remove label from a note
             type: ATOMIC
-            description: 'Remove an assigned label from a note. The system contains a regular note titled "Team retro remove label" with the "Work" label.'
+            description: 'Remove an assigned label from a note. Seed data: regular note "Team retro remove label" with the "Work" label; label "Work".'
             dependencies:
               - REQ-2.7.1
             scenarios:
@@ -268,11 +268,11 @@ children:
                   - keyword: WHEN
                     content: Open More options, choose "Change labels", and clear the selected label.
                   - keyword: THEN
-                    content: The label is removed from the note; selecting that label in the sidebar no longer shows the note in the filtered list.
+                    content: The "Work" label is removed from the target note; other notes and the sidebar remain unchanged.
           - id: REQ-2.7.3
             name: Default label
             type: ATOMIC
-            description: 'Provide "Reminders" as a default label in the label list. The system contains the default label "Reminders".'
+            description: 'Provide "Reminders" as a default label in the label list. Seed data: default label "Reminders".'
             dependencies: []
             scenarios:
               - name: Default label
@@ -286,7 +286,7 @@ children:
           - id: REQ-2.7.4
             name: Assign default label when creating note
             type: ATOMIC
-            description: Assign the default "Reminders" label during note creation.
+            description: 'Assign the default "Reminders" label during note creation. Seed data: default label "Reminders".'
             dependencies:
               - REQ-2.7.3
             scenarios:
@@ -295,13 +295,13 @@ children:
                   - keyword: GIVEN
                     content: User is on the home page and the "Take a note" editor is open.
                   - keyword: WHEN
-                    content: Choose the "Reminders" label, enter a title and content, and close the editor.
+                    content: Open "More options", choose "Change labels", select the "Reminders" label, enter a title and content, and click "Close".
                   - keyword: THEN
-                    content: The created note is saved with the "Reminders" label and appears when "Reminders" is selected in the sidebar.
+                    content: The created note is saved with the "Reminders" label.
           - id: REQ-2.7.5
             name: Edit labels
             type: ATOMIC
-            description: 'Create, rename, and delete labels from the label management list. Reference image: ![image](./reference/manage_labels.png) The system contains a separate editable label named "Work editable".'
+            description: 'Create, rename, and delete labels from the label management list. Reference image: ![image](./reference/manage_labels.png) Seed data: editable label "Work editable".'
             dependencies:
               - REQ-2.7.1
             scenarios:
@@ -310,7 +310,7 @@ children:
                   - keyword: GIVEN
                     content: User can see the sidebar.
                   - keyword: WHEN
-                    content: Click "Edit Labels", change a label name, and save the update.
+                    content: Click "Edit labels", replace "Work editable" with "Projects", and click the Save button for that label.
                   - keyword: THEN
                     content: The label list reflects the saved changes.
           - id: REQ-2.7.6
@@ -323,7 +323,7 @@ children:
               - id: REQ-2.7.6.1
                 name: View list filtered by label
                 type: ATOMIC
-                description: 'Filter the notes list by a selected label. The system contains a regular note titled "Design review" with the "Work" label. The system contains a regular note titled "Movie list" without the "Work" or "Reminders" label.'
+                description: 'Filter the notes list by a selected label. Seed data: note "Design review" with the "Work" label and note "Movie list" without the "Work" or "Reminders" label; label "Work".'
                 dependencies:
                   - REQ-2.7.1
                 scenarios:
@@ -338,7 +338,7 @@ children:
               - id: REQ-2.7.6.2
                 name: View all notes
                 type: ATOMIC
-                description: 'Return from a label-filtered view to the full notes list. The system contains a regular note titled "Movie list" without the "Work" or "Reminders" label.'
+                description: 'Return from a label-filtered view to the full notes list. Seed data: note "Design review" with the "Work" label and note "Movie list" without the "Work" or "Reminders" label; label "Work".'
                 dependencies:
                   - REQ-2.7.6.1
                 scenarios:
@@ -353,7 +353,7 @@ children:
               - id: REQ-2.7.6.3
                 name: View Reminders
                 type: ATOMIC
-                description: 'Filter the notes list by the default "Reminders" label. The system contains a regular note titled "Call dentist existing" with the "Reminders" label. The system contains a regular note titled "Movie list" without the "Work" or "Reminders" label.'
+                description: 'Filter the notes list by the default "Reminders" label. Seed data: note "Call dentist existing" with the "Reminders" label and note "Movie list" without the "Work" or "Reminders" label; label "Reminders".'
                 dependencies:
                   - REQ-2.7.3
                 scenarios:
@@ -375,7 +375,7 @@ children:
           - id: REQ-2.8.1
             name: Pin note
             type: ATOMIC
-            description: 'Pin an existing note from the note card. Reference image: ![image](./reference/pin_button.png) The system contains a regular note titled "Meeting agenda 2.8.1" that is not pinned.'
+            description: 'Pin an existing note from the note card. Reference image: ![image](./reference/pin_button.png) Seed data: regular note "Meeting agenda 2.8.1" that is not pinned.'
             dependencies:
               - REQ-2.2
             scenarios:
@@ -390,7 +390,7 @@ children:
           - id: REQ-2.8.2
             name: Unpin note
             type: ATOMIC
-            description: 'Remove the pinned state from a pinned note. The system contains a regular note titled "Meeting agenda 2.8.2" that is not pinned.'
+            description: 'Remove the pinned state from a pinned note. Seed data: regular note "Meeting agenda 2.8.2" that is not pinned.'
             dependencies:
               - REQ-2.8.1
             scenarios:
@@ -414,9 +414,9 @@ children:
                   - keyword: GIVEN
                     content: User is on the home page and the "Take a note" editor is open.
                   - keyword: WHEN
-                    content: Enter a title and content, click the pin button, and close the editor.
+                    content: Enter a title and content, click the "Pin note" button, and click "Close".
                   - keyword: THEN
-                    content: The note is created and displayed in the pinned section.
+                    content: The created note is displayed in the Pinned section and has the pinned state.
   - id: REQ-3
     name: Search
     type: FOLDER
@@ -427,7 +427,7 @@ children:
       - id: REQ-3.1
         name: Initial suggested filters
         type: ATOMIC
-        description: 'Show suggested search filters after the search bar is focused and filter the notes list when one is selected. Image reference: ![image](./reference/search_suggested_filters.png) The system contains a regular note titled "Call dentist existing" with the "Reminders" label.'
+        description: 'Show suggested search filters after the search bar is focused and filter the notes list when one is selected. Image reference: ![image](./reference/search_suggested_filters.png) Seed data: note "Call dentist existing" with the "Reminders" label; label "Reminders".'
         dependencies:
           - REQ-1.1
         scenarios:
@@ -436,13 +436,13 @@ children:
               - keyword: GIVEN
                 content: User is on the home page.
               - keyword: WHEN
-                content: Click the search bar at the top and choose a suggested filter.
+                content: Click the top search field labeled "Search" and choose a suggested filter.
               - keyword: THEN
                 content: The notes list shows only notes that match the selected filter.
       - id: REQ-3.2
         name: Search by keyword
         type: ATOMIC
-        description: 'Search notes by keyword and highlight matching text in the results. Image reference: ![image](./reference/search_keyword.png) The system contains a note titled "Study schedule" whose title or content contains the keyword "st".'
+            description: 'Search notes by keyword and highlight matching text in the results. Image reference: ![image](./reference/search_keyword.png) Seed data: note "Study schedule" whose title or content contains the keyword "st".'
         dependencies:
           - REQ-3.1
         scenarios:
@@ -473,7 +473,7 @@ children:
               - keyword: GIVEN
                 content: User is on the home page.
               - keyword: WHEN
-                content: Click the settings icon.
+                content: Click the settings icon labeled "Settings".
               - keyword: THEN
                 content: The page displays the list of settings options.
       - id: REQ-4.2
@@ -490,7 +490,7 @@ children:
               - keyword: WHEN
                 content: Click "Settings".
               - keyword: THEN
-                content: The page focuses on a list of configurable options with save and cancel actions.
+                content: The detailed settings page displays "Move new notes to the bottom", "Move checked items to the bottom", "Save", and "Cancel".
   - id: REQ-5
     name: List View & Grid View
     type: FOLDER
@@ -510,7 +510,7 @@ children:
               - keyword: GIVEN
                 content: User is on the home page.
               - keyword: WHEN
-                content: Click the list-view icon and then click the grid-view icon.
+                content: Click the "List view" control and then click the "Grid view" control.
               - keyword: THEN
                 content: The page switches to list view and then switches back to grid view.
       - id: REQ-5.2
@@ -562,6 +562,6 @@ children:
               - keyword: GIVEN
                 content: The sidebar is expanded.
               - keyword: WHEN
-                content: Click the sidebar collapse control and then click it again.
+                content: Click the "Toggle sidebar" control and then click it again.
               - keyword: THEN
                 content: The sidebar first collapses to an icon-only view and then expands to show both icons and labels again.

@@ -7,7 +7,7 @@ import * as h from './helpers';
 test('REQ-2.7.6.3: View Reminders', async ({ page }) => {
   await h.openHome(page);
   await h.openSidebar(page);
-  await h.clickFirstAvailable(page, [[h.FIXTURES.labels.default]]);
+  await h.clickSidebarLabel(page, h.FIXTURES.labels.default);
   await h.expectNoteVisible(page, h.FIXTURES.notes.reminderExistingTitle);
-  await h.expectTextAbsent(page, h.FIXTURES.notes.otherTitle);
+  await h.expectNoteAbsent(page, h.FIXTURES.notes.otherTitle);
 });

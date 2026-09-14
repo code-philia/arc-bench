@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-4.1
@@ -7,5 +7,8 @@ import * as h from './helpers';
 test('REQ-4.1: Setting options list', async ({ page }) => {
   await h.openHome(page);
   await h.openSettingsMenu(page);
-  await h.expectTextsVisible(page, [/settings/i]);
+  const menu = page.getByRole('menu');
+  await expect(menu.getByRole('menuitem', { name: /^Settings$/i })).toBeVisible();
+  await expect(menu.getByRole('menuitem', { name: /^Help & feedback$/i })).toBeVisible();
+  await expect(menu.getByRole('menuitem', { name: /^Send feedback$/i })).toBeVisible();
 });

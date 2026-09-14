@@ -6,5 +6,5 @@ import * as h from './helpers';
 
 test('REQ-2.1: Enter Login Page', async ({ page }) => {
   await h.openLoginPage(page);
-  await h.expectTextsVisible(page, [/Login/i]);
+  await h.expectVisible(page, /^Login$/i);
 });

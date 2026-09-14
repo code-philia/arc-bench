@@ -45,14 +45,14 @@ Open the login form from the homepage navigation bar.
   - **THEN:** The system displays the login form page.
 
 ### REQ-2.2 Log In Successfully
-Authenticate with valid credentials and enter the authenticated homepage state.
+Authenticate with valid credentials and enter the authenticated homepage state. Seed data: verified account with nickname "BookStack User", email "bookstack_user@example.com", and password "Password123!".
 
 **Dependencies:** REQ-2.1
 
 **Scenarios:**
 - Log In Successfully
   - **GIVEN:** The user is on the login form page.
-  - **WHEN:** The user enters a valid email and password, enables `Remember Me`, and clicks `Login`.
+  - **WHEN:** The user enters a valid email in the "Email address" field and a password in the "Password" field, enables `Remember Me`, and clicks `Login`.
   - **THEN:** The system logs the user in, returns to the homepage, and displays the user nickname in the top-right area.
 
 ## REQ-3 Authenticated Homepage Dashboard
@@ -61,7 +61,7 @@ Authenticated homepage dashboard that shows recent drafts, recently viewed items
 **Dependencies:** REQ-2
 
 ### REQ-3.1 Enter Authenticated Homepage
-Display the dashboard layout after a successful login.
+Display the dashboard layout after a successful login, including the "My Recent Drafts", "My Recently Viewed", "My Most Viewed Favorites", and "Recently Updated Pages" overview sections. Seed data: verified account with nickname "BookStack User", email "bookstack_user@example.com", and password "Password123!".
 
 **Dependencies:** REQ-2.2
 
@@ -69,7 +69,7 @@ Display the dashboard layout after a successful login.
 - Enter Authenticated Homepage
   - **GIVEN:** The user has logged in successfully.
   - **WHEN:** The system finishes the post-login navigation.
-  - **THEN:** The authenticated homepage dashboard is displayed with its overview cards and lists.
+  - **THEN:** The authenticated homepage dashboard is displayed with "My Recent Drafts", "My Recently Viewed", "My Most Viewed Favorites", and "Recently Updated Pages" overview sections.
 
 ## REQ-4 Shelves Module
 Shelves are top-level content containers with name, description, related books, and tags. This module covers listing shelves, opening shelf details, creating shelves, editing shelves, and deleting shelves. Shelf list page ![image](./reference/shelves.png)
@@ -77,7 +77,7 @@ Shelves are top-level content containers with name, description, related books, 
 **Dependencies:** REQ-1
 
 ### REQ-4.1 View Shelf List
-Open the shelf list page from the global navigation bar.
+Open the shelf list page from the global navigation bar. Seed data: shelf "Shelf 4.1".
 
 **Dependencies:** REQ-1.1
 
@@ -93,7 +93,7 @@ Shelf details page that shows shelf information, included books, and the related
 **Dependencies:** REQ-4.1
 
 #### REQ-4.2.1 Enter Shelf Details Page
-Open the details page of a shelf from the shelf list.
+Open the details page of a shelf from the shelf list. Seed data: shelf "Shelf 4.2.1".
 
 **Dependencies:** REQ-4.1
 
@@ -109,18 +109,18 @@ Provide a shelf creation flow with fields for shelf name, description, and tags.
 **Dependencies:** REQ-4.2
 
 #### REQ-4.3.1 Create Shelf
-Create a shelf from the shelf creation form.
+Create a shelf from the shelf creation form. Seed data: shelf "Shelf 4.3.1".
 
 **Dependencies:** REQ-4.2.1
 
 **Scenarios:**
 - Create Shelf
   - **GIVEN:** The user is on the shelf details page and can access the action panel.
-  - **WHEN:** The user opens the `New Shelf` flow, enters shelf information, and clicks `Save Shelf`.
+  - **WHEN:** The user opens the `New Shelf` flow, enters the shelf name in the "Name" field, description in the "Description" field, tags in the "Shelf Tags" field, and clicks `Save Shelf`.
   - **THEN:** The system creates the shelf and displays it in the shelf list.
 
 #### REQ-4.3.2 Cancel Creation
-Exit the shelf creation flow without saving a new shelf.
+Exit the shelf creation flow without saving a new shelf. Seed data: shelf "Shelf 4.3.2".
 
 **Dependencies:** REQ-4.2.1
 
@@ -136,7 +136,7 @@ Delete the current shelf from the shelf details flow with confirmation. Confirma
 **Dependencies:** REQ-4.2
 
 #### REQ-4.4.1 Confirm Delete Shelf
-Delete a shelf after the user confirms the action.
+Delete a shelf after the user confirms the action. Seed data: deletable shelf "Shelf 4.4.1".
 
 **Dependencies:** REQ-4.2.1
 
@@ -147,7 +147,7 @@ Delete a shelf after the user confirms the action.
   - **THEN:** The system deletes the shelf and returns to the shelf list page.
 
 #### REQ-4.4.2 Cancel Delete Shelf
-Exit the delete flow without deleting the shelf.
+Exit the delete flow without deleting the shelf. Seed data: deletable shelf "Shelf 4.4.2".
 
 **Dependencies:** REQ-4.2.1
 
@@ -163,18 +163,18 @@ Provide a shelf editing flow for changing shelf information, related books, and 
 **Dependencies:** REQ-4.2
 
 #### REQ-4.5.1 Save Shelf Edits
-Save changes made in the shelf edit form.
+Save changes made in the shelf edit form. Seed data: editable shelf "Shelf 4.5.1" with valid initial description and tags.
 
 **Dependencies:** REQ-4.2.1
 
 **Scenarios:**
 - Save Shelf Edits
   - **GIVEN:** The user is on the shelf details page and can access the action panel.
-  - **WHEN:** The user clicks `Edit`, updates shelf information, and clicks `Save Shelf`.
+  - **WHEN:** The user clicks `Edit`, updates the "Name", "Description", and "Shelf Tags" fields, and clicks `Save Shelf`.
   - **THEN:** The system saves the changes and returns to the shelf details page.
 
 #### REQ-4.5.2 Cancel Shelf Edits
-Exit the shelf editing flow without saving changes.
+Exit the shelf editing flow without saving changes. Seed data: editable shelf "Shelf 4.5.2" with valid initial description and tags.
 
 **Dependencies:** REQ-4.2.1
 
@@ -190,7 +190,7 @@ Books contain a name, description, chapters, and pages. This module covers viewi
 **Dependencies:** REQ-1
 
 ### REQ-5.1 View Books List
-Open the books list page from the global navigation bar.
+Open the books list page from the global navigation bar. Seed data: book "Book 5.1".
 
 **Dependencies:** REQ-1.1
 
@@ -206,7 +206,7 @@ Book details page that can be opened from supported book entry points and displa
 **Dependencies:** REQ-5.1
 
 #### REQ-5.2.1 Enter Book Details Page through Book List Page
-Open a book details page from the books list.
+Open a book details page from the books list. Seed data: book "Book 5.2.1".
 
 **Dependencies:** REQ-5.1
 
@@ -217,7 +217,7 @@ Open a book details page from the books list.
   - **THEN:** The system displays the selected book details page.
 
 #### REQ-5.2.2 Enter Book Details Page through Shelf Details Page
-Open a book details page from a shelf details page.
+Open a book details page from a shelf details page. Seed data: shelf "Shelf 5.2.2" containing book "Book 5.2.2" with valid initial metadata.
 
 **Dependencies:** REQ-4.2.1
 
@@ -240,7 +240,7 @@ Create a new book from the books list page.
 **Scenarios:**
 - Fill out and Save Book
   - **GIVEN:** The user is on the books list page and can access the action panel.
-  - **WHEN:** The user clicks `Create New Book`, enters the required information, and clicks `Save Book`.
+  - **WHEN:** The user clicks `New Book`, enters the book name in the "Name" field, description in the "Description" field, tags in the "Book Tags" field, and clicks `Save Book`.
   - **THEN:** The system creates the book and opens the created book details page.
 
 #### REQ-5.3.2 Cancel Creating Book
@@ -260,18 +260,18 @@ Provide a book editing flow for changing book metadata on the book details page.
 **Dependencies:** REQ-5.2
 
 #### REQ-5.4.1 Save Book Edits
-Save changes made in the book edit form.
+Save changes made in the book edit form. Seed data: editable book "Book 5.4.1" with valid initial description and tags.
 
 **Dependencies:** REQ-5.2.1
 
 **Scenarios:**
 - Save Book Edits
   - **GIVEN:** The user is on the book details page and can access the action panel.
-  - **WHEN:** The user clicks `Edit`, updates book information, and clicks `Save Book`.
+  - **WHEN:** The user clicks `Edit`, updates the "Name", "Description", and "Book Tags" fields, and clicks `Save Book`.
   - **THEN:** The system saves the changes and returns to the book details page.
 
 #### REQ-5.4.2 Cancel Book Edits
-Exit the book editing flow without saving changes.
+Exit the book editing flow without saving changes. Seed data: editable book "Book 5.4.2" with valid initial description and tags.
 
 **Dependencies:** REQ-5.2.1
 
@@ -287,7 +287,7 @@ Delete the current book from the book details flow with confirmation. Confirmati
 **Dependencies:** REQ-5.2
 
 #### REQ-5.5.1 Confirm Delete Book
-Delete a book after the user confirms the action.
+Delete a book after the user confirms the action. Seed data: deletable book "Book 5.5.1".
 
 **Dependencies:** REQ-5.2.1
 
@@ -298,7 +298,7 @@ Delete a book after the user confirms the action.
   - **THEN:** The system deletes the book and returns to the books list page.
 
 #### REQ-5.5.2 Cancel Delete Book
-Exit the delete flow without deleting the book.
+Exit the delete flow without deleting the book. Seed data: deletable book "Book 5.5.2".
 
 **Dependencies:** REQ-5.2.1
 
@@ -314,14 +314,14 @@ Provide a book creation flow from a shelf details page so the created book is as
 **Dependencies:** REQ-4.2
 
 #### REQ-5.6.1 Fill out and Save Book with Shelf
-Create a new book from the current shelf context.
+Create a new book from the current shelf context. Seed data: shelf "Shelf 5.6.1".
 
 **Dependencies:** REQ-4.2.1
 
 **Scenarios:**
 - Fill out and Save Book with Shelf
   - **GIVEN:** The user is on a shelf details page and can access the action panel.
-  - **WHEN:** The user clicks `Create New Book`, enters the required information, and clicks `Save Book`.
+  - **WHEN:** The user clicks `Create New Book`, enters the book name in the "Name" field, description in the "Description" field, tags in the "Book Tags" field, and clicks `Save Book`.
   - **THEN:** The system creates the book and associates it with the current shelf.
 
 ## REQ-6 Pages and Chapters Module
@@ -335,29 +335,29 @@ Provide the page editing flow for creating pages, saving drafts, and deleting dr
 **Dependencies:** REQ-5.2
 
 #### REQ-6.1.1 Save Page
-Create and save a new page in a book.
+Create and save a new page in a book. Seed data: book "Book 6.1.1".
 
 **Dependencies:** REQ-5.2.1
 
 **Scenarios:**
 - Save Page
   - **GIVEN:** The user is on a book details page.
-  - **WHEN:** The user clicks `New Page`, enters page information, and clicks `Save Page`.
+  - **WHEN:** The user clicks `New Page`, enters the page title in the "Page title" field and content in the "Write your page content here..." field, and clicks `Save Page`.
   - **THEN:** The system saves the page, adds it to the book, and returns to the book details page.
 
 #### REQ-6.1.2 Save Draft
-Save the current page content as a draft.
+Save the current page content as a draft. Seed data: book "Book 6.1.2"; verified account with nickname "BookStack User", email "bookstack_user@example.com", and password "Password123!".
 
 **Dependencies:** REQ-5.2.1
 
 **Scenarios:**
 - Save Draft
-  - **GIVEN:** The user is on the page edit page.
-  - **WHEN:** The user enters page content and saves a draft.
+  - **GIVEN:** The authenticated user is on the page edit page.
+  - **WHEN:** The user enters content in the "Write your page content here..." field and clicks `Save Draft`.
   - **THEN:** The system stores the draft and shows it in the `My Recent Drafts` list on the homepage.
 
 #### REQ-6.1.3 Delete Draft
-Delete an existing page draft.
+Delete an existing page draft. Seed data: book "Book 6.1.3" with existing draft page "Draft 6.1.3".
 
 **Dependencies:** REQ-6.1.2
 
@@ -373,14 +373,14 @@ Provide a chapter creation flow from the book details page and support entering 
 **Dependencies:** REQ-5.2
 
 #### REQ-6.2.1 Create Chapter
-Create a new chapter within a book.
+Create a new chapter within a book. Seed data: book "Book 6.2.1".
 
 **Dependencies:** REQ-5.2.1
 
 **Scenarios:**
 - Create Chapter
   - **GIVEN:** The user is on the book details page.
-  - **WHEN:** The user clicks `New Chapter`, enters the chapter information, and clicks `Save Chapter`.
+  - **WHEN:** The user clicks `New Chapter`, enters the chapter name in the "Name" field, description in the "Description" field, and clicks `Save Chapter`.
   - **THEN:** The system creates the chapter and adds it to the current book.
 
 ### REQ-6.3 Page Reading Page
@@ -389,7 +389,7 @@ Page reading page that opens from a book or chapter page list and shows the sele
 **Dependencies:** REQ-6.1, REQ-6.2
 
 #### REQ-6.3.1 Enter Page Reading Page
-Open the reading page for a selected page.
+Open the reading page for a selected page. Seed data: book "Book 6.3.1" with readable page "Page 6.3.1" and page content.
 
 **Dependencies:** REQ-6.1.1
 
@@ -400,7 +400,7 @@ Open the reading page for a selected page.
   - **THEN:** The system displays the page reading page.
 
 #### REQ-6.3.2 Redirect to Page Edit Page
-Open the page edit flow from the page reading page.
+Open the page edit flow from the page reading page. Seed data: book "Book 6.3.2" with editable page "Page 6.3.2" and page content.
 
 **Dependencies:** REQ-6.3.1
 
@@ -416,7 +416,7 @@ Display recently viewed shelves, books, chapters, and pages in the `My Recently 
 **Dependencies:** REQ-4, REQ-5, REQ-6
 
 ### REQ-7.1 Add to Recently Viewed
-Add supported content to the recently viewed list after it is opened.
+Add supported content to the recently viewed list after it is opened. Seed data: shelf "Shelf 7.1"; verified account with nickname "BookStack User", email "bookstack_user@example.com", and password "Password123!".
 
 **Dependencies:** REQ-4.2.1, REQ-5.2.1, REQ-6.3.1
 
@@ -427,13 +427,13 @@ Add supported content to the recently viewed list after it is opened.
   - **THEN:** The system adds the item to `My Recently Viewed` on the homepage.
 
 ### REQ-7.2 Quick Navigation from Recently Viewed
-Open a content page from the recently viewed list.
+Open a content page from the recently viewed list. Seed data: shelf "Shelf 7.2"; verified account with nickname "BookStack User", email "bookstack_user@example.com", and password "Password123!".
 
 **Dependencies:** REQ-7.1
 
 **Scenarios:**
 - Quick Navigation from Recently Viewed
-  - **GIVEN:** The homepage shows `My Recently Viewed` with at least one item.
+  - **GIVEN:** The authenticated homepage shows `My Recently Viewed` with at least one item.
   - **WHEN:** The user clicks an item in `My Recently Viewed`.
   - **THEN:** The system opens the corresponding content page.
 
@@ -443,7 +443,7 @@ Allow shelves, books, chapters, and pages to be favorited and displayed in the `
 **Dependencies:** REQ-4, REQ-5, REQ-6
 
 ### REQ-8.1 Favorite Items
-Add supported content items to the favorites list.
+Add supported content items to the favorites list. Seed data: book "Book 8.1".
 
 **Dependencies:** REQ-4.2.1, REQ-5.2.1, REQ-6.3.1, REQ-6.2.1
 
@@ -454,13 +454,13 @@ Add supported content items to the favorites list.
   - **THEN:** The system adds the item to the favorites list and changes the action to `Unfavorite`.
 
 ### REQ-8.2 Quick Navigation from Favorites
-Open a content page from a favorites list entry.
+Open a content page from a favorites list entry. Seed data: book "Book 8.2"; verified account with nickname "BookStack User", email "bookstack_user@example.com", and password "Password123!".
 
 **Dependencies:** REQ-8.1
 
 **Scenarios:**
 - Quick Navigation from Favorites
-  - **GIVEN:** The homepage or favorites page shows at least one favorite item.
+  - **GIVEN:** The authenticated homepage or favorites page shows at least one favorite item.
   - **WHEN:** The user clicks an item in `My Most Viewed Favorites`.
   - **THEN:** The system opens the corresponding content page.
 
@@ -470,7 +470,7 @@ Show recently created or edited pages on the homepage, with up to five items.
 **Dependencies:** REQ-6.1
 
 ### REQ-9.1 Quick Navigation from Recently Updated
-Open a page from the recently updated pages list.
+Open a page from the recently updated pages list. Seed data: book "Book 9.1".
 
 **Dependencies:** REQ-6.1.1
 

@@ -5,6 +5,7 @@ import * as h from './helpers';
 // fixtures: shelf_7_2
 
 test('REQ-7.2: Quick Navigation from Recently Viewed', async ({ page }) => {
+  await h.login(page);
   await h.openShelfDetails(page, h.FIXTURES.shelves.recentlyViewedNavigation.name);
   await h.returnHomeByLogo(page);
   await h.clickNamed(page, h.FIXTURES.shelves.recentlyViewedNavigation.name);

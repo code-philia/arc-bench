@@ -7,7 +7,9 @@ import * as h from './helpers';
 test('REQ-2.4: Update Note', async ({ page }) => {
   await h.openHome(page);
   await h.openNote(page, h.FIXTURES.notes.editTitle);
-  await h.fillField(page, [/note/i, /content/i], h.FIXTURES.notes.updatedContent);
+  await page.getByRole('dialog', { name: /^Note editor$/i })
+    .getByRole('textbox', { name: /^Note content$/i })
+    .fill(h.FIXTURES.notes.updatedContent);
   await h.closeEditor(page);
   await h.expectNoteVisible(page, h.FIXTURES.notes.updatedContent);
 });
