@@ -1,0 +1,11 @@
+import { test } from '@playwright/test';
+import * as h from './helpers';
+
+// requirement: REQ-2.5.1
+// fixtures: public_homepage, archivable_note
+
+test('REQ-2.5.1: Archive', async ({ page }) => {
+  await h.openHome(page);
+  await h.archiveNote(page, h.FIXTURES.notes.archive251Title);
+  await h.expectTextsVisible(page, [/^Note archived$/i, /^Undo$/i]);
+});

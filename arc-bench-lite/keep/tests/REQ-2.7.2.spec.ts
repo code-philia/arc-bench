@@ -1,0 +1,14 @@
+import { expect, test } from '@playwright/test';
+import * as h from './helpers';
+
+// requirement: REQ-2.7.2
+// fixtures: public_homepage, label_catalog, labeled_note
+
+test('REQ-2.7.2: Remove label from a note', async ({ page }) => {
+  await h.openHome(page);
+  await h.openLabelDialogForNote(page, h.FIXTURES.notes.labelRemoveTitle);
+  await h.setLabel(page, h.FIXTURES.labels.work, false);
+  await h.closeEditor(page);
+  const card = await h.noteCard(page, h.FIXTURES.notes.labelRemoveTitle);
+  await expect(card).not.toContainText(h.FIXTURES.labels.work);
+});
