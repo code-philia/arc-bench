@@ -24,7 +24,7 @@ export const FIXTURES = {
     topCategory: 'CLOTHES',
     subcategory: 'Men',
     secondarySubcategory: 'Women',
-    searchKeyword: 'shirt',
+    searchKeyword: 'skirt',
     popularProduct: 'Hummingbird detail t-shirt',
     alternativeProduct: 'The best is yet to come notebook',
     whiteProduct: 'White t-shirt',
@@ -38,12 +38,23 @@ export const FIXTURES = {
       quantity: '3',
       excessiveQuantity: '999',
     },
-    cart: {
-      name: 'Hummingbird cart t-shirt',
-    },
-    checkoutStep: {
-      name: 'Hummingbird checkout-step t-shirt',
-    },
+    cart461: { name: 'Hummingbird cart 4.6.1 t-shirt' },
+    cart462: { name: 'Hummingbird cart 4.6.2 t-shirt' },
+    cart463: { name: 'Hummingbird cart 4.6.3 t-shirt' },
+    cart51: { name: 'Hummingbird cart 5.1 t-shirt' },
+    cart52: { name: 'Hummingbird cart 5.2 t-shirt' },
+    cart53: { name: 'Hummingbird cart 5.3 t-shirt' },
+    cart54: { name: 'Hummingbird cart 5.4 t-shirt' },
+    cart55: { name: 'Hummingbird cart 5.5 t-shirt' },
+    cart56: { name: 'Hummingbird cart 5.6 t-shirt' },
+    cart57: { name: 'Hummingbird cart 5.7 t-shirt' },
+    checkout61: { name: 'Hummingbird checkout 6.1 t-shirt' },
+    checkout62: { name: 'Hummingbird checkout 6.2 t-shirt' },
+    checkout631: { name: 'Hummingbird checkout 6.3.1 t-shirt' },
+    checkout632: { name: 'Hummingbird checkout 6.3.2 t-shirt' },
+    checkout633: { name: 'Hummingbird checkout 6.3.3 t-shirt' },
+    checkout64: { name: 'Hummingbird checkout 6.4 t-shirt' },
+    checkout65: { name: 'Hummingbird checkout 6.5 t-shirt' },
     orderConfirmation: {
       name: 'Hummingbird order-confirmation t-shirt',
     },
@@ -82,10 +93,9 @@ export const FIXTURES = {
       email: 'prestashop_checkout_new_address_user@example.com',
       password: 'ShopPass123!',
     },
-    checkoutInvoice: {
-      email: 'prestashop_checkout_invoice_user@example.com',
-      password: 'ShopPass123!',
-    },
+    checkoutInvoiceAddress: { email: 'prestashop_checkout_invoice_address_user@example.com', password: 'ShopPass123!' },
+    checkoutShipping: { email: 'prestashop_checkout_shipping_user@example.com', password: 'ShopPass123!' },
+    checkoutPayment: { email: 'prestashop_checkout_payment_user@example.com', password: 'ShopPass123!' },
     checkoutOrderConfirmation: {
       email: 'prestashop_checkout_6_6_user@example.com',
       password: 'ShopPass123!',
@@ -200,6 +210,9 @@ function namedLocators(scope: Scope, pattern: RegExp): Locator[] {
     t.getByRole('checkbox', { name: pattern }),
     t.getByRole('radio', { name: pattern }),
     t.getByRole('option', { name: pattern }),
+    t.getByRole('alert', { name: pattern }),
+    t.getByRole('region', { name: pattern }),
+    t.getByRole('contentinfo', { name: pattern }),
     t.getByRole('heading', { name: pattern }),
     t.getByLabel(pattern),
     t.getByPlaceholder(pattern),
@@ -239,7 +252,6 @@ async function resolveField(scope: Scope, value: Match): Promise<Locator> {
   }
   return firstVisible([
     target(scope).getByRole('textbox'),
-    target(scope).locator('textarea'),
     target(scope).getByRole('spinbutton'),
   ]);
 }
@@ -350,20 +362,13 @@ export async function expectHome(page: Page): Promise<void> {
 }
 
 export async function expectCartCount(page: Page): Promise<void> {
-  const cart = await firstVisible([
-    page.getByRole('link', { name: /cart/i }),
-    page.getByRole('button', { name: /cart/i }),
-  ]);
+  const cart = page.getByRole('link', { name: /^Shopping cart$/i });
   await expect(cart).toBeVisible();
   await expect(cart).toContainText(/\d+/);
 }
 
 export async function carousel(page: Page): Promise<Locator> {
-  return firstVisible([
-    page.getByRole('region', { name: /carousel/i }),
-    page.getByRole('group', { name: /carousel/i }),
-    page.getByLabel(/carousel/i),
-  ]);
+  return page.getByRole('region', { name: /^Carousel$/i });
 }
 
 export async function expectCarouselToChange(page: Page, action?: () => Promise<void>): Promise<void> {
@@ -378,25 +383,31 @@ export async function expectCarouselToChange(page: Page, action?: () => Promise<
 }
 
 export async function openCategoryMenu(page: Page): Promise<void> {
-  await hoverNamed(page, [FIXTURES.catalog.topCategory, /clothes/i]);
+  const navigation = page.getByRole('navigation', { name: /^Main navigation$/i });
+  await navigation.getByRole('button', { name: /^Clothes$/i }).hover();
 }
 
 export async function openCategoryPage(page: Page): Promise<void> {
   await openHome(page);
   await openCategoryMenu(page);
-  await clickFirstAvailable(page, [[FIXTURES.catalog.subcategory]]);
+  const navigation = page.getByRole('navigation', { name: /^Main navigation$/i });
+  await navigation.getByRole('link', { name: /^Men$/i }).click();
 }
 
 export async function openSearchResults(page: Page): Promise<void> {
   await openHome(page);
-  await clickFirstAvailable(page, [[/search/i]]);
-  await fillField(page, [/search/i], FIXTURES.catalog.searchKeyword);
-  await pressEnter(page, [/search/i]);
+  const search = page.getByRole('textbox', { name: /^Search$/i });
+  await search.click();
+  await search.fill(FIXTURES.catalog.searchKeyword);
+  await search.press('Enter');
 }
 
 export async function openProductDetail(page: Page, product: ProductFixture): Promise<void> {
-  await openCategoryPage(page);
-  await clickFirstAvailable(page, [[product.name]]);
+  await openHome(page);
+  const search = page.getByRole('textbox', { name: /^Search$/i });
+  await search.fill(product.name);
+  await search.press('Enter');
+  await page.getByRole('main').getByRole('link', { name: new RegExp(`^${escapeRegExp(product.name)}$`, 'i') }).click();
 }
 
 export async function ensureWishlistPrompt(page: Page): Promise<void> {
@@ -404,62 +415,60 @@ export async function ensureWishlistPrompt(page: Page): Promise<void> {
 }
 
 export async function openCart(page: Page): Promise<void> {
-  await clickFirstAvailable(page, [[/cart/i, /shopping cart/i]]);
+  await page.getByRole('link', { name: /^Shopping cart$/i }).click();
 }
 
 export async function openSignIn(page: Page): Promise<void> {
   await openHome(page);
-  await clickFirstAvailable(page, [[/sign in/i, /login/i]]);
+  await clickNamed(page, /^Sign in$/i);
 }
 
 export async function login(page: Page, account: AccountFixture = FIXTURES.accounts.login): Promise<void> {
   await openSignIn(page);
-  await fillField(page, [/email/i], account.email);
-  await fillField(page, [/password/i], account.password);
-  await clickFirstAvailable(page, [[/sign in/i]]);
+  await page.getByLabel('Email address *', { exact: true }).fill(account.email);
+  await page.getByLabel('Password *', { exact: true }).fill(account.password);
+  await page.getByRole('button', { name: /^SIGN IN$/i }).click();
 }
 
 export async function openMyAccount(page: Page, account: AccountFixture = FIXTURES.accounts.login): Promise<void> {
   await login(page, account);
-  const accountEntry: Match[] = [/my account/i];
-  if (account.firstName) accountEntry.push(new RegExp(account.firstName, 'i'));
-  await clickFirstAvailable(page, accountEntry);
+  await page.getByRole('link', { name: /^My account$/i }).first().click();
 }
 
 export async function openAddressBook(page: Page, account: AccountFixture = FIXTURES.accounts.login): Promise<void> {
   await openMyAccount(page, account);
-  await clickFirstAvailable(page, [[/addresses/i]]);
+  await page.getByRole('link', { name: /^Addresses$/i }).first().click();
 }
 
 export async function openOrderHistory(page: Page, account: AccountFixture = FIXTURES.accounts.login): Promise<void> {
   await openMyAccount(page, account);
-  await clickFirstAvailable(page, [[/order history and details/i, /orders/i]]);
+  await clickNamed(page, /^Order history and details$/i);
 }
 
 export async function openWishlists(page: Page, account: AccountFixture = FIXTURES.accounts.login): Promise<void> {
   await openMyAccount(page, account);
-  await clickFirstAvailable(page, [[/wishlist/i]]);
+  await clickNamed(page, /^Wishlists?$/i);
 }
 
 export async function setProductQuantity(page: Page, quantity: string): Promise<void> {
-  await fillField(page, [/quantity/i], quantity);
+  await page.getByRole('spinbutton', { name: /^Quantity$/i }).fill(quantity);
 }
 
 export async function addProductToCart(page: Page): Promise<void> {
-  await clickFirstAvailable(page, [[/add to cart/i]]);
+  await clickNamed(page, /^ADD TO CART$/i);
 }
 
 export async function openCartWithProduct(page: Page, product: ProductFixture): Promise<void> {
   await openProductDetail(page, product);
   await addProductToCart(page);
-  await clickFirstAvailable(page, [[/proceed to checkout/i]]);
-  await expectTextsVisible(page, [/shopping cart|cart summary|your cart/i]);
+  await clickNamed(page, /^Proceed to checkout$/i);
+  await expect(page.getByRole('heading', { name: /^Shopping cart$/i })).toBeVisible();
 }
 
 export async function startCheckoutWithProduct(page: Page, product: ProductFixture): Promise<void> {
   await openCartWithProduct(page, product);
-  await clickFirstAvailable(page, [[/proceed to checkout/i]]);
-  await expectTextsVisible(page, [/personal information|checkout/i]);
+  await clickNamed(page, /^Proceed to checkout$/i);
+  await expect(page.getByRole('heading', { name: /^Personal information$/i })).toBeVisible();
 }
 
 export async function awaitDownload(action: () => Promise<void>, page: Page): Promise<Download> {

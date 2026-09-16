@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-8.5.4: Download Invoice', async ({ page }) => {
   await h.openOrderHistory(page, h.FIXTURES.accounts.orderHistory);
-  const download = await h.awaitDownload(() => h.clickFirstAvailable(page, [[/pdf/i]]), page);
+  const download = await h.awaitDownload(() => page.getByRole('link', { name: /^PDF$/i }).click(), page);
   await expect(download.suggestedFilename()).toMatch(/\.pdf$/i);
 });

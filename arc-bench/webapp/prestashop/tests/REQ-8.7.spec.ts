@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-8.7: User Logout', async ({ page }) => {
   await h.openMyAccount(page, h.FIXTURES.accounts.login);
-  await h.clickFirstAvailable(page, [[/sign out/i, /logout/i]]);
-  await h.expectHome(page);
+  await page.getByRole('button', { name: /^Sign out$/i }).click();
+  await expect(page.getByRole('link', { name: /^Sign in$/i })).toBeVisible();
 });

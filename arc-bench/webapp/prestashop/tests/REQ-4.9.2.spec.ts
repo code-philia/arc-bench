@@ -6,6 +6,7 @@ import * as h from './helpers';
 
 test('REQ-4.9.2: Add Review', async ({ page }) => {
   await h.openProductDetail(page, h.FIXTURES.products.detail);
-  await h.clickFirstAvailable(page, [[/write your review/i, /review/i]]);
-  await h.expectTextsVisible(page, [/login|sign in|review form/i]);
+  await page.getByRole('button', { name: /^Reviews \(\d+\)$/i }).click();
+  await page.getByRole('button', { name: /^Write a review$/i }).click();
+  await expect(page.getByRole('heading', { name: /^Sign in to continue$/i })).toBeVisible();
 });

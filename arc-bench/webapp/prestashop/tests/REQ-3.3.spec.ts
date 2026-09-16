@@ -6,5 +6,6 @@ import * as h from './helpers';
 
 test('REQ-3.3: Category Description', async ({ page }) => {
   await h.openCategoryPage(page);
-  await h.expectTextsVisible(page, [/men/i, /products/i, /description/i]);
+  await expect(page.getByRole('heading', { name: /^Men$/i })).toBeVisible();
+  await expect(page.getByText(/^Description:/i)).toBeVisible();
 });

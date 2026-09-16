@@ -6,5 +6,7 @@ import * as h from './helpers';
 
 test('REQ-4.11: Related Products', async ({ page }) => {
   await h.openProductDetail(page, h.FIXTURES.products.detail);
-  await h.expectTextsVisible(page, [/related products/i, /you might also like/i, /same category/i]);
+  const related = page.getByRole('region', { name: /^Related products$/i });
+  await expect(related).toBeVisible();
+  await expect(related.getByRole('article').first()).toBeVisible();
 });

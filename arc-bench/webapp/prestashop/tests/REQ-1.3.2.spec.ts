@@ -7,6 +7,7 @@ import * as h from './helpers';
 test('REQ-1.3.2: Enter Subcategory', async ({ page }) => {
   await h.openHome(page);
   await h.openCategoryMenu(page);
-  await h.clickFirstAvailable(page, [[/men/i]]);
-  await h.expectTextsVisible(page, [/men/i, /sort by/i]);
+  await page.getByRole('link', { name: /^Men$/i }).first().click();
+  await expect(page.getByRole('heading', { name: /^Men$/i })).toBeVisible();
+  await expect(page.getByRole('combobox', { name: /^Sort by$/i })).toBeVisible();
 });

@@ -6,7 +6,8 @@ import * as h from './helpers';
 
 test('REQ-3.6.4: Clear All Filters', async ({ page }) => {
   await h.openCategoryPage(page);
-  await h.setCheckbox(page, [/in stock/i], true);
-  await h.clickFirstAvailable(page, [[/clear all/i]]);
-  await h.expectTextsVisible(page, [h.FIXTURES.catalog.blackProduct, h.FIXTURES.catalog.whiteProduct]);
+  await page.getByRole('checkbox', { name: /^In stock$/i }).check();
+  await page.getByRole('button', { name: /^Clear all$/i }).click();
+  await expect(page.getByRole('article').filter({ hasText: 'White t-shirt' })).toBeVisible();
+  await expect(page.getByRole('article').filter({ hasText: 'Black mug' })).toBeVisible();
 });

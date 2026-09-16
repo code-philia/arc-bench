@@ -6,5 +6,7 @@ import * as h from './helpers';
 
 test('REQ-8.2: Account Overview', async ({ page }) => {
   await h.openMyAccount(page, h.FIXTURES.accounts.login);
-  await h.expectTextsVisible(page, [/order history/i, /addresses/i, /information/i]);
+  for (const name of ['Order history and details', 'Addresses', 'Information']) {
+    await expect(page.getByRole('link', { name, exact: true }).first()).toBeVisible();
+  }
 });

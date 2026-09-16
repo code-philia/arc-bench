@@ -6,9 +6,9 @@ import * as h from './helpers';
 
 test('REQ-8.4.3: Edit Address', async ({ page }) => {
   await h.openAddressBook(page, h.FIXTURES.accounts.addressEdit);
-  await h.clickFirstAvailable(page, [[/update/i, /edit/i]]);
-  await h.expectTextsVisible(page, [/alias/i, /address/i]);
-  await h.fillField(page, [/address/i], h.FIXTURES.address.updatedAddress1);
-  await h.clickFirstAvailable(page, [[/save/i]]);
-  await h.expectTextsVisible(page, [/updated|saved|success/i]);
+  await page.getByRole('button', { name: /^Update$/i }).click();
+  await expect(page.getByRole('heading', { name: /^Update address$/i })).toBeVisible();
+  await page.getByLabel('Address *', { exact: true }).fill('88 Market Street');
+  await page.getByRole('button', { name: /^Save$/i }).click();
+  await expect(page.getByText(/^Address updated successfully\.$/i)).toBeVisible();
 });

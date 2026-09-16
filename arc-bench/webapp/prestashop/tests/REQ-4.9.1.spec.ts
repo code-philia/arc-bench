@@ -6,5 +6,5 @@ import * as h from './helpers';
 
 test('REQ-4.9.1: View Review List', async ({ page }) => {
   await h.openProductDetail(page, h.FIXTURES.products.detail);
-  await h.expectTextsVisible(page, [/review/i, /rating/i, /average/i]);
+  await expect(page.getByText(/Customer reviews · Average rating/i)).toBeVisible();
 });

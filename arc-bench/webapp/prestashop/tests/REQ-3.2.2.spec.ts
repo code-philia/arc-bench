@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-3.2.2: Navigate Back via Breadcrumb', async ({ page }) => {
   await h.openCategoryPage(page);
-  await h.clickFirstAvailable(page, [[/clothes/i]]);
-  await h.expectTextsVisible(page, [/clothes/i]);
+  await page.getByRole('navigation', { name: /^Breadcrumb$/i }).getByRole('link', { name: /^Clothes$/i }).click();
+  await expect(page.getByRole('heading', { name: /^Clothes$/i })).toBeVisible();
 });

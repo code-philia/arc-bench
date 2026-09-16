@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-4.5.2: Decrease Quantity', async ({ page }) => {
   await h.openProductDetail(page, h.FIXTURES.products.detail);
-  await h.clickFirstAvailable(page, [[/\-/i, /decrease/i]]);
-  await h.expectFieldValue(page, [/quantity/i], '1');
+  await page.getByRole('button', { name: /^Decrease quantity$/i }).click();
+  await expect(page.getByRole('spinbutton', { name: /^Quantity$/i })).toHaveValue('1');
 });

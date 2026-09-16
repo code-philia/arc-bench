@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-1.2: Logo Click Returns Home', async ({ page }) => {
   await h.openCategoryPage(page);
-  await h.clickFirstAvailable(page, [[/logo/i, /home/i]]);
-  await h.expectHome(page);
+  await page.getByRole('link', { name: /^Logo$/i }).click();
+  await expect(page.getByRole('region', { name: /^Carousel$/i })).toBeVisible();
 });

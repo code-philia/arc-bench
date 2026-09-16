@@ -6,6 +6,8 @@ import * as h from './helpers';
 
 test('REQ-3.5.2: Hover to Show Action Buttons', async ({ page }) => {
   await h.openCategoryPage(page);
-  await h.hoverNamed(page, [h.FIXTURES.catalog.popularProduct]);
-  await h.expectTextsVisible(page, [/quick view/i, /wishlist/i, /color/i]);
+  const card = page.getByRole('article').filter({ hasText: 'Hummingbird detail t-shirt' });
+  await card.hover();
+  await expect(card.getByRole('button', { name: /^Quick view$/i })).toBeVisible();
+  await expect(card.getByRole('button', { name: /^Add to wishlist$/i })).toBeVisible();
 });

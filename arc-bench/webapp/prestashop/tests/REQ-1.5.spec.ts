@@ -6,5 +6,7 @@ import * as h from './helpers';
 
 test('REQ-1.5: User Entry', async ({ page }) => {
   await h.openSignIn(page);
-  await h.expectTextsVisible(page, [/sign in/i, /email/i, /password/i]);
+  await expect(page.getByRole('heading', { name: /^Sign in$/i }).first()).toBeVisible();
+  await expect(page.getByLabel('Email address *', { exact: true })).toBeVisible();
+  await expect(page.getByLabel('Password *', { exact: true })).toBeVisible();
 });

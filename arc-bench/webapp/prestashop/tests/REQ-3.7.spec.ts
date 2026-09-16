@@ -6,8 +6,8 @@ import * as h from './helpers';
 
 test('REQ-3.7: Sort Function', async ({ page }) => {
   await h.openCategoryPage(page);
-  await h.clickFirstAvailable(page, [[/sort by/i]]);
-  await h.expectTextsVisible(page, [/price, low to high/i]);
-  await h.clickFirstAvailable(page, [[/price, low to high/i]]);
-  await h.expectTextsVisible(page, [/€|\$/i]);
+  await page.getByRole('combobox', { name: /^Sort by$/i }).selectOption({ label: 'Price, low to high' });
+  const firstProduct = page.getByRole('article').first();
+  await expect(firstProduct).toContainText('Black mug');
+  await expect(firstProduct).toContainText('€11.90');
 });

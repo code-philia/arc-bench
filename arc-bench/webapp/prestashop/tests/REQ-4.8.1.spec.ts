@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-4.8.1: View Description Tab', async ({ page }) => {
   await h.openProductDetail(page, h.FIXTURES.products.detail);
-  await h.clickFirstAvailable(page, [[/description/i]]);
-  await h.expectTextsVisible(page, [/description/i, /hummingbird|regular fit|product/i]);
+  await page.getByRole('button', { name: /^Description$/i }).click();
+  await expect(page.getByRole('main').getByText(/A soft, responsibly made cotton t-shirt/i).last()).toBeVisible();
 });

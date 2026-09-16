@@ -7,5 +7,6 @@ import * as h from './helpers';
 test('REQ-1.3.1: Expand Category Menu', async ({ page }) => {
   await h.openHome(page);
   await h.openCategoryMenu(page);
-  await h.expectTextsVisible(page, [/men/i, /women/i]);
+  await expect(page.getByRole('link', { name: /^Men$/i }).first()).toBeVisible();
+  await expect(page.getByRole('link', { name: /^Women$/i }).first()).toBeVisible();
 });

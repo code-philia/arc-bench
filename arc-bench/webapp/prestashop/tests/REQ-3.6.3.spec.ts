@@ -6,6 +6,7 @@ import * as h from './helpers';
 
 test('REQ-3.6.3: Filter by Price Range', async ({ page }) => {
   await h.openCategoryPage(page);
-  await h.fillField(page, [/price/i], '20');
-  await h.expectTextsVisible(page, [/€|\$/i]);
+  await page.getByRole('slider', { name: /^Maximum price$/i }).fill('20');
+  await expect(page.getByRole('article').filter({ hasText: 'White t-shirt' })).toBeVisible();
+  await expect(page.getByRole('article').filter({ hasText: 'Printed summer shirt' })).toHaveCount(0);
 });

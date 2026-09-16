@@ -6,5 +6,7 @@ import * as h from './helpers';
 
 test('REQ-4.2: Product Image Area', async ({ page }) => {
   await h.openProductDetail(page, h.FIXTURES.products.detail);
-  await h.expectTextsVisible(page, [/image/i, /zoom/i]);
+  for (const name of ['Main', 'Detail', 'Back']) {
+    await expect(page.getByRole('button', { name, exact: true })).toBeVisible();
+  }
 });

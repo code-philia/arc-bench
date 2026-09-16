@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-3.9: Pagination', async ({ page }) => {
   await h.openCategoryPage(page);
-  await h.clickFirstAvailable(page, [[/next/i, /^2$/i]]);
-  await h.expectTextsVisible(page, [/showing/i]);
+  await page.getByRole('button', { name: /^2$/i }).click();
+  await expect(page.getByText(/^Showing 13-/i)).toBeVisible();
 });

@@ -6,5 +6,8 @@ import * as h from './helpers';
 
 test('REQ-3.2.1: View Breadcrumb Navigation', async ({ page }) => {
   await h.openCategoryPage(page);
-  await h.expectTextsVisible(page, [/home/i, /clothes/i, /men/i]);
+  const breadcrumbs = page.getByRole('navigation', { name: /^Breadcrumb$/i });
+  await expect(breadcrumbs.getByRole('link', { name: /^Home$/i })).toBeVisible();
+  await expect(breadcrumbs.getByRole('link', { name: /^Clothes$/i })).toBeVisible();
+  await expect(breadcrumbs.getByText(/^Men$/i)).toBeVisible();
 });

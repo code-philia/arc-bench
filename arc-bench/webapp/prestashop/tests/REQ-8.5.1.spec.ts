@@ -6,5 +6,7 @@ import * as h from './helpers';
 
 test('REQ-8.5.1: View Order List', async ({ page }) => {
   await h.openOrderHistory(page, h.FIXTURES.accounts.orderHistory);
-  await h.expectTextsVisible(page, [/reference/i, /date/i, /status/i, /total/i]);
+  for (const column of ['Order reference', 'Date', 'Total', 'Status']) {
+    await expect(page.getByRole('columnheader', { name: column, exact: true })).toBeVisible();
+  }
 });

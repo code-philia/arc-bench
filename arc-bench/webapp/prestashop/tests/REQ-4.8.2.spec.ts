@@ -6,6 +6,8 @@ import * as h from './helpers';
 
 test('REQ-4.8.2: View Product Details Tab', async ({ page }) => {
   await h.openProductDetail(page, h.FIXTURES.products.detail);
-  await h.clickFirstAvailable(page, [[/product details/i, /details/i]]);
-  await h.expectTextsVisible(page, [/reference/i, /data sheet/i, /features/i]);
+  await page.getByRole('button', { name: /^Product Details$/i }).click();
+  for (const label of ['Reference', 'Data sheet', 'Specific features']) {
+    await expect(page.getByText(label, { exact: true })).toBeVisible();
+  }
 });

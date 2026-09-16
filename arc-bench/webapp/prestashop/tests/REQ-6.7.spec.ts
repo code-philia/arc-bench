@@ -7,12 +7,15 @@ import * as h from './helpers';
 test('REQ-6.7: Order Complete Page', async ({ page }) => {
   await h.login(page, h.FIXTURES.accounts.checkoutOrderComplete);
   await h.startCheckoutWithProduct(page, h.FIXTURES.products.orderComplete);
-  await h.clickFirstAvailable(page, [[/continue/i, /shipping/i]]);
-  await h.clickFirstAvailable(page, [[/continue/i, /payment/i]]);
-  await h.clickFirstAvailable(page, [[/bank wire/i, /pay by check/i]]);
-  await h.setCheckbox(page, [/terms/i], true);
-  await h.clickFirstAvailable(page, [[/place order/i, /confirm order/i]]);
-  await h.expectTextsVisible(page, [/reference/i, /order details/i]);
-  await h.clickFirstAvailable(page, [[/continue shopping/i]]);
-  await h.expectHome(page);
+  for (let step = 0; step < 3; step += 1) {
+    await page.getByRole('button', { name: /^Continue$/i }).click();
+  }
+  await page.getByRole('radio', { name: /^Bank wire$/i }).check();
+  await page.getByRole('checkbox', { name: /^I agree to the terms and conditions$/i }).check();
+  await page.getByRole('button', { name: /^Continue$/i }).click();
+  await page.getByRole('button', { name: /^Place order$/i }).click();
+  await expect(page.getByText(/Order reference:/i)).toBeVisible();
+  await expect(page.getByText(/^Order details$/i)).toBeVisible();
+  await page.getByRole('link', { name: /^Continue shopping$/i }).click();
+  await expect(page.getByRole('region', { name: /^Carousel$/i })).toBeVisible();
 });

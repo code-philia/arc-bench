@@ -6,7 +6,7 @@ import * as h from './helpers';
 
 test('REQ-3.6.2: Filter by Color', async ({ page }) => {
   await h.openCategoryPage(page);
-  await h.clickFirstAvailable(page, [[/white/i]]);
-  await h.expectTextsVisible(page, [/white/i]);
-  await h.expectTextAbsent(page, h.FIXTURES.catalog.blackProduct);
+  await page.getByRole('radio', { name: /^White$/i }).check();
+  await expect(page.getByRole('radio', { name: /^White$/i })).toBeChecked();
+  await expect(page.getByRole('article').filter({ hasText: h.FIXTURES.catalog.blackProduct })).toHaveCount(0);
 });

@@ -6,7 +6,9 @@ import * as h from './helpers';
 
 test('REQ-4.4: Variant Selection', async ({ page }) => {
   await h.openProductDetail(page, h.FIXTURES.products.detail);
-  await h.chooseOption(page, [/size/i], h.FIXTURES.products.detail.size!);
-  await h.clickFirstAvailable(page, [[h.FIXTURES.products.detail.color!]]);
-  await h.expectTextsVisible(page, [h.FIXTURES.products.detail.color!, h.FIXTURES.products.detail.size!]);
+  await page.getByRole('combobox', { name: /^Size$/i }).selectOption({ label: 'M' });
+  const white = page.getByRole('button', { name: /^White$/i });
+  await white.click();
+  await expect(page.getByRole('combobox', { name: /^Size$/i })).toHaveValue('M');
+  await expect(white).toHaveAttribute('aria-pressed', 'true');
 });

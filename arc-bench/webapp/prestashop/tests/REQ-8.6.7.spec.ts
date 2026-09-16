@@ -6,7 +6,7 @@ import * as h from './helpers';
 
 test('REQ-8.6.7: Add Wishlist Product to Cart', async ({ page }) => {
   await h.openWishlists(page, h.FIXTURES.accounts.wishlistCart);
-  await h.clickFirstAvailable(page, [[h.FIXTURES.wishlist.name]]);
-  await h.clickFirstAvailable(page, [[/add to cart/i]]);
-  await h.expectTextsVisible(page, [/cart/i, /added/i]);
+  await page.getByRole('button', { name: /^Favorites$/i }).click();
+  await page.getByRole('button', { name: /^Add to cart$/i }).click();
+  await expect(page.getByText(/^Hummingbird wishlist t-shirt was added to your cart\.$/i)).toBeVisible();
 });

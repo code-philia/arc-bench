@@ -5,6 +5,8 @@ import * as h from './helpers';
 // fixtures: products.detail
 
 test('REQ-4.1: Enter Product Detail Page', async ({ page }) => {
-  await h.openProductDetail(page, h.FIXTURES.products.detail);
-  await h.expectTextsVisible(page, [h.FIXTURES.products.detail.name, /add to cart/i]);
+  await h.openCategoryPage(page);
+  await page.getByRole('link', { name: /^Hummingbird detail t-shirt$/i }).click();
+  await expect(page.getByRole('heading', { name: /^Hummingbird detail t-shirt$/i })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^ADD TO CART$/i })).toBeVisible();
 });

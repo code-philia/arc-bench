@@ -6,6 +6,8 @@ import * as h from './helpers';
 
 test('REQ-3.4: Subcategory Navigation', async ({ page }) => {
   await h.openCategoryPage(page);
-  await h.clickFirstAvailable(page, [[/women/i]]);
-  await h.expectTextsVisible(page, [/women/i, /sort by/i]);
+  const subcategories = page.getByRole('region', { name: /^Subcategories$/i });
+  await subcategories.getByRole('link', { name: /^Women$/i }).click();
+  await expect(page.getByRole('heading', { name: /^Women$/i })).toBeVisible();
+  await expect(page.getByRole('combobox', { name: /^Sort by$/i })).toBeVisible();
 });

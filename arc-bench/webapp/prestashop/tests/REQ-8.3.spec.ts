@@ -6,12 +6,17 @@ import * as h from './helpers';
 
 test('REQ-8.3: Account Information Management', async ({ page }) => {
   await h.openMyAccount(page, h.FIXTURES.accounts.profile);
-  await h.clickFirstAvailable(page, [[/information/i]]);
-  await h.expectTextsVisible(page, [/first name/i, /last name/i, /password/i]);
-  await h.fillField(page, [/email/i], h.FIXTURES.accounts.profile.newEmail);
-  await h.clickFirstAvailable(page, [[/save/i]]);
-  await h.expectTextsVisible(page, [/updated|saved|success/i]);
-  await h.fillField(page, [/new password/i, /password/i], h.FIXTURES.accounts.profile.newPassword);
-  await h.clickFirstAvailable(page, [[/save/i]]);
-  await h.expectTextsVisible(page, [/updated|saved|success/i]);
+  await page.getByRole('link', { name: /^Information$/i }).first().click();
+  await page.getByLabel('Email address *', { exact: true }).fill('prestashop_profile_user_next@example.com');
+  await page.getByRole('button', { name: /^Save$/i }).click();
+  await expect(page.getByText(/^Your information has been updated successfully\.$/i)).toBeVisible();
+  await page.getByLabel('New password', { exact: true }).fill('ShopPass456!');
+  await page.getByRole('button', { name: /^Save$/i }).click();
+  await expect(page.getByText(/^Your information has been updated successfully\.$/i)).toBeVisible();
+  await page.getByRole('button', { name: /^Sign out$/i }).click();
+  await page.getByRole('link', { name: /^Sign in$/i }).click();
+  await page.getByLabel('Email address *', { exact: true }).fill('prestashop_profile_user_next@example.com');
+  await page.getByLabel('Password *', { exact: true }).fill('ShopPass456!');
+  await page.getByRole('button', { name: /^SIGN IN$/i }).click();
+  await expect(page.getByRole('heading', { name: /^My account$/i }).first()).toBeVisible();
 });

@@ -6,5 +6,8 @@ import * as h from './helpers';
 
 test('REQ-3.5.1: View Product Cards', async ({ page }) => {
   await h.openCategoryPage(page);
-  await h.expectTextsVisible(page, [h.FIXTURES.catalog.popularProduct, /€|\$/i, /sale/i]);
+  const card = page.getByRole('article').filter({ hasText: 'Hummingbird detail t-shirt' });
+  await expect(card.getByText('Sale', { exact: true })).toBeVisible();
+  await expect(card.getByText('€19.99', { exact: true })).toBeVisible();
+  await expect(card.getByText('€24.99', { exact: true })).toBeVisible();
 });

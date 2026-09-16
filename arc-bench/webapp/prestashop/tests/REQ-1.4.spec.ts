@@ -6,9 +6,10 @@ import * as h from './helpers';
 
 test('REQ-1.4: Search Function', async ({ page }) => {
   await h.openHome(page);
-  await h.clickFirstAvailable(page, [[/search/i]]);
-  await h.fillField(page, [/search/i], h.FIXTURES.catalog.searchKeyword);
-  await h.expectTextsVisible(page, [/shirt/i]);
-  await h.pressEnter(page, [/search/i]);
-  await h.expectTextsVisible(page, [/shirt/i, /results|products/i]);
+  const search = page.getByRole('textbox', { name: /^Search$/i });
+  await search.fill('skirt');
+  await expect(page.getByRole('button', { name: /^Printed summer skirt €35\.00$/i })).toBeVisible();
+  await search.press('Enter');
+  await expect(page.getByRole('heading', { name: /^Search results for “skirt”$/i })).toBeVisible();
+  await expect(page.getByRole('link', { name: /^Printed summer skirt$/i })).toBeVisible();
 });

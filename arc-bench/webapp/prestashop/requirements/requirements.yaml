@@ -7,7 +7,7 @@ children:
 - id: REQ-0
   name: Visit Homepage
   type: ATOMIC
-  description: Visit the homepage of the website.
+  description: 'Visit the homepage and expose the navigation bar, the textbox with accessible name "Search", the region with accessible name "Carousel", and the visible "Popular products" area.'
   dependencies: []
   scenarios:
   - name: Visit Homepage
@@ -17,7 +17,7 @@ children:
     - keyword: WHEN
       content: Enter the website URL
     - keyword: THEN
-      content: Display homepage with navigation bar, carousel, and product display area
+      content: Display the homepage with the navigation bar, a search box, the Carousel, and the Popular products area
 - id: REQ-1
   name: Global Navigation
   type: FOLDER
@@ -27,7 +27,7 @@ children:
   - id: REQ-1.1
     name: View Global Navigation
     type: ATOMIC
-    description: View the global navigation bar.
+    description: 'View the global navigation bar. Its navigation landmark has accessible name "Main navigation"; it contains the link with accessible name "Logo", visible button "Clothes", textbox with accessible name "Search", combobox with accessible name "Language", link with accessible name "Sign in", and link with accessible name "Shopping cart".'
     dependencies:
     - REQ-0
     scenarios:
@@ -42,7 +42,7 @@ children:
   - id: REQ-1.2
     name: Logo Click Returns Home
     type: ATOMIC
-    description: Click website Logo to return to homepage.
+    description: 'Use visible button "Clothes" and link "Men" to leave the homepage, then click the link with accessible name "Logo" to return to the region with accessible name "Carousel".'
     dependencies: []
     scenarios:
     - name: Logo Click Returns Home
@@ -62,7 +62,7 @@ children:
     - id: REQ-1.3.1
       name: Expand Category Menu
       type: ATOMIC
-      description: Expand the category menu to see subcategories.
+      description: 'Hover the visible button "Clothes" to expose visible links "Men" and "Women".'
       dependencies:
       - REQ-1.1
       scenarios:
@@ -77,7 +77,7 @@ children:
     - id: REQ-1.3.2
       name: Enter Subcategory
       type: ATOMIC
-      description: Click a subcategory to navigate to its product list.
+      description: 'From the expanded visible button "Clothes", follow the visible link "Men" to the heading "Men" and combobox "Sort by".'
       dependencies:
       - REQ-1.3.1
       scenarios:
@@ -92,7 +92,7 @@ children:
   - id: REQ-1.4
     name: Search Function
     type: ATOMIC
-    description: 'Top global search box, supports product keyword search. Real-time search suggestion dropdown displays while typing. Press Enter or click search button to navigate to search results page. ![image](./reference/search.png) The product search index returns matching products when the keyword "shirt" is entered.'
+    description: 'The textbox with accessible name "Search" supports product keyword search. Typing "skirt" displays a button named "Printed summer skirt €35.00"; pressing Enter opens heading "Search results for “skirt”" and link "Printed summer skirt". ![image](./reference/search.png)'
     dependencies: []
     scenarios:
     - name: Search Function
@@ -104,7 +104,7 @@ children:
       - keyword: THEN
         content: Search box gains focus
       - keyword: WHEN
-        content: Enter a search keyword (e.g., shirt)
+        content: Enter the search keyword "skirt"
       - keyword: THEN
         content: Auto-expand search suggestion dropdown
       - keyword: WHEN
@@ -114,7 +114,7 @@ children:
   - id: REQ-1.5
     name: User Entry
     type: ATOMIC
-    description: User login/register/my account entry link.
+    description: 'The signed-out user entry is a link with accessible name "Sign in"; it opens heading "Sign in" with fields named "Email address *" and "Password *". The signed-in account entry is a link with accessible name "My account".'
     dependencies: []
     scenarios:
     - name: User Entry
@@ -134,7 +134,7 @@ children:
     - id: REQ-1.6.1
       name: View Cart Count
       type: ATOMIC
-      description: View the number of items in the cart.
+      description: 'The header link with accessible name "Shopping cart" displays a numeric item count.'
       dependencies:
       - REQ-1.1
       scenarios:
@@ -149,7 +149,7 @@ children:
     - id: REQ-1.6.2
       name: Click to Enter Cart
       type: ATOMIC
-      description: Click the cart icon to navigate to the cart page.
+      description: 'Follow the header link with accessible name "Shopping cart" to heading "Shopping cart".'
       dependencies:
       - REQ-1.6.1
       scenarios:
@@ -164,14 +164,14 @@ children:
 - id: REQ-2
   name: Homepage
   type: FOLDER
-  description: 'Homepage content display, including carousel ads, popular products, promotions, Newsletter subscription, and footer. ![image](./reference/homepage.png)'
+  description: 'Homepage content includes region with accessible name "Carousel", heading "Popular products", textbox with accessible name "Newsletter email", and the footer contentinfo landmark. ![image](./reference/homepage.png)'
   dependencies:
   - REQ-1
   children:
   - id: REQ-2.1
     name: Browse Homepage
     type: ATOMIC
-    description: Browse the homepage.
+    description: 'Browse the homepage and verify region "Carousel", heading "Popular products", textbox "Newsletter email", and footer contentinfo landmark.'
     dependencies:
     - REQ-0
     scenarios:
@@ -182,7 +182,7 @@ children:
       - keyword: WHEN
         content: View each area of the homepage
       - keyword: THEN
-        content: Display carousel, Popular Products, promotion area, Newsletter subscription, footer
+        content: Display the Carousel, Popular products, promotion area, Newsletter email field, and footer
   - id: REQ-2.2
     name: Carousel Banner
     type: FOLDER
@@ -192,7 +192,7 @@ children:
     - id: REQ-2.2.1
       name: Carousel Auto Switch
       type: ATOMIC
-      description: The homepage exposes the promotional carousel as a region or group with an accessible name containing "Carousel". It contains at least two visually different slides and automatically switches to the next slide within five seconds.
+      description: 'The homepage exposes a region with accessible name "Carousel". It contains at least two visually different slides and automatically switches within five seconds.'
       dependencies:
       - REQ-2.1
       scenarios:
@@ -207,7 +207,7 @@ children:
     - id: REQ-2.2.2
       name: Manual Carousel Switch
       type: ATOMIC
-      description: Manually switch carousel slide.
+      description: 'In the region with accessible name "Carousel", activate visible button "Next slide" to display the next visually different slide.'
       dependencies:
       - REQ-2.1
       scenarios:
@@ -222,7 +222,7 @@ children:
     - id: REQ-2.2.3
       name: Click Carousel to Navigate
       type: ATOMIC
-      description: Click carousel content to navigate to corresponding marketing page.
+      description: 'Activate the first carousel link with accessible name "Shop new arrivals" to navigate to heading "Men".'
       dependencies:
       - REQ-2.1
       scenarios:
@@ -237,7 +237,7 @@ children:
   - id: REQ-2.3
     name: Popular Products Section
     type: ATOMIC
-    description: 'Popular products grid on homepage, containing product cards, quick view, and wishlist functionality. The homepage Popular Products section includes the product "Hummingbird detail t-shirt", and the product card links to its product detail page.'
+    description: 'The visible "Popular products" grid includes link "Hummingbird detail t-shirt"; following it opens heading "Hummingbird detail t-shirt".'
     dependencies: []
     scenarios:
     - name: Popular Products Section
@@ -251,14 +251,14 @@ children:
 - id: REQ-3
   name: Category Page
   type: FOLDER
-  description: 'Product listing page for displaying category products, search results, brand products, and comparable listing contexts. Page layout: Left sidebar filters + Right product grid. Top shows breadcrumb navigation, category title, product count, and sort dropdown. Products displayed in card grid format, supports pagination. ![image](./reference/category.png) The Men category has at least 13 products across multiple pages, including "Hummingbird detail t-shirt", "Hummingbird cart t-shirt", "Hummingbird checkout-step t-shirt", "Hummingbird order-confirmation t-shirt", "Hummingbird order-complete t-shirt", "Hummingbird order-history t-shirt", "Hummingbird wishlist t-shirt", "White t-shirt", and "Black mug"; these products have stock, color, price, sale, and category attributes suitable for filtering, sorting, and pagination.'
+  description: 'Product listing page for displaying category products, search results, brand products, and comparable listing contexts. Page layout: Left sidebar filters + Right product grid. Top shows breadcrumb navigation, category title, product count, and sort dropdown. Products displayed in card grid format, supports pagination. ![image](./reference/category.png) The Men category has at least 14 products across multiple pages, including "Hummingbird detail t-shirt", "Hummingbird cart t-shirt", "Hummingbird checkout-step t-shirt", "Hummingbird order-confirmation t-shirt", "Hummingbird order-complete t-shirt", "Hummingbird order-history t-shirt", "Hummingbird wishlist t-shirt", "White t-shirt", "Black mug", and "Printed summer skirt"; these products have stock, color, price, sale, and category attributes suitable for filtering, sorting, pagination, and keyword search.'
   dependencies:
   - REQ-1
   children:
   - id: REQ-3.1
     name: Enter Category Page
     type: ATOMIC
-    description: Enter a category page.
+    description: 'Use visible button "Clothes" and link "Men" to enter heading "Men"; the page exposes combobox "Sort by" and visible text beginning "Showing".'
     dependencies:
     - REQ-1.3.1
     scenarios:
@@ -279,7 +279,7 @@ children:
     - id: REQ-3.2.1
       name: View Breadcrumb Navigation
       type: ATOMIC
-      description: View the breadcrumb navigation on a category page.
+      description: 'Use visible button "Clothes" and link "Men", then view navigation landmark with accessible name "Breadcrumb" containing links "Home" and "Clothes" and visible text "Men".'
       dependencies:
       - REQ-3.1
       scenarios:
@@ -294,7 +294,7 @@ children:
     - id: REQ-3.2.2
       name: Navigate Back via Breadcrumb
       type: ATOMIC
-      description: Navigate back to parent category via breadcrumb.
+      description: 'Use visible button "Clothes" and link "Men", then follow link "Clothes" inside navigation landmark with accessible name "Breadcrumb" to heading "Clothes".'
       dependencies:
       - REQ-3.2.1
       scenarios:
@@ -309,7 +309,7 @@ children:
   - id: REQ-3.3
     name: Category Description
     type: ATOMIC
-    description: Category description text displayed on category page.
+    description: 'Use visible button "Clothes" and link "Men" to enter heading "Men"; the page displays visible text beginning "Description:".'
     dependencies: []
     scenarios:
     - name: Category Description
@@ -323,7 +323,7 @@ children:
   - id: REQ-3.4
     name: Subcategory Navigation
     type: ATOMIC
-    description: Quick entry links to subcategories under current category.
+    description: 'Use visible button "Clothes" and link "Men" to enter the category. A region with accessible name "Subcategories" contains link "Women"; following it opens heading "Women" and combobox "Sort by".'
     dependencies: []
     scenarios:
     - name: Subcategory Navigation
@@ -343,7 +343,7 @@ children:
     - id: REQ-3.5.1
       name: View Product Cards
       type: ATOMIC
-      description: View product cards in the product grid.
+      description: 'Use visible button "Clothes" and link "Men" to enter the category. The article containing "Hummingbird detail t-shirt" displays visible "€19.99", "€24.99", and "Sale".'
       dependencies:
       - REQ-3.1
       scenarios:
@@ -358,7 +358,7 @@ children:
     - id: REQ-3.5.2
       name: Hover to Show Action Buttons
       type: ATOMIC
-      description: Hover over a product card to show action buttons.
+      description: 'Use visible button "Clothes" and link "Men" to enter the category, then hover the article containing "Hummingbird detail t-shirt" to expose buttons "Quick view" and "Add to wishlist".'
       dependencies:
       - REQ-3.5.1
       scenarios:
@@ -373,7 +373,7 @@ children:
     - id: REQ-3.5.3
       name: Click to Enter Detail Page
       type: ATOMIC
-      description: Click a product card to enter detail page.
+      description: 'Use visible button "Clothes" and link "Men" to enter the category, then follow link "Hummingbird detail t-shirt" to heading "Hummingbird detail t-shirt" and button "ADD TO CART".'
       dependencies:
       - REQ-3.5.1
       scenarios:
@@ -394,7 +394,7 @@ children:
     - id: REQ-3.6.1
       name: Filter by Availability
       type: ATOMIC
-      description: Filter products by availability. In the Men category, "White t-shirt" is in stock and "Black mug" is out of stock.
+      description: 'Use visible button "Clothes" and link "Men" to enter the category, then select checkbox "In stock". The article containing "White t-shirt" remains and the article containing "Black mug" is omitted.'
       dependencies:
       - REQ-3.1
       scenarios:
@@ -409,7 +409,7 @@ children:
     - id: REQ-3.6.2
       name: Filter by Color
       type: ATOMIC
-      description: Filter products by color.
+      description: 'Use visible button "Clothes" and link "Men" to enter the category, then select radio "White". White product articles remain and the article containing "Black mug" is omitted.'
       dependencies:
       - REQ-3.1
       scenarios:
@@ -424,7 +424,7 @@ children:
     - id: REQ-3.6.3
       name: Filter by Price Range
       type: ATOMIC
-      description: Filter products by price range. The category contains products priced on both sides of a 20-unit threshold so the filter can show matching products with visible currency prices after the user enters that limit.
+      description: 'Use visible button "Clothes" and link "Men" to enter the category, then set slider "Maximum price" to 20. The article containing "White t-shirt" remains and the article containing "Printed summer shirt" is omitted.'
       dependencies:
       - REQ-3.1
       scenarios:
@@ -439,7 +439,7 @@ children:
     - id: REQ-3.6.4
       name: Clear All Filters
       type: ATOMIC
-      description: Clear all applied filters.
+      description: 'Use visible button "Clothes" and link "Men" to enter the category. After selecting checkbox "In stock", activate button "Clear all"; articles containing "White t-shirt" and "Black mug" display again.'
       dependencies:
       - REQ-3.6.1
       scenarios:
@@ -454,7 +454,7 @@ children:
   - id: REQ-3.7
     name: Sort Function
     type: ATOMIC
-    description: Product list sort dropdown menu, supports sorting by relevance, sales, name, price, reference. ![image](./reference/sort.png)
+    description: 'Use visible button "Clothes" and link "Men" to enter the category. The combobox "Sort by" includes option "Price, low to high"; selecting it places the article containing "Black mug" at visible "€11.90" first. ![image](./reference/sort.png)'
     dependencies: []
     scenarios:
     - name: Sort Function
@@ -472,7 +472,7 @@ children:
   - id: REQ-3.8
     name: Product Count Display
     type: ATOMIC
-    description: Display total product count under current filter conditions.
+    description: 'Use visible button "Clothes" and link "Men" to enter the category and display visible text matching "Showing <start>-<end> of <total> item(s)".'
     dependencies: []
     scenarios:
     - name: Product Count Display
@@ -486,7 +486,7 @@ children:
   - id: REQ-3.9
     name: Pagination
     type: ATOMIC
-    description: Product list pagination navigation, supports browsing more products by page.
+    description: 'Use visible button "Clothes" and link "Men" to enter the category. Pagination includes button "2"; activating it displays the second page with visible text beginning "Showing 13-".'
     dependencies: []
     scenarios:
     - name: Pagination
@@ -507,7 +507,7 @@ children:
   - id: REQ-4.1
     name: Enter Product Detail Page
     type: ATOMIC
-    description: Enter a product detail page.
+    description: 'Use visible button "Clothes" and link "Men" to enter the category. Follow link "Hummingbird detail t-shirt"; its detail page exposes heading "Hummingbird detail t-shirt" and button "ADD TO CART".'
     dependencies:
     - REQ-3.5.1
     scenarios:
@@ -522,7 +522,7 @@ children:
   - id: REQ-4.2
     name: Product Image Area
     type: ATOMIC
-    description: Product image display area, including main image, thumbnail switching, and large image viewer.
+    description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt". Its image area exposes buttons "Main", "Detail", and "Back".'
     dependencies: []
     scenarios:
     - name: Product Image Area
@@ -536,7 +536,7 @@ children:
   - id: REQ-4.3
     name: Product Basic Info
     type: ATOMIC
-    description: Product basic information display, including name, price (tax incl./excl.), regular price and discount, discount percentage, description. The catalog includes a discounted product with tax information, description text, and a visible 20% discount.
+    description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt" and heading "Hummingbird detail t-shirt". It displays "€19.99", "€24.99", "-20%", "Tax included · 20% VAT", and description text beginning "A soft, responsibly made cotton t-shirt".'
     dependencies: []
     scenarios:
     - name: Product Basic Info
@@ -550,7 +550,7 @@ children:
   - id: REQ-4.4
     name: Variant Selection
     type: ATOMIC
-    description: 'Product variant selector, including size, color, and other attribute selection. The product "Hummingbird detail t-shirt" has a selectable size "M" and color "White", sufficient stock for normal quantities including 3, and stock lower than 999.'
+    description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt". Its combobox "Size" contains "M" and its visible button "White" is selectable; it has sufficient stock for 3 and stock lower than 999.'
     dependencies: []
     scenarios:
     - name: Variant Selection
@@ -574,7 +574,7 @@ children:
     - id: REQ-4.5.1
       name: Increase Quantity
       type: ATOMIC
-      description: Increase product quantity.
+      description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt", then increase its spinbutton "Quantity" using button "Increase quantity".'
       dependencies:
       - REQ-4.1
       scenarios:
@@ -583,13 +583,13 @@ children:
         - keyword: GIVEN
           content: User is on a product detail page and can see the quantity selector.
         - keyword: WHEN
-          content: Click "+" button
+          content: Click the "Increase quantity" button
         - keyword: THEN
           content: Quantity increases by 1
     - id: REQ-4.5.2
       name: Decrease Quantity
       type: ATOMIC
-      description: Decrease product quantity.
+      description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt", then decrease its spinbutton "Quantity" using button "Decrease quantity".'
       dependencies:
       - REQ-4.5.1
       scenarios:
@@ -598,13 +598,13 @@ children:
         - keyword: GIVEN
           content: User is on a product detail page and can see the quantity selector.
         - keyword: WHEN
-          content: Click "-" button
+          content: Click the "Decrease quantity" button
         - keyword: THEN
           content: Quantity decreases by 1, minimum is 1
     - id: REQ-4.5.3
       name: Direct Input Quantity
       type: ATOMIC
-      description: Directly enter product quantity.
+      description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt", then enter 3 in its spinbutton "Quantity".'
       dependencies:
       - REQ-4.1
       scenarios:
@@ -619,7 +619,7 @@ children:
     - id: REQ-4.5.4
       name: Stock Insufficient Warning
       type: ATOMIC
-      description: Display warning when entered quantity exceeds stock.
+      description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt", enter 999 in spinbutton "Quantity", and activate button "ADD TO CART"; display alert text "Not enough stock available".'
       dependencies:
       - REQ-4.1
       scenarios:
@@ -634,7 +634,7 @@ children:
   - id: REQ-4.6
     name: Add to Cart
     type: FOLDER
-    description: 'Add product to cart functionality, includes success modal, continue shopping, and proceed to checkout options. ![image](./reference/add_to_cart.png) The product "Hummingbird cart t-shirt" is published, purchasable, and has a default available combination with sufficient stock for cart operations.'
+    description: 'Add product to cart functionality, includes success modal, continue shopping, and proceed to checkout options. ![image](./reference/add_to_cart.png) Each cart scenario uses its own published, purchasable isolated product with a default available combination and sufficient stock.'
     dependencies:
     - REQ-4.4
     - REQ-4.5
@@ -642,7 +642,7 @@ children:
     - id: REQ-4.6.1
       name: Add Product to Cart
       type: ATOMIC
-      description: Add a product to the cart.
+      description: 'Use textbox with accessible name "Search" to open isolated link "Hummingbird cart 4.6.1 t-shirt" and activate button "ADD TO CART"; display heading "Product successfully added to your shopping cart".'
       dependencies:
       - REQ-4.4
       scenarios:
@@ -657,7 +657,7 @@ children:
     - id: REQ-4.6.2
       name: Continue Shopping After Add
       type: ATOMIC
-      description: Continue shopping after adding product to cart.
+      description: 'Use textbox with accessible name "Search" to open link "Hummingbird cart 4.6.2 t-shirt" and activate button "ADD TO CART". Then activate button "CONTINUE SHOPPING" to return to heading "Hummingbird cart 4.6.2 t-shirt".'
       dependencies:
       - REQ-4.6.1
       scenarios:
@@ -672,7 +672,7 @@ children:
     - id: REQ-4.6.3
       name: Proceed to Checkout After Add
       type: ATOMIC
-      description: Proceed to checkout after adding product to cart.
+      description: 'Use textbox with accessible name "Search" to open link "Hummingbird cart 4.6.3 t-shirt" and activate button "ADD TO CART". Then activate button "PROCEED TO CHECKOUT" to open heading "Shopping cart".'
       dependencies:
       - REQ-4.6.1
       scenarios:
@@ -687,7 +687,7 @@ children:
   - id: REQ-4.7
     name: Add to Wishlist
     type: ATOMIC
-    description: Add product to user wishlist (requires login).
+    description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt". The detail page exposes a region with accessible name "Product information" containing the button with accessible name "Add to wishlist". For a signed-out user, display heading "Sign in to continue".'
     dependencies: []
     scenarios:
     - name: Add to Wishlist
@@ -707,7 +707,7 @@ children:
     - id: REQ-4.8.1
       name: View Description Tab
       type: ATOMIC
-      description: View the product description tab.
+      description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt". Activate button "Description" and display text beginning "A soft, responsibly made cotton t-shirt".'
       dependencies:
       - REQ-4.1
       scenarios:
@@ -722,7 +722,7 @@ children:
     - id: REQ-4.8.2
       name: View Product Details Tab
       type: ATOMIC
-      description: View the product details tab.
+      description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt". Activate button "Product Details" and display visible "Reference", "Data sheet", and "Specific features".'
       dependencies:
       - REQ-4.1
       scenarios:
@@ -737,13 +737,13 @@ children:
   - id: REQ-4.9
     name: Product Reviews
     type: FOLDER
-    description: Product review functionality, including review list, rating display, and add review (requires login).
+    description: 'Product review functionality, including review list, rating display, and add review (requires login). The review area visibly includes "Customer reviews" and a rating.'
     dependencies: []
     children:
     - id: REQ-4.9.1
       name: View Review List
       type: ATOMIC
-      description: View the product review list.
+      description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt" and display visible text "Customer reviews · Average rating <rating>/5".'
       dependencies:
       - REQ-4.1
       scenarios:
@@ -758,7 +758,7 @@ children:
     - id: REQ-4.9.2
       name: Add Review
       type: ATOMIC
-      description: Add a review for the product.
+      description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt". Activate button named "Reviews (<count>)", then button "Write a review"; a signed-out user sees heading "Sign in to continue".'
       dependencies:
       - REQ-4.9.1
       scenarios:
@@ -773,7 +773,7 @@ children:
   - id: REQ-4.10
     name: Recently Viewed
     type: ATOMIC
-    description: Display user's recently viewed products.
+    description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt" and display article cards inside the region with accessible name "Recently viewed".'
     dependencies: []
     scenarios:
     - name: Recently Viewed
@@ -787,7 +787,7 @@ children:
   - id: REQ-4.11
     name: Related Products
     type: ATOMIC
-    description: Recommend other products in the same category.
+    description: 'Use textbox with accessible name "Search" to open link "Hummingbird detail t-shirt" and display article cards inside the region with accessible name "Related products".'
     dependencies: []
     scenarios:
     - name: Related Products
@@ -808,7 +808,7 @@ children:
   - id: REQ-5.1
     name: Enter Cart
     type: ATOMIC
-    description: Enter the shopping cart page.
+    description: 'Use textbox with accessible name "Search" to open link "Hummingbird cart 5.1 t-shirt", activate button "ADD TO CART", then button "PROCEED TO CHECKOUT" in the modal; the destination is heading "Shopping cart".'
     dependencies:
     - REQ-4.6.1
     scenarios:
@@ -823,7 +823,7 @@ children:
   - id: REQ-5.2
     name: Cart Product List
     type: ATOMIC
-    description: Product list display in cart, including image, name, variant, unit price, quantity, subtotal, and delete button.
+    description: 'Use textbox with accessible name "Search" to open link "Hummingbird cart 5.2 t-shirt", activate buttons "ADD TO CART" and modal "PROCEED TO CHECKOUT". Its cart row shows visible "Unit price" and "Subtotal", spinbutton "Quantity for Hummingbird cart 5.2 t-shirt", and button "Remove Hummingbird cart 5.2 t-shirt".'
     dependencies: []
     scenarios:
     - name: Cart Product List
@@ -837,7 +837,7 @@ children:
   - id: REQ-5.3
     name: Modify Product Quantity
     type: ATOMIC
-    description: Modify product quantity in cart.
+    description: 'Use textbox "Search", buttons "ADD TO CART" and modal "PROCEED TO CHECKOUT" to place "Hummingbird cart 5.3 t-shirt" in the cart. Button "Increase quantity" changes spinbutton "Quantity for Hummingbird cart 5.3 t-shirt" to 2 and updates visible "Subtotal" and "Total (tax incl.)".'
     dependencies: []
     scenarios:
     - name: Modify Product Quantity
@@ -851,7 +851,7 @@ children:
   - id: REQ-5.4
     name: Delete Product
     type: ATOMIC
-    description: Delete product from cart.
+    description: 'Use textbox "Search", buttons "ADD TO CART" and modal "PROCEED TO CHECKOUT" to place "Hummingbird cart 5.4 t-shirt" in the cart. Use button "Remove Hummingbird cart 5.4 t-shirt"; the page then shows heading "Your cart is empty".'
     dependencies: []
     scenarios:
     - name: Delete Product
@@ -865,7 +865,7 @@ children:
   - id: REQ-5.5
     name: Cart Summary
     type: ATOMIC
-    description: Price summary area on cart page, showing items subtotal, shipping fee, discount amount, and total.
+    description: 'Use textbox "Search", buttons "ADD TO CART" and modal "PROCEED TO CHECKOUT" to place "Hummingbird cart 5.5 t-shirt" in the cart. Heading "Summary" shows visible "Subtotal", "Shipping", "Discount", "Tax included", and "Total (tax incl.)".'
     dependencies: []
     scenarios:
     - name: Cart Summary
@@ -879,7 +879,7 @@ children:
   - id: REQ-5.6
     name: Continue Shopping Link
     type: ATOMIC
-    description: Return to product browsing page to continue shopping. ![image](./reference/add_to_cart.png)
+    description: 'Use textbox "Search", buttons "ADD TO CART" and modal "PROCEED TO CHECKOUT" to place "Hummingbird cart 5.6 t-shirt" in the cart. Activate link "Continue shopping" to return to heading "Men". ![image](./reference/add_to_cart.png)'
     dependencies: []
     scenarios:
     - name: Continue Shopping Link
@@ -893,7 +893,7 @@ children:
   - id: REQ-5.7
     name: Proceed to Checkout Button
     type: ATOMIC
-    description: Enter checkout flow.
+    description: 'Use textbox "Search", buttons "ADD TO CART" and modal "PROCEED TO CHECKOUT" to place "Hummingbird cart 5.7 t-shirt" in the cart. Activate the cart-page button "PROCEED TO CHECKOUT" to enter heading "Personal information".'
     dependencies: []
     scenarios:
     - name: Proceed to Checkout Button
@@ -914,7 +914,7 @@ children:
   - id: REQ-6.1
     name: Start Checkout
     type: ATOMIC
-    description: 'Start the checkout flow. The product "Hummingbird checkout-step t-shirt" is published, purchasable, and has a default available combination with sufficient stock for checkout-step scenarios.'
+    description: 'Use textbox "Search" to open link "Hummingbird checkout 6.1 t-shirt", activate buttons "ADD TO CART" and both "PROCEED TO CHECKOUT" buttons; enter heading "Personal information".'
     dependencies:
     - REQ-5.7
     scenarios:
@@ -929,7 +929,7 @@ children:
   - id: REQ-6.2
     name: Personal Information Step
     type: ATOMIC
-    description: 'Checkout flow first step, logged-in users see their info, non-logged users can login/register/guest checkout. ![image](./reference/checkout.png) The system contains a separate verified customer account for checkout information with email "prestashop_checkout_user@example.com" and password "ShopPass123!".'
+    description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_checkout_user@example.com" / "ShopPass123!". Use textbox "Search", link "Hummingbird checkout 6.2 t-shirt", button "ADD TO CART", and both "PROCEED TO CHECKOUT" buttons. Heading "Personal information" exposes fields "Email address *", "First name *", and "Last name *". ![image](./reference/checkout.png)'
     dependencies: []
     scenarios:
     - name: Personal Information Step
@@ -955,7 +955,7 @@ children:
     - id: REQ-6.3.1
       name: Select Existing Address
       type: ATOMIC
-      description: 'Select an existing shipping address. The system contains a separate verified customer account for selecting an existing checkout address with email "prestashop_checkout_address_user@example.com" and password "ShopPass123!". The prestashop_checkout_address_user account has a valid default address with alias "Home".'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_checkout_address_user@example.com" / "ShopPass123!". Use textbox "Search", link "Hummingbird checkout 6.3.1 t-shirt", button "ADD TO CART", and both "PROCEED TO CHECKOUT" buttons. Activate button "Continue"; radio "Home" is selected.'
       dependencies:
       - REQ-6.2
       scenarios:
@@ -970,7 +970,7 @@ children:
     - id: REQ-6.3.2
       name: Add New Address
       type: ATOMIC
-      description: 'Add a new shipping address. The system contains a separate verified customer account for adding a checkout address with email "prestashop_checkout_new_address_user@example.com" and password "ShopPass123!". The country selector contains the country "China".'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_checkout_new_address_user@example.com" / "ShopPass123!". Use textbox "Search", link "Hummingbird checkout 6.3.2 t-shirt", button "ADD TO CART", and both "PROCEED TO CHECKOUT" buttons. Activate buttons "Continue" and "Add new address" to display fields "Alias *", "Address *", "City *", and "Country *".'
       dependencies:
       - REQ-6.2
       scenarios:
@@ -985,7 +985,7 @@ children:
     - id: REQ-6.3.3
       name: Set Invoice Address
       type: ATOMIC
-      description: 'Set the invoice address. The system contains a separate verified customer account for setting an invoice address with email "prestashop_checkout_invoice_user@example.com" and password "ShopPass123!". The prestashop_checkout_invoice_user account has a valid address available for the shipping and invoice-address flow.'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_checkout_invoice_address_user@example.com" / "ShopPass123!". Use textbox "Search", link "Hummingbird checkout 6.3.3 t-shirt", button "ADD TO CART", and both "PROCEED TO CHECKOUT" buttons. Activate button "Continue"; clearing checkbox "Use this address for invoice" displays heading "Invoice address".'
       dependencies:
       - REQ-6.3.1
       scenarios:
@@ -1000,7 +1000,7 @@ children:
   - id: REQ-6.4
     name: Shipping Method Step
     type: ATOMIC
-    description: 'Select shipping method, display shipping cost. ![image](./reference/checkout_shipping.png) The store has at least one available shipping method named "delivery" or "pick up" with a shipping cost and estimated delivery time.'
+    description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_checkout_shipping_user@example.com" / "ShopPass123!". Use textbox "Search", link "Hummingbird checkout 6.4 t-shirt", button "ADD TO CART", both "PROCEED TO CHECKOUT" buttons, and two "Continue" buttons. At heading "Shipping method", selecting radio "Express delivery" updates the value with accessible name "Order total". ![image](./reference/checkout_shipping.png)'
     dependencies:
     - REQ-6.3.1
     scenarios:
@@ -1019,7 +1019,7 @@ children:
   - id: REQ-6.5
     name: Payment Step
     type: ATOMIC
-    description: 'Select payment method, agree to terms before placing order. ![image](./reference/checkout_payment.png) The store has an available payment method named "bank wire" or "pay by check". The checkout payment step contains an available terms-and-conditions agreement that can be checked and opened.'
+    description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_checkout_payment_user@example.com" / "ShopPass123!". Use textbox "Search", link "Hummingbird checkout 6.5 t-shirt", button "ADD TO CART", both "PROCEED TO CHECKOUT" buttons, and three "Continue" buttons. Heading "Payment" includes radio "Bank wire", checkbox "I agree to the terms and conditions", and link "View terms and conditions", which opens heading "Terms and conditions". ![image](./reference/checkout_payment.png)'
     dependencies:
     - REQ-6.4
     scenarios:
@@ -1046,7 +1046,7 @@ children:
   - id: REQ-6.6
     name: Order Confirmation
     type: ATOMIC
-    description: 'Confirm order information and complete order, navigate to order complete page. ![image](./reference/checkout_summary.png) The system contains a separate verified customer account for the order-confirmation checkout flow with email "prestashop_checkout_6_6_user@example.com" and password "ShopPass123!". The product "Hummingbird order-confirmation t-shirt" is published, purchasable, and has a default available combination with stock sufficient for one order. The prestashop_checkout_6_6_user account has a valid default address available for completing the REQ-6.6 order-confirmation checkout flow.'
+    description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_checkout_6_6_user@example.com" / "ShopPass123!". Use textbox "Search", link "Hummingbird order-confirmation t-shirt", button "ADD TO CART", both "PROCEED TO CHECKOUT" buttons, and three "Continue" buttons. Choose radio "Bank wire", check checkbox "I agree to the terms and conditions", use "Continue" to reach heading "Order confirmation", then button "Place order" to open heading "Order complete". ![image](./reference/checkout_summary.png)'
     dependencies:
     - REQ-6.5
     scenarios:
@@ -1061,7 +1061,7 @@ children:
   - id: REQ-6.7
     name: Order Complete Page
     type: ATOMIC
-    description: 'Confirmation page after order successfully created, displaying order reference, order details, and continue shopping link. ![image](./reference/checkout_summary.png) The system contains a separate verified customer account for the completed-order checkout flow with email "prestashop_checkout_6_7_user@example.com" and password "ShopPass123!". The product "Hummingbird order-complete t-shirt" is published, purchasable, and has a default available combination with stock sufficient for one order. The prestashop_checkout_6_7_user account has a valid default address available for completing the REQ-6.7 order-complete checkout flow.'
+    description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_checkout_6_7_user@example.com" / "ShopPass123!". Use textbox "Search", link "Hummingbird order-complete t-shirt", button "ADD TO CART", both "PROCEED TO CHECKOUT" buttons, and three "Continue" buttons. Choose radio "Bank wire", check checkbox "I agree to the terms and conditions", use "Continue", and activate button "Place order". The result displays visible "Order reference" and "Order details", link "Continue shopping", and returns to region "Carousel". ![image](./reference/checkout_summary.png)'
     dependencies:
     - REQ-6.6
     scenarios:
@@ -1087,7 +1087,7 @@ children:
   - id: REQ-7.1
     name: Enter Login Page
     type: ATOMIC
-    description: Enter the user login page.
+    description: 'Follow link "Sign in" to heading "Sign in" with field "Email address *".'
     dependencies:
     - REQ-1.5
     scenarios:
@@ -1102,7 +1102,7 @@ children:
   - id: REQ-7.2
     name: User Login
     type: ATOMIC
-    description: 'Login form, including email, password input, show/hide password, remember me option. ![image](./reference/login.png) The system contains a verified customer account with email "prestashop_user@example.com", password "ShopPass123!", first name "Store", last name "User", and birthdate "1995-08-21".'
+    description: 'Follow link "Sign in" to a login form with fields "Email address *" and "Password *", buttons "SHOW"/"HIDE" and "SIGN IN", and checkbox "Remember me". Successful authentication opens heading "My account" and button "Sign out". ![image](./reference/login.png) The verified account is "prestashop_user@example.com" / "ShopPass123!".'
     dependencies:
     - REQ-7.1
     scenarios:
@@ -1133,7 +1133,7 @@ children:
   - id: REQ-7.3
     name: User Registration
     type: ATOMIC
-    description: 'New user registration form, including social title, name, email, password, birthday, subscription options, and terms agreement. The birthday field accepts a valid calendar date entered in yyyy-mm-dd form, such as 1995-08-21, and stores it as part of the customer profile. ![image](./reference/register.png)'
+    description: 'Follow link "Sign in", then link "No account? Create one here". The form contains radio "Mr", fields "First name *", "Last name *", "Email address *", "Password *", and "Birthdate", checkboxes "Receive offers from PrestaShop partners", "Subscribe to our newsletter", and "I agree to the terms and conditions *", plus button "SAVE". Use a new unique email each execution because registration persists. Successful registration opens heading "My account". Birthdate accepts 1995-08-21. ![image](./reference/register.png)'
     dependencies:
     - REQ-7.1
     scenarios:
@@ -1182,7 +1182,7 @@ children:
   - id: REQ-7.4
     name: Forgot Password
     type: ATOMIC
-    description: Forgot password functionality, sends password reset email. ![image](./reference/forgot_password.png)
+    description: 'Follow link "Sign in" and then link "Forgot your password?". The page has heading "Reset your password", textbox "Email address", and button "Send reset link". Enter the registered address "prestashop_user@example.com"; submission shows visible text "A password reset link has been sent to your email address." ![image](./reference/forgot_password.png)'
     dependencies:
     - REQ-7.1
     scenarios:
@@ -1214,7 +1214,7 @@ children:
   - id: REQ-8.1
     name: Enter My Account
     type: ATOMIC
-    description: Enter My Account page.
+    description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_user@example.com" / "ShopPass123!", then follow link "My account". The page has heading "My account" and links "Information", "Addresses", and "Order history and details".'
     dependencies:
     - REQ-7.2
     scenarios:
@@ -1229,7 +1229,7 @@ children:
   - id: REQ-8.2
     name: Account Overview
     type: ATOMIC
-    description: Account homepage, displaying user info summary and quick entry to each function. ![image](./reference/my_account.png)
+    description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_user@example.com" / "ShopPass123!", then follow link "My account". The overview exposes links "Order history and details", "Addresses", and "Information". ![image](./reference/my_account.png)'
     dependencies:
     - REQ-8.1
     scenarios:
@@ -1244,7 +1244,7 @@ children:
   - id: REQ-8.3
     name: Account Information Management
     type: ATOMIC
-    description: 'Modify personal information and password. ![image](./reference/my_account_info.png) The system contains a separate verified customer account for profile editing with email "prestashop_profile_user@example.com" and password "ShopPass123!".'
+    description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_profile_user@example.com" / "ShopPass123!", then follow links "My account" and "Information". Change field "Email address *" to "prestashop_profile_user_next@example.com" and use button "Save"; show visible text "Your information has been updated successfully." Set field "New password" to "ShopPass456!", use "Save", button "Sign out", and authenticate with the new credentials to return to heading "My account". ![image](./reference/my_account_info.png)'
     dependencies:
     - REQ-8.1
     scenarios:
@@ -1275,7 +1275,7 @@ children:
     - id: REQ-8.4.1
       name: View Address List
       type: ATOMIC
-      description: 'View the list of addresses. The system contains a separate verified customer account for viewing addresses with email "prestashop_address_view_user@example.com" and password "ShopPass123!". The prestashop_address_view_user account has a valid address with alias "Home".'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_address_view_user@example.com" / "ShopPass123!", then follow links "My account" and "Addresses". The page shows headings "Addresses" and "Home".'
       dependencies:
       - REQ-8.1
       scenarios:
@@ -1290,7 +1290,7 @@ children:
     - id: REQ-8.4.2
       name: Add New Address
       type: ATOMIC
-      description: 'Add a new address. The system contains a separate verified customer account for creating an address with email "prestashop_address_create_user@example.com" and password "ShopPass123!". The country selector contains the country "China". The prestashop_address_create_user account has an initially empty address book.'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_address_create_user@example.com" / "ShopPass123!", then follow links "My account" and "Addresses". Use button "Create new address" and fill fields "Alias *", "First name *", "Last name *", "Address *", "Zip / Postal code *", "City *", "Country *", and "Phone *" with "Office", "Store", "User", "1 Commerce Road", "200000", "Shanghai", "China", and "13800000020". Activate button "Save"; heading "Office" appears.'
       dependencies:
       - REQ-8.4.1
       scenarios:
@@ -1315,7 +1315,7 @@ children:
     - id: REQ-8.4.3
       name: Edit Address
       type: ATOMIC
-      description: 'Edit an existing address. The system contains a separate verified customer account for editing an address with email "prestashop_address_edit_user@example.com" and password "ShopPass123!". The prestashop_address_edit_user account has a valid editable address with alias "Home".'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_address_edit_user@example.com" / "ShopPass123!", then follow links "My account" and "Addresses". Use button "Update" on heading "Home", change field "Address *" to "88 Market Street", and activate button "Save"; show visible text "Address updated successfully."'
       dependencies:
       - REQ-8.4.1
       scenarios:
@@ -1336,7 +1336,7 @@ children:
     - id: REQ-8.4.4
       name: Delete Address
       type: ATOMIC
-      description: 'Delete an existing address. The system contains a separate verified customer account for deleting an address with email "prestashop_address_delete_user@example.com" and password "ShopPass123!". The prestashop_address_delete_user account has a valid deletable address with alias "Home".'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_address_delete_user@example.com" / "ShopPass123!", then follow links "My account" and "Addresses". Use button "Delete" to remove heading "Home" and show visible text "Address deleted."'
       dependencies:
       - REQ-8.4.1
       scenarios:
@@ -1357,7 +1357,7 @@ children:
     - id: REQ-8.5.1
       name: View Order List
       type: ATOMIC
-      description: View the list of orders.
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_order_history_user@example.com" / "ShopPass123!", then follow links "My account" and "Order history and details". The table displays columnheaders "Order reference", "Date", "Total", and "Status".'
       dependencies:
       - REQ-8.1
       scenarios:
@@ -1372,7 +1372,7 @@ children:
     - id: REQ-8.5.2
       name: View Order Details
       type: ATOMIC
-      description: View details of an order.
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_order_history_user@example.com" / "ShopPass123!", then follow links "My account" and "Order history and details". Activate button "Details" to open heading "Order details · <reference>" containing headings "Products", "Shipping information", and "Payment information".'
       dependencies:
       - REQ-8.5.1
       scenarios:
@@ -1387,7 +1387,7 @@ children:
     - id: REQ-8.5.3
       name: Reorder
       type: ATOMIC
-      description: 'Reorder products from a past order. The product "Hummingbird order-history t-shirt" is published, purchasable, and has a default available combination so that a historical order can be reordered. The historical order contains the product "Hummingbird order-history t-shirt", which remains available for reorder and can be added back to the shopping cart.'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_order_history_user@example.com" / "ShopPass123!", then follow links "My account" and "Order history and details". Activate button "Reorder" for the order containing "Hummingbird order-history t-shirt"; show visible text "The products from your order were added to the cart."'
       dependencies:
       - REQ-8.5.1
       scenarios:
@@ -1402,7 +1402,7 @@ children:
     - id: REQ-8.5.4
       name: Download Invoice
       type: ATOMIC
-      description: Download the invoice for an order.
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_order_history_user@example.com" / "ShopPass123!", then follow links "My account" and "Order history and details". Activate link "PDF" to download the invoice.'
       dependencies:
       - REQ-8.5.1
       scenarios:
@@ -1423,7 +1423,7 @@ children:
     - id: REQ-8.6.1
       name: View Wishlist List
       type: ATOMIC
-      description: 'View the list of wishlists. The system contains a separate verified customer account for viewing wishlists with email "prestashop_wishlist_view_user@example.com" and password "ShopPass123!". The prestashop_wishlist_view_user account has a wishlist named "Favorites" containing "Hummingbird wishlist t-shirt".'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_wishlist_view_user@example.com" / "ShopPass123!", then follow links "My account" and "Wishlist". The page has heading "Wishlist" and button "Favorites" containing "Hummingbird wishlist t-shirt".'
       dependencies:
       - REQ-8.1
       scenarios:
@@ -1438,7 +1438,7 @@ children:
     - id: REQ-8.6.2
       name: Create New Wishlist
       type: ATOMIC
-      description: 'Create a new wishlist. The system contains a separate verified customer account for creating a wishlist with email "prestashop_wishlist_create_user@example.com" and password "ShopPass123!".'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_wishlist_create_user@example.com" / "ShopPass123!", then follow links "My account" and "Wishlist". Use button "Create new wishlist", heading "Create new wishlist", textbox "Wishlist name", and button "Save"; button "Holiday Picks" appears.'
       dependencies:
       - REQ-8.6.1
       scenarios:
@@ -1459,7 +1459,7 @@ children:
     - id: REQ-8.6.3
       name: View Wishlist Products
       type: ATOMIC
-      description: 'View products in a wishlist. The prestashop_wishlist_view_user account has a wishlist named "Favorites" containing "Hummingbird wishlist t-shirt".'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_wishlist_view_user@example.com" / "ShopPass123!", then follow links "My account" and "Wishlist". Activate button "Favorites" to display "Hummingbird wishlist t-shirt" and button "Add to cart".'
       dependencies:
       - REQ-8.6.1
       scenarios:
@@ -1474,7 +1474,7 @@ children:
     - id: REQ-8.6.4
       name: Rename Wishlist
       type: ATOMIC
-      description: 'Rename a wishlist. The system contains a separate verified customer account for renaming a wishlist with email "prestashop_wishlist_rename_user@example.com" and password "ShopPass123!". The prestashop_wishlist_rename_user account has a wishlist named "Favorites" that can be renamed.'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_wishlist_rename_user@example.com" / "ShopPass123!", then follow links "My account" and "Wishlist". Use button "Rename wishlist" on "Favorites", fill textbox "Wishlist name" with "Holiday Picks", and activate button "Save"; button "Holiday Picks" appears.'
       dependencies:
       - REQ-8.6.1
       scenarios:
@@ -1493,7 +1493,7 @@ children:
     - id: REQ-8.6.5
       name: Delete Wishlist
       type: ATOMIC
-      description: 'Delete a wishlist. The system contains a separate verified customer account for deleting a wishlist with email "prestashop_wishlist_delete_user@example.com" and password "ShopPass123!". The prestashop_wishlist_delete_user account has a deletable wishlist named "Favorites".'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_wishlist_delete_user@example.com" / "ShopPass123!", then follow links "My account" and "Wishlist". Activate button "Delete wishlist" for "Favorites" and show visible text "Wishlist deleted."'
       dependencies:
       - REQ-8.6.1
       scenarios:
@@ -1508,7 +1508,7 @@ children:
     - id: REQ-8.6.6
       name: Remove Product from Wishlist
       type: ATOMIC
-      description: 'Remove a product from a wishlist. The system contains a separate verified customer account for removing a wishlist product with email "prestashop_wishlist_remove_user@example.com" and password "ShopPass123!". The prestashop_wishlist_remove_user account has a wishlist named "Favorites" containing "Hummingbird wishlist t-shirt".'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_wishlist_remove_user@example.com" / "ShopPass123!", then follow links "My account" and "Wishlist". Open button "Favorites" and activate button "Remove" for "Hummingbird wishlist t-shirt"; the product disappears.'
       dependencies:
       - REQ-8.6.3
       scenarios:
@@ -1523,7 +1523,7 @@ children:
     - id: REQ-8.6.7
       name: Add Wishlist Product to Cart
       type: ATOMIC
-      description: 'Add a product from a wishlist to the cart. The system contains a separate verified customer account for adding a wishlist product to the cart with email "prestashop_wishlist_cart_user@example.com" and password "ShopPass123!". The prestashop_wishlist_cart_user account has a wishlist named "Favorites" containing "Hummingbird wishlist t-shirt".'
+      description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_wishlist_cart_user@example.com" / "ShopPass123!", then follow links "My account" and "Wishlist". Open button "Favorites", activate button "Add to cart" for "Hummingbird wishlist t-shirt", and show visible text "Hummingbird wishlist t-shirt was added to your cart."'
       dependencies:
       - REQ-8.6.3
       scenarios:
@@ -1538,7 +1538,7 @@ children:
   - id: REQ-8.7
     name: User Logout
     type: ATOMIC
-    description: Logout from current session. ![image](./reference/logout.png)
+    description: 'Authenticate through link "Sign in", fields "Email address *" and "Password *", and button "SIGN IN" as "prestashop_user@example.com" / "ShopPass123!", then follow link "My account". Activate button "Sign out"; the header exposes link "Sign in". ![image](./reference/logout.png)'
     dependencies:
     - REQ-8.1
     scenarios:

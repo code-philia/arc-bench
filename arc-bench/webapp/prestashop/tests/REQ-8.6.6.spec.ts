@@ -6,7 +6,7 @@ import * as h from './helpers';
 
 test('REQ-8.6.6: Remove Product from Wishlist', async ({ page }) => {
   await h.openWishlists(page, h.FIXTURES.accounts.wishlistRemove);
-  await h.clickFirstAvailable(page, [[h.FIXTURES.wishlist.name]]);
-  await h.clickFirstAvailable(page, [[/remove/i, /delete/i]]);
-  await h.expectTextsVisible(page, [/removed|deleted|success/i]);
+  await page.getByRole('button', { name: /^Favorites$/i }).click();
+  await page.getByRole('button', { name: /^Remove$/i }).click();
+  await expect(page.getByText('Hummingbird wishlist t-shirt', { exact: true })).toHaveCount(0);
 });

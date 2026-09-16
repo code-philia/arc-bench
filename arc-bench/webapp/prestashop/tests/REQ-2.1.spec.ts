@@ -6,5 +6,8 @@ import * as h from './helpers';
 
 test('REQ-2.1: Browse Homepage', async ({ page }) => {
   await h.openHome(page);
-  await h.expectTextsVisible(page, [/carousel/i, /popular products/i, /newsletter/i, /footer/i]);
+  await expect(page.getByRole('region', { name: /^Carousel$/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Popular products$/i })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: /^Newsletter email$/i })).toBeVisible();
+  await expect(page.getByRole('contentinfo')).toBeVisible();
 });

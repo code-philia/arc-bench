@@ -6,5 +6,7 @@ import * as h from './helpers';
 
 test('REQ-4.10: Recently Viewed', async ({ page }) => {
   await h.openProductDetail(page, h.FIXTURES.products.detail);
-  await h.expectTextsVisible(page, [/recently viewed/i, /product/i]);
+  const recentlyViewed = page.getByRole('region', { name: /^Recently viewed$/i });
+  await expect(recentlyViewed).toBeVisible();
+  await expect(recentlyViewed.getByRole('article').first()).toBeVisible();
 });

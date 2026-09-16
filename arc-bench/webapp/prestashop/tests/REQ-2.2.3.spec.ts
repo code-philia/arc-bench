@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-2.2.3: Click Carousel to Navigate', async ({ page }) => {
   await h.openHome(page);
-  await h.clickFirstAvailable(page, [[/shop now/i, /discover/i, /carousel/i]]);
-  await h.expectTextsVisible(page, [/product|sale|category/i]);
+  await page.getByRole('link', { name: /^Shop new arrivals$/i }).first().click();
+  await expect(page.getByRole('heading', { name: /^Men$/i })).toBeVisible();
 });

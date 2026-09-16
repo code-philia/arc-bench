@@ -2,12 +2,10 @@ import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-5.6
-// fixtures: products.cart
+// fixtures: products.cart56
 
 test('REQ-5.6: Continue Shopping Link', async ({ page }) => {
-  await h.openProductDetail(page, h.FIXTURES.products.cart);
-  await h.addProductToCart(page);
-  await h.clickFirstAvailable(page, [[/proceed to checkout/i]]);
-  await h.clickFirstAvailable(page, [[/continue shopping/i]]);
-  await h.expectTextsVisible(page, [/home|products|search/i]);
+  await h.openCartWithProduct(page, h.FIXTURES.products.cart56);
+  await page.getByRole('link', { name: /^Continue shopping$/i }).click();
+  await expect(page.getByRole('heading', { name: /^Men$/i })).toBeVisible();
 });

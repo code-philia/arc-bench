@@ -6,5 +6,5 @@ import * as h from './helpers';
 
 test('REQ-3.8: Product Count Display', async ({ page }) => {
   await h.openCategoryPage(page);
-  await h.expectTextsVisible(page, [/showing/i, /item/i]);
+  await expect(page.getByText(/^Showing \d+-\d+ of \d+ item\(s\)$/i)).toBeVisible();
 });

@@ -6,5 +6,7 @@ import * as h from './helpers';
 
 test('REQ-0: Visit Homepage', async ({ page }) => {
   await h.openHome(page);
-  await h.expectTextsVisible(page, [/carousel/i, /popular products/i, /search/i]);
+  await expect(page.getByRole('region', { name: /^Carousel$/i })).toBeVisible();
+  await expect(page.getByText(/^Popular products$/i)).toBeVisible();
+  await expect(page.getByRole('textbox', { name: /^Search$/i })).toBeVisible();
 });

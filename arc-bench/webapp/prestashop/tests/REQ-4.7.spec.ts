@@ -6,6 +6,6 @@ import * as h from './helpers';
 
 test('REQ-4.7: Add to Wishlist', async ({ page }) => {
   await h.openProductDetail(page, h.FIXTURES.products.detail);
-  await h.clickFirstAvailable(page, [[/wishlist/i]]);
-  await h.expectTextsVisible(page, [/wishlist/i, /sign in|login|added/i]);
+  await page.getByRole('region', { name: /^Product information$/i }).getByRole('button', { name: /^Add to wishlist$/i }).click();
+  await expect(page.getByRole('heading', { name: /^Sign in to continue$/i })).toBeVisible();
 });

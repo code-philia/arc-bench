@@ -6,16 +6,15 @@ import * as h from './helpers';
 
 test('REQ-8.4.2: Add New Address', async ({ page }) => {
   await h.openAddressBook(page, h.FIXTURES.accounts.addressCreate);
-  await h.clickFirstAvailable(page, [[/create new address/i, /add first address/i]]);
-  await h.expectTextsVisible(page, [/alias/i, /address/i, /city/i, /country/i]);
-  await h.fillField(page, [/alias/i], h.FIXTURES.address.newAlias);
-  await h.fillField(page, [/first name/i], h.FIXTURES.address.firstName);
-  await h.fillField(page, [/last name/i], h.FIXTURES.address.lastName);
-  await h.fillField(page, [/address/i], h.FIXTURES.address.address1);
-  await h.fillField(page, [/zip|postal/i], h.FIXTURES.address.postalCode);
-  await h.fillField(page, [/city/i], h.FIXTURES.address.city);
-  await h.chooseOption(page, [/country/i], h.FIXTURES.address.country);
-  await h.fillField(page, [/phone/i], h.FIXTURES.address.phone);
-  await h.clickFirstAvailable(page, [[/save/i]]);
-  await h.expectTextsVisible(page, [h.FIXTURES.address.newAlias, /address/i]);
+  await page.getByRole('button', { name: /^Create new address$/i }).click();
+  await page.getByLabel('Alias *', { exact: true }).fill('Office');
+  await page.getByLabel('First name *', { exact: true }).fill('Store');
+  await page.getByLabel('Last name *', { exact: true }).fill('User');
+  await page.getByLabel('Address *', { exact: true }).fill('1 Commerce Road');
+  await page.getByLabel('Zip / Postal code *', { exact: true }).fill('200000');
+  await page.getByLabel('City *', { exact: true }).fill('Shanghai');
+  await page.getByLabel('Country *', { exact: true }).selectOption({ label: 'China' });
+  await page.getByLabel('Phone *', { exact: true }).fill('13800000020');
+  await page.getByRole('button', { name: /^Save$/i }).click();
+  await expect(page.getByRole('heading', { name: /^Office$/i })).toBeVisible();
 });
