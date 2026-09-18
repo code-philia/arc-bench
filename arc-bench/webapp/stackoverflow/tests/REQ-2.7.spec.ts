@@ -11,7 +11,7 @@ test('REQ-2.7: Edit Profile Management', async ({ page }) => {
   await h.fillField(page, [/display name/i], h.FIXTURES.profile.updatedDisplayName);
   await h.fillField(page, [/location/i], h.FIXTURES.profile.location);
   await h.fillField(page, [/title/i], h.FIXTURES.profile.title);
-  await h.fillMarkdownBody(page, h.FIXTURES.profile.about);
+  await page.getByRole('textbox', { name: /^About me$/i }).fill(h.FIXTURES.profile.about);
   await h.fillField(page, [/website/i], h.FIXTURES.profile.website);
   await h.fillField(page, [/github/i], h.FIXTURES.profile.github);
   await h.clickFirstAvailable(page, [[/save and copy changes to all public communities/i, /save/i]]);

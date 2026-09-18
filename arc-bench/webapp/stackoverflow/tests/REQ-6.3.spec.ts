@@ -6,7 +6,7 @@ import * as h from './helpers';
 
 test('REQ-6.3: Follow Tags', async ({ page }) => {
   await h.login(page, h.FIXTURES.accounts.tagWatcher);
-  await h.openTagDetail(page, h.FIXTURES.tags.primary);
+  await h.openTagDetail(page, h.FIXTURES.tags.watchTarget);
   await h.clickFirstAvailable(page, [[/watch tag/i]]);
   await h.expectTextsVisible(page, [/watched|unwatch tag/i]);
   await h.clickFirstAvailable(page, [[/unwatch tag/i]]);

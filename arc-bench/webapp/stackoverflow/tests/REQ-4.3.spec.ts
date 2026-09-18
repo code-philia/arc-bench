@@ -7,6 +7,6 @@ import * as h from './helpers';
 test('REQ-4.3: Accepted Answer Selection', async ({ page }) => {
   await h.login(page, h.FIXTURES.accounts.answerAcceptOwner);
   await h.openQuestionDetail(page, h.FIXTURES.questions.acceptedAnswer);
-  await h.clickAnswerAction(page, [/accept answer|accepted/i]);
+  await h.clickAnswerAction(page, [/^accept answer$/i]);
   await h.expectTextsVisible(page, [/accepted answer/i]);
 });

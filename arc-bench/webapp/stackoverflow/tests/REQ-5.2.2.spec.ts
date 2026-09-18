@@ -7,6 +7,6 @@ import * as h from './helpers';
 test('REQ-5.2.2: Delete Comment', async ({ page }) => {
   await h.login(page, h.FIXTURES.accounts.commentDeleteUser);
   await h.openQuestionDetail(page, h.FIXTURES.questions.commentDelete);
-  await h.clickCommentAction(page, [/^delete$/i]);
+  await page.getByRole('button', { name: /^Delete comment$/i }).click();
   await h.expectTextAbsent(page, h.FIXTURES.comment.body);
 });

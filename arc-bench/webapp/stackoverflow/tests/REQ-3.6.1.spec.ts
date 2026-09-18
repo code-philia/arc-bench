@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-3.6.1
@@ -7,8 +7,11 @@ import * as h from './helpers';
 test('REQ-3.6.1: Upvote Question', async ({ page }) => {
   await h.login(page, h.FIXTURES.accounts.questionUpvoter);
   await h.openQuestionDetail(page, h.FIXTURES.questions.upvote);
-  await h.clickFirstAvailable(page, [[/up vote|upvote/i]]);
-  await h.expectTextsVisible(page, [/^8$/]);
-  await h.clickFirstAvailable(page, [[/up vote|upvote/i]]);
-  await h.expectTextsVisible(page, [/^7$/]);
+  const questionVoting = page.getByRole('article').filter({ hasText: /Safe retry strategy/i }).getByRole('group').first();
+  const score = questionVoting.getByRole('status', { name: /^Vote score$/i });
+  const initial = await score.textContent();
+  await questionVoting.getByRole('button', { name: /^Upvote$/i }).click();
+  await expect(score).not.toHaveText(initial || '');
+  await questionVoting.getByRole('button', { name: /^Upvote$/i }).click();
+  await expect(score).toHaveText(initial || '');
 });

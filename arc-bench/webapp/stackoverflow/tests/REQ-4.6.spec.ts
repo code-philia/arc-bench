@@ -8,7 +8,7 @@ test('REQ-4.6: Delete Answer', async ({ page }) => {
   await h.login(page, h.FIXTURES.accounts.answerDeleteUser);
   await h.openQuestionDetail(page, h.FIXTURES.questions.answerDelete);
   await h.clickAnswerAction(page, [/^delete$/i]);
-  await h.expectTextsVisible(page, [/consequences|confirm deletion/i]);
-  await h.clickFirstAvailable(page, [[/confirm deletion|delete/i]]);
+  await h.expectTextsVisible(page, [/delete answer\?/i]);
+  await h.clickFirstAvailable(page, [[/^confirm deletion$/i]]);
   await h.expectTextAbsent(page, h.FIXTURES.answer.deleteBody);
 });

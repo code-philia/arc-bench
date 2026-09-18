@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-7.3
@@ -7,14 +7,13 @@ import * as h from './helpers';
 test('REQ-7.3: Create Custom Filter', async ({ page }) => {
   await h.login(page, h.FIXTURES.accounts.filterUser);
   await h.openQuestionList(page);
-  await h.clickFirstAvailable(page, [[/^filter$/i]]);
-  await h.expectTextsVisible(page, [/sort/i, /tag/i, /filter panel/i]);
-  await h.setCheckbox(page, [/unanswered/i], true);
-  await h.chooseOption(page, [/sort/i], [/newest/i]);
-  await h.fillField(page, [/tag/i], h.FIXTURES.tags.primary);
-  await h.clickFirstAvailable(page, [[/save custom filter/i]]);
-  await h.expectTextsVisible(page, [/save filter/i]);
-  await h.fillField(page, [/title/i], h.FIXTURES.filters.customName);
-  await h.clickFirstAvailable(page, [[/save filter/i]]);
-  await h.expectTextsVisible(page, [h.FIXTURES.filters.customName]);
+  await page.getByRole('button', { name: /^Filter$/i }).click();
+  const panel = page.getByRole('region', { name: /^Filter panel$/i });
+  await panel.getByRole('checkbox', { name: /^No answers$/i }).check();
+  await panel.getByRole('radio', { name: /^Newest$/i }).check();
+  await panel.getByRole('textbox', { name: /^Tag$/i }).fill(h.FIXTURES.tags.filterTarget);
+  await panel.getByRole('button', { name: /^Save custom filter$/i }).click();
+  await panel.getByRole('textbox', { name: /^Filter title$/i }).fill(h.FIXTURES.filters.customName);
+  await panel.getByRole('button', { name: /^Save filter$/i }).click();
+  await expect(panel.getByText(`Filter saved: ${h.FIXTURES.filters.customName}`, { exact: true })).toBeVisible();
 });

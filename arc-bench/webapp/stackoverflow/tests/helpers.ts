@@ -41,16 +41,17 @@ export const FIXTURES = {
       password: 'Password123!',
       displayName: 'Stack User',
     },
-    questionCreator: {
-      email: 'question_creator@example.com',
-      password: 'Password123!',
-      displayName: 'Stack User',
-    },
+    questionCreatorCreate: { email: 'question_creator_create@example.com', password: 'Password123!', displayName: 'Stack User' },
+    questionCreatorValidation: { email: 'question_creator_validation@example.com', password: 'Password123!', displayName: 'Stack User' },
     questionEditor: {
       email: 'question_editor@example.com',
       password: 'Password123!',
       displayName: 'Stack User',
     },
+    questionEditorMode: { email: 'question_editor_mode@example.com', password: 'Password123!', displayName: 'Stack User' },
+    questionEditorTitleTags: { email: 'question_editor_title_tags@example.com', password: 'Password123!', displayName: 'Stack User' },
+    questionEditorBodyPreview: { email: 'question_editor_body_preview@example.com', password: 'Password123!', displayName: 'Stack User' },
+    questionEditorGuidance: { email: 'question_editor_guidance@example.com', password: 'Password123!', displayName: 'Stack User' },
     questionDeleter: {
       email: 'question_deleter@example.com',
       password: 'Password123!',
@@ -86,11 +87,8 @@ export const FIXTURES = {
       password: 'Password123!',
       displayName: 'Stack User',
     },
-    answerValidationUser: {
-      email: 'answer_validation_user@example.com',
-      password: 'Password123!',
-      displayName: 'Stack User',
-    },
+    answerValidationEmpty: { email: 'answer_validation_empty@example.com', password: 'Password123!', displayName: 'Stack User' },
+    answerValidationCancel: { email: 'answer_validation_cancel@example.com', password: 'Password123!', displayName: 'Stack User' },
     answerDeleteUser: {
       email: 'answer_delete_user@example.com',
       password: 'Password123!',
@@ -162,7 +160,10 @@ export const FIXTURES = {
   },
   questions: {
     detail: { title: 'How can I safely retry an idempotent HTTP request in Node.js?' },
-    editPreview: { title: 'SO Question Edit Preview' },
+    editMode: { title: 'SO Question Edit Mode' },
+    editTitleTags: { title: 'SO Question Edit Title Tags' },
+    editBodyPreview: { title: 'SO Question Edit Body Preview' },
+    editGuidance: { title: 'SO Question Edit Guidance' },
     editSave: { title: 'SO Question Edit Save' },
     deletable: { title: 'SO Deletable Question' },
     upvote: { title: 'SO Upvote Question' },
@@ -172,7 +173,8 @@ export const FIXTURES = {
     acceptedAnswer: { title: 'SO Accepted Answer Question' },
     answerSorting: { title: 'SO Answer Sorting Question' },
     successfulAnswerEdit: { title: 'SO Successful Answer Edit Question' },
-    answerValidation: { title: 'SO Answer Validation Question' },
+    answerValidationEmpty: { title: 'SO Answer Validation Empty Question' },
+    answerValidationCancel: { title: 'SO Answer Validation Cancel Question' },
     answerDelete: { title: 'SO Answer Delete Question' },
     questionComment: { title: 'SO Question Comment Question' },
     expandedComments: { title: 'SO Expanded Comment Question' },
@@ -196,6 +198,8 @@ export const FIXTURES = {
   tags: {
     primary: 'python',
     secondary: 'javascript',
+    watchTarget: 'python-follow-test',
+    filterTarget: 'python-filter-test',
   },
   search: {
     query: 'react state',
@@ -286,11 +290,11 @@ async function resolveField(scope: Scope, value: Match): Promise<Locator> {
   const patterns = toPatterns(value);
   for (const pattern of patterns) {
     const locator = await firstVisible([
-      target(scope).getByLabel(pattern),
-      target(scope).getByPlaceholder(pattern),
       target(scope).getByRole('textbox', { name: pattern }),
       target(scope).getByRole('searchbox', { name: pattern }),
       target(scope).getByRole('combobox', { name: pattern }),
+      target(scope).getByLabel(pattern),
+      target(scope).getByPlaceholder(pattern),
     ]);
     try {
       if (await locator.isVisible({ timeout: 200 })) return locator;
@@ -426,19 +430,19 @@ export async function expectHomepage(page: Page): Promise<void> {
 
 export async function openLoginPage(page: Page): Promise<void> {
   await openHome(page);
-  await clickFirstAvailable(page, [[/^log in$/i, /^login$/i]]);
+  await clickNamed(page, /^Log in$/i);
 }
 
 export async function openSignupPage(page: Page): Promise<void> {
   await openHome(page);
-  await clickFirstAvailable(page, [[/^sign up$/i]]);
+  await clickNamed(page, /^Sign up$/i);
 }
 
 export async function login(page: Page, account: AccountFixture = FIXTURES.accounts.readonly): Promise<void> {
   await openLoginPage(page);
   await fillField(page, [/email/i], account.email);
   await fillField(page, [/password/i], account.password);
-  await clickFirstAvailable(page, [[/^log in$/i, /^login$/i]]);
+  await clickNamed(page, /^Log in$/i);
 }
 
 export async function openProfile(page: Page, account: AccountFixture = FIXTURES.accounts.readonly): Promise<void> {
@@ -448,7 +452,7 @@ export async function openProfile(page: Page, account: AccountFixture = FIXTURES
 
 export async function openQuestionList(page: Page): Promise<void> {
   await openHome(page);
-  await clickFirstAvailable(page, [[/^questions$/i]]);
+  await page.getByRole('navigation', { name: /^Primary navigation$/i }).getByRole('button', { name: /^Questions$/i }).click();
 }
 
 export async function openQuestionDetail(page: Page, question: QuestionFixture = FIXTURES.questions.detail): Promise<void> {
@@ -458,11 +462,16 @@ export async function openQuestionDetail(page: Page, question: QuestionFixture =
 
 export async function openAskQuestion(page: Page, account: AccountFixture = FIXTURES.accounts.readonly): Promise<void> {
   await login(page, account);
-  await clickFirstAvailable(page, [[/ask question/i]]);
+  await clickNamed(page, /^Ask Question$/i);
 }
 
 export async function fillMarkdownBody(scope: Scope, value: string): Promise<void> {
-  await fillField(scope, [/body/i, /markdown/i, /text/i], value);
+  const locator = await firstVisible([
+    target(scope).getByRole('textbox', { name: /^Body$/i }),
+    target(scope).getByRole('textbox', { name: /^Answer body$/i }),
+    target(scope).getByRole('textbox', { name: /^Your Answer$/i }),
+  ]);
+  await locator.fill(value);
 }
 
 export async function openQuestionEdit(page: Page, account: AccountFixture, question: QuestionFixture): Promise<void> {
@@ -479,7 +488,7 @@ export async function openAnswerEditor(page: Page, account: AccountFixture, ques
 
 export async function openTagsPage(page: Page): Promise<void> {
   await openQuestionList(page);
-  await clickFirstAvailable(page, [[/^tags$/i]]);
+  await page.getByRole('navigation', { name: /^Primary navigation$/i }).getByRole('button', { name: /^Tags$/i }).click();
 }
 
 export async function openTagDetail(page: Page, tag: string = FIXTURES.tags.primary): Promise<void> {
@@ -489,5 +498,5 @@ export async function openTagDetail(page: Page, tag: string = FIXTURES.tags.prim
 
 export async function openActivityTab(page: Page, account: AccountFixture = FIXTURES.accounts.activity): Promise<void> {
   await openProfile(page, account);
-  await clickFirstAvailable(page, [[/^activity$/i]]);
+  await clickNamed(page, /^Activity$/i);
 }

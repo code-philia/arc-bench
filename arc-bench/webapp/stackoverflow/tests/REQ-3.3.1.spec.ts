@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-3.3.1
@@ -6,5 +6,9 @@ import * as h from './helpers';
 
 test('REQ-3.3.1: Default Question View', async ({ page }) => {
   await h.openQuestionDetail(page, h.FIXTURES.questions.detail);
-  await h.expectTextsVisible(page, [/header/i, /sidebar/i, /question/i, /answers/i]);
+  await expect(page.getByRole('banner')).toBeVisible();
+  await expect(page.getByRole('main')).toBeVisible();
+  await expect(page.getByRole('complementary')).toHaveCount(2);
+  await expect(page.getByRole('heading', { name: h.FIXTURES.questions.detail.title, exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Answers$/i })).toBeVisible();
 });

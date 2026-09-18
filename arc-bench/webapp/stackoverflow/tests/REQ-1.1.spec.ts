@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as h from './helpers';
 
 // requirement: REQ-1.1
@@ -6,5 +6,9 @@ import * as h from './helpers';
 
 test('REQ-1.1: View Homepage Layout', async ({ page }) => {
   await h.openHome(page);
-  await h.expectTextsVisible(page, [/header/i, /sidebar/i, /questions/i]);
+  await expect(page.getByRole('banner')).toBeVisible();
+  await expect(page.getByRole('main')).toBeVisible();
+  await expect(page.getByRole('complementary')).toHaveCount(2);
+  await expect(page.getByRole('heading', { name: /^Newest Questions$/i })).toBeVisible();
+  await expect(page.getByRole('article').first()).toBeVisible();
 });

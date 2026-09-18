@@ -6,8 +6,7 @@ dependencies: []
 children:
 - id: REQ-0
   name: Open Homepage
-  description: Opening the platform root URL loads the homepage shell with the global header, left navigation,
-    right sidebar widgets, and central question feed.
+  description: Opening the platform root URL loads the homepage shell with a banner, main content, complementary sidebars, a navigation landmark named "Primary navigation" containing buttons named "Questions", "Tags", "Users", and "Badges", a textbox named "Search", and a central feed containing question articles.
   dependencies: []
   type: ATOMIC
   scenarios:
@@ -29,7 +28,7 @@ children:
   children:
   - id: REQ-1.1
     name: View Homepage Total Layout
-    description: Displays the multi-column homepage layout including header, sidebar, and main feed.
+    description: Displays the multi-column homepage layout using a banner, main landmark, two complementary sidebars, heading "Newest Questions", and question articles.
     dependencies:
     - REQ-0
     type: ATOMIC
@@ -45,7 +44,7 @@ children:
   - id: REQ-1.2
     name: Global Navigation Header
     description: Fixed top bar for global navigation and utility. Includes the platform logo, search input
-      with suggestions, product links, and authentication status (Login/Sign up buttons or User Avatar/Stats).
+      with suggestions, the visible text "Products", and authentication status (Login/Sign up buttons or User Avatar/Stats).
     dependencies: []
     type: ATOMIC
     scenarios:
@@ -214,7 +213,7 @@ children:
           content: Show error message "The email is not a valid email address"
     - id: REQ-2.4.4
       name: Error - Unregistered Email
-      description: Shows error message "No account found with this email".
+      description: 'Entering the unregistered email "unknown_user@example.com" with password "Password123!" shows the error "No account found with this email".'
       dependencies:
       - REQ-1.1
       type: ATOMIC
@@ -229,7 +228,7 @@ children:
           content: Show error message "No account found with this email"
     - id: REQ-2.4.5
       name: Error - Incorrect Password
-      description: Shows error message "The email or password does not match any account".
+      description: 'Entering the registered email "stack_user@example.com" with the incorrect password "WrongPassword123!" shows the error "The email or password does not match any account".'
       dependencies:
       - REQ-1.1
       type: ATOMIC
@@ -252,8 +251,7 @@ children:
     children:
     - id: REQ-2.5.1
       name: Happy Path - Successful Sign up
-      description: Creates a new account with a unique email and valid password, signs the user in automatically,
-        and returns the user to the homepage.
+      description: 'Creates a new account with the unique email "new_stack_user@example.com" and valid password "Password123!", signs the user in automatically, and returns the user to the homepage.'
       dependencies:
       - REQ-1.1
       type: ATOMIC
@@ -289,7 +287,7 @@ children:
           content: Show error "Email is already in use"
     - id: REQ-2.5.3
       name: Error - Weak Password
-      description: Shows validation error explaining password requirements (e.g. minimum 8 characters).
+      description: 'Entering the candidate email "weak_password_candidate@example.com" with weak password "short" shows the validation error "Password must be at least 8 characters and include a letter and a number".'
       dependencies:
       - REQ-1.1
       type: ATOMIC
@@ -320,7 +318,7 @@ children:
           stats and recent activity modules.
   - id: REQ-2.7
     name: Edit Profile Management
-    description: 'Allows users to customize their public identity and manage private details. ![image](./reference/edit-profile.jpeg) The system contains a separate verified account with email "profile_editor@example.com", password "Password123!", and an editable public profile. The profile for profile_editor@example.com contains valid existing values for display name, full name, location, title, About me, website, X, and GitHub fields before editing.'
+    description: 'Allows users to customize their public identity and manage private details. ![image](./reference/edit-profile.jpeg) The system contains verified account "profile_editor@example.com" / "Password123!" with an editable public profile. The test updates Display name to "Stack User Updated", Location to "Shanghai", Title to "Backend Engineer", About me to "I enjoy building APIs and developer tooling for teams.", Website to "www.example.dev", and GitHub to "github.com/example", then uses "Save and copy changes to all public communities" and receives a success message.'
     dependencies:
     - REQ-2.6
     type: ATOMIC
@@ -378,7 +376,7 @@ children:
     children:
     - id: REQ-3.2.1
       name: Create New Question
-      description: 'Lets an authenticated user compose a question with a title, markdown body, and tags, then publishes it to a new question detail page. The tag suggestion data returns "node.js", "http", and "retry" when a user enters "node.js" in the question tag field.'
+      description: 'Lets verified account "question_creator_create@example.com" / "Password123!" publish a question titled "How can I safely retry an idempotent HTTP request in Node.js without duplicating side effects?" with body "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?" and tag "node.js". The tag suggestions include "node.js", "http", and "retry".'
       dependencies:
       - REQ-2.2
       type: ATOMIC
@@ -412,8 +410,7 @@ children:
             under "Questions" tab
     - id: REQ-3.2.2
       name: Validation for Required Fields
-      description: Blocks question submission until the title, body, and at least one tag satisfy the
-        required-field rules.
+      description: 'Blocks question submission until the title, body, and at least one tag satisfy the required validation rules. Seed data: isolated verified account "question_creator_validation@example.com" and isolated validation record.'
       dependencies:
       - REQ-2.2
       type: ATOMIC
@@ -449,8 +446,7 @@ children:
     children:
     - id: REQ-3.3.1
       name: Default Question View
-      description: Displays the full hierarchical layout including header, sidebar, body, and interaction
-        sections.
+      description: Displays the full hierarchical layout using a banner, main landmark, two complementary sidebars, the current question heading, and an answers heading.
       dependencies:
       - REQ-3.1
       type: ATOMIC
@@ -483,8 +479,7 @@ children:
           content: Title is clear; metadata shows accurate timestamps and view counts.
     - id: REQ-3.3.3
       name: Post Voting and Interaction Sidebar
-      description: A vertical sidebar to the left of the question body. Contains upvote/downvote arrows,
-        the current score, a bookmark/favorite icon, and a timeline/history icon.
+      description: A vertical interaction area beside the question body contains buttons named "Upvote", "Downvote", "Save", and "Timeline", plus the current score.
       dependencies:
       - REQ-2.2
       - REQ-3.3.1
@@ -550,13 +545,13 @@ children:
   - id: REQ-3.4
     name: Edit Question
     type: FOLDER
-    description: 'Allows authors and high-reputation users to refine questions. The edit interface mimics the Ask Question structure but includes revision history and modification tracking. ![image](./reference/edit-question.jpeg) The system contains a separate verified account with email "question_editor@example.com" and password "Password123!" that owns an editable question.'
+    description: 'Allows authors and high-reputation users to refine questions. The edit interface mimics the Ask Question structure but includes revision history and modification tracking. ![image](./reference/edit-question.jpeg) The edit scenarios use isolated verified editor accounts and isolated editable questions.'
     dependencies:
     - REQ-3.3
     children:
     - id: REQ-3.4.1
       name: Enter Edit Mode
-      description: 'Displays the Edit Question page with all current content pre-populated in the respective fields. The question "SO Question Edit Preview" is public, owned by question_editor@example.com, and contains existing title, body, and tag values that are editable.'
+      description: 'Displays the Edit Question page with all current content pre-populated in the respective fields. Seed data: verified account "question_editor_mode@example.com" and question "SO Question Edit Mode".'
       dependencies:
       - REQ-3.3.1
       type: ATOMIC
@@ -572,7 +567,7 @@ children:
             fields.
     - id: REQ-3.4.2
       name: Title and Tags Editor
-      description: Section for modifying the question's headline and categorization.
+      description: 'The edit page exposes fields named "Title" and "Tags". Verified account "question_editor_title_tags@example.com" / "Password123!" edits question "SO Question Edit Title Tags", setting Title to "How can I safely retry an idempotent HTTP request in Node.js without duplicating side effects?" and Tags to "node.js".'
       dependencies:
       - REQ-3.4.1
       type: ATOMIC
@@ -587,8 +582,7 @@ children:
           content: Input fields reflect the new content.
     - id: REQ-3.4.3
       name: Markdown Body Editor with Preview
-      description: The main rich-text workspace. Includes a toolbar for Markdown formatting (Bold, Italic,
-        Code, and other supported markdown tools) and a real-time preview rendered below the editor.
+      description: 'The main rich-text workspace has a Body field, Markdown formatting tools, and a real-time preview. Verified account "question_editor_body_preview@example.com" / "Password123!" edits question "SO Question Edit Body Preview" with body "Updated question body that explains the current retry approach, failure modes, and what has already been tested in production environments.".'
       dependencies:
       - REQ-3.4.1
       type: ATOMIC
@@ -603,7 +597,7 @@ children:
           content: The preview area below automatically updates to show the rendered HTML.
     - id: REQ-3.4.4
       name: Edit Summary and Revision History
-      description: 'Components for documenting and viewing changes. Includes a "Rev" dropdown to view previous versions and an "Edit Summary" field to describe the reason for the update. The question "SO Question Edit Save" is public, owned by question_editor@example.com, and has an initial revision that can receive a new saved revision.'
+      description: 'The edit page includes a combobox named "Rev" for previous versions and a field named "Edit Summary" that captures "Clarified retry requirements and added implementation context." for the next revision. The public question "SO Question Edit Save" is owned by question_editor@example.com and has an initial revision.'
       dependencies:
       - REQ-3.4.1
       type: ATOMIC
@@ -618,8 +612,7 @@ children:
           content: The summary is captured for the revision history.
     - id: REQ-3.4.5
       name: Guidance Sidebar (How to Edit)
-      description: A supplemental widget on the right providing community guidelines on how to effectively
-        edit posts.
+      description: 'A supplemental widget displays heading "How to Edit" and an "Editing checklist" with community guidelines. Seed data: verified account "question_editor_guidance@example.com" and question "SO Question Edit Guidance".'
       dependencies:
       - REQ-3.4.1
       type: ATOMIC
@@ -634,7 +627,7 @@ children:
           content: Users see a checklist of best practices for editing.
   - id: REQ-3.5
     name: Delete Question
-    description: 'Question author can delete their own question if it has no answers or minimal engagement. The system contains a separate verified account with email "question_deleter@example.com" and password "Password123!" that owns a deletable question. The question "SO Deletable Question" is public, owned by question_deleter@example.com, has no answers or important engagement, and can be soft-deleted.'
+    description: 'Question author can activate "Delete" for their own low-engagement question, review heading "Delete question?", and activate "Confirm deletion". The system contains verified account "question_deleter@example.com" / "Password123!" owning public question "SO Deletable Question", which has no answers and can be soft-deleted.'
     dependencies:
     - REQ-3.3
     - REQ-3.3.1
@@ -657,8 +650,7 @@ children:
   - id: REQ-3.6
     name: Vote on Question
     type: FOLDER
-    description: Users can upvote or downvote questions to indicate quality and usefulness. Voting affects
-      question author's reputation.
+    description: 'Users can upvote or downvote the question article containing the safe retry strategy. Its voting group contains buttons "Upvote" and "Downvote" and a status element named "Vote score". Voting changes that score and clicking the same vote again reverses the change; the question author''s reputation is updated.'
     dependencies:
     - REQ-3.3
     children:
@@ -686,7 +678,7 @@ children:
           content: Remove upvote, decrement vote count, remove reputation bonus
     - id: REQ-3.6.2
       name: Downvote Question
-      description: 'Lets a signed-in user downvote a question and applies the visible vote-state change and reputation impact defined for the action. The system contains a separate verified account with email "question_downvoter@example.com" and password "Password123!" that has not voted on the dedicated downvote question. The question "SO Downvote Question" is public, has an initial score of 3, and has no vote from question_downvoter@example.com.'
+      description: 'Lets a signed-in user activate the button named "Downvote" and applies the visible vote-state change and reputation impact. Verified account "question_downvoter@example.com" / "Password123!" has not voted on public question "SO Downvote Question", whose initial score is 3.'
       dependencies:
       - REQ-2.2
       - REQ-3.3.1
@@ -711,7 +703,7 @@ children:
   children:
   - id: REQ-4.1
     name: Answer Submission (Your Answer)
-    description: 'A dedicated section at the bottom of the Question Detail Page for authenticated users to provide solutions. Features a Markdown editor consistent with the question creation interface. The system contains a separate verified account with email "answer_submitter@example.com" and password "Password123!" that can publish an answer. The question "SO Answer Submission Question" is public, open for answers, and displays a usable Your Answer editor for answer_submitter@example.com.'
+    description: 'A dedicated section at the bottom of the Question Detail Page exposes the "Your Answer" editor and button "Post Your Answer". Verified account "answer_submitter@example.com" / "Password123!" can publish the answer "Use exponential backoff together with an idempotency key so duplicate requests can be safely retried without creating duplicate side effects in downstream services." on public question "SO Answer Submission Question".'
     dependencies:
     - REQ-2.2
     - REQ-3.3.1
@@ -750,7 +742,7 @@ children:
         content: The answer's score updates; reputation is awarded/deducted from the answer author.
   - id: REQ-4.3
     name: Accepted Answer Selection
-    description: 'Special privilege for the question author to mark a single answer as the definitive solution, distinguished by a green checkmark and the accessible label "Accepted answer". The system contains a separate verified account with email "answer_accept_owner@example.com" and password "Password123!" that owns the dedicated accepted-answer question. The question "SO Accepted Answer Question" is public, owned by answer_accept_owner@example.com, and contains a visible unaccepted answer authored by Helpful User.'
+    description: 'The question author can activate the control with accessible name "Accept answer" to mark one answer as definitive; afterward it has accessible name "Accepted answer" and a green checkmark. Verified account "answer_accept_owner@example.com" / "Password123!" owns public question "SO Accepted Answer Question", which contains a visible unaccepted answer authored by Helpful User.'
     dependencies:
     - REQ-2.2
     - REQ-3.3.1
@@ -794,7 +786,7 @@ children:
     children:
     - id: REQ-4.5.1
       name: Happy Path - Successfully Edit Answer
-      description: 'Updates answer content, append to revision history, and display "edited" timestamp on the post. The system contains a separate verified account with email "answer_edit_user@example.com" and password "Password123!" that owns the dedicated answer used for a successful edit. The question "SO Successful Answer Edit Question" contains exactly one target answer authored by answer_edit_user@example.com with the initial body "Use exponential backoff together with an idempotency key so duplicate requests can be safely retried without creating duplicate side effects in downstream services.".'
+      description: 'Verified account "answer_edit_user@example.com" / "Password123!" owns the target answer on "SO Successful Answer Edit Question". It changes the initial body "Use exponential backoff together with an idempotency key so duplicate requests can be safely retried without creating duplicate side effects in downstream services." to "Updated answer body describing exponential backoff, retry budgets, and idempotency keys for safe network retries.", enters edit summary "Expanded answer with retry-budget and idempotency details.", saves, appends a revision, and displays an "edited" timestamp.'
       dependencies:
       - REQ-4.1
       type: ATOMIC
@@ -820,7 +812,7 @@ children:
             the post.
     - id: REQ-4.5.2
       name: Error - Empty Answer Body
-      description: 'Show the validation error "Body cannot be empty" and prevent submission. The verified account "answer_validation_user@example.com" with password "Password123!" owns a non-empty answer on "SO Answer Validation Question" that can be edited for this validation flow.'
+      description: 'Show the validation error "Body cannot be empty" and prevent submission. Seed data: verified account "answer_validation_empty@example.com" with a non-empty answer on "SO Answer Validation Empty Question".'
       dependencies:
       - REQ-4.1
       type: ATOMIC
@@ -835,7 +827,7 @@ children:
           content: Show validation error "Body cannot be empty" and prevent submission.
     - id: REQ-4.5.3
       name: Cancel Answer Editing
-      description: 'Close the editor and return to the original answer view without saving changes. The verified account "answer_validation_user@example.com" with password "Password123!" owns a non-empty answer on "SO Answer Validation Question" that can be edited and then left unchanged.'
+      description: 'Verified account "answer_validation_cancel@example.com" / "Password123!" opens its non-empty answer on "SO Answer Validation Cancel Question", changes the editor text to "Updated answer body describing exponential backoff, retry budgets, and idempotency keys for safe network retries.", then activates "Cancel". The editor closes and the updated text is not saved or displayed.'
       dependencies:
       - REQ-4.1
       type: ATOMIC
@@ -850,7 +842,7 @@ children:
           content: Close editor and return to the original answer view without saving changes.
   - id: REQ-4.6
     name: Delete Answer
-    description: 'Answer author can delete their own answer if not accepted. The system contains a separate verified account with email "answer_delete_user@example.com" and password "Password123!" that owns a separate unaccepted answer that can be deleted. The question "SO Answer Delete Question" contains exactly one target answer authored by answer_delete_user@example.com with the visible body "This answer is reserved for the answer deletion scenario."; the answer is not accepted and can be deleted.'
+    description: 'Answer author can activate "Delete" for an unaccepted answer, review heading "Delete answer?", and activate "Confirm deletion". Verified account "answer_delete_user@example.com" / "Password123!" owns the target answer on "SO Answer Delete Question" with body "This answer is reserved for the answer deletion scenario.".'
     dependencies:
     - REQ-4.1
     type: ATOMIC
@@ -932,7 +924,7 @@ children:
     children:
     - id: REQ-5.2.1
       name: Edit Comment
-      description: 'Updates comment, show "edited" indicator. The system contains a separate verified account with email "comment_edit_user@example.com" and password "Password123!" that owns an editable comment. The question "SO Comment Edit Question" contains exactly one target comment authored by comment_edit_user@example.com, within the editable time window, with the body "Can you share what you tried so far?".'
+      description: 'Verified account "comment_edit_user@example.com" / "Password123!" owns comment "Can you share what you tried so far?" on "SO Comment Edit Question". The owner activates "Edit comment", changes field "Comment" to "Updated comment clarifying the original reproduction steps.", submits with Enter, and sees an "edited" indicator.'
       dependencies:
       - REQ-5.1.1
       type: ATOMIC
@@ -953,7 +945,7 @@ children:
           content: Update comment, show "edited" indicator
     - id: REQ-5.2.2
       name: Delete Comment
-      description: 'Removes comment immediately without confirmation. The system contains a separate verified account with email "comment_delete_user@example.com" and password "Password123!" that owns a separate deletable comment. The question "SO Comment Delete Question" contains exactly one separate target comment authored by comment_delete_user@example.com with the body "Can you share what you tried so far?".'
+      description: 'The comment owner can activate "Delete comment" to remove the comment immediately without confirmation. Verified account "comment_delete_user@example.com" / "Password123!" owns the target comment "Can you share what you tried so far?" on "SO Comment Delete Question".'
       dependencies:
       - REQ-5.1.1
       type: ATOMIC
@@ -1012,7 +1004,7 @@ children:
         content: Add the comment below the answer and show the commenter name and timestamp.
   - id: REQ-5.5
     name: Reply to Comments
-    description: 'Lets an authenticated user reply to an existing comment and displays the reply as a nested child item under the parent comment. The system contains a separate verified account with email "comment_reply_user@example.com" and password "Password123!" that can reply to comments. The question "SO Comment Reply Question" contains a visible comment authored by Helpful User with a Reply action.'
+    description: 'Verified account "comment_reply_user@example.com" / "Password123!" replies to the visible Helpful User comment on "SO Comment Reply Question" with "@Helpful User I tried exponential backoff and a request identifier.". The reply is displayed as a nested child item with the mention "@Helpful User".'
     dependencies:
     - REQ-5.1.1
     type: ATOMIC
@@ -1042,7 +1034,7 @@ children:
   children:
   - id: REQ-6.1
     name: View All Tags
-    description: 'Displays paginated list of all tags with names, descriptions, and question counts, sorted by popularity. The tag catalog contains the public tags "python", "javascript", "node.js", "http", and "retry", each with a description and question count.'
+    description: 'The navigation landmark named "Primary navigation" contains a button named "Tags" that opens a paginated list of all tags with names, descriptions, and question counts, sorted by popularity. The tag catalog contains the public tags "python", "javascript", "node.js", "http", and "retry", each with a description and question count.'
     dependencies:
     - REQ-1.1
     type: ATOMIC
@@ -1058,7 +1050,7 @@ children:
           by popularity
   - id: REQ-6.2
     name: Tag Detail Page
-    description: 'Displays all questions with a specific tag, tag description, and related tags. The "python" tag has a public tag detail page with tagged questions, tag information, and related tag data.'
+    description: 'Displays all questions with a specific tag and its description. The "python" tag page is headed "python" and displays the description "Python is a dynamically typed, multi-purpose programming language designed to be quick to learn, understand, and use." together with tagged questions.'
     dependencies:
     - REQ-6.1
     type: ATOMIC
@@ -1073,7 +1065,7 @@ children:
         content: Display filtered question list showing only questions with that tag, with tag info header
   - id: REQ-6.3
     name: Follow Tags
-    description: 'Lets an authenticated user watch or unwatch a tag so the preference is reflected on the tag page and in question lists. The system contains a separate verified account with email "tag_watcher@example.com" and password "Password123!" whose initial watched-tags state does not include "python".'
+    description: 'Lets an authenticated user watch or unwatch a tag so the preference is reflected on the tag page and in question lists. Seed data: verified account "tag_watcher@example.com" with isolated tag "python-follow-test" initially unwatched.'
     dependencies:
     - REQ-2.2
     - REQ-6.2
@@ -1142,7 +1134,7 @@ children:
         content: Update question list based on selected filter criteria
   - id: REQ-7.3
     name: Create Custom Filter
-    description: 'Lets the user combine predefined filters, sorting choices, and tag criteria, then save the configuration as a reusable custom filter. The system contains a separate verified account with email "filter_user@example.com" and password "Password123!" that can save custom filters.'
+    description: 'Verified account "filter_user@example.com" opens button "Filter" and region "Filter panel", selects checkbox "No answers" and radio "Newest", enters isolated tag "python-filter-test" in field "Tag", enters "Python unanswered filter" in field "Filter title", and activates "Save filter". The confirmation text is "Filter saved: Python unanswered filter".'
     dependencies:
     - REQ-1.1
     type: ATOMIC
@@ -1219,7 +1211,7 @@ children:
           content: Award badge to user, show notification popup, display on profile
     - id: REQ-8.2.2
       name: View All Badges
-      description: 'Displays categorized list of all available badges with descriptions and earn counts. The badge catalog contains Gold, Silver, and Bronze badge categories and includes the badges "Great Answer" and "Teacher" with descriptions and earn counts.'
+      description: 'The navigation landmark named "Primary navigation" contains button "Badges". It opens heading "Badges" and the headings "Gold badges", "Silver badges", and "Bronze badges", including badge headings "Great Answer" and "Teacher" with descriptions and earn counts.'
       dependencies:
       - REQ-1.1
       type: ATOMIC
