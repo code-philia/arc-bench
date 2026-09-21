@@ -1,9 +1,15 @@
-# ARC-Bench
+﻿# ARC-Bench
 
 `arc-bench` is a benchmark for requirement-to-application generation. It
 evaluates whether a generation system can transform multi-modal web application
 requirements into a runnable implementation whose behavior is validated by
 end-to-end Playwright tests.
+
+The benchmark was first introduced in the ARC paper, [Compiling Large Multi-Modal Requirement Documents into Runnable
+  Software Systems: From an Agentic Test-Driven Perspective](https://arxiv.org/abs/2602.13723). This repository provides the benchmark
+artifacts and evaluation workflow for independent reproduction. The associated
+ARC compiler is open-sourced at
+<https://github.com/code-philia/agentic-requirement-compiler>.
 
 The benchmark is organized as a set of web application tasks. Each task pairs a
 requirement package with an executable test suite, so different generators can
@@ -41,6 +47,7 @@ Requirement counts are the number of atomic requirement nodes in
 
 ## Reference
 
+```bibtex
 @article{kong2026arc,
   author    = {Weiyu Kong and Yun Lin and Xiwen Teoh and Duc-Minh Nguyen and Ruofei Ren and Jiaxin Chang and Haoxu Hu and Haoyu Chen},
   title     = {Compiling Large Multi-Modal Requirement Documents into Runnable Software Systems: From an Agentic Test-Driven Perspective},
@@ -48,6 +55,7 @@ Requirement counts are the number of atomic requirement nodes in
   year      = {2026},
   series    = {ISSTA}
 }
+```
 
 ## 🚀 Benchmark Basic Usage
 
