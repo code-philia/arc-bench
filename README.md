@@ -39,6 +39,16 @@ Requirement counts are the number of atomic requirement nodes in
 | `12306` | 117 | 117 | China Railway 12306, <https://www.12306.cn/en> |
 | `ctrip` | 125 | 125 | Ctrip, <https://www.ctrip.com/> |
 
+## Reference
+
+@article{kong2026arc,
+  author    = {Weiyu Kong and Yun Lin and Xiwen Teoh and Duc-Minh Nguyen and Ruofei Ren and Jiaxin Chang and Haoxu Hu and Haoyu Chen},
+  title     = {Compiling Large Multi-Modal Requirement Documents into Runnable Software Systems: From an Agentic Test-Driven Perspective},
+  booktitle = {Proceedings of the ACM SIGSOFT International Symposium on Software Testing and Analysis},
+  year      = {2026},
+  series    = {ISSTA}
+}
+
 ## 🚀 Benchmark Basic Usage
 
 The benchmark usage is independent of any particular generation method:
