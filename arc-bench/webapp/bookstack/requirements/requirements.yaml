@@ -1,7 +1,9 @@
 id: ROOT
 name: BookStack Knowledge Base System
 type: FOLDER
-description: Web-based knowledge base system for browsing, organizing, and reading shelves, books, chapters, and pages.
+description: >
+  Web-based knowledge base system for browsing, organizing, and reading
+  shelves, books, chapters, and pages.
 dependencies: []
 children:
   - id: REQ-1
@@ -13,7 +15,9 @@ children:
       - id: REQ-1.1
         name: Open Homepage
         type: ATOMIC
-        description: Open the application and display the homepage.
+        description: >
+          Open the application and display the homepage. The page contains
+          exactly one visible heading with accessible name `BookStack`.
         dependencies: []
         scenarios:
           - name: Open Homepage
@@ -23,11 +27,15 @@ children:
               - keyword: WHEN
                 content: The user opens the application URL.
               - keyword: THEN
-                content: The homepage is displayed as the default page.
+                content: The homepage is displayed as the default page with exactly one visible heading named `BookStack`.
       - id: REQ-1.2
         name: Back to Homepage from Other Pages
         type: ATOMIC
-        description: Return to the homepage by clicking the BookStack logo in the global navigation bar.
+        description: >
+          Return to the homepage by activating exactly one button with
+          accessible name `BookStack` in the global navigation. The button is
+          keyboard accessible and is present on every non-homepage page used
+          by this benchmark.
         dependencies:
           - REQ-1.1
         scenarios:
@@ -36,9 +44,9 @@ children:
               - keyword: GIVEN
                 content: The user is on a non-homepage page and the global navigation bar is visible.
               - keyword: WHEN
-                content: The user clicks the BookStack logo in the top-left corner.
+                content: The user activates the unique button named `BookStack` in the global navigation.
               - keyword: THEN
-                content: The system navigates to the homepage.
+                content: The system navigates to the homepage, where exactly one visible heading named `BookStack` is present.
   - id: REQ-2
     name: User Authentication and Session
     type: FOLDER
@@ -49,7 +57,10 @@ children:
       - id: REQ-2.1
         name: Enter Login Page
         type: ATOMIC
-        description: Open the login form from the homepage navigation bar.
+        description: >
+          Open the login form from the homepage navigation bar. The login page
+          contains exactly one visible heading named `Login` and exactly one
+          form with role `form` and accessible name `Login form`.
         dependencies:
           - REQ-1.1
         scenarios:
@@ -58,9 +69,9 @@ children:
               - keyword: GIVEN
                 content: The user is on the homepage and is not logged in.
               - keyword: WHEN
-                content: The user clicks `Login` in the homepage navigation bar.
+                content: The user activates the unique link or button named `Login` in the homepage navigation bar.
               - keyword: THEN
-                content: The system displays the login form page.
+                content: The system displays the login form page with exactly one visible heading named `Login` and a form named `Login form`.
       - id: REQ-2.2
         name: Log In Successfully
         type: ATOMIC
@@ -73,9 +84,9 @@ children:
               - keyword: GIVEN
                 content: The user is on the login form page.
               - keyword: WHEN
-                content: The user enters a valid email in the "Email address" field and a password in the "Password" field, enables `Remember Me`, and clicks `Login`.
+                content: The user enters `bookstack_user@example.com` in the uniquely labelled email textbox `Email address`, enters `Password123!` in the uniquely labelled password textbox `Password`, checks the checkbox named `Remember Me`, and activates the `Login` button inside the `Login form`.
               - keyword: THEN
-                content: The system logs the user in, returns to the homepage, and displays the user nickname in the top-right area.
+                content: The system logs the user in, returns to the homepage, and displays the nickname `BookStack User` in the authenticated navigation area.
   - id: REQ-3
     name: Authenticated Homepage Dashboard
     type: FOLDER
@@ -86,7 +97,7 @@ children:
       - id: REQ-3.1
         name: Enter Authenticated Homepage
         type: ATOMIC
-        description: 'Display the dashboard layout after a successful login, including the "My Recent Drafts", "My Recently Viewed", "My Most Viewed Favorites", and "Recently Updated Pages" overview sections. Seed data: verified account with nickname "BookStack User", email "bookstack_user@example.com", and password "Password123!".'
+        description: 'Display the dashboard layout after a successful login, including four visible named regions or headings: "My Recent Drafts", "My Recently Viewed", "My Most Viewed Favorites", and "Recently Updated Pages". Seed data: verified account with nickname "BookStack User", email "bookstack_user@example.com", and password "Password123!".'
         dependencies:
           - REQ-2.2
         scenarios:
@@ -97,7 +108,7 @@ children:
               - keyword: WHEN
                 content: The system finishes the post-login navigation.
               - keyword: THEN
-                content: The authenticated homepage dashboard is displayed with "My Recent Drafts", "My Recently Viewed", "My Most Viewed Favorites", and "Recently Updated Pages" overview sections.
+                content: The authenticated homepage dashboard is displayed with visible headings or named regions exactly matching "My Recent Drafts", "My Recently Viewed", "My Most Viewed Favorites", and "Recently Updated Pages".
   - id: REQ-4
     name: Shelves Module
     type: FOLDER
@@ -108,7 +119,7 @@ children:
       - id: REQ-4.1
         name: View Shelf List
         type: ATOMIC
-        description: 'Open the shelf list page from the global navigation bar. Seed data: shelf "Shelf 4.1".'
+        description: 'Open the shelf list page from the global navigation bar. The navigation control may be a link or button named exactly "Shelves". The page exposes a visible heading "Shelves" and a named region "Shelf list" containing the seeded shelf "Shelf 4.1" as a unique link or button with that accessible name.'
         dependencies:
           - REQ-1.1
         scenarios:
@@ -117,9 +128,9 @@ children:
               - keyword: GIVEN
                 content: The user is on a page where the global navigation bar is visible.
               - keyword: WHEN
-                content: The user clicks `Shelves` in the top navigation bar.
+                content: The user activates the unique link or button named `Shelves` in the top navigation bar.
               - keyword: THEN
-                content: The system displays the shelf list page.
+                content: The system displays the shelf list page with heading `Shelves` and a unique shelf entry named `Shelf 4.1` in the `Shelf list` region.
       - id: REQ-4.2
         name: Shelf Details Page
         type: FOLDER
@@ -130,7 +141,7 @@ children:
           - id: REQ-4.2.1
             name: Enter Shelf Details Page
             type: ATOMIC
-            description: 'Open the details page of a shelf from the shelf list. Seed data: shelf "Shelf 4.2.1".'
+            description: 'Open the details page of a shelf from the shelf list. The shelf list contains the shelf as a unique link or button named exactly "Shelf 4.2.1". The destination displays a visible heading named "Shelf 4.2.1" and a shelf action region.'
             dependencies:
               - REQ-4.1
             scenarios:
@@ -139,9 +150,9 @@ children:
                   - keyword: GIVEN
                     content: The user is on the shelf list page and at least one shelf is visible.
                   - keyword: WHEN
-                    content: The user clicks a shelf in the list.
+                    content: The user activates the unique link or button named `Shelf 4.2.1` in the shelf list.
                   - keyword: THEN
-                    content: The system displays the selected shelf details page.
+                    content: The system displays the shelf details page with a visible heading named `Shelf 4.2.1`.
       - id: REQ-4.3
         name: Create New Shelf
         type: FOLDER
@@ -152,7 +163,7 @@ children:
           - id: REQ-4.3.1
             name: Create Shelf
             type: ATOMIC
-            description: 'Create a shelf from the shelf creation form. Seed data: shelf "Shelf 4.3.1".'
+            description: 'Create a shelf from the shelf creation form. The form is exposed as role `form` named `Create shelf form` and contains uniquely labelled textboxes `Name` and `Description`, a control named `Shelf Tags` that reveals a textbox with exact placeholder `tag1, tag2`, a button named `Save Shelf`, and a button named `Cancel`. Seed data: shelf "Shelf 4.3.1".'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -161,13 +172,13 @@ children:
                   - keyword: GIVEN
                     content: The user is on the shelf details page and can access the action panel.
                   - keyword: WHEN
-                    content: The user opens the `New Shelf` flow, enters the shelf name in the "Name" field, description in the "Description" field, tags in the "Shelf Tags" field, and clicks `Save Shelf`.
+                    content: The user activates the unique button named `New Shelf`, fills `Name` with `Shelf Created 4.3.1`, fills `Description` with `Shelf created by REQ-4.3.1.`, activates `Shelf Tags`, fills the revealed `tag1, tag2` textbox with `created, shelf`, and activates the `Save Shelf` button.
                   - keyword: THEN
-                    content: The system creates the shelf and displays it in the shelf list.
+                    content: The system persists the shelf and displays the shelf list with exactly one entry named `Shelf Created 4.3.1`.
           - id: REQ-4.3.2
             name: Cancel Creation
             type: ATOMIC
-            description: 'Exit the shelf creation flow without saving a new shelf. Seed data: shelf "Shelf 4.3.2".'
+            description: 'Exit the shelf creation flow without saving a new shelf. The creation form has a unique button named `Cancel`. Seed data: shelf "Shelf 4.3.2".'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -176,9 +187,9 @@ children:
                   - keyword: GIVEN
                     content: The user is on the shelf creation page.
                   - keyword: WHEN
-                    content: The user clicks `Cancel`.
+                    content: The user activates the unique `Cancel` button.
                   - keyword: THEN
-                    content: The system returns to the shelf list without creating a new shelf.
+                    content: The system returns to the shelf list and does not persist any shelf entered in the cancelled form.
       - id: REQ-4.4
         name: Delete Shelf
         type: FOLDER
@@ -189,7 +200,7 @@ children:
           - id: REQ-4.4.1
             name: Confirm Delete Shelf
             type: ATOMIC
-            description: 'Delete a shelf after the user confirms the action. Seed data: deletable shelf "Shelf 4.4.1".'
+            description: 'Delete a shelf after the user confirms the action. The details action area contains a unique button named `Delete`. Confirmation displays a dialog or confirmation page containing a unique button named `Confirm Delete` and a unique button named `Cancel`. Seed data: deletable shelf "Shelf 4.4.1".'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -198,13 +209,13 @@ children:
                   - keyword: GIVEN
                     content: The user is on the shelf details page and can access the action panel.
                   - keyword: WHEN
-                    content: The user clicks `Delete` and confirms the deletion on the confirmation page.
+                    content: The user activates `Delete`, then activates the unique `Confirm Delete` control on the confirmation view.
                   - keyword: THEN
-                    content: The system deletes the shelf and returns to the shelf list page.
+                    content: The system deletes the shelf, returns to the shelf list page, and the entry named `Shelf 4.4.1` is absent.
           - id: REQ-4.4.2
             name: Cancel Delete Shelf
             type: ATOMIC
-            description: 'Exit the delete flow without deleting the shelf. Seed data: deletable shelf "Shelf 4.4.2".'
+            description: 'Exit the delete flow without deleting the shelf. The confirmation view contains a unique button named `Cancel`. Seed data: deletable shelf "Shelf 4.4.2".'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -213,9 +224,9 @@ children:
                   - keyword: GIVEN
                     content: The user is on the delete shelf confirmation page.
                   - keyword: WHEN
-                    content: The user clicks `Cancel`.
+                    content: The user activates the unique `Cancel` button.
                   - keyword: THEN
-                    content: The system returns to the shelf details page and keeps the shelf unchanged.
+                    content: The system returns to the shelf details page and keeps the shelf named `Shelf 4.4.2` unchanged.
       - id: REQ-4.5
         name: Edit Shelf
         type: FOLDER
@@ -226,7 +237,7 @@ children:
           - id: REQ-4.5.1
             name: Save Shelf Edits
             type: ATOMIC
-            description: 'Save changes made in the shelf edit form. Seed data: editable shelf "Shelf 4.5.1" with valid initial description and tags.'
+            description: 'Save changes made in the shelf edit form. The form is exposed as role `form` named `Edit shelf form` and contains uniquely labelled textboxes `Name` and `Description`, a `Shelf Tags` control with a `tag1, tag2` textbox, and a button named `Save Shelf`. Seed data: editable shelf "Shelf 4.5.1" with valid initial description and tags.'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -235,13 +246,13 @@ children:
                   - keyword: GIVEN
                     content: The user is on the shelf details page and can access the action panel.
                   - keyword: WHEN
-                    content: The user clicks `Edit`, updates the "Name", "Description", and "Shelf Tags" fields, and clicks `Save Shelf`.
+                    content: The user activates `Edit`, fills `Name` with `Shelf Updated 4.5.1`, fills `Description` with `Shelf updated by REQ-4.5.1.`, activates `Shelf Tags`, fills `tag1, tag2` with `knowledge-base, docs`, and activates `Save Shelf`.
                   - keyword: THEN
-                    content: The system saves the changes and returns to the shelf details page.
+                    content: The system saves the changes and returns to a shelf details page displaying `Shelf Updated 4.5.1`.
           - id: REQ-4.5.2
             name: Cancel Shelf Edits
             type: ATOMIC
-            description: 'Exit the shelf editing flow without saving changes. Seed data: editable shelf "Shelf 4.5.2" with valid initial description and tags.'
+            description: 'Exit the shelf editing flow without saving changes. The edit form has a unique button named `Cancel`. Seed data: editable shelf "Shelf 4.5.2" with valid initial description and tags.'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -250,9 +261,9 @@ children:
                   - keyword: GIVEN
                     content: The user is on the shelf edit page.
                   - keyword: WHEN
-                    content: The user clicks `Cancel`.
+                    content: The user activates the unique `Cancel` button.
                   - keyword: THEN
-                    content: The system returns to the shelf details page without applying the edits.
+                    content: The system returns to the shelf details page without applying the edits; `Shelf 4.5.2` remains unchanged.
   - id: REQ-5
     name: Books Module
     type: FOLDER
@@ -263,7 +274,7 @@ children:
       - id: REQ-5.1
         name: View Books List
         type: ATOMIC
-        description: 'Open the books list page from the global navigation bar. Seed data: book "Book 5.1".'
+        description: 'Open the books list page from the global navigation bar. The navigation control may be a link or button named exactly "Books". The page exposes a visible heading "Books" and a named region "Book list" containing the seeded book "Book 5.1" as a unique link or button.'
         dependencies:
           - REQ-1.1
         scenarios:
@@ -272,9 +283,9 @@ children:
               - keyword: GIVEN
                 content: The user is on a page where the global navigation bar is visible.
               - keyword: WHEN
-                content: The user clicks `Books` in the top navigation bar.
+                content: The user activates the unique link or button named `Books` in the top navigation bar.
               - keyword: THEN
-                content: The system displays the books list page with book cards and the action panel.
+                content: The system displays the books list page with heading `Books`, a `Book list` region, and the seeded book `Book 5.1` as a unique link or button.
       - id: REQ-5.2
         name: Book Details Page
         type: FOLDER
@@ -285,7 +296,7 @@ children:
           - id: REQ-5.2.1
             name: Enter Book Details Page through Book List Page
             type: ATOMIC
-            description: 'Open a book details page from the books list. Seed data: book "Book 5.2.1".'
+            description: 'Open a book details page from the books list. The book list contains a unique link or button named exactly "Book 5.2.1". The destination displays a visible heading named "Book 5.2.1".'
             dependencies:
               - REQ-5.1
             scenarios:
@@ -294,13 +305,13 @@ children:
                   - keyword: GIVEN
                     content: The user is on the books list page and at least one book card is visible.
                   - keyword: WHEN
-                    content: The user clicks a book card in the list.
+                    content: The user activates the unique link or button named `Book 5.2.1` in the book list.
                   - keyword: THEN
-                    content: The system displays the selected book details page.
+                    content: The system displays the book details page with a visible heading named `Book 5.2.1`.
           - id: REQ-5.2.2
             name: Enter Book Details Page through Shelf Details Page
             type: ATOMIC
-            description: 'Open a book details page from a shelf details page. Seed data: shelf "Shelf 5.2.2" containing book "Book 5.2.2" with valid initial metadata.'
+            description: 'Open a book details page from a shelf details page. The shelf contains a unique link or button named exactly "Book 5.2.2". The destination displays a visible heading named "Book 5.2.2". Seed data: shelf "Shelf 5.2.2" containing book "Book 5.2.2" with valid initial metadata.'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -309,9 +320,9 @@ children:
                   - keyword: GIVEN
                     content: The user is on a shelf details page and at least one book is listed on the shelf.
                   - keyword: WHEN
-                    content: The user clicks a book in the shelf details page.
+                    content: The user activates the unique link or button named `Book 5.2.2` in the shelf details page.
                   - keyword: THEN
-                    content: The system displays the selected book details page.
+                    content: The system displays the book details page with a visible heading named `Book 5.2.2`.
       - id: REQ-5.3
         name: Create Book in Book List Page
         type: FOLDER
@@ -322,7 +333,7 @@ children:
           - id: REQ-5.3.1
             name: Fill out and Save Book
             type: ATOMIC
-            description: Create a new book from the books list page.
+            description: 'Create a new book from the books list page. The form is exposed as role `form` named `Create book form` and contains uniquely labelled textboxes `Name` and `Description`, a `Book Tags` control that reveals a `tag1, tag2` textbox, and a button named `Save Book`.'
             dependencies:
               - REQ-5.1
             scenarios:
@@ -331,13 +342,13 @@ children:
                   - keyword: GIVEN
                     content: The user is on the books list page and can access the action panel.
                   - keyword: WHEN
-                    content: The user clicks `New Book`, enters the book name in the "Name" field, description in the "Description" field, tags in the "Book Tags" field, and clicks `Save Book`.
+                    content: The user activates `Create New Book`, fills `Name` with `Book Created 5.3.1`, fills `Description` with `Book created by REQ-5.3.1.`, activates `Book Tags`, fills `tag1, tag2` with `created, book`, and activates `Save Book`.
                   - keyword: THEN
-                    content: The system creates the book and opens the created book details page.
+                    content: The system creates the book and opens its details page, displaying `Book Created 5.3.1` as a visible heading.
           - id: REQ-5.3.2
             name: Cancel Creating Book
             type: ATOMIC
-            description: Exit the book creation flow without creating a book.
+            description: 'Exit the book creation flow without creating a book. The creation form contains a unique button named `Cancel`.'
             dependencies:
               - REQ-5.1
             scenarios:
@@ -346,9 +357,9 @@ children:
                   - keyword: GIVEN
                     content: The user is on the create new book page.
                   - keyword: WHEN
-                    content: The user clicks `Cancel`.
+                    content: The user activates the unique `Cancel` button.
                   - keyword: THEN
-                    content: The system returns to the previous page and does not create a new book.
+                    content: The system returns to the books list and does not persist a book entered in the cancelled form.
       - id: REQ-5.4
         name: Edit Book
         type: FOLDER
@@ -359,7 +370,7 @@ children:
           - id: REQ-5.4.1
             name: Save Book Edits
             type: ATOMIC
-            description: 'Save changes made in the book edit form. Seed data: editable book "Book 5.4.1" with valid initial description and tags.'
+            description: 'Save changes made in the book edit form. The form is exposed as role `form` named `Edit book form` and contains uniquely labelled textboxes `Name` and `Description`, a `Book Tags` control with a `tag1, tag2` textbox, and a button named `Save Book`. Seed data: editable book "Book 5.4.1" with valid initial description and tags.'
             dependencies:
               - REQ-5.2.1
             scenarios:
@@ -368,13 +379,13 @@ children:
                   - keyword: GIVEN
                     content: The user is on the book details page and can access the action panel.
                   - keyword: WHEN
-                    content: The user clicks `Edit`, updates the "Name", "Description", and "Book Tags" fields, and clicks `Save Book`.
+                    content: The user activates `Edit`, fills `Name` with `Book Updated 5.4.1`, fills `Description` with `Book updated by REQ-5.4.1.`, activates `Book Tags`, fills `tag1, tag2` with `manual, handbook`, and activates `Save Book`.
                   - keyword: THEN
-                    content: The system saves the changes and returns to the book details page.
+                    content: The system saves the changes and returns to a book details page displaying `Book Updated 5.4.1`.
           - id: REQ-5.4.2
             name: Cancel Book Edits
             type: ATOMIC
-            description: 'Exit the book editing flow without saving changes. Seed data: editable book "Book 5.4.2" with valid initial description and tags.'
+            description: 'Exit the book editing flow without saving changes. The edit form has a unique button named `Cancel`. Seed data: editable book "Book 5.4.2" with valid initial description and tags.'
             dependencies:
               - REQ-5.2.1
             scenarios:
@@ -383,9 +394,9 @@ children:
                   - keyword: GIVEN
                     content: The user is on the book edit page.
                   - keyword: WHEN
-                    content: The user clicks `Cancel`.
+                    content: The user activates the unique `Cancel` button.
                   - keyword: THEN
-                    content: The system returns to the book details page without applying the edits.
+                    content: The system returns to the book details page without applying the edits; `Book 5.4.2` remains unchanged.
       - id: REQ-5.5
         name: Delete Book
         type: FOLDER
@@ -396,7 +407,7 @@ children:
           - id: REQ-5.5.1
             name: Confirm Delete Book
             type: ATOMIC
-            description: 'Delete a book after the user confirms the action. Seed data: deletable book "Book 5.5.1".'
+            description: 'Delete a book after the user confirms the action. The details action area contains a unique button named `Delete`; the confirmation view contains a unique button named `Confirm Delete` and a unique button named `Cancel`. Seed data: deletable book "Book 5.5.1".'
             dependencies:
               - REQ-5.2.1
             scenarios:
@@ -405,13 +416,13 @@ children:
                   - keyword: GIVEN
                     content: The user is on the book details page and can access the action panel.
                   - keyword: WHEN
-                    content: The user clicks `Delete` and confirms the deletion.
+                    content: The user activates `Delete`, then activates the unique `Confirm Delete` control.
                   - keyword: THEN
-                    content: The system deletes the book and returns to the books list page.
+                    content: The system deletes the book, returns to the books list page, and the entry named `Book 5.5.1` is absent.
           - id: REQ-5.5.2
             name: Cancel Delete Book
             type: ATOMIC
-            description: 'Exit the delete flow without deleting the book. Seed data: deletable book "Book 5.5.2".'
+            description: 'Exit the delete flow without deleting the book. The confirmation view contains a unique button named `Cancel`. Seed data: deletable book "Book 5.5.2".'
             dependencies:
               - REQ-5.2.1
             scenarios:
@@ -420,9 +431,9 @@ children:
                   - keyword: GIVEN
                     content: The user is on the delete book confirmation page.
                   - keyword: WHEN
-                    content: The user clicks `Cancel`.
+                    content: The user activates the unique `Cancel` button.
                   - keyword: THEN
-                    content: The system returns to the book details page and keeps the book unchanged.
+                    content: The system returns to the book details page and keeps `Book 5.5.2` unchanged.
       - id: REQ-5.6
         name: Create Book from Shelf Details Page
         type: FOLDER
@@ -433,7 +444,7 @@ children:
           - id: REQ-5.6.1
             name: Fill out and Save Book with Shelf
             type: ATOMIC
-            description: 'Create a new book from the current shelf context. Seed data: shelf "Shelf 5.6.1".'
+            description: 'Create a new book from the current shelf context. The form has uniquely labelled textboxes `Name` and `Description`, a `Book Tags` control with a `tag1, tag2` textbox, and a button named `Save Book`. The created book remains associated with the current shelf. Seed data: shelf "Shelf 5.6.1".'
             dependencies:
               - REQ-4.2.1
             scenarios:
@@ -442,9 +453,9 @@ children:
                   - keyword: GIVEN
                     content: The user is on a shelf details page and can access the action panel.
                   - keyword: WHEN
-                    content: The user clicks `Create New Book`, enters the book name in the "Name" field, description in the "Description" field, tags in the "Book Tags" field, and clicks `Save Book`.
+                    content: The user activates `New Book`, fills `Name` with `Book Created 5.6.1`, fills `Description` with `Book created by REQ-5.6.1.`, activates `Book Tags`, fills `tag1, tag2` with `created, shelf-book`, and activates `Save Book`.
                   - keyword: THEN
-                    content: The system creates the book and associates it with the current shelf.
+                    content: The system creates the book, associates it with `Shelf 5.6.1`, and displays both names on the resulting page.
   - id: REQ-6
     name: Pages and Chapters Module
     type: FOLDER
@@ -462,7 +473,7 @@ children:
           - id: REQ-6.1.1
             name: Save Page
             type: ATOMIC
-            description: 'Create and save a new page in a book. Seed data: book "Book 6.1.1".'
+            description: 'Create and save a new page in a book. The editor contains exactly one textbox with placeholder `Page title`, exactly one multiline textbox with placeholder `Write your page content here...`, and a button named `Save Page`. Seed data: book "Book 6.1.1".'
             dependencies:
               - REQ-5.2.1
             scenarios:
@@ -471,13 +482,13 @@ children:
                   - keyword: GIVEN
                     content: The user is on a book details page.
                   - keyword: WHEN
-                    content: The user clicks `New Page`, enters the page title in the "Page title" field and content in the "Write your page content here..." field, and clicks `Save Page`.
+                    content: The user activates `New Page`, fills `Page title` with `Page Created 6.1.1`, fills `Write your page content here...` with `Page content created by REQ-6.1.1.`, and activates `Save Page`.
                   - keyword: THEN
-                    content: The system saves the page, adds it to the book, and returns to the book details page.
+                    content: The system saves the page, adds exactly one entry named `Page Created 6.1.1` to the book, and returns to the book details page.
           - id: REQ-6.1.2
             name: Save Draft
             type: ATOMIC
-            description: 'Save the current page content as a draft. Seed data: book "Book 6.1.2"; verified account with nickname "BookStack User", email "bookstack_user@example.com", and password "Password123!".'
+            description: 'Save the current page content as a draft. The editor contains a textbox with placeholder `Page title`, a multiline textbox with placeholder `Write your page content here...`, and a button named `Save Draft`. Seed data: book "Book 6.1.2"; verified account with nickname "BookStack User", email "bookstack_user@example.com", and password "Password123!".'
             dependencies:
               - REQ-5.2.1
             scenarios:
@@ -486,13 +497,13 @@ children:
                   - keyword: GIVEN
                     content: The authenticated user is on the page edit page.
                   - keyword: WHEN
-                    content: The user enters content in the "Write your page content here..." field and clicks `Save Draft`.
+                    content: The user fills `Page title` with `Page Draft 6.1.2`, fills `Write your page content here...` with `Draft content created by REQ-6.1.2.`, and activates `Save Draft`.
                   - keyword: THEN
-                    content: The system stores the draft and shows it in the `My Recent Drafts` list on the homepage.
+                    content: The system stores the draft and shows exactly one entry named `Page Draft 6.1.2` in the `My Recent Drafts` list on the homepage.
           - id: REQ-6.1.3
             name: Delete Draft
             type: ATOMIC
-            description: 'Delete an existing page draft. Seed data: book "Book 6.1.3" with existing draft page "Draft 6.1.3".'
+            description: 'Delete an existing page draft. The draft editor exposes a unique control named `Delete Draft`; the confirmation view exposes a unique control named `Confirm Delete`. Seed data: book "Book 6.1.3" with existing draft page "Draft 6.1.3".'
             dependencies:
               - REQ-6.1.2
             scenarios:
@@ -501,9 +512,9 @@ children:
                   - keyword: GIVEN
                     content: The user is on the page edit page and a draft already exists.
                   - keyword: WHEN
-                    content: The user opens the draft actions, clicks `Delete Draft`, and confirms the deletion.
+                    content: The user opens the draft actions, activates `Delete Draft`, and activates the unique `Confirm Delete` control.
                   - keyword: THEN
-                    content: The system deletes the draft and returns to the related book details page.
+                    content: The system deletes the draft, returns to the related book details page, and the draft named `Draft 6.1.3` is absent.
       - id: REQ-6.2
         name: Create New Chapter
         type: FOLDER
@@ -514,7 +525,7 @@ children:
           - id: REQ-6.2.1
             name: Create Chapter
             type: ATOMIC
-            description: 'Create a new chapter within a book. Seed data: book "Book 6.2.1".'
+            description: 'Create a new chapter within a book. The chapter form contains uniquely labelled textboxes `Name` and `Description` and a button named `Save Chapter`. Seed data: book "Book 6.2.1".'
             dependencies:
               - REQ-5.2.1
             scenarios:
@@ -523,9 +534,9 @@ children:
                   - keyword: GIVEN
                     content: The user is on the book details page.
                   - keyword: WHEN
-                    content: The user clicks `New Chapter`, enters the chapter name in the "Name" field, description in the "Description" field, and clicks `Save Chapter`.
+                    content: The user activates `New Chapter`, fills `Name` with `Chapter Created 6.2.1`, fills `Description` with `Chapter created by REQ-6.2.1.`, and activates `Save Chapter`.
                   - keyword: THEN
-                    content: The system creates the chapter and adds it to the current book.
+                    content: The system creates the chapter and displays exactly one entry named `Chapter Created 6.2.1` in the current book.
       - id: REQ-6.3
         name: Page Reading Page
         type: FOLDER
@@ -537,7 +548,7 @@ children:
           - id: REQ-6.3.1
             name: Enter Page Reading Page
             type: ATOMIC
-            description: 'Open the reading page for a selected page. Seed data: book "Book 6.3.1" with readable page "Page 6.3.1" and page content.'
+            description: 'Open the reading page for a selected page. The page entry is a unique link or button named exactly "Page 6.3.1"; activating it displays a visible heading named "Page 6.3.1" and the page content. Seed data: book "Book 6.3.1" with readable page "Page 6.3.1" and page content.'
             dependencies:
               - REQ-6.1.1
             scenarios:
@@ -546,13 +557,13 @@ children:
                   - keyword: GIVEN
                     content: The user is viewing a list of pages within a book or chapter.
                   - keyword: WHEN
-                    content: The user clicks a page entry.
+                    content: The user activates the unique link or button named `Page 6.3.1`.
                   - keyword: THEN
-                    content: The system displays the page reading page.
+                    content: The system displays the page reading page with a visible heading named `Page 6.3.1`.
           - id: REQ-6.3.2
             name: Redirect to Page Edit Page
             type: ATOMIC
-            description: 'Open the page edit flow from the page reading page. Seed data: book "Book 6.3.2" with editable page "Page 6.3.2" and page content.'
+            description: 'Open the page edit flow from the page reading page. The action area contains a unique button named `Edit`. The editor contains a button named `Save Page`. Seed data: book "Book 6.3.2" with editable page "Page 6.3.2" and page content.'
             dependencies:
               - REQ-6.3.1
             scenarios:
@@ -561,9 +572,9 @@ children:
                   - keyword: GIVEN
                     content: The user is on the page reading page and can access the action area.
                   - keyword: WHEN
-                    content: The user clicks `Edit`.
+                    content: The user activates the unique `Edit` button.
                   - keyword: THEN
-                    content: The system opens the edit page for the current page.
+                    content: The system opens the edit page for the current page, where the `Save Page` button is visible.
   - id: REQ-7
     name: Recently Viewed
     type: FOLDER
@@ -600,9 +611,9 @@ children:
           - name: Quick Navigation from Recently Viewed
             steps:
               - keyword: GIVEN
-                    content: The authenticated homepage shows `My Recently Viewed` with at least one item.
+                content: The authenticated homepage shows `My Recently Viewed` with at least one item.
               - keyword: WHEN
-                content: The user clicks an item in `My Recently Viewed`.
+                content: The user activates the unique link or button named after the target item in `My Recently Viewed`.
               - keyword: THEN
                 content: The system opens the corresponding content page.
   - id: REQ-8
@@ -617,7 +628,7 @@ children:
       - id: REQ-8.1
         name: Favorite Items
         type: ATOMIC
-        description: 'Add supported content items to the favorites list. Seed data: book "Book 8.1".'
+        description: 'Add supported content items to the favorites list. The current content page contains exactly one button named `Favorite` with aria-pressed=false. Activating it changes the same control to name `Unfavorite` with aria-pressed=true. Seed data: book "Book 8.1".'
         dependencies:
           - REQ-4.2.1
           - REQ-5.2.1
@@ -629,9 +640,9 @@ children:
               - keyword: GIVEN
                 content: The user is on a supported shelf, book, chapter, or page view.
               - keyword: WHEN
-                content: The user clicks `Favorite` for the current content item.
+                content: The user activates the unique button named `Favorite` for the current content item.
               - keyword: THEN
-                content: The system adds the item to the favorites list and changes the action to `Unfavorite`.
+                content: The system adds the item to the favorites list and changes the control to `Unfavorite` with aria-pressed=true.
       - id: REQ-8.2
         name: Quick Navigation from Favorites
         type: ATOMIC
@@ -642,9 +653,9 @@ children:
           - name: Quick Navigation from Favorites
             steps:
               - keyword: GIVEN
-                    content: The authenticated homepage or favorites page shows at least one favorite item.
+                content: The authenticated homepage or favorites page shows at least one favorite item.
               - keyword: WHEN
-                content: The user clicks an item in `My Most Viewed Favorites`.
+                content: The user activates the unique link or button named after the target item in `My Most Viewed Favorites`.
               - keyword: THEN
                 content: The system opens the corresponding content page.
   - id: REQ-9
@@ -666,6 +677,6 @@ children:
               - keyword: GIVEN
                 content: The homepage shows `Recently Updated Pages` with at least one item.
               - keyword: WHEN
-                content: The user clicks an item in the `Recently Updated Pages` list.
+                content: The user activates the unique link or button named after the target page in the `Recently Updated Pages` list.
               - keyword: THEN
                 content: The system opens the reading page for the selected page.

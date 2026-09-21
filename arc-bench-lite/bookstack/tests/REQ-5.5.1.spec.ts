@@ -9,4 +9,5 @@ test('REQ-5.5.1: Confirm Delete Book', async ({ page }) => {
   await h.clickNamed(page, /^Delete$/i);
   await h.clickNamed(page, /^Confirm Delete$/i);
   await h.expectVisible(page, /^Books$/i);
+  await h.expectAbsent(page, h.FIXTURES.books.deleteConfirm.name);
 });

@@ -115,9 +115,6 @@ export async function clickNamed(page: Page, value: string | RegExp): Promise<vo
   const locator = await firstVisible([
     page.getByRole('button', { name }),
     page.getByRole('link', { name }),
-    page.getByRole('tab', { name }),
-    page.getByRole('menuitem', { name }),
-    page.getByText(name),
   ]);
   await locator.click();
 }
@@ -138,7 +135,7 @@ export async function expectTextsVisible(page: Page, values: Array<string | RegE
   }
 }
 
-export async function fillField(page: Page, labelOrPlaceholder: string, value: string): Promise<void> {
+export async function fillField(page: Page | Locator, labelOrPlaceholder: string, value: string): Promise<void> {
   const name = toPattern(labelOrPlaceholder);
   const locator = await firstVisible([
     page.getByLabel(name),
@@ -222,6 +219,16 @@ export async function expectVisible(page: Page, value: string | RegExp): Promise
   await expect(locator).toBeVisible();
 }
 
+export async function expectAbsent(page: Page, value: string | RegExp): Promise<void> {
+  const name = toPattern(value);
+  const locator = page.getByRole('heading', { name })
+    .or(page.getByRole('button', { name }))
+    .or(page.getByRole('link', { name }))
+    .or(page.getByRole('tab', { name }))
+    .or(page.getByText(name));
+  await expect(locator).toHaveCount(0);
+}
+
 export async function openBookCreationFromShelf(page: Page, shelfName: string): Promise<void> {
   await openShelfDetails(page, shelfName);
   await clickNamed(page, /^New Book$/i);
@@ -232,13 +239,15 @@ export async function fillBookForm(
   data: { name: string; description: string; tags: string; updatedName?: string; updatedDescription?: string },
   mode: 'create' | 'edit' = 'create',
 ): Promise<void> {
-  await fillField(page, 'Name', mode === 'edit' ? data.updatedName ?? data.name : data.name);
-  await fillField(page, 'Description', mode === 'edit' ? data.updatedDescription ?? data.description : data.description);
-  await page.getByRole('button', { name: /^Book Tags$/i }).click();
-  const tagsField = page.getByPlaceholder('tag1, tag2');
-  if (await tagsField.count()) {
-    await tagsField.fill(data.tags);
-  }
+  const form = page.getByRole('form', {
+    name: mode === 'edit' ? /^Edit book form$/i : /^Create book form$/i,
+  });
+  await fillField(form, 'Name', mode === 'edit' ? data.updatedName ?? data.name : data.name);
+  await fillField(form, 'Description', mode === 'edit' ? data.updatedDescription ?? data.description : data.description);
+  await form.getByRole('button', { name: /^Book Tags$/i }).click();
+  const tagsField = form.getByPlaceholder('tag1, tag2');
+  await expect(tagsField).toHaveCount(1);
+  await tagsField.fill(data.tags);
 }
 
 export async function fillShelfForm(
@@ -246,13 +255,15 @@ export async function fillShelfForm(
   data: { name: string; description: string; tags: string; updatedName?: string; updatedDescription?: string },
   mode: 'create' | 'edit' = 'create',
 ): Promise<void> {
-  await fillField(page, 'Name', mode === 'edit' ? data.updatedName ?? data.name : data.name);
-  await fillField(page, 'Description', mode === 'edit' ? data.updatedDescription ?? data.description : data.description);
-  await page.getByRole('button', { name: /^Shelf Tags$/i }).click();
-  const tagsField = page.getByPlaceholder('tag1, tag2');
-  if (await tagsField.count()) {
-    await tagsField.fill(data.tags);
-  }
+  const form = page.getByRole('form', {
+    name: mode === 'edit' ? /^Edit shelf form$/i : /^Create shelf form$/i,
+  });
+  await fillField(form, 'Name', mode === 'edit' ? data.updatedName ?? data.name : data.name);
+  await fillField(form, 'Description', mode === 'edit' ? data.updatedDescription ?? data.description : data.description);
+  await form.getByRole('button', { name: /^Shelf Tags$/i }).click();
+  const tagsField = form.getByPlaceholder('tag1, tag2');
+  await expect(tagsField).toHaveCount(1);
+  await tagsField.fill(data.tags);
 }
 
 export async function openPageEditor(page: Page, bookName: string): Promise<void> {
@@ -288,7 +299,7 @@ export async function openPageReading(page: Page, bookName: string, pageName: st
 
 export async function returnHomeByLogo(page: Page): Promise<void> {
   const logo = await firstVisible([
-    page.getByRole('button', { name: /^BookStack logo$/i }),
+    page.getByRole('button', { name: /^BookStack$/i }),
   ]);
   await logo.click();
 }
