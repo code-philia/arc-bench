@@ -120,7 +120,15 @@ export async function openHome(page: Page): Promise<void> {
 }
 
 export async function clickNamed(scope: Scope, value: Match): Promise<void> {
-  const locator = await resolveNamed(scope, value);
+  const patterns = toPatterns(value);
+  const t = target(scope);
+  const actions = patterns.flatMap((pattern) => [
+    t.getByRole('button', { name: pattern }),
+    t.getByRole('link', { name: pattern }),
+    t.getByRole('menuitem', { name: pattern }),
+    t.getByRole('tab', { name: pattern }),
+  ]);
+  const locator = await firstVisible(actions);
   await locator.click();
 }
 
@@ -173,10 +181,10 @@ export async function fillField(scope: Scope, labelOrPlaceholder: Match, value: 
       // continue
     }
   }
-  const fallback = await firstVisible([
-    target(scope).getByRole('textbox'),
-  ]);
-  await fallback.fill(value);
+  const pattern = patterns[0];
+  const field = target(scope).getByRole('textbox', { name: pattern });
+  await expect(field).toHaveCount(1);
+  await field.fill(value);
 }
 
 export async function expectTextAbsent(scope: Scope, value: Match): Promise<void> {
@@ -192,7 +200,9 @@ export async function openSidebar(page: Page): Promise<void> {
 }
 
 export async function expectHomePage(page: Page): Promise<void> {
-  await expectTextsVisible(page, [/take a note/i, /search/i]);
+  await expect(page.getByRole('region', { name: /^Notes workspace$/i })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Take a note$/i })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: /^Search$/i })).toBeVisible();
 }
 
 function candidateNoteContainers(scope: Scope): Locator[] {
@@ -210,7 +220,7 @@ export async function noteCard(scope: Scope, text: string | RegExp): Promise<Loc
       // continue
     }
   }
-  return target(scope).getByText(pattern).first();
+  return target(scope).getByRole('article').filter({ hasText: pattern }).first();
 }
 
 export async function expectNoteVisible(page: Page, titleOrText: string | RegExp): Promise<void> {
@@ -243,9 +253,8 @@ export async function fillComposer(page: Page, title: string, content: string): 
 
 export async function closeEditor(page: Page): Promise<void> {
   const dialog = noteEditor(page);
-  if (await dialog.count()) {
-    await dialog.getByRole('button', { name: /^Close$/i }).click();
-  }
+  await expect(dialog).toHaveCount(1);
+  await dialog.getByRole('button', { name: /^Close$/i }).click();
 }
 
 export async function createNote(page: Page, title: string, content: string): Promise<void> {

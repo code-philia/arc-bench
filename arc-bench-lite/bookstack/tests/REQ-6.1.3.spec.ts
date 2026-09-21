@@ -9,4 +9,5 @@ test('REQ-6.1.3: Delete Draft', async ({ page }) => {
   await h.clickNamed(page, /^Delete Draft$/i);
   await h.clickNamed(page, /^Confirm Delete$/i);
   await h.expectTextsVisible(page, [h.FIXTURES.books.draftDelete.bookName]);
+  await h.expectAbsent(page, h.FIXTURES.books.draftDelete.pageName);
 });
