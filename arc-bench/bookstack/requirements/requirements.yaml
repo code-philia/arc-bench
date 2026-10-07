@@ -1,0 +1,798 @@
+id: ROOT
+name: BookStack knowledge base
+type: FOLDER
+dependencies: []
+description: A knowledge base for organizing and reading shelves, books, chapters, and pages.
+environment:
+  benchmark_now: '2026-10-06T12:00:00Z'
+  timezone: UTC
+  clock: Application and evaluator use benchmark_now when displaying dates or time-dependent content.
+data:
+- id: DATA-ACCOUNT
+  lifecycle: SEED
+  entity: verified account
+  properties:
+    nickname: BookStack User
+    email: bookstack_user@example.com
+    password: Password123!
+  description: Registration and verification are outside scope; initialize this account once.
+- id: DATA-BOOTSTRAP
+  lifecycle: SEED
+  entity: bootstrap shelf
+  properties:
+    name: Benchmark Bootstrap Shelf
+    description: Entry shelf for the New Shelf creation action.
+    tags: []
+    books: []
+  description: Source only exposes New Shelf from an existing shelf. One immutable bootstrap shelf breaks
+    that creation prerequisite; other shelves are UI-created.
+- id: DATA-CONTENT
+  lifecycle: CREATED
+  entity: shelves, books, chapters and pages including owned drafts
+  description: Created by REQ-4.3, REQ-5.3, REQ-5.6, REQ-6.1 and REQ-6.3. Original example names are base
+    names, suffixed with run id, worker and test identity. Descriptions and tags are the scenario values.
+    A book created from a shelf belongs to that shelf. Drafts belong to the authenticated account and
+    parent book.
+- id: DATA-SESSION
+  lifecycle: DERIVED
+  entity: session and personal dashboard state
+  description: Established through login, opening content, favoriting content, or saving pages/drafts.
+    No private storage injection.
+children:
+- id: REQ-1
+  name: Application entry and navigation
+  type: FOLDER
+  dependencies: []
+  description: |-
+    The logged-out homepage provides search input and links to Login, Shelves and Books. These entry points are available throughout the content flows. Visual layout follows the supplied references; search behavior is not specified by this source.
+
+    Content metadata and personal preferences persist across navigation and reload.
+  children:
+  - id: REQ-1.1
+    name: Open the application
+    type: ATOMIC
+    dependencies: []
+    description: |-
+      Opening the application homepage at / while logged out displays "Login"(role=link), "Shelves"(role=link), and "Books"(role=link) as its public entry points.
+
+      ![image](./reference/index.png)
+    data:
+      requires: []
+    scenarios:
+    - name: Show logged-out navigation
+      steps:
+      - keyword: GIVEN
+        content: A fresh anonymous browser opens the initialized knowledge base; DATA-ACCOUNT and DATA-BOOTSTRAP exist,
+          but no session has been established.
+      - keyword: WHEN
+        content: Open / and inspect the homepage entry links.
+      - keyword: THEN
+        content: The homepage displays visible Login, Shelves and Books links with their declared accessible names.
+  - id: REQ-1.2
+    name: Return home
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1
+    description: |-
+      Opening / from the shelves list returns to the homepage, which exposes "Login"(role=link), "Shelves"(role=link), and "Books"(role=link).
+
+      ![image](./reference/index.png)
+      ![image](./reference/shelves.png)
+    data:
+      requires: []
+    scenarios:
+    - name: Return from shelves
+      steps:
+      - keyword: GIVEN
+        content: The anonymous homepage is open and the seeded Benchmark Bootstrap Shelf is available in Shelf list.
+      - keyword: WHEN
+        content: Click Shelves, verify Shelf list opens, then open / to return to the homepage.
+      - keyword: THEN
+        content: The homepage returns with its Books link visible.
+- id: REQ-2
+  name: Account access
+  type: FOLDER
+  dependencies: []
+  description: A preverified account can log in; account registration is outside scope. Content browsing
+    and the source-described content mutations remain available while logged out; drafts and personal
+    lists require login.
+  children:
+  - id: REQ-2.1
+    name: Open login
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1
+    description: |-
+      Clicking "Login"(role=link) in navigation opens a login form containing "Email"(role=textbox), "Password"(role=textbox), an initially unchecked "Remember Me"(role=checkbox), and a Login submit action.
+
+      ![image](./reference/login.png)
+    data:
+      requires: []
+    scenarios:
+    - name: Show login form
+      steps:
+      - keyword: GIVEN
+        content: A fresh browser is on the anonymous application entry with Login available on the page.
+      - keyword: WHEN
+        content: Click the Login navigation link and inspect the displayed form.
+      - keyword: THEN
+        content: Email and Password fields and the Login submit button are visible; Remember Me is present and unchecked.
+  - id: REQ-2.2
+    name: Authenticate verified account
+    type: ATOMIC
+    dependencies:
+    - REQ-2.1
+    description: |-
+      Users enter a verified account's credentials in "Email"(role=textbox) and "Password"(role=textbox), select "Remember Me"(role=checkbox), and submit the form reached through "Login"(role=link). Successful authentication returns to the homepage, shows BookStack User in the top-right user area, and enables the personal dashboard lists. Invalid-credential wording is unspecified.
+
+      ![image](./reference/login.png)
+      ![image](./reference/index_after_login.png)
+    data:
+      requires:
+      - DATA-ACCOUNT
+      - DATA-SESSION
+    scenarios:
+    - name: Log in with remember me
+      steps:
+      - keyword: GIVEN
+        content: DATA-ACCOUNT contains verified bookstack_user@example.com with Password123! and nickname BookStack
+          User; the browser is anonymous on the application entry.
+      - keyword: WHEN
+        content: Click Login on the page, fill Email and Password with those credentials, check Remember Me,
+          and click the Login submit button.
+      - keyword: THEN
+        content: The homepage visibly displays BookStack User and My Recent Drafts, confirming authentication and access
+          to the personal dashboard. No unprovided remember-me expiry guarantee is inferred.
+- id: REQ-3
+  name: Authenticated dashboard
+  type: FOLDER
+  dependencies: []
+  description: The authenticated homepage shows recent drafts, recently viewed items, most viewed favorites,
+    recently updated pages, recent activity and dashboard controls as visually referenced.
+  children:
+  - id: REQ-3.1
+    name: View authenticated dashboard
+    type: ATOMIC
+    dependencies:
+    - REQ-2.2
+    description: |-
+      Successful login displays an authenticated dashboard with "My Recent Drafts"(role=region), "My Recently Viewed"(role=region), "My Most Viewed Favorites"(role=region), and "Recently Updated Pages"(role=region), each containing its corresponding personal or content list. Recent activity and dashboard controls also follow the visual reference.
+
+      ![image](./reference/index_after_login.png)
+    data:
+      requires:
+      - DATA-ACCOUNT
+      - DATA-SESSION
+    scenarios:
+    - name: Show personal dashboard regions
+      steps:
+      - keyword: GIVEN
+        content: The verified DATA-ACCOUNT exists and a fresh anonymous browser is at the application entry.
+      - keyword: WHEN
+        content: Open Login, fill Email with bookstack_user@example.com and Password with Password123!, check Remember
+          Me, and submit Login.
+      - keyword: THEN
+        content: The authenticated homepage displays My Recent Drafts, My Recently Viewed, My Most Viewed Favorites
+          and Recently Updated Pages as named regions.
+- id: REQ-4
+  name: Organize shelves
+  type: FOLDER
+  dependencies: []
+  description: Shelves contain a name, description, related books and tags. Support browsing, creation,
+    editing, cancellation and confirmed deletion. Related-book editing remains part of the requirement
+    even where not sampled by a test.
+  children:
+  - id: REQ-4.1
+    name: Browse shelfs
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1
+    - REQ-4.3
+    description: |-
+      Activating "Shelves"(role=link) on the page displays "Shelf list"(role=region). Each shelf appears exactly once as a keyboard-accessible "{item name}"(role=button) identified by its business name; a semantically equivalent link is also permitted. No total list size is prescribed.
+
+      ![image](./reference/shelves.png)
+    data:
+      requires:
+      - DATA-CONTENT
+    scenarios:
+    - name: Show a uniquely identified item
+      steps:
+      - keyword: GIVEN
+        content: As an anonymous visitor, create a case-isolated Shelf 4.1 through the bootstrap shelf's New Shelf form,
+          using Reference shelf description. and knowledge-base, docs as metadata.
+      - keyword: WHEN
+        content: Click Shelves on the page and inspect Shelf list for the full isolated name.
+      - keyword: THEN
+        content: The created shelf's opening entry appears exactly once and is visible and keyboard-accessible within
+          Shelf list.
+  - id: REQ-4.2
+    name: Open shelf details
+    type: ATOMIC
+    dependencies:
+    - REQ-4.1
+    description: |-
+      Choosing "{item name}"(role=button) in "Shelf list"(role=region), or the allowed equivalent link, opens that shelf's details with a heading bearing its name and information belonging to the selected shelf. Its included books and related actions are available from these details.
+
+      ![image](./reference/shelf.png)
+    data:
+      requires:
+      - DATA-CONTENT
+    scenarios:
+    - name: Open from global list
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has UI-created isolated Shelf 4.2.1 with Reference shelf description. and knowledge-base,
+          docs.
+      - keyword: WHEN
+        content: Click Shelves, then activate that exact shelf's entry within Shelf list.
+      - keyword: THEN
+        content: The selected shelf's detail heading matches its full isolated name and its saved description is visible;
+          a different shelf is not opened.
+  - id: REQ-4.3
+    name: Create or abandon shelf
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1
+    description: |-
+      While logged out, users open the bootstrap shelf through Shelves and Shelf list, then click "New Shelf"(role=button) to enter "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox). "Save Shelf"(role=button) creates exactly one shelf with that metadata and returns to Shelf list; the metadata persists across navigation and reload. "Cancel"(role=button) instead returns to Shelfs without creating the entered object. Runtime names may append the evaluator's run, worker, and case identity to source examples.
+
+      ![image](./reference/create_shelf.png)
+    data:
+      requires:
+      - DATA-CONTENT
+      - DATA-BOOTSTRAP
+    scenarios:
+    - name: Save a new shelf
+      steps:
+      - keyword: GIVEN
+        content: The anonymous application has DATA-BOOTSTRAP and no shelf with the isolated Shelf Created 4.3.1 name.
+      - keyword: WHEN
+        content: Open Shelves, select Benchmark Bootstrap Shelf, click New Shelf, enter the isolated name in Name, Shelf
+          created by corresponding prerequisite behavior. in Description and created, shelf in Tags, then click Save
+          Shelf. Open the saved shelf, reload and reopen Edit.
+      - keyword: THEN
+        content: Saving returns to Shelf list with exactly one visible entry. The saved name, description and tags remain
+          in the reopened metadata form after reload, demonstrating persistence of the entered metadata.
+    - name: Cancel new shelf
+      steps:
+      - keyword: GIVEN
+        content: The anonymous browser has opened Benchmark Bootstrap Shelf through Shelves and Shelf list; the isolated
+          Shelf Cancelled 4.3.2 does not exist.
+      - keyword: WHEN
+        content: Click New Shelf, fill Name with the isolated title, Description with Unsaved shelf description 4.3.2.
+          and Tags with cancelled, shelf, then click Cancel.
+      - keyword: THEN
+        content: Shelfs list returns, with no entry for the unsaved name; none of the entered metadata creates a shelf.
+  - id: REQ-4.5
+    name: Edit or abandon shelf metadata
+    type: ATOMIC
+    dependencies:
+    - REQ-4.2
+    - REQ-4.3
+    description: |-
+      On the selected shelf's details, "Edit"(role=button) opens "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox) prefilled with saved values. "Save Shelf"(role=button) updates that same shelf and returns to its details with the updated heading and description; changes survive reload. "Cancel"(role=button) discards all pending changes and returns to the unchanged details. Related-book editing is also supported.
+
+      ![image](./reference/edit_shelve.png)
+    data:
+      requires:
+      - DATA-CONTENT
+    scenarios:
+    - name: Save metadata changes
+      steps:
+      - keyword: GIVEN
+        content: UI-created isolated Shelf 4.5.1 has Reference shelf description. and knowledge-base, docs; its details
+          are open anonymously.
+      - keyword: WHEN
+        content: Click Edit and verify Name, Description and Tags are prefilled. Replace Name with isolated Shelf Updated
+          4.5.1 and Description with Shelf updated by corresponding prerequisite behavior., retain the tags, and click
+          Save Shelf. Reload the returned details and reopen Edit.
+      - keyword: THEN
+        content: The updated heading and description are visible before and after reload. The reopened fields retain
+          the updated name, description and tags on that same shelf.
+    - name: Cancel metadata changes
+      steps:
+      - keyword: GIVEN
+        content: UI-created isolated Shelf 4.5.2 has Reference shelf description. and knowledge-base, docs; its details
+          are open anonymously.
+      - keyword: WHEN
+        content: Click Edit, replace Name with isolated Shelf Updated 4.5.2 and Description with Shelf updated by corresponding
+          prerequisite behavior., then click Cancel.
+      - keyword: THEN
+        content: Details return with the original heading and description and no heading for the replacement name; pending
+          metadata was not committed.
+  - id: REQ-4.4
+    name: Delete or retain shelf
+    type: ATOMIC
+    dependencies:
+    - REQ-4.2
+    - REQ-4.3
+    description: |-
+      Clicking "Delete"(role=button) on a selected shelf opens confirmation. "Confirm Delete"(role=button) removes that shelf and returns to Shelfs, where its entry is absent from "Shelf list"(role=region); the deletion remains effective across navigation. "Cancel"(role=button) keeps the shelf and preserves its original heading and description.
+
+      ![image](./reference/delete_shelves.png)
+    data:
+      requires:
+      - DATA-CONTENT
+    scenarios:
+    - name: Confirm deletion
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has UI-created isolated Shelf 4.4.1 with Reference shelf description. and is viewing
+          that shelf's details.
+      - keyword: WHEN
+        content: Click Delete, inspect confirmation with Confirm Delete and Cancel, then click Confirm Delete; reopen
+          Shelves after reload.
+      - keyword: THEN
+        content: Shelfs list returns and contains no entry for the deleted shelf before or after reload.
+    - name: Cancel deletion
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has UI-created isolated Shelf 4.4.2 with Reference shelf description. and is viewing
+          its details.
+      - keyword: WHEN
+        content: Click Delete and then Cancel in the confirmation.
+      - keyword: THEN
+        content: The same shelf details remain, with the original heading and Reference shelf description.; the shelf
+          is not deleted.
+- id: REQ-5
+  name: Manage books
+  type: FOLDER
+  dependencies: []
+  description: Books contain a name, rich-text description, optional cover image, tags, default page template,
+    chapters and pages. Support creation from the global list and from a shelf, metadata editing and confirmed
+    deletion. Optional cover and default-template behavior are retained but not sampled; the source gives
+    no format or template catalog rules.
+  children:
+  - id: REQ-5.1
+    name: Browse books
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1
+    - REQ-5.3
+    description: |-
+      Clicking "Books"(role=link) on the page displays "Book list"(role=region). Each book appears exactly once as a keyboard-accessible "{item name}"(role=button) identified by its business name, with an equivalent link also allowed. No total list size is prescribed.
+
+      ![image](./reference/books.png)
+    data:
+      requires:
+      - DATA-CONTENT
+    scenarios:
+    - name: Show a uniquely identified item
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has UI-created isolated Book 5.1 with Reference book description. and manual,
+          handbook through Books, Create New Book, metadata fields and Save Book.
+      - keyword: WHEN
+        content: Click Books on the page and inspect Book list.
+      - keyword: THEN
+        content: Exactly one visible keyboard-accessible opening entry identifies that full isolated book name.
+  - id: REQ-5.2
+    name: Open book details
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1
+    - REQ-5.6
+    description: |-
+      Selecting "{item name}"(role=button), or its allowed equivalent link, in "Book list"(role=region) opens the corresponding book's details with its name as the heading and information belonging to that book. The same selection behavior is available from the Book list on its containing shelf.
+
+      ![image](./reference/book.png)
+    data:
+      requires:
+      - DATA-CONTENT
+    scenarios:
+    - name: Open from global list
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has UI-created isolated Book 5.2.1 with Reference book description. and manual,
+          handbook.
+      - keyword: WHEN
+        content: Click Books, then activate the exact book entry in Book list.
+      - keyword: THEN
+        content: The opened detail heading is that book's name and its saved description is visible.
+    - name: Open from containing shelf
+      steps:
+      - keyword: GIVEN
+        content: Through UI, create isolated Shelf 5.2.2 and then Book 5.2.2 from that shelf's Create New Book form,
+          associating the two objects.
+      - keyword: WHEN
+        content: Follow the containing shelf's named parent entry, then choose the isolated book from that shelf's Book
+          list.
+      - keyword: THEN
+        content: The selected book detail heading matches its name and the shelf-created description is visible, preserving
+          the parent association.
+  - id: REQ-5.3
+    name: Create or abandon book
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1
+    description: |-
+      While logged out, users open Books and click "Create New Book"(role=button), then enter "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox). "Save Book"(role=button) creates one book with that metadata and opens its details with the saved name and description. Description supports rich text, a cover is optional, and a default page template can be chosen. "Cancel"(role=button) returns to Books without creating the entered book. Saved metadata survives navigation and reload; runtime names may append evaluator run, worker, and case identity to source examples.
+
+      ![image](./reference/create_book.png)
+    data:
+      requires:
+      - DATA-CONTENT
+    scenarios:
+    - name: Save a new book
+      steps:
+      - keyword: GIVEN
+        content: The browser is anonymous and no book has the isolated Book Created 5.3.1 name.
+      - keyword: WHEN
+        content: Click Books and Create New Book, fill Name with the isolated title, Description with Book created by
+          corresponding prerequisite behavior. and Tags with created, book, then Save Book. Reload details and reopen
+          Edit.
+      - keyword: THEN
+        content: Saving opens the new book's heading and description. Reopened Name, Description and Tags retain all
+          submitted metadata after reload.
+    - name: Cancel new book
+      steps:
+      - keyword: GIVEN
+        content: The anonymous Books list is open and isolated Book Cancelled 5.3.2 does not exist.
+      - keyword: WHEN
+        content: Click Create New Book, enter the isolated name, Unsaved book description 5.3.2. and cancelled, book
+          in the metadata fields, then click Cancel.
+      - keyword: THEN
+        content: Books list returns with no entry for that name; the unsaved book is not created.
+  - id: REQ-5.4
+    name: Edit or abandon book metadata
+    type: ATOMIC
+    dependencies:
+    - REQ-5.2
+    - REQ-5.3
+    description: |-
+      On the selected book's details, "Edit"(role=button) opens "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox) prefilled with their saved values. "Save Book"(role=button) changes that same book and returns to its details with the updated heading and description, persisting after reload. "Cancel"(role=button) returns to the unchanged details and discards all pending edits.
+
+      ![image](./reference/edit_book.png)
+    data:
+      requires:
+      - DATA-CONTENT
+    scenarios:
+    - name: Save metadata changes
+      steps:
+      - keyword: GIVEN
+        content: UI-created isolated Book 5.4.1 has Reference book description. and manual, handbook, and its details
+          are open anonymously.
+      - keyword: WHEN
+        content: Click Edit and check the prefilled metadata, replace Name with isolated Book Updated 5.4.1 and Description
+          with Book updated by corresponding prerequisite behavior., retain tags and Save Book; reload and reopen Edit.
+      - keyword: THEN
+        content: The new heading and description appear before and after reload; the reopened metadata fields contain
+          the saved replacement values and retained tags.
+    - name: Cancel metadata changes
+      steps:
+      - keyword: GIVEN
+        content: UI-created isolated Book 5.4.2 has Reference book description. and manual, handbook, and its detail
+          is open anonymously.
+      - keyword: WHEN
+        content: Click Edit, enter isolated Book Updated 5.4.2 and Book updated by corresponding prerequisite behavior.
+          as replacement name and description, then Cancel.
+      - keyword: THEN
+        content: The original heading and description return, and no heading has the proposed replacement name.
+  - id: REQ-5.5
+    name: Delete or retain book
+    type: ATOMIC
+    dependencies:
+    - REQ-5.2
+    - REQ-5.3
+    description: |-
+      Clicking "Delete"(role=button) on the selected book opens confirmation. "Confirm Delete"(role=button) removes that book and returns to Books, with its entry absent from "Book list"(role=region) across subsequent navigation. "Cancel"(role=button) keeps the book's original heading and description unchanged.
+
+      ![image](./reference/delete_book.png)
+    data:
+      requires:
+      - DATA-CONTENT
+    scenarios:
+    - name: Confirm deletion
+      steps:
+      - keyword: GIVEN
+        content: UI-created isolated Book 5.5.1 with Reference book description. is open anonymously.
+      - keyword: WHEN
+        content: Click Delete, inspect Confirm Delete and Cancel, click Confirm Delete, then reload and reopen Books.
+      - keyword: THEN
+        content: Books list contains no entry for the selected book both immediately and after reload.
+    - name: Cancel deletion
+      steps:
+      - keyword: GIVEN
+        content: UI-created isolated Book 5.5.2 with Reference book description. is open anonymously.
+      - keyword: WHEN
+        content: Click Delete and Cancel in confirmation.
+      - keyword: THEN
+        content: The original book heading and Reference book description. remain visible; no deletion is committed.
+  - id: REQ-5.6
+    name: Create a book in a shelf
+    type: ATOMIC
+    dependencies:
+    - REQ-4.2
+    - REQ-5.3
+    description: |-
+      Clicking "Create New Book"(role=button) on a shelf's details opens a creation form with "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox). "Save Book"(role=button) creates the book under that specific shelf and opens its details with its name and a "{containing shelf name}"(role=button) parent action, for which an equivalent link is also permitted. Following the parent action opens the containing shelf, whose "Book list"(role=region) includes the created book.
+
+      ![image](./reference/shelf.png)
+      ![image](./reference/create_book.png)
+      ![image](./reference/book.png)
+    data:
+      requires:
+      - DATA-CONTENT
+    scenarios:
+    - name: Save a book with shelf association
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has UI-created isolated Shelf 5.6.1 and is viewing it; isolated Book Created 5.6.1
+          does not exist.
+      - keyword: WHEN
+        content: Click the shelf's Create New Book, fill Name with the isolated book name, Description with Book created
+          by corresponding prerequisite behavior. and Tags with created, shelf-book, then Save Book. Follow the named
+          containing shelf entry.
+      - keyword: THEN
+        content: The new book detail shows its name; its parent entry opens the correct shelf, whose Book list exposes
+          the created book exactly once.
+- id: REQ-6
+  name: Author and read content
+  type: FOLDER
+  dependencies: []
+  description: Pages are reading units, chapters organize pages. Support published pages, user-owned drafts,
+    draft deletion, chapter creation and entry, and reading pages from book or chapter page lists.
+  children:
+  - id: REQ-6.1
+    name: Publish or save a draft page
+    type: ATOMIC
+    dependencies:
+    - REQ-5.3
+    - REQ-2.2
+    description: |-
+      Clicking "New Page"(role=button) on a book opens "Page title"(role=textbox) and "Write your page content here..."(role=textbox). "Save Page"(role=button) publishes the entered title and body, returns to the book, and adds exactly one entry to "Page list"(role=region), including while logged out. When authenticated, users can instead click "Save Draft"(role=button) to save an owned draft, which appears exactly once in the homepage's "My Recent Drafts"(role=region). Saved drafts can be reopened from the parent book's Page list to resume editing or delete them. REQ-2.2 is required only for the Save Draft branch.
+
+      ![image](./reference/page_draft.png)
+      ![image](./reference/index_after_login.png)
+    data:
+      requires:
+      - DATA-CONTENT
+      - DATA-ACCOUNT
+      - DATA-SESSION
+    scenarios:
+    - name: Publish a page
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has UI-created isolated Book 6.1.1 and is viewing it; isolated Page Created 6.1.1
+          does not exist.
+      - keyword: WHEN
+        content: Click New Page, fill Page title with the isolated name and Write your page content here... with Page
+          content created by corresponding prerequisite behavior., then Save Page.
+      - keyword: THEN
+        content: The parent book returns with exactly one visible Page list entry for the saved page, without requiring
+          login.
+    - name: Save an owned recent draft
+      steps:
+      - keyword: GIVEN
+        content: Log in through Email and Password as DATA-ACCOUNT, create isolated Book 6.1.2 through UI, and open
+          that book.
+      - keyword: WHEN
+        content: Click New Page, enter isolated Page Draft 6.1.2 and Draft content created by corresponding prerequisite
+          behavior., then Save Draft. Open the parent book if the editor remains and open / to return home.
+      - keyword: THEN
+        content: The parent Page list contains exactly one draft entry; the authenticated My Recent Drafts region also
+          contains that draft exactly once.
+  - id: REQ-6.2
+    name: Delete an owned draft
+    type: ATOMIC
+    dependencies:
+    - REQ-6.1
+    description: |-
+      Opening an owned draft while logged in offers "Delete Draft"(role=button). Clicking it opens confirmation with "Confirm Delete"(role=button); confirming returns to the parent book and removes that draft from "Page list"(role=region).
+
+      ![image](./reference/delete_draft.png)
+    data:
+      requires:
+      - DATA-CONTENT
+      - DATA-ACCOUNT
+      - DATA-SESSION
+    scenarios:
+    - name: Confirm draft deletion
+      steps:
+      - keyword: GIVEN
+        content: DATA-ACCOUNT is authenticated and owns a UI-created isolated Draft 6.1.3 with Disposable draft. under
+          isolated Book 6.1.3, established through New Page and Save Draft.
+      - keyword: WHEN
+        content: Open Books, select the parent, select the draft in Page list, click Delete Draft and Confirm Delete.
+      - keyword: THEN
+        content: The parent book's heading returns and Page list contains no entry for that draft.
+  - id: REQ-6.3
+    name: Create and enter a chapter
+    type: ATOMIC
+    dependencies:
+    - REQ-5.3
+    description: |-
+      Clicking "New Chapter"(role=button) on a book opens "Name"(role=textbox) and "Description"(role=textbox). "Save Chapter"(role=button) saves the entered chapter and adds exactly one entry to "Chapter list"(role=region). Opening its "{chapter name}"(role=button) entry displays that chapter's heading and saved description.
+
+      ![image](./reference/create_chapter.png)
+      ![image](./reference/chapter.png)
+    data:
+      requires:
+      - DATA-CONTENT
+    scenarios:
+    - name: Save and open a chapter
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has UI-created isolated Book 6.2.1 and is viewing it; isolated Chapter Created
+          6.2.1 does not exist.
+      - keyword: WHEN
+        content: Click New Chapter, enter the isolated name and Chapter created by corresponding prerequisite behavior.
+          in Name and Description, then Save Chapter. Click that chapter's entry in Chapter list.
+      - keyword: THEN
+        content: Saving adds exactly one Chapter list entry. Selecting it opens the same chapter's heading and saved
+          description.
+  - id: REQ-6.4
+    name: Read a page or reopen its editor
+    type: ATOMIC
+    dependencies:
+    - REQ-6.1
+    description: |-
+      Selecting "{page title}"(role=button) from a book or chapter's "Page list"(role=region) displays the published page's title heading and saved body. "Edit"(role=button) on the reading page opens an editor prefilled with the current title in "Page title"(role=textbox) and body in "Write your page content here..."(role=textbox), with "Save Page"(role=button) available to save the page.
+
+      ![image](./reference/page.png)
+      ![image](./reference/page_draft.png)
+    data:
+      requires:
+      - DATA-CONTENT
+    scenarios:
+    - name: Read selected page
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has UI-published isolated Page 6.3.1 with Reading content for Page 6.3.1. under
+          isolated Book 6.3.1; the parent Page list is open.
+      - keyword: WHEN
+        content: Activate the exact page entry in Page list.
+      - keyword: THEN
+        content: The page heading matches the isolated title and its saved body is visible.
+    - name: Reopen page editor
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has UI-published isolated Page 6.3.2 with Reading content for Page 6.3.2. under
+          isolated Book 6.3.2.
+      - keyword: WHEN
+        content: Open that page from Page list and click Edit.
+      - keyword: THEN
+        content: The editor's Page title and Write your page content here... fields contain the saved title and body,
+          and Save Page is visible.
+- id: REQ-7
+  name: Recently viewed content
+  type: FOLDER
+  dependencies: []
+  description: Authenticated visits to shelves, books, chapters and pages are recorded for that user.
+    My Recently Viewed contains at most ten records and opens the selected item. The source does not define
+    a tie-breaker or eviction order.
+  children:
+  - id: REQ-7.1
+    name: Record and reopen viewed content
+    type: ATOMIC
+    dependencies:
+    - REQ-2.2
+    - REQ-4.2
+    description: |-
+      Authenticated visits to shelves, books, chapters, and pages record those items for the user. Opening / returns home, where "My Recently Viewed"(role=region) contains at most ten records and one entry per visited identity. Selecting "{visited item name}"(role=button), or the allowed equivalent link, opens the corresponding item.
+
+      ![image](./reference/index_after_login.png)
+    data:
+      requires:
+      - DATA-CONTENT
+      - DATA-ACCOUNT
+      - DATA-SESSION
+    scenarios:
+    - name: Record shelf visit
+      steps:
+      - keyword: GIVEN
+        content: DATA-ACCOUNT is authenticated and isolated Shelf 7.1 has been created through the public shelf form.
+      - keyword: WHEN
+        content: Open the exact shelf from Shelves and Shelf list, then open / to return home.
+      - keyword: THEN
+        content: My Recently Viewed contains exactly one entry for that visited shelf, with the region containing no
+          more than ten records.
+    - name: Reopen visited shelf
+      steps:
+      - keyword: GIVEN
+        content: DATA-ACCOUNT is authenticated and isolated Shelf 7.2 has been UI-created and visited through Shelf
+          list.
+      - keyword: WHEN
+        content: Open / to return home and click that shelf's exact entry in My Recently Viewed.
+      - keyword: THEN
+        content: The recent list exposes the identity exactly once and selecting it opens that same shelf's heading.
+- id: REQ-8
+  name: Personal favorites
+  type: FOLDER
+  dependencies: []
+  description: Authenticated users can favorite and unfavorite shelves, books, chapters and pages. My
+    Most Viewed Favorites contains at most four items, and a dedicated favorites page exposes the complete
+    collection. Ranking ties and the name of the complete-list entry are not specified; these are not
+    tested.
+  children:
+  - id: REQ-8.1
+    name: Favorite and unfavorite content
+    type: ATOMIC
+    dependencies:
+    - REQ-2.2
+    - REQ-5.3
+    description: |-
+      On an authenticated shelf, book, chapter, or page details view, "Favorite"(role=button) initially exposes aria-pressed=false. Clicking it stores a personal favorite and changes the action to "Unfavorite"(role=button) with aria-pressed=true. Clicking Unfavorite removes the preference and restores Favorite with aria-pressed=false. The selected state persists after reload and follows the same behavior for all four content types.
+
+      ![image](./reference/book.png)
+      ![image](./reference/favourites.png)
+    data:
+      requires:
+      - DATA-CONTENT
+      - DATA-ACCOUNT
+      - DATA-SESSION
+    scenarios:
+    - name: Favorite a book
+      steps:
+      - keyword: GIVEN
+        content: DATA-ACCOUNT is authenticated and is viewing UI-created isolated Book 8.1; Favorite starts with pressed=false.
+      - keyword: WHEN
+        content: Click Favorite on that book's details.
+      - keyword: THEN
+        content: The action changes to Unfavorite and reports pressed=true for that book.
+    - name: Persist removal of a favorite
+      steps:
+      - keyword: GIVEN
+        content: DATA-ACCOUNT is authenticated and has UI-created isolated Book Unfavorite; it has not yet been favorited.
+      - keyword: WHEN
+        content: Click Favorite, reload, click Unfavorite, reload again, and open / to return home.
+      - keyword: THEN
+        content: After the first reload Unfavorite still reports pressed=true; after removal Favorite reports pressed=false
+          before and after reload. My Most Viewed Favorites has no entry for the removed book.
+  - id: REQ-8.2
+    name: Open a homepage favorite
+    type: ATOMIC
+    dependencies:
+    - REQ-8.1
+    description: |-
+      After an item is favorited, the authenticated homepage's "My Most Viewed Favorites"(role=region) exposes that item as "{favorite item name}"(role=button), with an equivalent link also permitted. The region contains at most four items; selecting an entry opens the corresponding item. A dedicated favorites page exposes the complete collection.
+
+      ![image](./reference/index_after_login.png)
+      ![image](./reference/favourites.png)
+    data:
+      requires:
+      - DATA-CONTENT
+      - DATA-ACCOUNT
+      - DATA-SESSION
+    scenarios:
+    - name: Open favorited book
+      steps:
+      - keyword: GIVEN
+        content: DATA-ACCOUNT is authenticated and has UI-created isolated Book 8.2, then clicked Favorite and observed
+          Unfavorite with pressed=true.
+      - keyword: WHEN
+        content: Open /, inspect My Most Viewed Favorites and activate the exact isolated book entry there.
+      - keyword: THEN
+        content: The favorite entry appears once in a list of no more than four items and opens the same book's heading.
+- id: REQ-9
+  name: Recently updated pages
+  type: FOLDER
+  dependencies: []
+  description: The homepage shows at most five recently created or edited pages and opens a selected page.
+    The source does not define ranking tie-breakers.
+  children:
+  - id: REQ-9.1
+    name: Open a recently updated page
+    type: ATOMIC
+    dependencies:
+    - REQ-6.1
+    description: |-
+      Creating or editing a page updates "Recently Updated Pages"(role=region) on the homepage. This region contains at most five items, and selecting "{page title}"(role=button), or the permitted equivalent link, opens that page with its saved title and body.
+
+      ![image](./reference/index.png)
+      ![image](./reference/page.png)
+    data:
+      requires:
+      - DATA-CONTENT
+    scenarios:
+    - name: Open recently published page
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has UI-created isolated Book 9.1 and published isolated Page Updated 9.1 with
+          Page content created by corresponding prerequisite behavior.
+      - keyword: WHEN
+        content: Open / and select that page's exact entry in Recently Updated Pages.
+      - keyword: THEN
+        content: The list has no more than five entries and includes the new page once; selection opens its saved heading
+          and body.
