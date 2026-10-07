@@ -16,14 +16,16 @@ requirement package with an executable test suite, so different generators can
 be compared against the same inputs and behavioral checks. This repository
 contains:
 
-- `arc-bench/webapp/<app>/requirements/`: structured requirements for the
-  benchmark web apps;
-- `arc-bench/webapp/<app>/tests/`: Playwright tests for those apps;
-- `arc-bench/webapp/<app>/project/`: optional reference implementation for an
-  app;
-- `scripts/run-playwright.js` and `playwright.config.ts`: the benchmark test
-  runner;
-- `Dockerfile`: an optional containerized benchmark execution environment.
+```text
+arc-bench/
+├── <app>/
+│   ├── requirements/
+│   │   ├── requirements.yaml   Structured requirements and scenarios
+│   │   └── reference/          Visual reference images
+│   └── tests/                  Playwright tests, helpers, and fixtures
+setup-playwright.sh             Test environment setup script
+README.md
+```
 
 The benchmark itself is generator-agnostic. Any implementation, whether it is
 produced by a generator or written as a reference implementation, is responsible
@@ -33,17 +35,91 @@ running the selected app's tests against that URL.
 
 ## 📊 Benchmark Applications
 
-Requirement counts are the number of atomic requirement nodes in
-`requirements.yaml`. Test counts are the number of Playwright `test(...)` cases.
+Applications are sorted by the number of **requirement nodes**, from smallest
+to largest. Counts include every node: ROOT, FOLDER, and ATOMIC.
+Scenarios are the GIVEN / WHEN / THEN cases in `requirements.yaml`;
+each scenario corresponds to one Playwright test.
 
-| App | # Requirements | # Test cases | # Domain |
-| --- | ---: | ---: | --- |
-| `keep` | 32 | 32 | Google Keep, <https://keep.google.com/> |
-| `bookstack` | 34 | 34 | BookStack, <https://demo.bookstackapp.com/> |
-| `stackoverflow` | 66 | 66 | Stack Overflow, <https://stackoverflow.com/> |
-| `prestashop` | 86 | 86 | PrestaShop, <https://demo.prestashop.com/> |
-| `12306` | 117 | 117 | China Railway 12306, <https://www.12306.cn/en> |
-| `ctrip` | 125 | 125 | Ctrip, <https://www.ctrip.com/> |
+| Application | # Requirements | # Scenarios | # Tests | Domain |
+| :--- | ---: | ---: | ---: | :--- |
+| `keep` | 22 | 33 | 33 | [Google Keep](https://keep.google.com/) |
+| `bookstack` | 34 | 35 | 35 | [BookStack](https://demo.bookstackapp.com/) |
+| `stackoverflow` | 58 | 66 | 66 | [Stack Overflow](https://stackoverflow.com/) |
+| `prestashop` | 63 | 86 | 86 | [PrestaShop](https://demo.prestashop.com/) |
+| `ctrip` | 106 | 152 | 152 | [Ctrip](https://www.ctrip.com/) |
+| `12306` | 116 | 142 | 142 | [China Railway 12306](https://www.12306.cn/en) |
+| **Total** | **399** | **514** | **514** | |
+
+## 🚀 Usage
+
+### 1. Generate an Application
+
+Use both inputs under `arc-bench/<app>/requirements/` to generate a web application:
+
+- **`requirements.yaml`** — application behavior, scenarios, and required data.
+- **`reference/`** — visual references for the application.
+
+Start the generated application and record its entry URL, for example
+`http://127.0.0.1:3000`. Keep it running while executing the tests.
+
+**Example generator: ARC.** Clone the
+[Agentic Requirement Compiler](https://github.com/code-philia/agentic-requirement-compiler.git)
+and follow its README to install and configure it:
+
+```bash
+git clone https://github.com/code-philia/agentic-requirement-compiler.git
+```
+
+Provide `arc-bench/<app>/requirements/` as the input requirement directory, then
+start the resulting application using its generated startup instructions.
+Other generators can use the same benchmark inputs.
+
+### 2. Run the Tests
+
+Install Node.js 22 LTS and npm before setting up the test environment.
+
+**Step 1 — Copy the test files.** Copy `arc-bench/<app>/tests/` and
+`setup-playwright.sh` into the generated application directory or a separate
+test directory. Keep the script and `tests/` at the same level:
+
+```text
+target-directory/
+├── setup-playwright.sh
+└── tests/
+    ├── REQ-*.spec.ts
+    └── ...
+```
+
+**Step 2 — Set up Playwright.** From that directory, run:
+
+```bash
+source setup-playwright.sh "http://127.0.0.1:3000"
+```
+
+Replace the URL with the entry URL of your running application. The script
+installs the Playwright dependency and Chromium, adds npm test commands, and
+generates `playwright.config.ts` with the target URL. It also supplies default
+run IDs automatically. On Linux, append `--with-deps` if browser system
+dependencies need to be installed.
+
+**Step 3 — Execute the tests.**
+
+```bash
+npm run test:e2e
+```
+
+Tests run sequentially with **`workers: 1`**. The generated configuration sets
+**`timeout: 10_000`** for each complete test and **`expect.timeout: 10_000`** for
+assertions. Actions use a 15-second timeout and navigation uses a 30-second
+timeout, subject to the overall test timeout. Adjust these settings in
+`playwright.config.ts` to suit your execution environment; set
+`use.actionTimeout: 10_000` for a 10-second limit on locator actions.
+
+To view the HTML report after a run:
+
+```bash
+npm run test:e2e:report
+```
 
 ## Reference
 
@@ -55,441 +131,4 @@ Requirement counts are the number of atomic requirement nodes in
   year      = {2026},
   series    = {ISSTA}
 }
-```
-
-## 🚀 Benchmark Basic Usage
-
-The benchmark usage is independent of any particular generation method:
-
-```text
-arc-bench/webapp/<app>/requirements/
-  -> generate a runnable web application with a chosen method
-  -> the implementation starts, initializes required data, and exposes an entry URL
-  -> run arc-bench/webapp/<app>/tests/ against that URL
-```
-
-Install the local test runner when running tests directly on the host:
-
-```bash
-npm install
-npm run test:install
-```
-
-Run one benchmark application's tests against a running application:
-
-```bash
-npm run test -- --app bookstack --target-url http://127.0.0.1:3301
-```
-
-Benchmark tests always run sequentially with one Playwright worker. This keeps
-state-changing scenarios deterministic and prevents different requirement
-cases from modifying the same application data concurrently.
-
-The test suites do not call private reset or seed APIs. Before each benchmark
-run, the target implementation must initialize the accounts and domain data
-specified by its requirement package. The reference flow satisfies this
-contract by starting a fresh container and letting the reference application
-initialize its own data before the tests begin.
-
-If the application is already deployed and you only have an entry URL, pass the
-URL with `--target-url`. The runner uses that URL as Playwright's `baseURL`.
-No environment variables are required for this path.
-
-```bash
-npm run test -- --app bookstack --target-url https://your-app.example.com
-```
-
-To run the same tests inside the Docker benchmark environment, use:
-
-```bash
-npm run test:docker -- --app bookstack --target-url https://your-app.example.com
-```
-
-When the application is running on the host machine, a localhost URL must be
-reachable from inside Docker. The npm wrapper rewrites `localhost`,
-`127.0.0.1`, and `0.0.0.0` to `host.docker.internal` for the container:
-
-```bash
-npm run test:docker -- --app bookstack --target-url http://127.0.0.1:3301
-```
-
-Docker test outputs are exported to:
-
-```text
-docker-output/test/<app>/
-|-- test-results/
-`-- playwright-report/
-```
-
-The Docker image in this repository provides a benchmark execution environment:
-Node.js, Playwright browsers, the benchmark runner, and benchmark files. For an
-already-running implementation, the Docker test command only needs the selected
-app and the entry URL.
-
-After changing requirements, test cases, helpers, or runner configuration, run
-the static benchmark contract audit:
-
-```bash
-npm run test:audit
-```
-
-The audit checks requirement-to-spec ID mapping, scenario-name alignment,
-sequential execution, entry-URL navigation, and the absence of direct API
-access, internal URL assertions, and implementation-specific class or
-data-attribute selectors.
-
-## 🧪 Reference Implementation Testing
-
-Reference implementations can be placed under:
-
-```text
-arc-bench/webapp/<app>/project/
-```
-The reference app must listen on `PORT` and expose a health endpoint at
-`/api/health`. It must initialize the database or other seed data required by
-the requirements during startup. It does not own or execute the benchmark E2E
-tests.
-
-### Run Reference Implementation
-
-Build or rebuild the benchmark image after changing Docker scripts or the test
-runner:
-
-```bash
-npm run docker:build
-```
-
-The image prepares the benchmark test environment and the Playwright Chromium
-browser cache used by the benchmark runner. It does not include reference
-implementation source code or reference `node_modules`.
-
-If a run reports a missing path such as
-`/ms-playwright/chromium_headless_shell-xxxx/...`, rebuild the image. That error
-means the image's browser cache does not match the benchmark runner's
-`@playwright/test` version.
-
-Run the `12306` reference implementation in Docker, then execute the benchmark
-tests against the URL exposed inside the container:
-
-```bash
-npm run reference -- --app 12306
-```
-
-Equivalent shorthand:
-
-```bash
-npm run reference:12306
-```
-
-This command does not require manually setting `PORT`, `TARGET_URL`,
-`PLAYWRIGHT_BASE_URL`, or `ARC_TEST_DATE`. The wrapper chooses the container
-port, starts the reference implementation, and calls the benchmark runner with
-the resulting URL.
-
-The reference flow performs the following steps in one fresh container:
-
-```text
-mount arc-bench/webapp/12306/project/
-mount arc-bench/webapp/12306/tests/
-  -> copy source to /workspaces/reference/12306/project
-  -> install dependencies inside the Linux container
-  -> build the frontend if package.json defines `build`
-  -> start the reference backend on PORT=3301
-  -> wait for http://127.0.0.1:3301/api/health
-  -> run `npm run test -- --app 12306 --target-url http://127.0.0.1:3301`
-```
-
-## 🧩 ARC Baseline Reproduction Flow
-
-This section is an application example of the benchmark using ARC (Agentic
-Requirement Compiler) as the generation method. This repository is not a
-standalone implementation of the ARC compiler; the compiler and its application
-templates are provided through Git submodules.
-
-- **ARC Agent**: <https://github.com/code-philia/agentic-requirement-compiler>
-
-### Prerequisites
-
-Install the following for the ARC baseline example:
-
-- Docker Desktop on Windows/macOS or Docker Engine on Linux;
-- access to an OpenAI-compatible model API.
-
-### Clone the Repository and Update Submodules
-
-Clone the benchmark repository and initialize the ARC compiler submodule and
-its nested submodules:
-
-```bash
-git submodule sync --recursive
-git submodule update --init --remote --recursive
-```
-
-### Configure ARC Environment
-
-The environment file belongs to the ARC compiler submodule. Read the configuration instructions in:
-
-```text
-agentic-requirement-compiler/README.md
-```
-
-Create the compiler environment file from the template.
-
-Linux/macOS:
-```bash
-cp agentic-requirement-compiler/.env_example \
-   agentic-requirement-compiler/.env
-```
-
-Windows PowerShell:
-
-```powershell
-Copy-Item `
-  agentic-requirement-compiler\.env_example `
-  agentic-requirement-compiler\.env
-```
-
-Edit `agentic-requirement-compiler/.env` according to the ARC compiler README.
-At minimum, configure the model API credentials and model name. The file is
-passed to Docker at runtime and is excluded from the Docker image.
-
-For one application, the complete flow is:
-
-```text
-arc-bench/webapp/<app>/
-|-- requirements/   input requirements and reference assets
-`-- tests/          Playwright tests for the generated app
-
-ARC compiles `arc-bench/webapp/<app>/requirements/`
-  -> generated backend starts on port 3301
-  -> /api/health becomes available
-  -> Playwright tests run from `arc-bench/webapp/<app>/tests/`
-  -> application, logs, raw results, and HTML report are exported
-```
-
-The recommended ARC baseline command performs all steps in one isolated
-container. The examples below use `bookstack`; replace it with another benchmark
-app name as needed.
-
-If you add or modify `arc-bench/`, `apps.config.json`, `scripts/`, or
-`docker/entrypoint.sh`, rebuild the image before running the container again.
-The image copies those files at build time.
-
-Linux:
-
-```bash
-mkdir -p docker-output
-
-docker run --rm \
-  --env-file agentic-requirement-compiler/.env \
-  --mount "type=bind,source=$PWD/docker-output,target=/export" \
-  arc-reproduction:latest bookstack
-```
-
-macOS:
-
-```bash
-mkdir -p docker-output
-
-docker run --rm \
-  --env-file agentic-requirement-compiler/.env \
-  --mount "type=bind,source=$PWD/docker-output,target=/export" \
-  arc-reproduction:latest bookstack
-```
-
-Windows PowerShell:
-
-```powershell
-New-Item -ItemType Directory -Force docker-output | Out-Null
-
-docker run --rm `
-  --env-file agentic-requirement-compiler\.env `
-  --mount "type=bind,source=$((Get-Location).Path)\docker-output,target=/export" `
-  arc-reproduction:latest bookstack
-```
-
-Replace `bookstack` with one of:
-
-```text
-keep
-bookstack
-stackoverflow
-prestashop
-12306
-ctrip
-```
-
-The container entrypoint performs:
-
-```text
-arc compile
-  -> PORT=3301 npm run start
-  -> wait for http://127.0.0.1:3301/api/health
-  -> npm run test -- --app <app-name>
-```
-
-The container exits with:
-
-- `0` when compilation, startup, and tests succeed;
-- a non-zero status when compilation fails, the health check fails, or tests
-  fail.
-
-### Step-by-Step Commands
-
-The one-container command above is recommended for complete reproduction. The
-following commands are useful when debugging or running one stage separately.
-
-#### Step 1: Build the Docker Image
-
-Linux/macOS:
-
-```bash
-docker build --progress=plain -t arc-reproduction:latest .
-```
-
-Windows PowerShell:
-
-```powershell
-docker build --progress=plain -t arc-reproduction:latest .
-```
-
-Parameter meanings:
-
-- `docker build`: builds an image from the `Dockerfile`;
-- `--progress=plain`: prints complete build logs;
-- `-t arc-reproduction:latest`: assigns the image name and tag;
-- `.`: uses the current repository as the Docker build context.
-
-
-#### Step 2: Compile an Application Only
-This command runs ARC compilation without starting the generated application or
-running Playwright.
-
-Linux/macOS:
-
-```bash
-docker run --rm \
-  --env-file agentic-requirement-compiler/.env \
-  --mount "type=bind,source=$PWD/docker-output,target=/export" \
-  --entrypoint arc \
-  arc-reproduction:latest \
-  compile /opt/arc/arc-bench/webapp/bookstack/requirements \
-  -o /export/bookstack/application \
-  --type web \
-  --clean
-```
-
-Windows PowerShell:
-
-```powershell
-docker run --rm `
-  --env-file agentic-requirement-compiler\.env `
-  --mount "type=bind,source=$((Get-Location).Path)\docker-output,target=/export" `
-  --entrypoint arc `
-  arc-reproduction:latest `
-  compile /opt/arc/arc-bench/webapp/bookstack/requirements `
-  -o /export/bookstack/application `
-  --type web `
-  --clean
-```
-
-Parameter meanings:
-
-- `--entrypoint arc`: bypasses the default Docker entrypoint and calls the
-  installed ARC CLI directly;
-- `compile`: compiles a requirement directory into an application;
-- `/opt/arc/arc-bench/webapp/bookstack/requirements`: the requirement
-  directory inside the image;
-- `-o /export/bookstack/application`: the generated application output
-  directory;
-- `--type web`: selects web application generation;
-- `--clean`: removes an existing output directory before compilation;
-- `--mount ...:/export`: persists the container output under
-  `docker-output/bookstack/application` on the host.
-
-#### Step 3: Start an Existing Application and Run Its Tests
-
-The default entrypoint already starts and tests a newly generated application.
-To test an existing generated application, mount it into a fresh container,
-start its backend, wait for the health endpoint, and run Playwright.
-
-Linux/macOS:
-
-```bash
-docker run --rm \
-  --mount "type=bind,source=$PWD/docker-output/bookstack/application,target=/workspaces/bookstack" \
-  --entrypoint /bin/bash \
-  arc-reproduction:latest \
-  -lc 'set -e
-       (cd /workspaces/bookstack/backend && PORT=3301 npm run start >/tmp/arc-app.log 2>&1) &
-       server_pid=$!
-       trap "kill $server_pid 2>/dev/null || true" EXIT
-       until curl --fail --silent http://127.0.0.1:3301/api/health >/dev/null; do sleep 1; done
-       cd /opt/arc
-       TARGET_URL=http://127.0.0.1:3301 npm run test -- --app bookstack'
-```
-
-Windows PowerShell:
-
-```powershell
-docker run --rm `
-  --mount "type=bind,source=$((Get-Location).Path)\docker-output\bookstack\application,target=/workspaces/bookstack" `
-  --entrypoint /bin/bash `
-  arc-reproduction:latest `
-  -lc 'set -e; (cd /workspaces/bookstack/backend && PORT=3301 npm run start >/tmp/arc-app.log 2>&1) & server_pid=$!; trap "kill $server_pid 2>/dev/null || true" EXIT; until curl --fail --silent http://127.0.0.1:3301/api/health >/dev/null; do sleep 1; done; cd /opt/arc; TARGET_URL=http://127.0.0.1:3301 npm run test -- --app bookstack'
-```
-
-This form assumes the generated application already contains its dependencies
-and frontend build output. Otherwise, use the complete one-container command.
-
-#### Step 4: Run All Applications
-
-Linux/macOS:
-
-```bash
-for app in keep bookstack stackoverflow prestashop 12306 ctrip; do
-  docker run --rm \
-    --env-file agentic-requirement-compiler/.env \
-    --mount "type=bind,source=$PWD/docker-output,target=/export" \
-    arc-reproduction:latest "$app"
-done
-```
-
-Windows PowerShell:
-
-```powershell
-$apps = @("keep", "bookstack", "stackoverflow", "prestashop", "12306", "ctrip")
-New-Item -ItemType Directory -Force docker-output | Out-Null
-
-foreach ($app in $apps) {
-  docker run --rm `
-    --env-file agentic-requirement-compiler\.env `
-    --mount "type=bind,source=$((Get-Location).Path)\docker-output,target=/export" `
-    arc-reproduction:latest $app
-}
-```
-
-Each application runs in its own container and does not reuse another
-application's backend process or workspace.
-
-### Outputs and Test Runner
-
-Results are written to:
-
-```text
-docker-output/<app>/
-|-- application/       generated ARC application
-|-- logs/
-|   |-- compile.log    ARC compilation log
-|   |-- app.log        application startup log
-|   `-- test.log       Playwright log
-|-- test-results/      screenshots, videos, traces, and raw results
-|-- playwright-report/ Playwright HTML report
-`-- summary.txt        compilation, runtime, and test statuses
-```
-
-Open the HTML report at:
-
-```text
-docker-output/bookstack/playwright-report/index.html
 ```

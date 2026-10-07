@@ -6,3 +6,4 @@ workspace/
 docker-output/
 .env
 .env.*
+project/
