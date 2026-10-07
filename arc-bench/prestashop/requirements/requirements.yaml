@@ -1,0 +1,1978 @@
+id: ROOT
+name: PrestaShop B2C storefront
+type: FOLDER
+dependencies: []
+description: A B2C storefront for browsing products, selecting variants, managing a cart, completing checkout, and managing customer accounts.
+environment:
+  benchmark_now: '2026-10-06T12:00:00Z'
+  timezone: UTC
+  clock: Application and evaluator use benchmark_now for displayed dates; elapsed time drives carousel behavior.
+data:
+- id: DATA-CATALOG
+  lifecycle: SEED
+  entity: published catalog
+  properties:
+    categories:
+      CLOTHES:
+      - Men
+      - Women
+      ACCESSORIES: []
+      ART: []
+    men_page_size: 12
+    currency: USD
+    tax_rate: 0.2
+    products:
+    - name: Hummingbird detail t-shirt
+      category: Men
+      price: 24
+      regular_price: 30
+      stock: 50
+      color: White
+      size: M
+      purchasable: true
+      composition: Cotton
+      brand: Hummingbird
+    - name: Hummingbird cart t-shirt
+      category: Men
+      price: 25
+      regular_price: null
+      stock: 50
+      color: White
+      size: M
+      purchasable: true
+      composition: Polyester
+      brand: Hummingbird
+    - name: Hummingbird checkout-step t-shirt
+      category: Men
+      price: 26
+      regular_price: null
+      stock: 50
+      color: White
+      size: M
+      purchasable: true
+      composition: Polyester
+      brand: Hummingbird
+    - name: Hummingbird order-confirmation t-shirt
+      category: Men
+      price: 27
+      regular_price: null
+      stock: 50
+      color: White
+      size: M
+      purchasable: true
+      composition: Polyester
+      brand: Hummingbird
+    - name: Hummingbird order-complete t-shirt
+      category: Men
+      price: 28
+      regular_price: null
+      stock: 50
+      color: White
+      size: M
+      purchasable: true
+      composition: Polyester
+      brand: Hummingbird
+    - name: Hummingbird order-history t-shirt
+      category: Men
+      price: 29
+      regular_price: null
+      stock: 50
+      color: White
+      size: M
+      purchasable: true
+      composition: Polyester
+      brand: Hummingbird
+    - name: Hummingbird wishlist t-shirt
+      category: Men
+      price: 23
+      regular_price: null
+      stock: 50
+      color: White
+      size: M
+      purchasable: true
+      composition: Polyester
+      brand: Hummingbird
+    - name: White t-shirt
+      category: Men
+      price: 22
+      regular_price: null
+      stock: 50
+      color: White
+      size: M
+      purchasable: true
+      composition: Cotton
+      brand: Benchmark Basics
+    - name: Black mug
+      category: Men
+      price: 12
+      regular_price: null
+      stock: 0
+      color: Black
+      size: One size
+      purchasable: false
+      composition: Ceramic
+      brand: Benchmark Basics
+    - name: Catalog item 1
+      category: Men
+      price: 11
+      regular_price: null
+      stock: 50
+      color: Black
+      size: One size
+      purchasable: true
+      composition: Ceramic
+      brand: Benchmark Basics
+    - name: Catalog item 2
+      category: Men
+      price: 12
+      regular_price: null
+      stock: 50
+      color: Black
+      size: One size
+      purchasable: true
+      composition: Ceramic
+      brand: Benchmark Basics
+    - name: Catalog item 3
+      category: Men
+      price: 13
+      regular_price: null
+      stock: 50
+      color: Black
+      size: One size
+      purchasable: true
+      composition: Ceramic
+      brand: Benchmark Basics
+    - name: Catalog item 4
+      category: Men
+      price: 14
+      regular_price: null
+      stock: 50
+      color: Black
+      size: One size
+      purchasable: true
+      composition: Ceramic
+      brand: Benchmark Basics
+    detail_variants:
+    - size: M
+      color: White
+      price: 24
+      regular_price: 30
+      stock: 50
+    - size: L
+      color: Black
+      price: 36
+      regular_price: 45
+      stock: 2
+    detail_images:
+    - identity: Front
+      description: Front view of Hummingbird detail t-shirt
+    - identity: Back
+      description: Back view of Hummingbird detail t-shirt
+  description: 'Concrete representative values instantiate source constraints, not a database schema. All 13 products
+    belong to Men, including the source Black mug. Source-named Hummingbird products and White t-shirt are on the
+    first unfiltered page; order of other entries is unrestricted. Detail t-shirt has 20% discount (30 to 24), tax-inclusive
+    price 24, tax-exclusive price 20, regular-fit description, reference HB-DETAIL, cotton data sheet, regular-fit
+    features, at least two images, seeded review Good fit with average rating 4, and related Men products. Women
+    listing is available. Additional representative combinations make the source dynamic-price/stock rule executable:
+    default M/White costs 24 with stock 50; L/Black costs 36 with stock 2. Front and Back image assets must be visually
+    distinct. The extra size/color combination does not change listing default prices or the 13-product Men pagination
+    world.'
+- id: DATA-ACCOUNTS
+  lifecycle: SEED
+  entity: verified customers
+  properties:
+    accounts:
+    - email: prestashop_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_profile_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_checkout_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_checkout_address_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_checkout_new_address_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_checkout_invoice_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_checkout_6_6_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_checkout_6_7_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_address_view_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_address_create_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_address_edit_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_address_delete_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_order_history_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_wishlist_view_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_wishlist_create_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_wishlist_rename_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_wishlist_delete_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_wishlist_remove_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+    - email: prestashop_wishlist_cart_user@example.com
+      password: ShopPass123!
+      first_name: Store
+      last_name: User
+      birthdate: '1995-08-21'
+  description: Source requires verified accounts. No verification behavior is specified, so these are initialized.
+    Address books start empty; UI setup creates Home where required. The source historical-order account also owns
+    DATA-HISTORY. New customer email and profile-next email are initially unused. No initial account cart contains
+    products.
+- id: DATA-HISTORY
+  lifecycle: SEED
+  entity: completed delivered historical order
+  properties:
+    owner: prestashop_order_history_user@example.com
+    reference: PS-HISTORY-001
+    date: '2026-07-18'
+    status: Delivered
+    product: Hummingbird order-history t-shirt
+    quantity: 1
+    product_amount: 29
+    shipping: 5
+    total: 34
+    address: 1 Commerce Road, Shanghai 200000, China
+    payment: Bank wire
+    invoice: Downloadable PDF for PS-HISTORY-001
+  description: Exactly one initial historical order. The scoped checkout flow cannot create Delivered status or
+    the historical date/reference; this immutable historical state must be initialized.
+- id: DATA-WISHLIST-MEMBERSHIP
+  lifecycle: SEED
+  entity: wishlist with product membership
+  properties:
+    owners:
+    - prestashop_wishlist_view_user@example.com
+    - prestashop_wishlist_remove_user@example.com
+    - prestashop_wishlist_cart_user@example.com
+    name: Favorites
+    products:
+    - Hummingbird wishlist t-shirt
+  description: No source-defined authenticated flow adds products to a wishlist; seed only these membership-bearing
+    Favorites objects. Rename/delete tests create an empty Favorites via the in-scope UI instead.
+- id: DATA-FULFILLMENT
+  lifecycle: SEED
+  entity: available fulfillment choices
+  properties:
+    countries:
+    - China
+    shipping_method: Delivery
+    shipping_cost: 5
+    payment_method: Bank wire
+    terms: Terms and conditions
+  description: Carrier, country and payment publication are outside scope. Terms agreement is available through
+    a separate link.
+- id: DATA-CUSTOMER
+  lifecycle: CREATED
+  entity: registered customer
+  description: Created through REQ-6.2 using new_customer_7_3@example.com.
+- id: DATA-ADDRESS
+  lifecycle: CREATED
+  entity: customer address
+  description: 'Created through REQ-7.3 or checkout REQ-5.3. Home/Office: Store User, 1 Commerce Road, 200000, Shanghai,
+    China, 13800000020. Home is created in UI setup before selection/edit/delete scenarios. Updated street: 88 Market
+    Street.'
+- id: DATA-WISHLIST
+  lifecycle: CREATED
+  entity: empty wishlist
+  description: Created through REQ-7.7. Favorites and Holiday Picks are isolated to scenario-owned accounts.
+- id: DATA-ORDER
+  lifecycle: CREATED
+  entity: new order
+  description: Created through REQ-5.6; assigned reference is observed, never predetermined.
+- id: DATA-FLOW
+  lifecycle: DERIVED
+  entity: session, filters, selected combination, cart, checkout and recently viewed state
+  description: Produced through the corresponding user interactions. Do not inject storage, cookies or API state.
+children:
+- id: REQ-1
+  name: Storefront discovery
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Visitors discover the homepage and navigate through persistent global controls. Homepage content includes carousel promotions, popular product cards with quick view and wishlist controls, promotion area, newsletter and footer. Visual presentation follows homepage.png and navigation.png.
+
+    English action names are case-insensitive. Global navigation remains available across pages. Carousel active content is an image named for the current promotion; exactly one such image is visible.
+  children:
+  - id: REQ-1.1
+    name: Discover storefront content
+    type: ATOMIC
+    dependencies: []
+    description: |-
+      Opening the storefront while logged out displays "Global navigation"(role=navigation), "Carousel"(role=region), "Popular Products"(role=region) containing Hummingbird detail t-shirt, "Promotions"(role=region), "Newsletter"(role=region), and the footer. Users navigate through "Logo"(role=link), "CLOTHES"(role=link), "Sign in"(role=button), and "Cart"(role=link), search with "Search"(role=searchbox), and access language selection through "Language"(role=combobox). Cart count starts at 0. All controls are keyboard-accessible, and mobile navigation collapses behind "Menu"(role=button).
+
+      ![image](./reference/homepage.png)
+    data:
+      requires:
+      - DATA-CATALOG
+    scenarios:
+    - name: Discover homepage
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has an empty cart and the seeded catalog is available.
+      - keyword: WHEN
+        content: Open the storefront homepage.
+      - keyword: THEN
+        content: Global navigation, Carousel, Popular Products containing Hummingbird detail t-shirt, Promotions, Newsletter
+          and footer are visible; Logo, CLOTHES, Sign in, Cart, Search and Language are available and Cart reports 0.
+    - name: Use responsive keyboard navigation
+      steps:
+      - keyword: GIVEN
+        content: The anonymous homepage is open with its desktop navigation visible.
+      - keyword: WHEN
+        content: Use Tab to reach each global navigation control; resize the viewport to 390×844, focus Menu and press
+          Enter, then reach CLOTHES with Tab.
+      - keyword: THEN
+        content: Desktop controls are keyboard reachable; mobile Menu opens navigation and CLOTHES receives keyboard
+          focus.
+  - id: REQ-1.2
+    name: Navigate categories and return home
+    type: ATOMIC
+    dependencies: []
+    description: |-
+      Hovering or keyboard-focusing and activating "CLOTHES"(role=link) reveals "Men"(role=link) and "Women"(role=link). Men opens its product listing with Hummingbird detail t-shirt and Sort by; activating CLOTHES itself opens the parent category. From any catalog page, "Logo"(role=link) returns home to Popular Products.
+
+      ![image](./reference/navigation.png)
+    data:
+      requires:
+      - DATA-CATALOG
+    scenarios:
+    - name: Browse Men and return with logo
+      steps:
+      - keyword: GIVEN
+        content: The anonymous homepage is open and the seeded catalog contains Hummingbird detail t-shirt.
+      - keyword: WHEN
+        content: Hover CLOTHES, activate Men, then activate Logo.
+      - keyword: THEN
+        content: Men initially shows its heading, Sort by and Hummingbird detail t-shirt; Logo returns to the homepage
+          with Popular Products.
+    - name: Open subcategory by keyboard
+      steps:
+      - keyword: GIVEN
+        content: The anonymous homepage is open.
+      - keyword: WHEN
+        content: Focus CLOTHES using the keyboard, press Enter to reveal its submenu, then focus Men and press Enter.
+      - keyword: THEN
+        content: Men opens with its heading and Hummingbird detail t-shirt in Product list.
+  - id: REQ-1.3
+    name: Search products
+    type: ATOMIC
+    dependencies: []
+    description: |-
+      Focusing "Search"(role=searchbox) and entering shirt displays "Search suggestions"(role=region) with Hummingbird detail t-shirt. Pressing Enter submits the search and displays a "Product list"(role=region) containing that product.
+
+      ![image](./reference/search.png)
+    data:
+      requires:
+      - DATA-CATALOG
+    scenarios:
+    - name: Suggest and search shirt
+      steps:
+      - keyword: GIVEN
+        content: The anonymous homepage is open and the catalog includes Hummingbird detail t-shirt.
+      - keyword: WHEN
+        content: Fill Search (searchbox) with shirt, inspect Search suggestions, then press Enter in Search.
+      - keyword: THEN
+        content: Suggestions include Hummingbird detail t-shirt; the submitted Product list includes that same product.
+  - id: REQ-1.4
+    name: Browse carousel promotions
+    type: ATOMIC
+    dependencies: []
+    description: |-
+      "Carousel"(role=region) contains at least two visually distinct promotion slides. Its visible image source or accessible name changes automatically within five seconds; clicking "Next"(role=button) changes the slide immediately. "Shop now"(role=link) opens a product or category containing Hummingbird detail t-shirt.
+
+      ![image](./reference/homepage.png)
+    data:
+      requires:
+      - DATA-CATALOG
+    scenarios:
+    - name: Advance automatically
+      steps:
+      - keyword: GIVEN
+        content: The homepage Carousel is visible with an identifiable current promotion image.
+      - keyword: WHEN
+        content: Observe the carousel without activating a control for up to five seconds.
+      - keyword: THEN
+        content: The visible promotion image source or accessible name changes to a different slide.
+    - name: Advance with Next
+      steps:
+      - keyword: GIVEN
+        content: The homepage Carousel is visible and its current promotion is recorded.
+      - keyword: WHEN
+        content: Click Next (button) within Carousel.
+      - keyword: THEN
+        content: The visible promotion changes to a different slide.
+    - name: Shop from promotion
+      steps:
+      - keyword: GIVEN
+        content: The homepage Carousel offers Shop now (link).
+      - keyword: WHEN
+        content: Activate Shop now.
+      - keyword: THEN
+        content: A product detail for Hummingbird detail t-shirt or a category containing that product opens.
+  - id: REQ-1.5
+    name: Open popular product
+    type: ATOMIC
+    dependencies: []
+    description: |-
+      Within "Popular Products"(role=region), "Hummingbird detail t-shirt"(role=link) is keyboard-accessible. Activating it opens that same product's detail with its heading and Add to cart action.
+
+      ![image](./reference/homepage.png)
+    data:
+      requires:
+      - DATA-CATALOG
+    scenarios:
+    - name: Open popular t-shirt
+      steps:
+      - keyword: GIVEN
+        content: The homepage Popular Products contains Hummingbird detail t-shirt.
+      - keyword: WHEN
+        content: Reach its named product link using the keyboard and activate it.
+      - keyword: THEN
+        content: The product detail heading identifies Hummingbird detail t-shirt and Add to cart is visible.
+  - id: REQ-1.6
+    name: Open empty cart
+    type: ATOMIC
+    dependencies: []
+    description: |-
+      With an empty visitor cart, clicking "Cart"(role=link) opens Shopping cart with an empty-cart message and no cart t-shirt row.
+
+      ![image](./reference/cart.png)
+    data:
+      requires:
+      - DATA-FLOW
+    scenarios:
+    - name: Inspect empty cart
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has added no products and Cart shows 0.
+      - keyword: WHEN
+        content: Activate Cart (link) in Global navigation.
+      - keyword: THEN
+        content: Shopping cart displays an empty-cart message and no Hummingbird cart t-shirt row.
+  - id: REQ-1.7
+    name: Preview popular product without leaving home
+    type: ATOMIC
+    dependencies:
+    - REQ-1.5
+    description: |-
+      Hovering "Product Hummingbird detail t-shirt"(role=region) within Popular Products reveals "Quick view"(role=button). Clicking it opens "Quick view Hummingbird detail t-shirt"(role=dialog) with that exact product and its current price 24. "Close"(role=button) dismisses the preview and restores the homepage's Popular Products without adding anything to the cart.
+
+      ![image](./reference/homepage.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Preview popular product without leaving home
+      steps:
+      - keyword: GIVEN
+        content: The anonymous homepage contains the popular Hummingbird detail t-shirt and an empty cart.
+      - keyword: WHEN
+        content: Hover its Product region, click Quick view (button), inspect the preview, then click Close within the
+          dialog.
+      - keyword: THEN
+        content: Quick view Hummingbird detail t-shirt displays that product and price 24; Close dismisses it, Popular
+          Products remains visible, and Cart still reports 0.
+- id: REQ-2
+  name: Catalog exploration
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Visitors browse category, search and comparable listing contexts. Men provides breadcrumb, description, filters, product grid, count, sorting and pagination. Sidebar filters support availability, sale, category, size, color, composition, price and brand; concrete behavior is tested only where the source provides an oracle.
+
+    Product list contains one Product <name> region per product. Sale price contains just the current monetary amount and discounted cards also expose Regular price. Product count is a named status. Breadcrumb and Subcategories are named regions. Monetary amounts use USD and a decimal point, with one numeric amount per amount region and an optional currency marker.
+  children:
+  - id: REQ-2.1
+    name: Browse category hierarchy
+    type: ATOMIC
+    dependencies: []
+    description: |-
+      The Men category displays its heading, "Category description"(role=region), numeric "Product count"(role=status), "Sort by"(role=combobox), and product grid. "Breadcrumb"(role=navigation) presents Home, CLOTHES, and Men in order; its "CLOTHES"(role=link) returns to the parent category with CLOTHES heading and a Men entry. Parent-category Men and "Women"(role=link) entries are keyboard-accessible, and Women opens its own listing with Sort by.
+
+      ![image](./reference/category.png)
+    data:
+      requires:
+      - DATA-CATALOG
+    scenarios:
+    - name: Inspect category and breadcrumb
+      steps:
+      - keyword: GIVEN
+        content: The seeded catalog is available to an anonymous visitor.
+      - keyword: WHEN
+        content: Open CLOTHES then Men through Global navigation.
+      - keyword: THEN
+        content: Men heading, Category description, numeric Product count, Sort by and Product list are visible; Breadcrumb
+          presents Home, CLOTHES and Men in that order.
+    - name: Return to parent category
+      steps:
+      - keyword: GIVEN
+        content: The visitor is viewing the Men category.
+      - keyword: WHEN
+        content: Activate CLOTHES in Breadcrumb.
+      - keyword: THEN
+        content: The parent CLOTHES category opens with its heading and a keyboard-accessible Men entry.
+    - name: Browse Women from parent
+      steps:
+      - keyword: GIVEN
+        content: The visitor has returned from Men to the parent CLOTHES category using Breadcrumb.
+      - keyword: WHEN
+        content: Focus Women (link) using the keyboard and activate it.
+      - keyword: THEN
+        content: Women opens with its heading and Sort by control.
+  - id: REQ-2.2
+    name: Inspect and open product cards
+    type: ATOMIC
+    dependencies:
+    - REQ-2.1
+    description: |-
+      "Product Hummingbird detail t-shirt"(role=region) contains the product image, name, sale and regular prices, and Sale label. Hover reveals "Quick view"(role=button), "Wishlist"(role=link), and "White"(role=button) as the color preview. The keyboard-accessible "Hummingbird detail t-shirt"(role=link) opens that same product's detail with Add to cart.
+
+      ![image](./reference/category.png)
+    data:
+      requires:
+      - DATA-CATALOG
+    scenarios:
+    - name: Inspect card and hover actions
+      steps:
+      - keyword: GIVEN
+        content: The visitor is viewing Men with Hummingbird detail t-shirt in Product list.
+      - keyword: WHEN
+        content: Inspect Product Hummingbird detail t-shirt and hover that region.
+      - keyword: THEN
+        content: The card shows its image, name, sale price 24, regular price 30 and Sale label; hover reveals Quick
+          view, Wishlist and White color-preview controls.
+    - name: Open card using keyboard
+      steps:
+      - keyword: GIVEN
+        content: Men Product list includes Hummingbird detail t-shirt.
+      - keyword: WHEN
+        content: Use keyboard focus to reach its product link and activate it.
+      - keyword: THEN
+        content: The exact product detail opens with its named heading and Add to cart.
+  - id: REQ-2.3
+    name: Filter catalog results
+    type: ATOMIC
+    dependencies:
+    - REQ-2.1
+    description: |-
+      Selecting "In stock"(role=checkbox) retains the White t-shirt and excludes the out-of-stock Black mug. Selecting "White"(role=checkbox) as the color filter also retains that t-shirt and excludes the Black mug. Entering a number in "Minimum price"(role=spinbutton) retains only products at or above that amount and updates "Product count"(role=status); entering 20 includes the White t-shirt and excludes the Black mug. "Clear all"(role=button) removes applied filters and restores the original results and count.
+
+      ![image](./reference/category.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Filter in-stock products
+      steps:
+      - keyword: GIVEN
+        content: The unfiltered Men catalog includes in-stock White t-shirt and out-of-stock Black mug.
+      - keyword: WHEN
+        content: Check In stock (checkbox) in Filters.
+      - keyword: THEN
+        content: White t-shirt remains in Product list and Black mug is excluded.
+    - name: Filter White color
+      steps:
+      - keyword: GIVEN
+        content: The unfiltered Men catalog includes White t-shirt and Black mug.
+      - keyword: WHEN
+        content: Check White (checkbox) in Filters.
+      - keyword: THEN
+        content: White t-shirt remains in Product list and Black mug is excluded.
+    - name: Filter minimum price
+      steps:
+      - keyword: GIVEN
+        content: The unfiltered Men catalog includes White t-shirt priced 22 and Black mug priced 12.
+      - keyword: WHEN
+        content: Fill Minimum price (spinbutton) with 20 and commit the input.
+      - keyword: THEN
+        content: White t-shirt remains, Black mug is excluded, and Product count reports the filtered result set.
+    - name: Clear applied filters
+      steps:
+      - keyword: GIVEN
+        content: The visitor has opened Men and recorded the original Product count, then applied In stock.
+      - keyword: WHEN
+        content: Click Clear all (button).
+      - keyword: THEN
+        content: In stock is unchecked and the original Product count and previously excluded Black mug return.
+  - id: REQ-2.4
+    name: Sort products by ascending price
+    type: ATOMIC
+    dependencies:
+    - REQ-2.1
+    description: |-
+      Selecting Price, low to high in "Sort by"(role=combobox) orders the current prices in "Product list"(role=region) ascending while retaining the White t-shirt. Equal-price products have no prescribed tie order.
+
+      ![image](./reference/sort.png)
+    data:
+      requires:
+      - DATA-CATALOG
+    scenarios:
+    - name: Sort current prices ascending
+      steps:
+      - keyword: GIVEN
+        content: The unfiltered Men Product list includes White t-shirt.
+      - keyword: WHEN
+        content: Select Price, low to high in Sort by (combobox).
+      - keyword: THEN
+        content: The displayed current prices are nondecreasing, White t-shirt remains, and the selected sort label
+          is shown; equal-price products have no required tie order.
+  - id: REQ-2.5
+    name: Browse additional result pages
+    type: ATOMIC
+    dependencies:
+    - REQ-2.1
+    description: |-
+      The unfiltered Men listing initially shows 12 of 13 products. "Product count"(role=status) displays Showing <start>-<end> of <total> item(s). Clicking "Next"(role=button) within "Pagination"(role=navigation) opens the remaining product slice and updates the range to 13-13 of 13 without changing the total.
+
+      ![image](./reference/category.png)
+    data:
+      requires:
+      - DATA-CATALOG
+    scenarios:
+    - name: Inspect first page and browse second
+      steps:
+      - keyword: GIVEN
+        content: The unfiltered Men catalog contains 13 products.
+      - keyword: WHEN
+        content: Record the first-page product identities, then click Next in Pagination (navigation).
+      - keyword: THEN
+        content: Initially 12 products and Showing 1-12 of 13 are displayed; the second page shows one different product
+          and Showing 13-13 of 13, preserving total 13.
+  - id: REQ-2.6
+    name: Filter products on sale
+    type: ATOMIC
+    dependencies:
+    - REQ-2.1
+    description: |-
+      Selecting "On sale"(role=checkbox) within "Filters"(role=region) includes discounted products and excludes undiscounted products according to DATA-CATALOG. The visible results and "Product count"(role=status) update to the filtered set.
+
+      ![image](./reference/category.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Filter products on sale
+      steps:
+      - keyword: GIVEN
+        content: The unfiltered Men catalog contains Hummingbird detail t-shirt and White t-shirt with their DATA-CATALOG
+          attributes; its original Product count is recorded.
+      - keyword: WHEN
+        content: Check On sale (checkbox) in Filters.
+      - keyword: THEN
+        content: Hummingbird detail t-shirt remains in Product list, White t-shirt is excluded, and Product count changes
+          to the filtered result set.
+  - id: REQ-2.7
+    name: Filter product size
+    type: ATOMIC
+    dependencies:
+    - REQ-2.1
+    description: |-
+      Choosing "M"(role=checkbox) within "Filters"(role=region) includes products offering size M and excludes One size products, using DATA-CATALOG attributes. The displayed results and "Product count"(role=status) update accordingly.
+
+      ![image](./reference/category.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Filter product size
+      steps:
+      - keyword: GIVEN
+        content: The unfiltered Men catalog contains White t-shirt and Black mug with their DATA-CATALOG attributes;
+          its original Product count is recorded.
+      - keyword: WHEN
+        content: Check M (checkbox) in Filters.
+      - keyword: THEN
+        content: White t-shirt remains in Product list, Black mug is excluded, and Product count changes to the filtered
+          result set.
+  - id: REQ-2.8
+    name: Filter product composition
+    type: ATOMIC
+    dependencies:
+    - REQ-2.1
+    description: |-
+      Choosing "Cotton"(role=checkbox) within "Filters"(role=region) includes cotton products and excludes ceramic and polyester products according to DATA-CATALOG. The result set and "Product count"(role=status) update together.
+
+      ![image](./reference/category.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Filter product composition
+      steps:
+      - keyword: GIVEN
+        content: The unfiltered Men catalog contains White t-shirt and Black mug with their DATA-CATALOG attributes;
+          its original Product count is recorded.
+      - keyword: WHEN
+        content: Check Cotton (checkbox) in Filters.
+      - keyword: THEN
+        content: White t-shirt remains in Product list, Black mug is excluded, and Product count changes to the filtered
+          result set.
+  - id: REQ-2.9
+    name: Filter product brand
+    type: ATOMIC
+    dependencies:
+    - REQ-2.1
+    description: |-
+      Choosing "Hummingbird"(role=checkbox) within "Filters"(role=region) retains that brand and excludes Benchmark Basics using DATA-CATALOG. The displayed results and "Product count"(role=status) reflect the selected brand.
+
+      ![image](./reference/category.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Filter product brand
+      steps:
+      - keyword: GIVEN
+        content: The unfiltered Men catalog contains Hummingbird detail t-shirt and White t-shirt with their DATA-CATALOG
+          attributes; its original Product count is recorded.
+      - keyword: WHEN
+        content: Check Hummingbird (checkbox) in Filters.
+      - keyword: THEN
+        content: Hummingbird detail t-shirt remains in Product list, White t-shirt is excluded, and Product count changes
+          to the filtered result set.
+  - id: REQ-2.10
+    name: Combine filters and clear them
+    type: ATOMIC
+    dependencies:
+    - REQ-2.3
+    description: |-
+      Filters combine by intersection. Selecting "In stock"(role=checkbox) and entering 25 in "Minimum price"(role=spinbutton) retains the cart t-shirt while excluding the White t-shirt priced 22 and the out-of-stock Black mug priced 12. "Clear all"(role=button) restores original first-page product identities and count, clears In stock, and resets Minimum price to empty or 0.
+
+      ![image](./reference/category.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Combine filters and clear them
+      steps:
+      - keyword: GIVEN
+        content: The visitor has recorded the unfiltered Men first-page product identities and count; White t-shirt
+          costs 22, Black mug costs 12 and is out of stock, and Hummingbird cart t-shirt costs 25.
+      - keyword: WHEN
+        content: Check In stock, enter 25 in Minimum price and commit it; inspect the results, then click Clear all.
+      - keyword: THEN
+        content: The intersection includes Hummingbird cart t-shirt and excludes White t-shirt and Black mug; Clear
+          all restores the original identities and count, unchecks In stock, and resets Minimum price to empty or 0.
+- id: REQ-3
+  name: Product selection
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Product details expose images and thumbnails/zoom, pricing and tax, variants, quantity, description/details tabs, reviews, recently viewed and related products. Variant-dependent pricing and availability update coherently; the source specifies M/White without requiring an invented different price.
+
+    Product information contains Sale price, Regular price and product text. Reviews show Average rating: <value>. Stock status shows Available stock: <number>. Selected product and variant state remain consistent across navigation within a flow.
+  children:
+  - id: REQ-3.1
+    name: Inspect product details
+    type: ATOMIC
+    dependencies:
+    - REQ-2.2
+    description: |-
+      Opening Hummingbird detail t-shirt displays its heading and "Add to cart"(role=button). "Product images"(role=region) contains exactly one main image named Hummingbird detail t-shirt, thumbnail choices, and "Zoom"(role=button). "Product information"(role=region) shows its name, sale and regular prices, 20% discount, tax information, and regular-fit description.
+
+      ![image](./reference/product_detail.png)
+    data:
+      requires:
+      - DATA-CATALOG
+    scenarios:
+    - name: Inspect selected product
+      steps:
+      - keyword: GIVEN
+        content: The seeded Hummingbird detail t-shirt is available in Men.
+      - keyword: WHEN
+        content: Open its named product link and inspect Product images and Product information.
+      - keyword: THEN
+        content: The detail heading and Add to cart identify the product; exactly one main image has its product name,
+          thumbnails and Zoom are available, and information shows sale price 24, regular price 30, 20% discount, tax
+          and regular-fit description.
+  - id: REQ-3.2
+    name: Select product combination and quantity
+    type: ATOMIC
+    dependencies:
+    - REQ-3.1
+    description: |-
+      Users choose M in "Size"(role=combobox) and "White"(role=radio), with price and stock reflecting that combination. "Quantity"(role=spinbutton) starts at 1; "Increase quantity"(role=button) changes it to 2, while "Decrease quantity"(role=button) returns it to 1 and cannot reduce it below 1. Direct entry of 3 is accepted. Entering 999 exceeds stock, so "Add to cart"(role=button) shows an insufficient-stock alert and adds no product.
+
+      ![image](./reference/product_detail.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Choose M and White
+      steps:
+      - keyword: GIVEN
+        content: Hummingbird detail t-shirt detail is open with its available variants.
+      - keyword: WHEN
+        content: Select M in Size (combobox) and White (radio).
+      - keyword: THEN
+        content: Size visibly selects M and White is checked for the selected combination.
+    - name: Adjust and directly enter quantity
+      steps:
+      - keyword: GIVEN
+        content: Hummingbird detail t-shirt detail is open and Quantity starts at 1.
+      - keyword: WHEN
+        content: Click Increase quantity, Decrease quantity, and Decrease quantity again; then fill Quantity with 3.
+      - keyword: THEN
+        content: Quantity changes to 2, returns to 1, remains 1 at the lower bound, then displays the directly entered
+          value 3.
+    - name: Reject quantity exceeding stock
+      steps:
+      - keyword: GIVEN
+        content: The anonymous visitor is viewing Hummingbird detail t-shirt with an empty cart and stock less than
+          999.
+      - keyword: WHEN
+        content: Fill Quantity with 999 and click Add to cart.
+      - keyword: THEN
+        content: An insufficient-stock alert appears and Cart remains 0; no success dialog is shown.
+  - id: REQ-3.3
+    name: Add product to cart and choose next destination
+    type: ATOMIC
+    dependencies:
+    - REQ-3.1
+    description: |-
+      Clicking "Add to cart"(role=button) for one default available Hummingbird cart t-shirt opens "Product successfully added to your shopping cart"(role=dialog) with that product and increases cart count. "Continue shopping"(role=link) closes the dialog and returns to the same detail; "Proceed to checkout"(role=link) opens Shopping cart with that product and its correct subtotal.
+
+      ![image](./reference/add_to_cart.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Add default product
+      steps:
+      - keyword: GIVEN
+        content: Hummingbird cart t-shirt detail is open with default M/White variant, Quantity 1 and an empty cart.
+      - keyword: WHEN
+        content: Click Add to cart (button).
+      - keyword: THEN
+        content: Product successfully added to your shopping cart (dialog) identifies Hummingbird cart t-shirt and Cart
+          reports one unit.
+    - name: Continue on same product
+      steps:
+      - keyword: GIVEN
+        content: One default Hummingbird cart t-shirt has been added through Add to cart and its success dialog is open.
+      - keyword: WHEN
+        content: Activate Continue shopping in the success dialog.
+      - keyword: THEN
+        content: The dialog closes and the same product detail remains visible.
+    - name: Proceed from confirmation to cart
+      steps:
+      - keyword: GIVEN
+        content: One default Hummingbird cart t-shirt has been added through Add to cart and its success dialog is open.
+      - keyword: WHEN
+        content: Activate Proceed to checkout in the success dialog.
+      - keyword: THEN
+        content: Shopping cart opens with the named product row and subtotal 25.
+  - id: REQ-3.4
+    name: Read description and product details
+    type: ATOMIC
+    dependencies:
+    - REQ-3.1
+    description: |-
+      Selecting "Description"(role=tab) displays its corresponding named tabpanel with the regular-fit description. Selecting "Product Details"(role=tab) displays the matching tabpanel with Reference HB-DETAIL, a cotton Data sheet, and regular-fit Features.
+
+      ![image](./reference/product_detail.png)
+    data:
+      requires:
+      - DATA-CATALOG
+    scenarios:
+    - name: Read description tab
+      steps:
+      - keyword: GIVEN
+        content: Hummingbird detail t-shirt detail is open.
+      - keyword: WHEN
+        content: Select Description (tab).
+      - keyword: THEN
+        content: Description is selected and its named tabpanel displays the regular-fit product description.
+    - name: Read details tab
+      steps:
+      - keyword: GIVEN
+        content: Hummingbird detail t-shirt detail is open.
+      - keyword: WHEN
+        content: Select Product Details (tab).
+      - keyword: THEN
+        content: Product Details is selected and its tabpanel shows Reference HB-DETAIL, a cotton Data sheet and regular-fit
+          Features.
+  - id: REQ-3.5
+    name: Inspect reviews and enforce visitor sign-in prompts
+    type: ATOMIC
+    dependencies:
+    - REQ-3.1
+    description: |-
+      "Reviews"(role=region) shows the seeded Good fit review and average rating 4. For an anonymous visitor, "Write your review"(role=button) opens "Sign in required"(role=dialog), identifying Hummingbird detail t-shirt, without submitting a review. "Wishlist"(role=link) produces the same product-specific sign-in prompt without storing wishlist membership.
+
+      ![image](./reference/product_detail.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Read existing review
+      steps:
+      - keyword: GIVEN
+        content: Hummingbird detail t-shirt has a seeded Good fit review and average rating 4.
+      - keyword: WHEN
+        content: Open the product detail and inspect Reviews.
+      - keyword: THEN
+        content: Reviews displays Good fit and average rating 4.
+    - name: Require sign-in before review
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor is viewing Hummingbird detail t-shirt and its existing Reviews.
+      - keyword: WHEN
+        content: Click Write your review (button).
+      - keyword: THEN
+        content: Sign in required (dialog) identifies the product, and existing Reviews remains unchanged without a
+          newly submitted review.
+    - name: Require sign-in before wishlist
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor is viewing Hummingbird detail t-shirt.
+      - keyword: WHEN
+        content: Activate Wishlist (link).
+      - keyword: THEN
+        content: Sign in required (dialog) identifies the product and the visitor remains anonymous; the wishlist action
+          does not report successful membership.
+  - id: REQ-3.6
+    name: Discover recently viewed and related products
+    type: ATOMIC
+    dependencies:
+    - REQ-3.1
+    description: |-
+      After visiting Hummingbird detail t-shirt, "Recently viewed"(role=region) includes that product. "Related products"(role=region) contains a different Men product with a keyboard-accessible opening entry.
+
+      ![image](./reference/product_detail.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Inspect recommendations and viewing history
+      steps:
+      - keyword: GIVEN
+        content: The visitor has opened Hummingbird detail t-shirt from Men.
+      - keyword: WHEN
+        content: Inspect Related products and Recently viewed.
+      - keyword: THEN
+        content: Recently viewed contains Hummingbird detail t-shirt; Related products contains a different seeded Men
+          product with a keyboard-accessible opening entry.
+  - id: REQ-3.7
+    name: Switch product thumbnail image
+    type: ATOMIC
+    dependencies:
+    - REQ-3.1
+    description: |-
+      "Product images"(role=region) offers keyboard-accessible "Front"(role=button) and "Back"(role=button) thumbnails. Back replaces the single main image with the distinct back view while retaining the product's accessible name; Front restores the original front image. Switching images does not change the selected product.
+
+      ![image](./reference/product_detail.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Switch product thumbnail image
+      steps:
+      - keyword: GIVEN
+        content: Hummingbird detail t-shirt detail shows its Front main image; its original image source is recorded.
+      - keyword: WHEN
+        content: Click Back in Product images, inspect the main image, then click Front.
+      - keyword: THEN
+        content: Back displays a different image source with the same product accessible name; Front restores the original
+          source, and the selected product heading is unchanged.
+  - id: REQ-3.8
+    name: Open and close enlarged product image
+    type: ATOMIC
+    dependencies:
+    - REQ-3.7
+    description: |-
+      Clicking "Zoom"(role=button) in Product images opens "Product image"(role=dialog) with the currently selected product image and a visible Front view or Back view caption. "Close"(role=button) dismisses the enlargement without changing the product or selected image.
+
+      ![image](./reference/product_detail.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Open and close enlarged product image
+      steps:
+      - keyword: GIVEN
+        content: Hummingbird detail t-shirt detail is open and Back has been selected in Product images.
+      - keyword: WHEN
+        content: Click Zoom, inspect Product image (dialog), then click its Close button.
+      - keyword: THEN
+        content: The dialog displays one enlarged product image and Back view caption; closing it preserves the product
+          heading and selected back image.
+  - id: REQ-3.9
+    name: Update price and stock for selected variant
+    type: ATOMIC
+    dependencies:
+    - REQ-3.2
+    description: |-
+      Choosing L in "Size"(role=combobox) and "Black"(role=radio) updates "Product information"(role=region) to the DATA-CATALOG variant's sale price 36, regular price 45, and "Stock"(role=status) displaying Available stock: 2. Selecting M and "White"(role=radio) restores sale price 24, regular price 30, and Available stock: 50. Both monetary values and stock must follow the actual selected combination rather than only changing the selection controls.
+
+      ![image](./reference/product_detail.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Update price and stock for selected variant
+      steps:
+      - keyword: GIVEN
+        content: Hummingbird detail t-shirt detail is open with the catalog variant data.
+      - keyword: WHEN
+        content: Select L in Size and Black (radio), inspect information, then select M and White (radio).
+      - keyword: THEN
+        content: 'L/Black shows sale price 36, regular price 45 and Available stock: 2; M/White restores price 24, regular
+          price 30 and Available stock: 50.'
+- id: REQ-4
+  name: Cart management
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Cart rows identify the product and selected combination, image, unit price, quantity and subtotal. Cart summary reconciles monetary totals. Visitors can continue browsing or start checkout.
+
+    Cart rows expose Unit price and Subtotal; Cart summary exposes Items subtotal, Shipping, Total and Discount when applicable. Variant text identifies Size: <size> and Color: <color>. Cart count counts units. Cart state remains consistent across navigation within a flow.
+  children:
+  - id: REQ-4.1
+    name: Inspect cart contents and summary
+    type: ATOMIC
+    dependencies:
+    - REQ-3.3
+    description: |-
+      After UI addition, Shopping cart contains exactly one "Hummingbird cart t-shirt"(role=row) with image, M/White combination, Unit price 25, "Quantity"(role=spinbutton) set to 1, Subtotal 25, and "Delete"(role=button). "Cart summary"(role=region) reconciles Items subtotal 25, Shipping 5, and Total 30 including tax. Discount appears only when applicable and is absent for this undiscounted product.
+
+      ![image](./reference/cart.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+      - DATA-FULFILLMENT
+    scenarios:
+    - name: Inspect cart row and totals
+      steps:
+      - keyword: GIVEN
+        content: The visitor has added one default M/White Hummingbird cart t-shirt through UI and opened Shopping cart
+          from the success dialog.
+      - keyword: WHEN
+        content: Inspect its named row and Cart summary.
+      - keyword: THEN
+        content: Exactly one row shows image, M/White, Unit price 25, Quantity 1, Subtotal 25 and Delete; summary shows
+          Items subtotal 25, Shipping 5 and Total 30 including tax, with no Discount.
+  - id: REQ-4.2
+    name: Change or remove cart items
+    type: ATOMIC
+    dependencies:
+    - REQ-4.1
+    description: |-
+      Clicking "Increase quantity"(role=button) within "Hummingbird cart t-shirt"(role=row) changes quantity from 1 to 2, row Subtotal to 50, and Total in "Cart summary"(role=region) to 55. "Delete"(role=button) on that row removes it, displays the empty-cart message, and recalculates Items subtotal and Total to 0.
+
+      ![image](./reference/cart.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+      - DATA-FULFILLMENT
+    scenarios:
+    - name: Increase cart quantity
+      steps:
+      - keyword: GIVEN
+        content: Shopping cart contains one M/White Hummingbird cart t-shirt priced 25 and quantity 1, added through
+          UI.
+      - keyword: WHEN
+        content: Click Increase quantity within that product row.
+      - keyword: THEN
+        content: Quantity becomes 2, row Subtotal becomes 50 and Cart summary Total becomes 55.
+    - name: Delete cart product
+      steps:
+      - keyword: GIVEN
+        content: Shopping cart contains one Hummingbird cart t-shirt added through UI.
+      - keyword: WHEN
+        content: Click Delete within its named row.
+      - keyword: THEN
+        content: The product row disappears, an empty-cart message appears, and Items subtotal and Total both become
+          0.
+  - id: REQ-4.3
+    name: Continue browsing or begin checkout
+    type: ATOMIC
+    dependencies:
+    - REQ-4.1
+    description: |-
+      From Shopping cart, "Continue shopping"(role=link) opens Men with the cart t-shirt available. "Proceed to checkout"(role=link) opens "Personal Information"(role=region) and "Order summary"(role=region) containing the selected product. Both transitions retain the cart.
+
+      ![image](./reference/checkout.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Return to browsing
+      steps:
+      - keyword: GIVEN
+        content: Shopping cart contains one Hummingbird cart t-shirt added through UI.
+      - keyword: WHEN
+        content: Activate Continue shopping (link).
+      - keyword: THEN
+        content: Men opens with Hummingbird cart t-shirt available and the header Cart still reports one unit.
+    - name: Enter checkout with selected cart
+      steps:
+      - keyword: GIVEN
+        content: Shopping cart contains one Hummingbird cart t-shirt added through UI.
+      - keyword: WHEN
+        content: Activate Proceed to checkout (link).
+      - keyword: THEN
+        content: Personal Information and Order summary open; the summary still contains the selected Hummingbird cart
+          t-shirt.
+  - id: REQ-4.4
+    name: Edit cart quantity directly
+    type: ATOMIC
+    dependencies:
+    - REQ-4.1
+    description: |-
+      Entering 3 in "Quantity"(role=spinbutton) within "Hummingbird cart t-shirt"(role=row) and committing on blur updates its Subtotal to 75 and "Cart summary"(role=region) to Items subtotal 75 and Total 80. The header "Cart"(role=link) reports a count of three units.
+
+      ![image](./reference/cart.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+      - DATA-FULFILLMENT
+    scenarios:
+    - name: Edit cart quantity directly
+      steps:
+      - keyword: GIVEN
+        content: Shopping cart contains one Hummingbird cart t-shirt priced 25, quantity 1 and shipping 5.
+      - keyword: WHEN
+        content: Fill Quantity within its row with 3, then blur that field.
+      - keyword: THEN
+        content: Row Subtotal and summary Items subtotal become 75, Total becomes 80, and header Cart reports three
+          units.
+  - id: REQ-4.5
+    name: Carry selected variant into cart
+    type: ATOMIC
+    dependencies:
+    - REQ-3.9
+    - REQ-4.1
+    description: |-
+      Users choose L in "Size"(role=combobox), select "Black"(role=radio), enter 2 in "Quantity"(role=spinbutton), and click "Add to cart"(role=button). Shopping cart displays "Hummingbird detail t-shirt"(role=row) with that exact variant, quantity, and sale unit price 36. "Cart summary"(role=region) shows Items subtotal 72, Shipping 5, Total 77, and informational Discount 18, calculated as 2×(45−36). The already-discounted subtotal is not discounted a second time.
+
+      ![image](./reference/cart.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-FLOW
+      - DATA-FULFILLMENT
+    scenarios:
+    - name: Carry selected variant into cart
+      steps:
+      - keyword: GIVEN
+        content: Hummingbird detail t-shirt detail is open with an empty cart; L/Black has stock 2 and sale/regular
+          prices 36/45.
+      - keyword: WHEN
+        content: Select L and Black, enter Quantity 2, click Add to cart and use Proceed to checkout in the success
+          dialog.
+      - keyword: THEN
+        content: The cart row retains L/Black and quantity 2 at unit price 36; Items subtotal is 72, Shipping 5, informational
+          Discount 18 and Total 77, without deducting the discount again.
+- id: REQ-5
+  name: Checkout completion
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Checkout progresses Personal Information → Addresses → Shipping Method → Payment → Order Confirmation; completed steps collapse and can be edited. Anonymous users can access login, registration or guest information; concrete guest completion is unspecified. Summary and prices stay coherent. Shipping addresses may be created or edited and invoice address separated.
+
+    Order summary and checkout steps Personal Information, Addresses, Shipping Method and Payment are named regions; Continue actions are scoped to their step. Expanded steps expose their inputs; collapsed completed steps expose summaries and edit actions and hide completed inputs. Shipping cost is a named amount region. Order details identify Quantity: <value>. Step data remain consistent across navigation within a flow.
+  children:
+  - id: REQ-5.1
+    name: Start checkout and inspect customer information
+    type: ATOMIC
+    dependencies:
+    - REQ-4.3
+    - REQ-6.1
+    description: |-
+      Anonymous checkout with the checkout-step t-shirt opens "Personal Information"(role=region) and "Order summary"(role=region). For signed-in checkout_user, Personal Information displays prestashop_checkout_user@example.com; its "Continue"(role=button) opens "Addresses"(role=region) if that step is not already active.
+
+      ![image](./reference/checkout.png)
+    data:
+      requires:
+      - DATA-CATALOG
+      - DATA-ACCOUNTS
+      - DATA-FLOW
+    scenarios:
+    - name: Start anonymous checkout
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has added one Hummingbird checkout-step t-shirt and opened Shopping cart through
+          UI.
+      - keyword: WHEN
+        content: Activate Proceed to checkout.
+      - keyword: THEN
+        content: Personal Information opens for the anonymous customer, and Order summary contains Hummingbird checkout-step
+          t-shirt.
+    - name: Inspect signed-in customer
+      steps:
+      - keyword: GIVEN
+        content: Verified checkout_user has signed in through Email and Password, created Home through the address UI,
+          and added one Hummingbird checkout-step t-shirt.
+      - keyword: WHEN
+        content: Proceed from Shopping cart into checkout; inspect Personal Information and click its Continue if Addresses
+          is not already active.
+      - keyword: THEN
+        content: Personal Information identifies prestashop_checkout_user@example.com and Addresses offers Home without
+          losing the order product.
+  - id: REQ-5.2
+    name: Select shipping address
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1
+    - REQ-7.3
+    description: |-
+      After checkout_address_user creates Home through UI, "Addresses"(role=region) offers "Home"(role=radio) with 1 Commerce Road. Selecting it visibly marks that address; "Continue"(role=button) progresses to Shipping Method while retaining the same order product.
+
+      ![image](./reference/checkout_address.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-ADDRESS
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Select Home address
+      steps:
+      - keyword: GIVEN
+        content: Signed-in checkout_address_user has created Home at 1 Commerce Road through UI and entered Addresses
+          with one Hummingbird checkout-step t-shirt.
+      - keyword: WHEN
+        content: Select Home (radio), inspect its checked state and street, then click Continue within Addresses.
+      - keyword: THEN
+        content: Home is visibly selected with 1 Commerce Road; Shipping Method opens and Order summary retains the
+          selected product.
+  - id: REQ-5.3
+    name: Create checkout shipping address
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1
+    description: |-
+      In checkout Addresses, checkout_new_address_user clicks "Add new address"(role=button) and completes "Alias"(role=textbox), "First name"(role=textbox), "Last name"(role=textbox), "Address"(role=textbox), "Postal code"(role=textbox), "City"(role=textbox), "Country"(role=combobox), and "Phone"(role=textbox). "Save"(role=button) saves Office for Store User at 1 Commerce Road, 200000 Shanghai, China, 13800000020. The saved Office address appears in checkout as "Office"(role=radio).
+
+      ![image](./reference/checkout_address.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-ADDRESS
+      - DATA-FULFILLMENT
+    scenarios:
+    - name: Save new checkout address
+      steps:
+      - keyword: GIVEN
+        content: Signed-in checkout_new_address_user has no saved address and is at checkout Addresses with Hummingbird
+          checkout-step t-shirt.
+      - keyword: WHEN
+        content: Click Add new address; enter Alias Office, First name Store, Last name User, Address 1 Commerce Road,
+          Postal code 200000, City Shanghai, Country China and Phone 13800000020, then click Save.
+      - keyword: THEN
+        content: The saved Office address is visible in Addresses with its entered street and available for checkout
+          selection; the order product is retained.
+  - id: REQ-5.4
+    name: Separate invoice address and choose carrier
+    type: ATOMIC
+    dependencies:
+    - REQ-5.2
+    description: |-
+      With checkout_invoice_user's UI-created Home available, clearing "Use same address"(role=checkbox) reveals "Invoice address"(role=region), including Home. Continuing with Home opens "Shipping Method"(role=region), where "Delivery"(role=radio) displays cost 5 and visibly reflects selection. "Order summary"(role=region) includes the checkout-step t-shirt price 26 plus shipping 5, totaling 31.
+
+      ![image](./reference/checkout_shipping.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-ADDRESS
+      - DATA-CATALOG
+      - DATA-FULFILLMENT
+      - DATA-FLOW
+    scenarios:
+    - name: Use separate invoice address
+      steps:
+      - keyword: GIVEN
+        content: Signed-in checkout_invoice_user has created Home through UI and is at Addresses with Hummingbird checkout-step
+          t-shirt.
+      - keyword: WHEN
+        content: Uncheck Use same address (checkbox).
+      - keyword: THEN
+        content: Invoice address appears and includes Home as an available billing address.
+    - name: Choose Delivery
+      steps:
+      - keyword: GIVEN
+        content: Signed-in checkout_invoice_user has created Home through UI and reached Addresses with Hummingbird
+          checkout-step t-shirt priced 26.
+      - keyword: WHEN
+        content: Select Home, click Continue in Addresses, then select Delivery (radio) in Shipping Method.
+      - keyword: THEN
+        content: Delivery is checked with cost 5; Order summary retains the product and shows total 31.
+  - id: REQ-5.5
+    name: Choose payment and read terms
+    type: ATOMIC
+    dependencies:
+    - REQ-5.4
+    description: |-
+      Continuing after Delivery selection opens "Payment"(role=region), where users select "Bank wire"(role=radio) and agree through "Terms and conditions"(role=checkbox). The separate "Terms and conditions"(role=link) opens "Terms and conditions"(role=region) with agreement content. "Place order"(role=button) completes the order only after agreement.
+
+      ![image](./reference/checkout_payment.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-CATALOG
+      - DATA-FULFILLMENT
+      - DATA-FLOW
+    scenarios:
+    - name: Choose bank wire and read terms
+      steps:
+      - keyword: GIVEN
+        content: A signed-in checkout customer has created Home, added Hummingbird checkout-step t-shirt, completed
+          Home and Delivery, and reached Payment.
+      - keyword: WHEN
+        content: Select Bank wire (radio), check Terms and conditions (checkbox), then activate the separate Terms and
+          conditions link.
+      - keyword: THEN
+        content: Bank wire and agreement are selected; the Terms and conditions region displays agreement content.
+    - name: Require terms before completion
+      steps:
+      - keyword: GIVEN
+        content: The signed-in customer has reached Payment with Home and Delivery completed and Hummingbird checkout-step
+          t-shirt retained.
+      - keyword: WHEN
+        content: Select Bank wire, leave Terms and conditions unchecked, and attempt Place order if the action is enabled.
+      - keyword: THEN
+        content: Order confirmation is not displayed; the product remains in Order summary and agreement is still required,
+          whether Place order is disabled or the attempt is rejected.
+  - id: REQ-5.6
+    name: Place order and inspect completion
+    type: ATOMIC
+    dependencies:
+    - REQ-5.5
+    description: |-
+      Using checkout_6_6_user with the order-confirmation t-shirt or checkout_6_7_user with the order-complete t-shirt, users complete Home, Delivery, Bank wire, and agreement, then click "Place order"(role=button). Order confirmation displays the chosen product; "Order reference"(role=region) contains a nonempty assigned reference, and "Order details"(role=region) shows product, quantity, amounts, shipping, and payment. "Continue shopping"(role=link) returns home with Search, My account, and Cart.
+
+      ![image](./reference/checkout_summary.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-ADDRESS
+      - DATA-CATALOG
+      - DATA-FULFILLMENT
+      - DATA-FLOW
+      - DATA-ORDER
+    scenarios:
+    - name: Place order for selected product
+      steps:
+      - keyword: GIVEN
+        content: Signed-in checkout_6_6_user has created Home and added one Hummingbird order-confirmation t-shirt through
+          UI.
+      - keyword: WHEN
+        content: Proceed to checkout, select Home and continue, select Delivery and continue, select Bank wire, check
+          Terms and conditions, then click Place order.
+      - keyword: THEN
+        content: Order confirmation opens and identifies Hummingbird order-confirmation t-shirt.
+    - name: Inspect completed order and continue shopping
+      steps:
+      - keyword: GIVEN
+        content: Signed-in checkout_6_7_user has created Home and added one Hummingbird order-complete t-shirt through
+          UI.
+      - keyword: WHEN
+        content: Complete checkout with Home, Delivery, Bank wire and checked Terms and conditions; click Place order,
+          inspect confirmation, then activate Continue shopping.
+      - keyword: THEN
+        content: Confirmation has a nonempty Order reference; Order details shows the product, quantity 1, total 33,
+          Home, Delivery and Bank wire. Continue shopping returns home with Search, My account and Cart available.
+  - id: REQ-5.7
+    name: Edit shipping address during checkout
+    type: ATOMIC
+    dependencies:
+    - REQ-5.2
+    - REQ-7.4
+    description: |-
+      Within "Addresses"(role=region), "Edit address Home"(role=button) opens the existing Home address form. Changing its street to 88 Market Street and clicking "Save"(role=button) updates the saved address, which remains selectable through "Home"(role=radio), without altering the cart product or summary. Continue then opens Shipping Method with the updated address available.
+
+      ![image](./reference/checkout_address.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-ADDRESS
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Edit shipping address during checkout
+      steps:
+      - keyword: GIVEN
+        content: A signed-in checkout customer has created Home at 1 Commerce Road and reached Addresses with Hummingbird
+          checkout-step t-shirt.
+      - keyword: WHEN
+        content: Click Edit address Home, replace Address with 88 Market Street, click Save, select Home and click Continue
+          in Addresses.
+      - keyword: THEN
+        content: Home shows 88 Market Street, Shipping Method opens, and Order summary retains the same selected product.
+  - id: REQ-5.8
+    name: Reopen completed shipping step
+    type: ATOMIC
+    dependencies:
+    - REQ-5.5
+    description: |-
+      At "Payment"(role=region) after completing Home and Delivery, clicking "Edit Shipping Method"(role=button) reopens "Shipping Method"(role=region) with "Delivery"(role=radio) still selected. "Continue"(role=button) returns to Payment while preserving the cart product and total 31. Reopening the step does not place an order.
+
+      ![image](./reference/checkout_shipping.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-ADDRESS
+      - DATA-CATALOG
+      - DATA-FLOW
+      - DATA-FULFILLMENT
+    scenarios:
+    - name: Reopen completed shipping step
+      steps:
+      - keyword: GIVEN
+        content: The signed-in customer has completed Home and Delivery and reached Payment with Hummingbird checkout-step
+          t-shirt and total 31.
+      - keyword: WHEN
+        content: Click Edit Shipping Method, inspect Delivery, then click Continue within Shipping Method.
+      - keyword: THEN
+        content: Shipping Method reopens with Delivery checked; Payment returns with the same product and total 31,
+          and no Order confirmation is created.
+  - id: REQ-5.9
+    name: Collapse completed address step and reopen it
+    type: ATOMIC
+    dependencies:
+    - REQ-5.2
+    description: |-
+      Completing "Addresses"(role=region) hides its editable controls, retains its summary and "Edit Addresses"(role=button), and activates "Shipping Method"(role=region). Clicking Edit Addresses reopens "Home"(role=radio) selection without losing the chosen address or order product. Available controls, rather than DOM layout, make completion and reopening observable.
+
+      ![image](./reference/checkout.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-ADDRESS
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Collapse completed address step and reopen it
+      steps:
+      - keyword: GIVEN
+        content: A signed-in customer has UI-created Home and is at Addresses with Hummingbird checkout-step t-shirt.
+      - keyword: WHEN
+        content: Select Home and click Continue, inspect the completed step, then click Edit Addresses.
+      - keyword: THEN
+        content: Home selection controls collapse, Edit Addresses and Delivery are available; reopening shows Home still
+          checked and preserves the order product.
+- id: REQ-6
+  name: Customer access
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Visitors sign in, register, request password reset and sign out. Password masking and remember-me controls are visible; remember-me lifetime and actual email delivery are unspecified.
+
+    Password reset confirmation is a named status message.
+  children:
+  - id: REQ-6.1
+    name: Sign in with password visibility and remember option
+    type: ATOMIC
+    dependencies: []
+    description: |-
+      Clicking "Sign in"(role=button) opens "Email"(role=textbox), masked "Password"(role=textbox), a Sign in submit action, and "No account? Create one here"(role=link). "SHOW"(role=button) reveals the password and "Remember me"(role=checkbox) is selectable. Valid verified Store User credentials sign in, showing Store User, "My account"(role=link), and "Sign out"(role=button). Registration does not replace the source's verified-account fixture.
+
+      ![image](./reference/login.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-FLOW
+    scenarios:
+    - name: Open sign-in entry
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor is on the homepage.
+      - keyword: WHEN
+        content: Activate Sign in in Global navigation.
+      - keyword: THEN
+        content: Email and masked Password fields, the Sign in submit button and No account? Create one here link are
+          visible.
+    - name: Reveal password and sign in
+      steps:
+      - keyword: GIVEN
+        content: The anonymous visitor has opened Sign in and verified Store User credentials are prestashop_user@example.com
+          / ShopPass123!.
+      - keyword: WHEN
+        content: Enter those credentials, click SHOW, check Remember me, then click the Sign in submit button.
+      - keyword: THEN
+        content: Email retains its value, Password becomes visible with the entered value, Remember me is checked, and
+          successful sign-in exposes Store User, My account and Sign out in Global navigation.
+  - id: REQ-6.2
+    name: Register customer
+    type: ATOMIC
+    dependencies: []
+    description: |-
+      From Sign in, "No account? Create one here"(role=link) opens registration with "Mr."(role=radio), "First name"(role=textbox), "Last name"(role=textbox), "Email"(role=textbox), "Password"(role=textbox), "Birthdate"(role=textbox), and "Receive offers"(role=checkbox), "Newsletter"(role=checkbox), and "Terms"(role=checkbox). Entering New Customer, unused new_customer_7_3@example.com, ShopPass123!, 1995-08-21, and all stated choices, then clicking "Save"(role=button), creates a signed-in account showing New Customer.
+
+      ![image](./reference/register.png)
+    data:
+      requires:
+      - DATA-CUSTOMER
+      - DATA-FLOW
+    scenarios:
+    - name: Create new customer
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has opened Sign in; new_customer_7_3@example.com is unused in this scenario world.
+      - keyword: WHEN
+        content: Activate No account? Create one here; select Mr., enter First name New, Last name Customer, Email new_customer_7_3@example.com,
+          Password ShopPass123! and Birthdate 1995-08-21, check Receive offers, Newsletter and Terms, then click Save.
+      - keyword: THEN
+        content: Registration creates a signed-in customer identified as New Customer.
+  - id: REQ-6.3
+    name: Request password reset
+    type: ATOMIC
+    dependencies: []
+    description: |-
+      Clicking "Forgot your password?"(role=link) from Sign in opens "Email"(role=textbox) and "Send"(role=button). Submitting existing prestashop_user@example.com displays an email-sent confirmation mentioning that address; actual mailbox delivery is not asserted.
+
+      ![image](./reference/forgot_password.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+    scenarios:
+    - name: Request existing-account reset
+      steps:
+      - keyword: GIVEN
+        content: An anonymous visitor has opened Sign in and prestashop_user@example.com is an existing verified account.
+      - keyword: WHEN
+        content: Activate Forgot your password?, enter that address in Email and click Send.
+      - keyword: THEN
+        content: Password reset confirmation reports that a reset email was sent and mentions prestashop_user@example.com;
+          mailbox delivery is outside this oracle.
+  - id: REQ-6.4
+    name: Sign out to storefront
+    type: ATOMIC
+    dependencies:
+    - REQ-6.1
+    - REQ-7.1
+    description: |-
+      The signed-in Store User clicks "Sign out"(role=button) from My account and returns home, which shows "Sign in"(role=button), Cart, and Hummingbird detail t-shirt. Sign out is no longer available.
+
+      ![image](./reference/logout.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-FLOW
+      - DATA-CATALOG
+    scenarios:
+    - name: Sign out from account
+      steps:
+      - keyword: GIVEN
+        content: Store User has signed in through the sign-in UI and opened My account.
+      - keyword: WHEN
+        content: Activate Sign out in Global navigation.
+      - keyword: THEN
+        content: The homepage displays Sign in, Cart and Hummingbird detail t-shirt, and Sign out is unavailable.
+- id: REQ-7
+  name: Account management
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Signed-in customers inspect account overview, edit credentials, manage addresses, view history/invoices, reorder and manage wishlists. Mutations affect the corresponding business identity, not a neighboring entry.
+
+    Account overview and Order history are named regions. "Profile update"(role=status) identifies the update message.
+  children:
+  - id: REQ-7.1
+    name: Inspect account overview
+    type: ATOMIC
+    dependencies:
+    - REQ-6.1
+    description: |-
+      Clicking "My account"(role=link) after signing in displays My account heading, Store User, and "Information"(role=link), "Addresses"(role=link), "Order history and details"(role=link), and "Wishlist"(role=link) entry points.
+
+      ![image](./reference/my_account.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-FLOW
+    scenarios:
+    - name: Inspect account overview
+      steps:
+      - keyword: GIVEN
+        content: Verified Store User has signed in through Email and Password.
+      - keyword: WHEN
+        content: Activate My account (link).
+      - keyword: THEN
+        content: My account heading and Store User appear with Information, Addresses, Order history and details and
+          Wishlist entry links.
+  - id: REQ-7.2
+    name: Change customer email and password
+    type: ATOMIC
+    dependencies:
+    - REQ-7.1
+    description: |-
+      The profile_user opens "Information"(role=link) with "Email"(role=textbox), "Current password"(role=textbox), and "New password"(role=textbox). Entering ShopPass123! as the current password, changing Email to prestashop_profile_user_next@example.com, and clicking "Save"(role=button) displays "Profile update"(role=status) confirmation and the new email while retaining the old password. A subsequent save with current password ShopPass123! and new password ShopPass456! confirms the password change. The resulting credentials permit sign-in.
+
+      ![image](./reference/my_account_info.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-FLOW
+    scenarios:
+    - name: Save email then password
+      steps:
+      - keyword: GIVEN
+        content: Verified profile_user has signed in using ShopPass123! and opened Information.
+      - keyword: WHEN
+        content: Enter Current password ShopPass123!, replace Email with prestashop_profile_user_next@example.com and
+          click Save; then enter Current password ShopPass123! and New password ShopPass456! and click Save again; sign
+          out and sign in with the new credentials.
+      - keyword: THEN
+        content: Each save reports Profile update success; the new email remains displayed after the first save and
+          the new email/password pair successfully signs in after the second.
+  - id: REQ-7.3
+    name: Create and view addresses
+    type: ATOMIC
+    dependencies:
+    - REQ-7.1
+    description: |-
+      Clicking "Addresses"(role=link) displays each saved address as "{alias}"(role=article), containing its values and Update and Delete actions. "Create new address"(role=button) opens "Alias"(role=textbox), "First name"(role=textbox), "Last name"(role=textbox), "Address"(role=textbox), "Postal code"(role=textbox), "City"(role=textbox), "Country"(role=combobox), and "Phone"(role=textbox), displaying entered values before submission. "Save"(role=button) with Office and registry address values creates one Office article; Home setup uses the same creation behavior and values.
+
+      ![image](./reference/my_account_address.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-ADDRESS
+      - DATA-FULFILLMENT
+    scenarios:
+    - name: View Home address
+      steps:
+      - keyword: GIVEN
+        content: Signed-in address_view_user has created Home through the normal address UI using Store User, 1 Commerce
+          Road, 200000 Shanghai, China and 13800000020.
+      - keyword: WHEN
+        content: Open Addresses from Account overview.
+      - keyword: THEN
+        content: Home (article) shows those saved values and its Update and Delete actions.
+    - name: Create Office address
+      steps:
+      - keyword: GIVEN
+        content: Signed-in address_create_user has opened Addresses and has no address articles.
+      - keyword: WHEN
+        content: Click Create new address; enter Alias Office, First name Store, Last name User, Address 1 Commerce
+          Road, Postal code 200000, City Shanghai, Country China and Phone 13800000020; inspect entered values, then
+          click Save.
+      - keyword: THEN
+        content: Exactly one Office article displays the saved address values with Update and Delete controls.
+  - id: REQ-7.4
+    name: Edit or delete named address
+    type: ATOMIC
+    dependencies:
+    - REQ-7.3
+    description: |-
+      The address_edit_user or address_delete_user first creates Home through UI. In "Home"(role=article), "Update"(role=button) opens its current Alias and street values. Editing the street to 88 Market Street and clicking "Save"(role=button) updates that same article. Alternatively, "Delete"(role=button) within Home removes only that address and returns to the address list.
+
+      ![image](./reference/my_account_address.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-ADDRESS
+    scenarios:
+    - name: Update Home street
+      steps:
+      - keyword: GIVEN
+        content: Signed-in address_edit_user has created Home at 1 Commerce Road through UI and opened Addresses.
+      - keyword: WHEN
+        content: Click Update within Home, verify Alias Home and the existing street, replace Address with 88 Market
+          Street and click Save.
+      - keyword: THEN
+        content: The same Home article shows 88 Market Street instead of the original street.
+    - name: Delete Home address
+      steps:
+      - keyword: GIVEN
+        content: Signed-in address_delete_user has created Home through UI and opened Addresses.
+      - keyword: WHEN
+        content: Click Delete within Home and confirm the deletion prompt.
+      - keyword: THEN
+        content: Home is removed and the address list is displayed.
+  - id: REQ-7.5
+    name: Read historical orders and details
+    type: ATOMIC
+    dependencies:
+    - REQ-7.1
+    description: |-
+      Clicking "Order history and details"(role=link) shows the historical "PS-HISTORY-001"(role=row), with the order-history t-shirt, reference, date 2026-07-18, Delivered status, and Total 34. "Details"(role=link) opens "Order details"(role=region) for that order, containing its product, registry shipping information, and Bank wire payment.
+
+      ![image](./reference/my_account_order.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-HISTORY
+      - DATA-CATALOG
+    scenarios:
+    - name: Inspect historical order list
+      steps:
+      - keyword: GIVEN
+        content: Verified order_history_user has the seeded historical order PS-HISTORY-001.
+      - keyword: WHEN
+        content: Sign in and open Order history and details from My account.
+      - keyword: THEN
+        content: The PS-HISTORY-001 row shows Hummingbird order-history t-shirt, 2026-07-18, Delivered and total 34,
+          with Details, Reorder and PDF entries.
+    - name: Inspect selected order details
+      steps:
+      - keyword: GIVEN
+        content: Signed-in order_history_user is viewing Order history and details with seeded PS-HISTORY-001.
+      - keyword: WHEN
+        content: Activate Details within PS-HISTORY-001.
+      - keyword: THEN
+        content: Order details identifies that reference and Hummingbird order-history t-shirt with its historical shipping
+          address and Bank wire payment.
+  - id: REQ-7.6
+    name: Reorder or download invoice
+    type: ATOMIC
+    dependencies:
+    - REQ-7.5
+    - REQ-3.3
+    description: |-
+      Within historical "PS-HISTORY-001"(role=row), "Reorder"(role=link) adds the available order-history t-shirt to Shopping cart with subtotal 29. "PDF"(role=link) downloads a valid invoice PDF for that reference, identified by its suggested filename. No internal order query is required.
+
+      ![image](./reference/my_account_order.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-HISTORY
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Reorder historical product
+      steps:
+      - keyword: GIVEN
+        content: Signed-in order_history_user is viewing seeded PS-HISTORY-001 and its historical product remains available;
+          the cart is empty.
+      - keyword: WHEN
+        content: Activate Reorder within that named order row.
+      - keyword: THEN
+        content: Shopping cart contains Hummingbird order-history t-shirt and subtotal 29.
+    - name: Download historical invoice
+      steps:
+      - keyword: GIVEN
+        content: Signed-in order_history_user is viewing seeded PS-HISTORY-001.
+      - keyword: WHEN
+        content: Activate PDF within that order row and receive the browser download.
+      - keyword: THEN
+        content: The download succeeds, its suggested filename identifies PS-HISTORY-001 and ends in .pdf, and the downloaded
+          bytes begin with %PDF-.
+  - id: REQ-7.7
+    name: Create or inspect wishlists
+    type: ATOMIC
+    dependencies:
+    - REQ-7.1
+    description: |-
+      "Wishlist"(role=link) opens saved collections, each represented by "{wishlist title}"(role=listitem) with a named opening entry and Edit and Delete actions. Clicking "Create new wishlist"(role=button) opens "Create new wishlist"(role=dialog), where "Name"(role=textbox) and "Save"(role=button) create exactly one Holiday Picks listitem. Favorites may similarly be created empty for rename and delete prerequisites. Opening seeded "Favorites"(role=link) shows its membership-bearing "Hummingbird wishlist t-shirt"(role=listitem) with Remove and Add to cart actions.
+
+      ![image](./reference/my_account_wishlist.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-WISHLIST
+      - DATA-WISHLIST-MEMBERSHIP
+    scenarios:
+    - name: Inspect seeded wishlist and products
+      steps:
+      - keyword: GIVEN
+        content: Verified wishlist_view_user has seeded Favorites containing Hummingbird wishlist t-shirt.
+      - keyword: WHEN
+        content: Sign in, open Wishlist from My account, then activate Favorites.
+      - keyword: THEN
+        content: Favorites is visible in the collection list; opening it shows the named product listitem and its Add
+          to cart action.
+    - name: Create Holiday Picks wishlist
+      steps:
+      - keyword: GIVEN
+        content: Signed-in wishlist_create_user has opened Wishlist.
+      - keyword: WHEN
+        content: Click Create new wishlist; enter Holiday Picks in Name within its dialog and click Save.
+      - keyword: THEN
+        content: Exactly one Holiday Picks collection appears with Edit and Delete actions.
+  - id: REQ-7.8
+    name: Rename or delete a wishlist
+    type: ATOMIC
+    dependencies:
+    - REQ-7.7
+    description: |-
+      For wishlist_rename_user or wishlist_delete_user, the UI-created "Favorites"(role=listitem) offers scoped "Edit"(role=button) and "Delete"(role=button). Edit displays Favorites in "Name"(role=textbox); replacing it with Holiday Picks and clicking "Save"(role=button) leaves one Holiday Picks and no Favorites. Delete instead removes Favorites from the collection list.
+
+      ![image](./reference/my_account_wishlist.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-WISHLIST
+    scenarios:
+    - name: Rename Favorites wishlist
+      steps:
+      - keyword: GIVEN
+        content: Signed-in wishlist_rename_user has created an empty Favorites collection through Create new wishlist.
+      - keyword: WHEN
+        content: Click Edit within Favorites, verify Name contains Favorites, replace it with Holiday Picks and click
+          Save.
+      - keyword: THEN
+        content: Favorites disappears and exactly one Holiday Picks collection remains.
+    - name: Delete Favorites wishlist
+      steps:
+      - keyword: GIVEN
+        content: Signed-in wishlist_delete_user has created an empty Favorites collection through Create new wishlist.
+      - keyword: WHEN
+        content: Click Delete within Favorites and confirm deletion.
+      - keyword: THEN
+        content: Favorites is removed from the collection list.
+  - id: REQ-7.9
+    name: Remove wishlist product or move it to cart
+    type: ATOMIC
+    dependencies:
+    - REQ-7.7
+    - REQ-3.3
+    description: |-
+      Seeded Favorites for wishlist_remove_user or wishlist_cart_user contains "Hummingbird wishlist t-shirt"(role=listitem). "Remove"(role=button) deletes that product's wishlist membership; "Add to cart"(role=button) instead adds that exact default available product to the cart. If the wishlist remains visible after addition, "Cart"(role=link) opens the cart to inspect the selected product.
+
+      ![image](./reference/my_account_wishlist.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-WISHLIST-MEMBERSHIP
+      - DATA-CATALOG
+      - DATA-FLOW
+    scenarios:
+    - name: Remove Favorites product
+      steps:
+      - keyword: GIVEN
+        content: Signed-in wishlist_remove_user has opened seeded Favorites containing Hummingbird wishlist t-shirt.
+      - keyword: WHEN
+        content: Click Remove within that product listitem.
+      - keyword: THEN
+        content: Hummingbird wishlist t-shirt is removed from Favorites.
+    - name: Add Favorites product to cart
+      steps:
+      - keyword: GIVEN
+        content: Signed-in wishlist_cart_user has opened seeded Favorites containing Hummingbird wishlist t-shirt and
+          has an empty cart.
+      - keyword: WHEN
+        content: Click Add to cart within that product; wait for Cart to report one unit, dismiss an optional success
+          dialog through Continue shopping, then activate Cart.
+      - keyword: THEN
+        content: Shopping cart contains the exact Hummingbird wishlist t-shirt product.
+  - id: REQ-7.10
+    name: Delete only the selected address
+    type: ATOMIC
+    dependencies:
+    - REQ-7.3
+    - REQ-7.4
+    description: |-
+      After creating "Home"(role=article) and "Office"(role=article) through UI under the same account, clicking "Delete"(role=button) within Home removes only Home and preserves Office with its original values. Business identity, rather than row position, determines the target.
+
+      ![image](./reference/my_account_address.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-ADDRESS
+    scenarios:
+    - name: Delete only the selected address
+      steps:
+      - keyword: GIVEN
+        content: Signed-in address_delete_user has created Home and Office through UI with 1 Commerce Road and 13800000020
+          and is viewing Addresses.
+      - keyword: WHEN
+        content: Click Delete within Home and confirm deletion.
+      - keyword: THEN
+        content: Home disappears; exactly one Office article remains with its original street and phone.
+  - id: REQ-7.11
+    name: Delete only the selected wishlist
+    type: ATOMIC
+    dependencies:
+    - REQ-7.7
+    - REQ-7.8
+    description: |-
+      For UI-created "Favorites"(role=listitem) and "Holiday Picks"(role=listitem) under wishlist_delete_user, "Delete"(role=button) scoped to Favorites removes only that collection. Holiday Picks remains exactly once and its "Holiday Picks"(role=link) still opens the surviving wishlist with a Holiday Picks heading, independent of list ordering.
+
+      ![image](./reference/my_account_wishlist.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-WISHLIST
+    scenarios:
+    - name: Delete only the selected wishlist
+      steps:
+      - keyword: GIVEN
+        content: Signed-in wishlist_delete_user has created empty Favorites and Holiday Picks collections through UI.
+      - keyword: WHEN
+        content: Click Delete within Favorites, confirm deletion, then activate the surviving Holiday Picks link.
+      - keyword: THEN
+        content: Favorites disappears, Holiday Picks remains exactly once, and its opening link displays the surviving
+          wishlist.

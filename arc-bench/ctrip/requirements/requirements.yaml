@@ -1,0 +1,3402 @@
+id: ROOT
+name: Ctrip travel services
+type: FOLDER
+dependencies: []
+description: A travel services application for account access, flight search and booking, order management, reusable traveler information, flight status, vouchers, and airport guidance.
+environment:
+  benchmark_now: '2026-07-19T08:00:00+08:00'
+  timezone: Asia/Shanghai
+  clock: Application and evaluator share benchmark_now for dates, voucher eligibility, and public countdowns.
+data:
+- id: DATA-ACCOUNTS
+  lifecycle: SEED
+  entity: existing verified accounts
+  properties:
+    user:
+      email: ctrip_user@example.com
+      password: Travel1234
+      username: ctrip_user
+      mobile: '13800000010'
+    order_read:
+      email: ctrip_order_read@example.com
+      password: Travel1234
+    order_cancel:
+      email: ctrip_order_cancel@example.com
+      password: Travel1234
+    personal_read:
+      email: ctrip_personal_read@example.com
+      password: Travel1234
+    traveler_create:
+      email: ctrip_traveler_create@example.com
+      password: Travel1234
+      mobile: '13800000024'
+    traveler_delete:
+      email: ctrip_traveler_delete@example.com
+      password: Travel1234
+    traveler_batch:
+      email: ctrip_traveler_batch@example.com
+      password: Travel1234
+    address_create:
+      email: ctrip_address_create@example.com
+      password: Travel1234
+    address_delete:
+      email: ctrip_address_delete@example.com
+      password: Travel1234
+    address_batch:
+      email: ctrip_address_batch@example.com
+      password: Travel1234
+    contact_search:
+      email: ctrip_contact_search@example.com
+      password: Travel1234
+    contact_batch_1:
+      email: ctrip_contact_batch_1@example.com
+      password: Travel1234
+    contact_create:
+      email: ctrip_contact_create@example.com
+      password: Travel1234
+    contact_delete:
+      email: ctrip_contact_delete@example.com
+      password: Travel1234
+    contact_batch_2:
+      email: ctrip_contact_batch_2@example.com
+      password: Travel1234
+    invoice_search:
+      email: ctrip_invoice_search@example.com
+      password: Travel1234
+    invoice_create:
+      email: ctrip_invoice_create@example.com
+      password: Travel1234
+      mobile: '13800000036'
+    invoice_vat:
+      email: ctrip_invoice_vat@example.com
+      password: Travel1234
+    invoice_delete:
+      email: ctrip_invoice_delete@example.com
+      password: Travel1234
+    invoice_batch:
+      email: ctrip_invoice_batch@example.com
+      password: Travel1234
+    profile_read:
+      email: ctrip_profile_read@example.com
+      password: Travel1234
+      mobile: '13800000013'
+      nickname: Profile Reader
+      real_name: Li Ming
+      gender: Male
+      birth_date: '1990-01-01'
+    profile_edit:
+      email: ctrip_profile_edit@example.com
+      password: Travel1234
+    password_change:
+      email: ctrip_password_change@example.com
+      password: Travel1234
+    phone_binding:
+      email: ctrip_phone_binding@example.com
+      password: Travel1234
+      mobile: '13800000018'
+    email_binding:
+      email: ctrip_email_binding@example.com
+      password: Travel1234
+    status_history_use:
+      email: ctrip_status_history_use@example.com
+      password: Travel1234
+    status_history_clear:
+      email: ctrip_status_history_clear@example.com
+      password: Travel1234
+    voucher_read:
+      email: ctrip_voucher_read@example.com
+      password: Travel1234
+    voucher_pending:
+      email: ctrip_voucher_pending@example.com
+      password: Travel1234
+    voucher_history:
+      email: ctrip_voucher_history@example.com
+      password: Travel1234
+    '13800000011':
+      mobile: '13800000011'
+      verification_code: '123456'
+    '13800000041':
+      mobile: '13800000041'
+      verification_code: '123456'
+    '13800000042':
+      mobile: '13800000042'
+      verification_code: '123456'
+    '13800000043':
+      mobile: '13800000043'
+      verification_code: '123456'
+    history_isolation:
+      email: ctrip_history_isolation@example.com
+      password: Travel1234
+    traveler_edit:
+      email: ctrip_traveler_edit@example.com
+      password: Travel1234
+    address_detail:
+      email: ctrip_address_detail@example.com
+      password: Travel1234
+    traveler_search_created:
+      email: ctrip_traveler_search_created@example.com
+      password: Travel1234
+    traveler_decline:
+      email: ctrip_traveler_decline@example.com
+      password: Travel1234
+    status_route_history:
+      email: ctrip_status_route_history@example.com
+      password: Travel1234
+  description: Email/username provisioning and final email binding are not defined as in-scope creation flows. Initialize
+    these existing accounts; registration accounts are instead CREATED. Accounts dedicated to create/delete start
+    with empty relevant lists. History-use/clear accounts start with no status history; tests create history through
+    search. profile_read has no orders, vouchers or status history. history_isolation is a separate verified owner
+    for account-isolation queries; its history starts empty. Extension-only mutation owners traveler_edit, address_detail,
+    traveler_search_created and traveler_decline start with empty corresponding lists; status_route_history starts
+    with empty status history. Their UI setup never changes original create/read owners.
+- id: DATA-SMS
+  lifecycle: SEED
+  entity: simulated verification delivery
+  properties:
+    country_code: '+86'
+    code: '123456'
+    registration_phone_rule: 139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo
+      100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run.
+  description: Code becomes valid after Send code. Source 13800000044..47 are example new phones, replaced by deterministic
+    isolated phones; never pre-create their accounts.
+- id: DATA-FLIGHTS
+  lifecycle: SEED
+  entity: published booking inventory
+  properties:
+    flights:
+    - number: CZ3401
+      origin: Chengdu
+      destination: Guangzhou
+      date: '2026-07-21'
+      airline: China Southern
+      stops: nonstop
+      fare: 320
+      departure: '11:00'
+      on_time: 95%
+    - number: JD5162
+      origin: Chengdu
+      destination: Guangzhou
+      date: '2026-07-21'
+      airline: Other airline
+      stops: stopover
+      fare: 460
+      departure: 09:00
+      on_time: 88%
+    - number: MU5234
+      origin: Chengdu
+      destination: Guangzhou
+      date: '2026-07-21'
+      airline: Other airline
+      stops: nonstop
+      fare: 580
+      departure: 07:30
+      on_time: 91%
+    - number: CZ3401
+      origin: Chengdu
+      destination: Guangzhou
+      date: '2026-07-22'
+      airline: China Southern
+      fare: 320
+      taxes: 70
+    empty_query:
+      origin: Beihai
+      destination: Mars City
+      date: '2026-07-23'
+    calendar_fare:
+      '2026-07-21': 460
+      '2026-07-22': 320
+    next_week: '2026-07-28'
+    jd5162:
+      taxes_per_passenger: 70
+      baggage_kg: 20
+      insurance: 40
+      extra_10kg: 60
+      drop_off: 42
+      lounge: 80
+      refund_fee: 100
+  description: Flight identity includes route, date and dataset. The source booking MU5234 and status MU5234 describe
+    different route records; do not merge them by flight number alone.
+- id: DATA-CITIES
+  lifecycle: SEED
+  entity: city directory
+  properties:
+    Chengdu:
+      code: CTU
+      group: Popular
+    Guangzhou:
+      code: CAN
+      group: GHIJ
+    other_cities:
+    - Shanghai
+    - Beijing
+- id: DATA-BOOKING-HISTORY
+  lifecycle: SEED
+  entity: initial anonymous search history
+  properties:
+    name: Chengdu - Guangzhou
+    origin: Chengdu
+    destination: Guangzhou
+    date: '2026-07-21'
+  description: The explicit anonymous homepage history is an initial browsing fixture, not a registered account.
+- id: DATA-PERSONAL-READ
+  lifecycle: SEED
+  entity: immutable legacy personal records
+  properties:
+    personal_read:
+      travelers:
+      - name: Li Si
+      addresses:
+      - recipient: Zhang San
+        city: Shanghai
+        district: Pudong New Area
+        street: No. 100 Century Avenue
+    contact_search:
+      contacts:
+      - name: Zhang San
+    invoice_search:
+      invoice_titles:
+      - name: Shanghai Example Technology Co., Ltd.
+        taxpayer_id: 91310000123456789A
+        type: Company
+    user:
+      travelers:
+      - name: Zhang San
+      - name: Li Si
+  description: Read-only legacy examples remain seed records; their creation is not the behavior under test. New
+    deletion records are UI-created on their independent owners.
+- id: DATA-ORDERS
+  lifecycle: SEED
+  entity: historical and cancellation orders
+  properties:
+  - owner: order_read
+    number: CTRIP20260721001
+    flight: JD5162
+    date: '2026-07-21'
+    origin: Chengdu
+    destination: Guangzhou
+    total: 530
+    payment_status: Pending payment
+    display_status: Pending payment
+  - owner: order_read
+    number: CTRIP20260722002
+    flight: CZ3401
+    date: '2026-07-22'
+    total: 390
+    payment_status: Paid
+    display_status: Not traveled
+  - owner: order_read
+    number: CTRIP20260718003
+    flight: MU5234
+    date: '2026-07-18'
+    total: 650
+    payment_status: Paid
+    display_status: Pending review
+  - owner: order_cancel
+    number: CTRIP20260721004
+    flight: JD5162
+    date: '2026-07-21'
+    total: 530
+    payment_status: Pending payment
+    display_status: Pending payment
+  description: Booking/payment flows cannot backdate paid/completed/pending-review history. Initialize legacy orders
+    separately from new UI submissions. Pending-order timers have sufficient positive remaining time at run start,
+    with a payment-expiry reminder; no exact timeout is specified.
+- id: DATA-STATUS
+  lifecycle: SEED
+  entity: flight status observations
+  properties:
+  - number: JD5162
+    date: '2026-07-21'
+    origin: Chengdu
+    destination: Guangzhou
+    status: Scheduled
+    check_in: H14-H25
+    gate: B12
+    carousel: '6'
+  - number: MU5234
+    date: '2026-07-21'
+    origin: Shanghai
+    destination: Beijing
+    airline: China Eastern
+    departure: 09:00
+    arrival: '11:30'
+    status: Scheduled
+- id: DATA-VOUCHERS
+  lifecycle: SEED
+  entity: voucher eligibility and issued history
+  properties:
+  - owner: voucher_read
+    order: CTRIP20260718004
+    date: '2026-07-18'
+    payment_status: Paid
+    travel_status: Completed
+    voucher_status: Completed
+  - owner: voucher_pending
+    order: CTRIP20260721005
+    payment_date: '2026-07-19'
+    payment_status: Paid
+    voucher_status: None
+  - owner: voucher_history
+    order: CTRIP20260514001
+    date: '2026-05-14'
+    payment_date: '2026-05-14'
+    payment_status: Paid
+    travel_status: Completed
+    voucher_status: None
+- id: DATA-AIRPORTS
+  lifecycle: SEED
+  entity: airport guide and deterministic weather
+  properties:
+    popular:
+    - Beijing Capital Airport
+    - Shanghai Pudong Airport
+    - Guangzhou Baiyun Airport
+    domestic_C:
+    - Chengdu
+    - Chongqing
+    - Changchun
+    international:
+    - Hong Kong International Airport
+    weather:
+      city: Beijing
+      range: -5°C to 3°C
+    beijing_capital:
+      location: Beijing
+      runways: 3 runways
+      overview: China's first national gateway
+      bus:
+        name: Fangzhuang line
+        stop: Fangzhuang
+        first: 06:00
+        last: '21:00'
+        headway: 30 minutes
+      medical_first_aid: 010-64541100
+  description: Weather is a supplied snapshot from the source, not a live meteorological fetch; independent of the
+    July clock.
+- id: DATA-REGISTERED
+  lifecycle: CREATED
+  entity: phone accounts
+  description: Created by registration UI, isolated deterministic phone per test.
+- id: DATA-CREATED-PERSONAL
+  lifecycle: CREATED
+  entity: travelers, addresses, contacts and invoice titles
+  description: Created through the corresponding add/save UI; names use deterministic run/worker/case suffixes.
+    Deletion scenarios create their own target and keep records.
+- id: DATA-SUBMITTED-ORDERS
+  lifecycle: CREATED
+  entity: new flight orders
+  description: Created by Submit order; paid only using simulated Alipay.
+- id: DATA-SESSION
+  lifecycle: DERIVED
+  entity: authenticated session
+  description: Established by public UI behavior within each scenario, never injected into storage.
+- id: DATA-SEARCH
+  lifecycle: DERIVED
+  entity: current search and result preferences
+  description: Established by public UI behavior within each scenario, never injected into storage.
+- id: DATA-BOOKING
+  lifecycle: DERIVED
+  entity: selected fare, passengers and optional fees
+  description: Established by public UI behavior within each scenario, never injected into storage.
+- id: DATA-STATUS-HISTORY
+  lifecycle: DERIVED
+  entity: account-owned status search history
+  description: Established by public UI behavior within each scenario, never injected into storage.
+- id: DATA-IDENTITIES
+  lifecycle: SEED
+  entity: accepted test identity inputs
+  properties:
+    ids:
+    - '110101199001011237'
+    - '110101199001021232'
+    - '110101199001031238'
+  description: Validation examples, not saved travelers; valid checksum mainland IDs used by UI setup.
+children:
+- id: REQ-1
+  name: Account access
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Visitors can enter password or verification-code login and register through agreement, phone verification and password setup. Legal acceptance is required. Logout removes the session.
+    ![image](./reference/index.png)
+    ![image](./reference/login1.png)
+    ![image](./reference/login2.png)
+    ![image](./reference/register1.png)
+    ![image](./reference/register2.png)
+    ![image](./reference/enter_self.png)
+
+
+    Global navigation is a single navigation landmark named Global navigation. Fields have associated labels. Actions described only as controls may be buttons or links; explicit tabs, radios, checkboxes, dialogs and fields retain their declared semantics. Verification delivery is simulated and codes are valid only after being sent in the current attempt. Password strength is a named region.
+  children:
+  - id: REQ-1.1
+    name: Enter the travel application
+    type: ATOMIC
+    dependencies: []
+    description: |-
+      Signed-out entry displays exactly one Ctrip Travel heading and one Log in and Register link in Global navigation, alongside a search box and quick-flight form containing "Origin"(role=textbox) and "Destination"(role=textbox).
+
+      ![image](./reference/index.png)
+    data:
+      requires: &id001
+      - DATA-IDENTITIES
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Show signed-out entry
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Inspect the initial homepage.
+      - keyword: THEN
+        content: Exactly one Ctrip Travel heading and one Log in and Register link in Global navigation are visible,
+          together with the searchbox and Origin and Destination fields.
+  - id: REQ-1.2
+    name: Open and switch login methods
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1
+    description: |-
+      Log in navigation opens the password form with Log in heading and "Account"(role=textbox) and "Password"(role=textbox). "Verification code login"(role=link) switches to "Mobile number"(role=textbox) and "Verification code"(role=textbox); "Password login"(role=link) switches back freely.
+
+      ![image](./reference/login1.png)
+      ![image](./reference/login2.png)
+    data:
+      requires: *id001
+    scenarios:
+    - name: Open password login
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Activate Log in within Global navigation.
+      - keyword: THEN
+        content: Log in heading, Account and Password fields are visible.
+    - name: Switch login modes
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked.
+      - keyword: WHEN
+        content: Activate Verification code login, inspect the form, then activate Password login.
+      - keyword: THEN
+        content: SMS mode shows Mobile number and Verification code; switching back shows Account and Password.
+  - id: REQ-1.3
+    name: Authenticate with password
+    type: ATOMIC
+    dependencies:
+    - REQ-1.2
+    description: |-
+      Users enter a verified mobile, username, or email in "Account"(role=textbox), enter "Password"(role=textbox), select the initially unchecked "Agree to terms"(role=checkbox), and click "Log in"(role=button). Agreement is required. Missing credentials or incorrect credentials show the specified alert without signing in; success returns home and replaces the login entry with "My account"(role=button).
+
+      ![image](./reference/login1.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-SESSION
+    scenarios:
+    - name: Authenticate by email
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked. ctrip_user@example.com is
+          the verified user account.
+      - keyword: WHEN
+        content: Enter Account ctrip_user@example.com and Password Travel1234, check Agree to terms and click Log in.
+      - keyword: THEN
+        content: Ctrip Travel homepage opens, My account is visible and the signed-out Log in navigation link disappears.
+    - name: Authenticate by username
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked. ctrip_user identifies the
+          verified user account.
+      - keyword: WHEN
+        content: Enter Account ctrip_user and Password Travel1234, check Agree to terms and click Log in.
+      - keyword: THEN
+        content: Ctrip Travel homepage opens, My account is visible and the signed-out Log in navigation link disappears.
+    - name: Authenticate by mobile
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked. 13800000010 belongs to the
+          verified user account.
+      - keyword: WHEN
+        content: Enter Account 13800000010 and Password Travel1234, check Agree to terms and click Log in.
+      - keyword: THEN
+        content: Ctrip Travel homepage opens, My account is visible and the signed-out Log in navigation link disappears.
+    - name: Reject missing account
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked.
+      - keyword: WHEN
+        content: Leave Account empty, enter Password Travel1234, check Agree to terms and click Log in.
+      - keyword: THEN
+        content: Enter your account alert appears, Account remains visible and My account is absent.
+    - name: Reject missing password
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked.
+      - keyword: WHEN
+        content: Enter Account ctrip_user@example.com, leave Password empty, check Agree to terms and click Log in.
+      - keyword: THEN
+        content: Enter your password alert appears, Account remains visible and My account is absent.
+    - name: Reject incorrect password
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked.
+      - keyword: WHEN
+        content: Enter Account ctrip_user@example.com and Password WrongPass123, check Agree to terms and click Log
+          in.
+      - keyword: THEN
+        content: Incorrect account or password alert appears, Account remains visible and My account is absent.
+    - name: Require legal acceptance
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked.
+      - keyword: WHEN
+        content: Enter Account ctrip_user@example.com and Password Travel1234, leave Agree to terms unchecked and click
+          Log in.
+      - keyword: THEN
+        content: Agree to terms first alert appears, the login form remains visible and My account is absent.
+  - id: REQ-1.4
+    name: Authenticate with SMS verification
+    type: ATOMIC
+    dependencies:
+    - REQ-1.2
+    description: |-
+      SMS login defaults to +86 and provides "Mobile number"(role=textbox), "Verification code"(role=textbox), and "Send code"(role=button), which becomes "Resend code"(role=button). With a sent code 123456 and "Agree to terms"(role=checkbox) selected, "Log in"(role=button) authenticates and displays "My account"(role=button). Missing mobile or code, an incorrect code, or absent agreement shows the declared alert and retains the signed-out form; required fields cannot substitute for each other.
+
+      ![image](./reference/login2.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-SMS
+      - DATA-SESSION
+    scenarios:
+    - name: Authenticate with sent code
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked. Verification code login
+          is selected and the simulated delivered code becomes valid only after Send code. Mobile 13800000011 is an
+          existing SMS account.
+      - keyword: WHEN
+        content: Enter Mobile number 13800000011, click Send code, enter Verification code 123456, check Agree to terms
+          and click Log in.
+      - keyword: THEN
+        content: +86 is displayed, Send code changes to Resend code, and successful login opens Ctrip Travel with My
+          account.
+    - name: Reject sending without mobile
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked. Verification code login
+          is selected and the simulated delivered code becomes valid only after Send code.
+      - keyword: WHEN
+        content: Leave Mobile number empty and click Send code.
+      - keyword: THEN
+        content: Enter your mobile number alert appears and My account remains absent.
+    - name: Reject empty verification code
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked. Verification code login
+          is selected and the simulated delivered code becomes valid only after Send code.
+      - keyword: WHEN
+        content: Enter Mobile number 13800000041, click Send code, leave Verification code empty, check Agree to terms
+          and click Log in.
+      - keyword: THEN
+        content: Enter your verification code alert appears; Mobile number remains visible and My account is absent.
+    - name: Reject incorrect verification code
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked. Verification code login
+          is selected and the simulated delivered code becomes valid only after Send code.
+      - keyword: WHEN
+        content: Enter Mobile number 13800000042, click Send code, enter Verification code 000000, check Agree to terms
+          and click Log in.
+      - keyword: THEN
+        content: Incorrect verification code alert appears; the SMS form remains and My account is absent.
+    - name: Require SMS legal acceptance
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked. Verification code login
+          is selected and the simulated delivered code becomes valid only after Send code.
+      - keyword: WHEN
+        content: Enter Mobile number 13800000043, click Send code, enter Verification code 123456, leave Agree to terms
+          unchecked and click Log in.
+      - keyword: THEN
+        content: Agree to terms first alert appears; the SMS form remains and My account is absent.
+  - id: REQ-1.5
+    name: Accept or decline registration agreements
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1
+    - REQ-1.2
+    description: |-
+      Register navigation displays Register heading and "Registration agreement and privacy policy"(role=dialog); "Free registration"(role=button) from password login opens the same agreement. The agreement remains accessible through "Registration agreement and privacy policy"(role=button). Agree and continue opens Verify mobile number with "Mobile number"(role=textbox) and "Verification code"(role=textbox), while Decline returns to the signed-out homepage without creating an account or displaying "My account"(role=button).
+
+      ![image](./reference/register1.png)
+    data:
+      requires: *id001
+    scenarios:
+    - name: Open registration agreement
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Activate Register in Global navigation.
+      - keyword: THEN
+        content: Register heading and Registration agreement and privacy policy dialog appear with Agree and continue
+          and Decline buttons.
+    - name: Accept from login registration entry
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked.
+      - keyword: WHEN
+        content: Activate Free registration, then click Agree and continue within the agreement dialog.
+      - keyword: THEN
+        content: Verify mobile number heading and Mobile number and Verification code fields appear.
+    - name: Decline registration
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Activate Register, then click Decline within Registration agreement and privacy policy.
+      - keyword: THEN
+        content: Ctrip Travel homepage returns with Log in; the agreement dialog closes and My account is absent.
+  - id: REQ-1.6
+    name: Verify a new mobile for registration
+    type: ATOMIC
+    dependencies:
+    - REQ-1.5
+    description: |-
+      After "Register"(role=link) opens "Registration agreement and privacy policy"(role=dialog), "Agree and continue"(role=button) advances to Verify mobile number. Users enter an unused isolated phone in "Mobile number"(role=textbox) and click "Send code"(role=button), enabling accepted code 123456 and changing the action to "Resend code"(role=button). Entering that code in "Verification code"(role=textbox) and clicking "Next, set password"(role=button) opens Set password with "Password"(role=textbox) and "Confirm password"(role=textbox).
+
+      ![image](./reference/register2.png)
+    data:
+      requires:
+      - DATA-SMS
+      - DATA-REGISTERED
+    scenarios:
+    - name: Advance after mobile verification
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. An
+          unused isolated phone is derived by the DATA-SMS rule.
+      - keyword: WHEN
+        content: Activate Register, Agree and continue, enter the isolated Mobile number, click Send code, enter 123456
+          in Verification code and click Next, set password.
+      - keyword: THEN
+        content: Resend code appears after sending, then Set password opens with Password and Confirm password fields.
+  - id: REQ-1.7
+    name: Create account with a valid password
+    type: ATOMIC
+    dependencies:
+    - REQ-1.6
+    - REQ-1.3
+    description: |-
+      Users enter matching "Password"(role=textbox) and "Confirm password"(role=textbox) values containing both letters and numbers and at least eight characters, then click "Complete registration"(role=button). Success shows Registration successful and opens password login; invalid submissions display the exact scenario validation message and stay on Set password. The created mobile account must authenticate through "Account"(role=textbox), Password, "Agree to terms"(role=checkbox), and "Log in"(role=button), resulting in "My account"(role=button).
+
+      ![image](./reference/register2.png)
+    data:
+      requires:
+      - DATA-REGISTERED
+    scenarios:
+    - name: Complete registration and authenticate created account
+      steps:
+      - keyword: GIVEN
+        content: An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity
+          according to DATA-SMS. From Register, accept Registration agreement and privacy policy using Agree and continue,
+          enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password
+          is now open.
+      - keyword: WHEN
+        content: Enter Travel1234 in both Password and Confirm password and click Complete registration; on the resulting
+          login form enter the same isolated phone in Account and Travel1234 in Password, check Agree to terms and click
+          Log in.
+      - keyword: THEN
+        content: Registration successful status appears and password login opens; the newly created credentials authenticate
+          and expose My account.
+    - name: Reject mismatched passwords
+      steps:
+      - keyword: GIVEN
+        content: An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity
+          according to DATA-SMS. From Register, accept Registration agreement and privacy policy using Agree and continue,
+          enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password
+          is now open.
+      - keyword: WHEN
+        content: Enter Password Travel1234 and Confirm password Travel5678 and click Complete registration.
+      - keyword: THEN
+        content: Passwords do not match alert appears, Set password remains open and My account is absent.
+    - name: Reject weak password
+      steps:
+      - keyword: GIVEN
+        content: An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity
+          according to DATA-SMS. From Register, accept Registration agreement and privacy policy using Agree and continue,
+          enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password
+          is now open.
+      - keyword: WHEN
+        content: Enter 1234567 in both Password and Confirm password and click Complete registration.
+      - keyword: THEN
+        content: Password must contain letters and numbers and be at least 8 characters alert appears; Set password
+          remains and My account is absent.
+  - id: REQ-1.8
+    name: End authenticated session
+    type: ATOMIC
+    dependencies:
+    - REQ-1.3
+    description: |-
+      Hovering "My account"(role=button) reveals the Log out menuitem. Activating it clears the session and replaces My account with Log in on the signed-out homepage, including after reload.
+
+      ![image](./reference/enter_self.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-SESSION
+    scenarios:
+    - name: Log out and retain signed-out state
+      steps:
+      - keyword: GIVEN
+        content: The verified user has signed in through Account ctrip_user@example.com, Password Travel1234 and checked
+          Agree to terms.
+      - keyword: WHEN
+        content: Hover My account, activate Log out (menuitem), then reload.
+      - keyword: THEN
+        content: Log in returns to Global navigation and My account disappears, both before and after reload.
+  - id: REQ-1.9
+    name: Reject registration with an incorrect sent code
+    type: ATOMIC
+    dependencies:
+    - REQ-1.5
+    description: |-
+      Following acceptance in "Registration agreement and privacy policy"(role=dialog), users enter an isolated "Mobile number"(role=textbox), click "Send code"(role=button), and enter an incorrect "Verification code"(role=textbox). "Next, set password"(role=button) shows Incorrect verification code, retains mobile verification and the entered phone, and does not expose password setup.
+
+      ![image](./reference/register2.png)
+    data:
+      requires:
+      - DATA-SMS
+      - DATA-REGISTERED
+    scenarios:
+    - name: Reject registration with an incorrect sent code
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. An
+          unused isolated phone is derived from DATA-SMS.
+      - keyword: WHEN
+        content: Activate Register and Agree and continue, enter the isolated phone, click Send code, enter 000000 in
+          Verification code and click Next, set password.
+      - keyword: THEN
+        content: Incorrect verification code appears; Verify mobile number remains, the entered phone is retained and
+          Set password is absent.
+  - id: REQ-1.10
+    name: Reject a letters-only registration password
+    type: ATOMIC
+    dependencies:
+    - REQ-1.6
+    description: |-
+      After mobile verification, entering abcdefgh in "Password"(role=textbox) and "Confirm password"(role=textbox), then clicking "Complete registration"(role=button), shows Password must contain letters and numbers and be at least 8 characters. Eight letters alone are insufficient; Set password remains visible without authentication or "My account"(role=button).
+
+      ![image](./reference/register2.png)
+    data:
+      requires:
+      - DATA-SMS
+      - DATA-REGISTERED
+    scenarios:
+    - name: Reject a letters-only registration password
+      steps:
+      - keyword: GIVEN
+        content: An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity
+          according to DATA-SMS. From Register, accept Registration agreement and privacy policy using Agree and continue,
+          enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password
+          is now open.
+      - keyword: WHEN
+        content: Enter abcdefgh in both Password and Confirm password and click Complete registration.
+      - keyword: THEN
+        content: Password must contain letters and numbers and be at least 8 characters appears; Set password remains
+          and My account is absent.
+  - id: REQ-1.11
+    name: Reject a numbers-only registration password
+    type: ATOMIC
+    dependencies:
+    - REQ-1.6
+    description: |-
+      After mobile verification, entering 12345678 in "Password"(role=textbox) and "Confirm password"(role=textbox), then clicking "Complete registration"(role=button), shows Password must contain letters and numbers and be at least 8 characters. Eight digits alone are insufficient; Set password remains visible without authentication or "My account"(role=button).
+
+      ![image](./reference/register2.png)
+    data:
+      requires:
+      - DATA-SMS
+      - DATA-REGISTERED
+    scenarios:
+    - name: Reject a numbers-only registration password
+      steps:
+      - keyword: GIVEN
+        content: An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity
+          according to DATA-SMS. From Register, accept Registration agreement and privacy policy using Agree and continue,
+          enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password
+          is now open.
+      - keyword: WHEN
+        content: Enter 12345678 in both Password and Confirm password and click Complete registration.
+      - keyword: THEN
+        content: Password must contain letters and numbers and be at least 8 characters appears; Set password remains
+          and My account is absent.
+  - id: REQ-1.12
+    name: Accept an eight-character mixed registration password
+    type: ATOMIC
+    dependencies:
+    - REQ-1.6
+    - REQ-1.3
+    description: |-
+      Entering Abcd1234 identically in "Password"(role=textbox) and "Confirm password"(role=textbox) satisfies the inclusive eight-character mixed-password boundary. "Complete registration"(role=button) creates the account, whose mobile and password subsequently authenticate through "Account"(role=textbox), Password, "Agree to terms"(role=checkbox), and "Log in"(role=button), showing "My account"(role=button).
+
+      ![image](./reference/register2.png)
+    data:
+      requires:
+      - DATA-REGISTERED
+      - DATA-SMS
+    scenarios:
+    - name: Accept an eight-character mixed registration password
+      steps:
+      - keyword: GIVEN
+        content: An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity
+          according to DATA-SMS. From Register, accept Registration agreement and privacy policy using Agree and continue,
+          enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password
+          is now open.
+      - keyword: WHEN
+        content: Enter Abcd1234 in both password fields and click Complete registration; on Log in enter the same isolated
+          mobile in Account and Abcd1234 in Password, check Agree to terms and click Log in.
+      - keyword: THEN
+        content: Registration successful appears and the created eight-character mixed password authenticates, exposing
+          My account.
+  - id: REQ-1.13
+    name: Require a sent code before SMS authentication
+    type: ATOMIC
+    dependencies:
+    - REQ-1.2
+    description: |-
+      Entering "Mobile number"(role=textbox) and the otherwise accepted 123456 in "Verification code"(role=textbox), selecting "Agree to terms"(role=checkbox), and clicking "Log in"(role=button) without sending a code in the current attempt must reject authentication. The SMS form remains and "My account"(role=button) does not appear.
+
+      ![image](./reference/login2.png)
+    data:
+      requires:
+      - DATA-SMS
+      - DATA-ACCOUNTS
+    scenarios:
+    - name: Require a sent code before SMS authentication
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log
+          in has been opened from Global navigation; Agree to terms initially is unchecked. Verification code login
+          is selected and the simulated delivered code becomes valid only after Send code. No Send code action has been
+          performed in this attempt.
+      - keyword: WHEN
+        content: Enter Mobile number 13800000011 and Verification code 123456, check Agree to terms and click Log in
+          without sending a code.
+      - keyword: THEN
+        content: A visible alert rejects the attempt; Mobile number remains visible and My account is absent.
+  - id: REQ-1.14
+    name: Reject a short mixed registration password
+    type: ATOMIC
+    dependencies:
+    - REQ-1.6
+    description: |-
+      Entering matching Abcd123 in "Password"(role=textbox) and "Confirm password"(role=textbox) fails the independent eight-character minimum despite containing both letters and numbers. "Complete registration"(role=button) shows Password must contain letters and numbers and be at least 8 characters, retains Set password, and does not sign in.
+
+      ![image](./reference/register2.png)
+    data:
+      requires:
+      - DATA-SMS
+      - DATA-REGISTERED
+    scenarios:
+    - name: Reject a short mixed registration password
+      steps:
+      - keyword: GIVEN
+        content: An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity
+          according to DATA-SMS. From Register, accept Registration agreement and privacy policy using Agree and continue,
+          enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password
+          is now open.
+      - keyword: WHEN
+        content: Enter Abcd123 in both password fields and click Complete registration.
+      - keyword: THEN
+        content: Password must contain letters and numbers and be at least 8 characters appears; Set password remains
+          and My account is absent.
+  - id: REQ-1.15
+    name: Reject registration without a verification code
+    type: ATOMIC
+    dependencies:
+    - REQ-1.5
+    description: |-
+      "Register"(role=link) opens "Registration agreement and privacy policy"(role=dialog), and "Agree and continue"(role=button) opens mobile verification. After entering "Mobile number"(role=textbox) and clicking "Send code"(role=button), leaving "Verification code"(role=textbox) empty and clicking "Next, set password"(role=button) shows Enter your verification code, retains Verify mobile number and the entered phone, and does not expose Set password.
+
+      ![image](./reference/register2.png)
+    data:
+      requires:
+      - DATA-SMS
+      - DATA-REGISTERED
+    scenarios:
+    - name: Reject registration without a verification code
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. An
+          unused isolated phone is derived according to DATA-SMS.
+      - keyword: WHEN
+        content: Open Register, accept Agree and continue, enter the isolated Mobile number and click Send code; leave
+          Verification code empty and click Next, set password.
+      - keyword: THEN
+        content: Enter your verification code appears; Verify mobile number and the entered phone remain, while Set
+          password is absent.
+- id: REQ-2
+  name: Find flights and select a fare
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Domestic/international route search uses fixed current date 2026-07-19. Quick-search supports trip type, cities, dates, children and cabin preferences. Results allow criterion updates, nearby fares, filtering and sorting. Multi-city, time and airport filter details are not specified beyond capability context.
+    ![image](./reference/search.png)
+    ![image](./reference/search_panel.png)
+    ![image](./reference/search_results.png)
+
+
+    Flight results expose a list with listitems named Flight <number>. Cabin class and Airline use combobox semantics; All airlines removes only the airline restriction.
+  children:
+  - id: REQ-2.1
+    name: Configure trip type
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1
+    description: |-
+      "One way"(role=radio) is initially selected, with "Add return"(role=button) available and "Return date"(role=textbox) absent. Selecting "Round trip"(role=radio) reveals Return date, while returning to One way hides it. "Multi-city"(role=radio) is also available.
+
+      ![image](./reference/search.png)
+    data:
+      requires: *id001
+    scenarios:
+    - name: Switch one-way and round-trip modes
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. One
+          way is initially selected.
+      - keyword: WHEN
+        content: Inspect Add return and the absent Return date, select Round trip, then select One way again.
+      - keyword: THEN
+        content: Round trip reveals Return date; One way removes that field and restores Add return; Multi-city remains
+          available.
+  - id: REQ-2.2
+    name: Select and exchange route cities
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1
+    description: |-
+      "Origin"(role=textbox) and "Destination"(role=textbox) accept cities; "Swap cities"(role=button) exchanges their values without searching. "City selection"(role=button) opens "City selection"(role=dialog), with its "City selection"(role=tab) choices: origin defaults to Popular with Chengdu, while the destination's GHIJ tab includes Guangzhou. Choosing a city closes the dialog and fills the city and airport code.
+
+      ![image](./reference/city_selection.png)
+    data:
+      requires:
+      - DATA-CITIES
+    scenarios:
+    - name: Exchange route cities
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Enter Origin Chengdu and Destination Guangzhou, then click Swap cities.
+      - keyword: THEN
+        content: Origin becomes Guangzhou and Destination becomes Chengdu.
+    - name: Choose a popular origin
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Click Origin, inspect the selected Popular tab in City selection, then click Chengdu.
+      - keyword: THEN
+        content: Origin becomes Chengdu (CTU) and City selection closes.
+    - name: Choose destination by pinyin group
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Click Destination, select GHIJ within City selection and click Guangzhou.
+      - keyword: THEN
+        content: Destination becomes Guangzhou (CAN) and City selection closes.
+  - id: REQ-2.3
+    name: Choose valid journey dates
+    type: ATOMIC
+    dependencies:
+    - REQ-2.1
+    description: |-
+      Opening "Departure date"(role=textbox) displays a calendar with daily fares and full-date actions. "2026-07-21"(role=button) shows ¥460 and sets departure before closing; "2026-07-18"(role=button) is disabled because it precedes July 19. "Add return"(role=button) selects "Round trip"(role=radio) and opens "Return date"(role=textbox). Selecting "2026-07-25"(role=button) after July 21 displays a four-day trip, while "2026-07-20"(role=button) is disabled as a return before departure.
+
+      ![image](./reference/date_selection.png)
+      ![image](./reference/date_selection_2.png)
+    data:
+      requires:
+      - DATA-FLIGHTS
+    scenarios:
+    - name: Select a future departure with fare
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Calendar
+          fares include ¥460 for July 21.
+      - keyword: WHEN
+        content: Open Departure date, inspect the fare, then click 2026-07-21.
+      - keyword: THEN
+        content: ¥460 is displayed; Departure date becomes 2026-07-21 and the date picker closes.
+    - name: Disable past departure dates
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Open Departure date and inspect 2026-07-18.
+      - keyword: THEN
+        content: That past-date button is visible but disabled.
+    - name: Add a four-day return trip
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Departure
+          date has been selected as 2026-07-21.
+      - keyword: WHEN
+        content: Click Add return and select 2026-07-25.
+      - keyword: THEN
+        content: Round trip is selected, Return date becomes 2026-07-25 and 4 days is displayed.
+    - name: Disable return before departure
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Departure
+          date has been selected as 2026-07-21.
+      - keyword: WHEN
+        content: Click Add return and inspect return choice 2026-07-20.
+      - keyword: THEN
+        content: The earlier return-date button is visible but disabled.
+  - id: REQ-2.4
+    name: Execute matching or empty flight search
+    type: ATOMIC
+    dependencies:
+    - REQ-2.2
+    - REQ-2.3
+    description: |-
+      Users fill "Origin"(role=textbox), "Destination"(role=textbox), and "Departure date"(role=textbox), then click "Search flights"(role=button). Flight results preserves criteria and shows "Flight list"(role=region); Chengdu–Guangzhou on July 21 contains exactly CZ3401, JD5162, and MU5234 with DATA-FLIGHTS fare, airline, stops, departure, and on-time facts. Equal cities show Origin and destination cannot be the same. Beihai–Mars City on July 23 displays No flights found and Modify search.
+
+      ![image](./reference/search_results.png)
+    data:
+      requires:
+      - DATA-FLIGHTS
+      - DATA-SEARCH
+    scenarios:
+    - name: Show matching published flights
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. DATA-FLIGHTS
+          contains the three July 21 Chengdu–Guangzhou flights.
+      - keyword: WHEN
+        content: Enter Origin Chengdu and Destination Guangzhou, choose Departure date 2026-07-21 and click Search flights.
+      - keyword: THEN
+        content: Flight results opens with exactly CZ3401, JD5162 and MU5234; Origin, Destination and Departure date
+          retain Chengdu, Guangzhou and 2026-07-21.
+    - name: Reject identical cities
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Enter Chengdu in both Origin and Destination and click Search flights.
+      - keyword: THEN
+        content: Origin and destination cannot be the same alert appears; editable search remains and Flight results
+          does not open.
+    - name: Show empty route result
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. No
+          Beihai–Mars City flight is published for July 23.
+      - keyword: WHEN
+        content: Enter Origin Beihai and Destination Mars City, select Departure date 2026-07-23 and click Search flights.
+      - keyword: THEN
+        content: Flight list has no flight listitems and displays No flights found with Modify search.
+  - id: REQ-2.5
+    name: Carry traveler and cabin preferences into search
+    type: ATOMIC
+    dependencies:
+    - REQ-2.4
+    description: |-
+      Selecting "Traveling with children"(role=checkbox) carries that preference into Flight results as Children included. "Cabin class"(role=combobox) includes Economy and retains the chosen option during search.
+    data:
+      requires:
+      - DATA-SEARCH
+    scenarios:
+    - name: Search with children included
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Check Traveling with children, then Enter Origin Chengdu and Destination Guangzhou, choose Departure
+          date 2026-07-21 and click Search flights.
+      - keyword: THEN
+        content: Flight results displays Children included.
+    - name: Choose Economy preference
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Select Economy in Cabin class, then Enter Origin Chengdu and Destination Guangzhou, choose Departure
+          date 2026-07-21 and click Search flights.
+      - keyword: THEN
+        content: Economy is selected and retained in Cabin class on Flight results.
+  - id: REQ-2.6
+    name: Reuse saved booking search
+    type: ATOMIC
+    dependencies:
+    - REQ-2.4
+    description: |-
+      Anonymous "Search history"(role=region) offers Chengdu - Guangzhou. Activating it restores the source route in "Origin"(role=textbox) and "Destination"(role=textbox), its date in "Departure date"(role=textbox), and directly displays the corresponding results.
+    data:
+      requires:
+      - DATA-BOOKING-HISTORY
+      - DATA-SEARCH
+    scenarios:
+    - name: Reuse anonymous route history
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Seeded
+          Search history contains Chengdu - Guangzhou for July 21.
+      - keyword: WHEN
+        content: Activate Chengdu - Guangzhou within Search history.
+      - keyword: THEN
+        content: Flight results opens directly; Origin, Destination and Departure date restore Chengdu, Guangzhou and
+          2026-07-21.
+  - id: REQ-2.7
+    name: Update results search criteria
+    type: ATOMIC
+    dependencies:
+    - REQ-2.4
+    - REQ-2.5
+    description: |-
+      Flight results permits changing route criteria, "Departure date"(role=textbox), and "Cabin class"(role=combobox). "Update results"(role=button) after selecting July 22 and Economy retains the results view and updated criteria while refreshing "Flight list"(role=region) for that day.
+
+      ![image](./reference/search_panel.png)
+    data:
+      requires:
+      - DATA-FLIGHTS
+      - DATA-SEARCH
+    scenarios:
+    - name: Refresh date and cabin on results
+      steps:
+      - keyword: GIVEN
+        content: The visitor has used Origin Chengdu, Destination Guangzhou, Departure date 2026-07-21 and Search flights;
+          Flight list contains CZ3401 (¥320, 11:00, 95%, nonstop), JD5162 (¥460, 09:00, 88%, stopover) and MU5234 (¥580,
+          07:30, 91%, nonstop). July 22 contains only CZ3401 at ¥320.
+      - keyword: WHEN
+        content: Choose Departure date 2026-07-22, select Economy in Cabin class and click Update results.
+      - keyword: THEN
+        content: Flight results remains open with July 22 and Economy retained, and Flight list contains only CZ3401
+          priced ¥320.
+  - id: REQ-2.8
+    name: Explore nearby and monthly fares
+    type: ATOMIC
+    dependencies:
+    - REQ-2.4
+    description: |-
+      "Date bar"(role=region) shows nearby minimum fares and next-week navigation. Selecting its July 22 action with ¥320 updates "Departure date"(role=textbox) and "Flight list"(role=region). "More dates"(role=button) opens "Monthly fares"(role=dialog) with July 22 and ¥320; Next week exposes July 28.
+
+      ![image](./reference/more_date.png)
+    data:
+      requires:
+      - DATA-FLIGHTS
+    scenarios:
+    - name: Switch to nearby low-fare date
+      steps:
+      - keyword: GIVEN
+        content: The visitor has used Origin Chengdu, Destination Guangzhou, Departure date 2026-07-21 and Search flights;
+          Flight list contains CZ3401 (¥320, 11:00, 95%, nonstop), JD5162 (¥460, 09:00, 88%, stopover) and MU5234 (¥580,
+          07:30, 91%, nonstop).
+      - keyword: WHEN
+        content: Inspect 2026-07-22 in Date bar and click it.
+      - keyword: THEN
+        content: The action shows ¥320; Departure date becomes July 22 and Flight list contains only CZ3401 priced ¥320.
+    - name: Open monthly fares
+      steps:
+      - keyword: GIVEN
+        content: The visitor has used Origin Chengdu, Destination Guangzhou, Departure date 2026-07-21 and Search flights;
+          Flight list contains CZ3401 (¥320, 11:00, 95%, nonstop), JD5162 (¥460, 09:00, 88%, stopover) and MU5234 (¥580,
+          07:30, 91%, nonstop).
+      - keyword: WHEN
+        content: Click More dates within Date bar.
+      - keyword: THEN
+        content: Monthly fares dialog opens with a 2026-07-22 button displaying ¥320.
+    - name: View next week dates
+      steps:
+      - keyword: GIVEN
+        content: The visitor has used Origin Chengdu, Destination Guangzhou, Departure date 2026-07-21 and Search flights;
+          Flight list contains CZ3401 (¥320, 11:00, 95%, nonstop), JD5162 (¥460, 09:00, 88%, stopover) and MU5234 (¥580,
+          07:30, 91%, nonstop).
+      - keyword: WHEN
+        content: Click Next week within Date bar.
+      - keyword: THEN
+        content: Date bar offers the 2026-07-28 date button.
+  - id: REQ-2.9
+    name: Filter flights by stops and airline
+    type: ATOMIC
+    dependencies:
+    - REQ-2.4
+    description: |-
+      Selecting "Nonstop only"(role=checkbox) removes JD5162 from "Flight list"(role=region). Selecting China Southern in "Airline"(role=combobox) additionally leaves only CZ3401; the filters compose without resetting each other.
+    data:
+      requires:
+      - DATA-FLIGHTS
+    scenarios:
+    - name: Compose nonstop and airline filters
+      steps:
+      - keyword: GIVEN
+        content: The visitor has used Origin Chengdu, Destination Guangzhou, Departure date 2026-07-21 and Search flights;
+          Flight list contains CZ3401 (¥320, 11:00, 95%, nonstop), JD5162 (¥460, 09:00, 88%, stopover) and MU5234 (¥580,
+          07:30, 91%, nonstop).
+      - keyword: WHEN
+        content: Check Nonstop only, inspect the results, then select China Southern in Airline.
+      - keyword: THEN
+        content: Nonstop first leaves CZ3401 and MU5234 and excludes JD5162; adding the airline filter leaves only CZ3401.
+  - id: REQ-2.10
+    name: Sort matching flights
+    type: ATOMIC
+    dependencies:
+    - REQ-2.4
+    description: |-
+      "Price: low to high"(role=button), "On-time: high to low"(role=button), and "Departure: earliest first"(role=button) order "Flight list"(role=region) by numeric fare, numeric on-time rate, or chronological departure respectively. Sorting preserves flight identities, whose accessible sequence makes order observable without using position to choose a business record.
+    data:
+      requires:
+      - DATA-FLIGHTS
+    scenarios:
+    - name: Order by lowest price
+      steps:
+      - keyword: GIVEN
+        content: The visitor has used Origin Chengdu, Destination Guangzhou, Departure date 2026-07-21 and Search flights;
+          Flight list contains CZ3401 (¥320, 11:00, 95%, nonstop), JD5162 (¥460, 09:00, 88%, stopover) and MU5234 (¥580,
+          07:30, 91%, nonstop).
+      - keyword: WHEN
+        content: 'Click Price: low to high.'
+      - keyword: THEN
+        content: The three flights remain and their visible order is CZ3401, JD5162, MU5234.
+    - name: Order by highest punctuality
+      steps:
+      - keyword: GIVEN
+        content: The visitor has used Origin Chengdu, Destination Guangzhou, Departure date 2026-07-21 and Search flights;
+          Flight list contains CZ3401 (¥320, 11:00, 95%, nonstop), JD5162 (¥460, 09:00, 88%, stopover) and MU5234 (¥580,
+          07:30, 91%, nonstop).
+      - keyword: WHEN
+        content: 'Click On-time: high to low.'
+      - keyword: THEN
+        content: The three flights remain and their visible order is CZ3401, MU5234, JD5162.
+    - name: Order by earliest departure
+      steps:
+      - keyword: GIVEN
+        content: The visitor has used Origin Chengdu, Destination Guangzhou, Departure date 2026-07-21 and Search flights;
+          Flight list contains CZ3401 (¥320, 11:00, 95%, nonstop), JD5162 (¥460, 09:00, 88%, stopover) and MU5234 (¥580,
+          07:30, 91%, nonstop).
+      - keyword: WHEN
+        content: 'Click Departure: earliest first.'
+      - keyword: THEN
+        content: The three flights remain and their visible order is MU5234, JD5162, CZ3401.
+  - id: REQ-2.11
+    name: Inspect and collapse fare options
+    type: ATOMIC
+    dependencies:
+    - REQ-2.4
+    description: |-
+      Within "Flight JD5162"(role=listitem), Show fares reveals Fare options with its Economy fare group and Refund and change rules. Hide fares closes those options and restores Show fares.
+    data:
+      requires:
+      - DATA-FLIGHTS
+    scenarios:
+    - name: Expand and collapse the selected flight fare
+      steps:
+      - keyword: GIVEN
+        content: The visitor has used Origin Chengdu, Destination Guangzhou, Departure date 2026-07-21 and Search flights;
+          Flight list contains CZ3401 (¥320, 11:00, 95%, nonstop), JD5162 (¥460, 09:00, 88%, stopover) and MU5234 (¥580,
+          07:30, 91%, nonstop).
+      - keyword: WHEN
+        content: Click Show fares within Flight JD5162, inspect its Fare options, then click Hide fares within the same
+          flight.
+      - keyword: THEN
+        content: Fare options displays Economy fare and Refund and change rules; Hide fares closes that region and restores
+          Show fares.
+  - id: REQ-2.12
+    name: Select the identified flight and fare
+    type: ATOMIC
+    dependencies:
+    - REQ-2.11
+    description: |-
+      Within "Flight JD5162"(role=listitem), "Show fares"(role=button) exposes "Economy fare"(role=group). Clicking its "Book"(role=button) opens Book flight for JD5162 with the selected route, date, and fare preserved. Signed-out booking is allowed.
+
+      ![image](./reference/book2.png)
+    data:
+      requires:
+      - DATA-BOOKING
+      - DATA-FLIGHTS
+    scenarios:
+    - name: Book JD5162 Economy fare
+      steps:
+      - keyword: GIVEN
+        content: The visitor has used Origin Chengdu, Destination Guangzhou, Departure date 2026-07-21 and Search flights;
+          Flight list contains CZ3401 (¥320, 11:00, 95%, nonstop), JD5162 (¥460, 09:00, 88%, stopover) and MU5234 (¥580,
+          07:30, 91%, nonstop). The visitor remains anonymous.
+      - keyword: WHEN
+        content: Click Show fares within Flight JD5162 and Book within its Economy fare group.
+      - keyword: THEN
+        content: Book flight opens for JD5162 with the selected Chengdu–Guangzhou route, July 21 and Economy fare retained.
+  - id: REQ-2.13
+    name: Change route criteria on flight results
+    type: ATOMIC
+    dependencies:
+    - REQ-2.7
+    description: |-
+      Users can edit "Origin"(role=textbox), "Destination"(role=textbox), and "Departure date"(role=textbox) on results. "Update results"(role=button) queries the changed route rather than retaining old flights; Beihai–Mars City on July 23 shows the defined empty "Flight list"(role=region) with updated criteria.
+
+      ![image](./reference/search_panel.png)
+    data:
+      requires:
+      - DATA-FLIGHTS
+      - DATA-SEARCH
+    scenarios:
+    - name: Change route criteria on flight results
+      steps:
+      - keyword: GIVEN
+        content: The visitor has used Origin Chengdu, Destination Guangzhou, Departure date 2026-07-21 and Search flights;
+          Flight list contains CZ3401 (¥320, 11:00, 95%, nonstop), JD5162 (¥460, 09:00, 88%, stopover) and MU5234 (¥580,
+          07:30, 91%, nonstop).
+      - keyword: WHEN
+        content: Replace Origin with Beihai and Destination with Mars City, choose Departure date 2026-07-23 and click
+          Update results.
+      - keyword: THEN
+        content: Flight results retains the changed criteria; Flight list contains no flights and displays No flights
+          found and Modify search instead of the old route results.
+  - id: REQ-2.14
+    name: Recover from an empty flight search
+    type: ATOMIC
+    dependencies:
+    - REQ-2.4
+    description: |-
+      Modify search from an empty "Flight list"(role=region) reveals editable "Origin"(role=textbox) and "Destination"(role=textbox) criteria, either inline or in quick search. Correcting the route and date and using "Search flights"(role=button) or "Update results"(role=button), as appropriate to the current form, restores published matches. The form's location is unrestricted.
+
+      ![image](./reference/search_results.png)
+    data:
+      requires:
+      - DATA-FLIGHTS
+      - DATA-SEARCH
+    scenarios:
+    - name: Recover from an empty flight search
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Beihai–Mars City for July 23 and Flight list displays No flights found.
+      - keyword: WHEN
+        content: Click Modify search, fill Origin Chengdu and Destination Guangzhou, choose July 21 and submit the exposed
+          Search flights or Update results action.
+      - keyword: THEN
+        content: Flight results displays exactly CZ3401, JD5162 and MU5234 for the corrected route.
+  - id: REQ-2.15
+    name: Restore flights after removing nonstop filter
+    type: ATOMIC
+    dependencies:
+    - REQ-2.9
+    description: |-
+      With "Origin"(role=textbox), "Destination"(role=textbox), and "Departure date"(role=textbox) retained, clearing "Nonstop only"(role=checkbox) restores matching stopover flights to "Flight list"(role=region), preserving unchanged filters.
+    data:
+      requires:
+      - DATA-FLIGHTS
+      - DATA-SEARCH
+    scenarios:
+    - name: Restore flights after removing nonstop filter
+      steps:
+      - keyword: GIVEN
+        content: The visitor has used Origin Chengdu, Destination Guangzhou, Departure date 2026-07-21 and Search flights;
+          Flight list contains CZ3401 (¥320, 11:00, 95%, nonstop), JD5162 (¥460, 09:00, 88%, stopover) and MU5234 (¥580,
+          07:30, 91%, nonstop).
+      - keyword: WHEN
+        content: Check Nonstop only, verify two results, then uncheck it.
+      - keyword: THEN
+        content: CZ3401, JD5162 and MU5234 all return; Origin Chengdu, Destination Guangzhou and July 21 remain unchanged.
+  - id: REQ-2.16
+    name: Remove airline filter while keeping nonstop preference
+    type: ATOMIC
+    dependencies:
+    - REQ-2.9
+    description: |-
+      "Airline"(role=combobox) offers All airlines. With China Southern and "Nonstop only"(role=checkbox) selected, choosing All airlines removes only the airline restriction and restores MU5234 to "Flight list"(role=region), while stopover JD5162 remains excluded.
+    data:
+      requires:
+      - DATA-FLIGHTS
+      - DATA-SEARCH
+    scenarios:
+    - name: Remove airline filter while keeping nonstop preference
+      steps:
+      - keyword: GIVEN
+        content: The visitor has used Origin Chengdu, Destination Guangzhou, Departure date 2026-07-21 and Search flights;
+          Flight list contains CZ3401 (¥320, 11:00, 95%, nonstop), JD5162 (¥460, 09:00, 88%, stopover) and MU5234 (¥580,
+          07:30, 91%, nonstop).
+      - keyword: WHEN
+        content: Check Nonstop only and select China Southern, verify only CZ3401 remains, then select All airlines.
+      - keyword: THEN
+        content: Nonstop only stays checked; CZ3401 and MU5234 are displayed while stopover JD5162 remains excluded.
+- id: REQ-3
+  name: Book, price and pay for flights
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Booking supports reminders, passengers, contact mobile, optional protection, baggage, transfer and lounge services. Fee summary includes fare/taxes and chosen services. Guest submission and simulated payment are allowed. Insurance variants, fast-track security and fulfillment beyond stated examples remain broad context.
+    ![image](./reference/book1_mention.png)
+    ![image](./reference/book2.png)
+    ![image](./reference/book3.png)
+    ![image](./reference/book4.png)
+
+
+    Contact information is the booking contact-validation region. Public countdown timers are named Time remaining and render MM:SS or HH:MM:SS. Payment is simulated.
+  children:
+  - id: REQ-3.1
+    name: Read flight travel reminders
+    type: ATOMIC
+    dependencies:
+    - REQ-2.12
+    description: |-
+      Within "Travel reminders"(role=region), Show reminder details reveals Power banks and Baggage allowance notices for the chosen flight.
+
+      ![image](./reference/book1_mention.png)
+    data:
+      requires: *id001
+    scenarios:
+    - name: Expand airline travel reminders
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530.
+      - keyword: WHEN
+        content: Click Show reminder details in Travel reminders.
+      - keyword: THEN
+        content: Travel reminders displays Power banks and Baggage allowance notices.
+  - id: REQ-3.2
+    name: Select frequent passengers and recalculate totals
+    type: ATOMIC
+    dependencies:
+    - REQ-2.12
+    - REQ-1.3
+    description: |-
+      Signed-in users choose Zhang San and Li Si using the "Zhang San"(role=checkbox) and "Li Si"(role=checkbox) choices within "Frequent passengers"(role=region). Their identities appear in "Selected passengers"(role=region), and "Fee breakdown"(role=region) updates from Passengers: 1 and Order total: ¥530 to Passengers: 2 and Order total: ¥1060, using ¥460 fare plus ¥70 tax per passenger.
+
+      ![image](./reference/book2.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-PERSONAL-READ
+      - DATA-BOOKING
+      - DATA-FLIGHTS
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Fill two passengers with corresponding total
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530. The verified user
+          is signed in and has seeded frequent travelers Zhang San and Li Si; Fee breakdown initially shows Passengers:
+          1 and ¥530.'
+      - keyword: WHEN
+        content: Check Zhang San and Li Si within Frequent passengers.
+      - keyword: THEN
+        content: 'Selected passengers contains exactly those two named records; Fee breakdown shows Passengers: 2 and
+          Order total: ¥1060.'
+  - id: REQ-3.3
+    name: Validate ad hoc passenger identity
+    type: ATOMIC
+    dependencies:
+    - REQ-2.12
+    description: |-
+      "Passenger details"(role=region) provides Full name and ID number for an ad hoc passenger, alongside "Contact mobile"(role=textbox). Leaving ID number validates its checksum: the source valid ID is accepted, while 123 shows Enter a valid ID number. The passenger is not saved as a frequent traveler, and no civil-identity registry lookup is required.
+
+      ![image](./reference/book2.png)
+    data:
+      requires:
+      - DATA-BOOKING
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Accept checksum-valid passenger identity
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530.
+      - keyword: WHEN
+        content: Enter Full name Wang Wu and ID number 110101199001011237 in Passenger details, then focus Contact mobile
+          to leave the ID field.
+      - keyword: THEN
+        content: The valid ID value remains and Passenger details has no visible validation alert.
+    - name: Reject invalid passenger identity
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530.
+      - keyword: WHEN
+        content: Enter Full name Wang Wu and ID number 123 in Passenger details, then focus Contact mobile.
+      - keyword: THEN
+        content: Passenger details displays Enter a valid ID number.
+  - id: REQ-3.4
+    name: Open new passenger entry during booking
+    type: ATOMIC
+    dependencies:
+    - REQ-2.12
+    description: |-
+      Clicking "Add passenger"(role=button) opens "Add passenger"(role=dialog) with passenger entry inputs, including "Full name"(role=textbox) and "ID number"(role=textbox). The source requires opening this dialog but specifies no save outcome.
+
+      ![image](./reference/book2.png)
+    data:
+      requires: *id001
+    scenarios:
+    - name: Open booking passenger dialog
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530.
+      - keyword: WHEN
+        content: Click Add passenger.
+      - keyword: THEN
+        content: Add passenger dialog opens with Full name and ID number entry fields; no save outcome is required by
+          this scenario.
+  - id: REQ-3.5
+    name: Confirm booking contact mobile
+    type: ATOMIC
+    dependencies:
+    - REQ-2.12
+    - REQ-1.3
+    description: |-
+      "Contact mobile"(role=textbox) defaults to the signed-in mobile 13800000010. Replacing it with valid 13800000014 and leaving focus retains the value without a contact validation alert in "Contact information"(role=region). Contact feedback remains separate from "Passenger details"(role=region).
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-BOOKING
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Replace prefilled contact mobile
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530. The verified user
+          is signed in and Contact mobile initially shows 13800000010.
+      - keyword: WHEN
+        content: Replace Contact mobile with 13800000014, then focus Full name in Passenger details.
+      - keyword: THEN
+        content: The replacement mobile remains and Contact information has no visible validation alert.
+  - id: REQ-3.6
+    name: Select optional services and compute fees
+    type: ATOMIC
+    dependencies:
+    - REQ-2.12
+    description: |-
+      JD5162 starts at ¥530 in "Fee breakdown"(role=region). Selecting "Combo insurance"(role=checkbox) within "Trip protection"(role=region) adds ¥40; "Insurance terms"(role=dialog) describes Flight delay coverage, Coverage limit: ¥1000, and How to claim. "Extra 10 kg"(role=checkbox) in "Baggage allowance"(role=region) adds ¥60 and raises the free 20 kg baseline to 30 kg. "Airport drop-off"(role=checkbox) with "Pickup address"(role=textbox) in "Airport transfer"(role=region) adds an estimated ¥42. "Tianfu T2 lounge"(role=checkbox) in "Airport services"(role=region) adds ¥80. Every selected service remains checked and appears in the breakdown.
+
+      ![image](./reference/book3.png)
+    data:
+      requires:
+      - DATA-FLIGHTS
+      - DATA-BOOKING
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Add combo insurance
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530.
+      - keyword: WHEN
+        content: Check Combo insurance within Trip protection.
+      - keyword: THEN
+        content: 'The option is checked, Fee breakdown adds Combo insurance: ¥40 and Order total becomes ¥570.'
+    - name: Read insurance coverage and claims
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530.
+      - keyword: WHEN
+        content: Click Insurance terms within Trip protection.
+      - keyword: THEN
+        content: 'Insurance terms dialog displays Flight delay coverage, Coverage limit: ¥1000 and How to claim.'
+    - name: Read free checked baggage
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530.
+      - keyword: WHEN
+        content: Inspect Baggage allowance.
+      - keyword: THEN
+        content: 'Free checked baggage: 20 kg is visible.'
+    - name: Purchase extra checked baggage
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530.
+      - keyword: WHEN
+        content: Check Extra 10 kg within Baggage allowance.
+      - keyword: THEN
+        content: 'The option is checked, Checked baggage: 30 kg appears, Fee breakdown adds Extra 10 kg: ¥60 and total
+          becomes ¥590.'
+    - name: Reserve airport drop-off
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530.
+      - keyword: WHEN
+        content: Enter Pickup address No. 1 Tianfu Avenue, Chengdu within Airport transfer and check Airport drop-off.
+      - keyword: THEN
+        content: 'The option is checked, Estimated fare: ¥42 appears, Fee breakdown adds Airport drop-off: ¥42 and total
+          becomes ¥572.'
+    - name: Purchase airport lounge
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530.
+      - keyword: WHEN
+        content: Check Tianfu T2 lounge within Airport services.
+      - keyword: THEN
+        content: 'The option remains checked, Fee breakdown adds Tianfu T2 lounge: ¥80 and total becomes ¥610.'
+  - id: REQ-3.7
+    name: Compose and remove optional fees
+    type: ATOMIC
+    dependencies:
+    - REQ-3.6
+    description: |-
+      Opening fee details displays "Fee details"(role=region). "Combo insurance"(role=checkbox) and "Extra 10 kg"(role=checkbox) compose to a one-passenger total ¥630; removing insurance removes its ¥40 line while retaining ¥60 baggage and total ¥590. Changes apply only to the current booking.
+
+      ![image](./reference/book3.png)
+    data:
+      requires:
+      - DATA-BOOKING
+      - DATA-FLIGHTS
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Compose optional fee details
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530.
+      - keyword: WHEN
+        content: Check Combo insurance and Extra 10 kg, then click Fee details.
+      - keyword: THEN
+        content: 'Order total becomes ¥630 and Fee details displays separate Combo insurance: ¥40 and Extra 10 kg: ¥60
+          lines.'
+    - name: Remove only the deselected optional fee
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530. Combo insurance
+          and Extra 10 kg have been checked and total is ¥630.
+      - keyword: WHEN
+        content: Uncheck Combo insurance and click Fee details.
+      - keyword: THEN
+        content: 'Total becomes ¥590; Fee details retains Extra 10 kg: ¥60 and removes Combo insurance: ¥40.'
+  - id: REQ-3.8
+    name: Submit passenger booking to cashier
+    type: ATOMIC
+    dependencies:
+    - REQ-3.3
+    description: |-
+      A guest completes "Full name"(role=textbox) and "ID number"(role=textbox) in "Passenger details"(role=region) with Wang Wu and checksum-valid 110101199001011237, enters 13800000014 in "Contact mobile"(role=textbox), selects "Agree to booking terms"(role=checkbox), and clicks "Submit order"(role=button). The JD5162 order awaits payment, showing Payment heading, "Time remaining"(role=timer) with textual remaining duration, and Unpaid orders are cancelled when the timer expires.
+
+      ![image](./reference/book4.png)
+    data:
+      requires:
+      - DATA-SUBMITTED-ORDERS
+      - DATA-BOOKING
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Submit a valid unpaid booking
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530. The visitor is
+          anonymous.
+      - keyword: WHEN
+        content: Enter Full name Wang Wu and ID number 110101199001011237 in Passenger details, enter Contact mobile
+          13800000014, check Agree to booking terms and click Submit order.
+      - keyword: THEN
+        content: Payment opens with a visible Time remaining timer representing a positive duration and Unpaid orders
+          are cancelled when the timer expires reminder.
+  - id: REQ-3.9
+    name: Pay a submitted order
+    type: ATOMIC
+    dependencies:
+    - REQ-3.8
+    description: |-
+      At the cashier, selecting "Alipay"(role=radio) and clicking "Pay now"(role=button) simulates payment for the submitted JD5162 order and displays Payment successful for that same order.
+
+      ![image](./reference/book4.png)
+    data:
+      requires:
+      - DATA-SUBMITTED-ORDERS
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Pay with simulated Alipay
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530. Enter Full name
+          Wang Wu and ID number 110101199001011237 in Passenger details, enter Contact mobile 13800000014, check Agree
+          to booking terms and click Submit order. The resulting unpaid order is open at Payment.
+      - keyword: WHEN
+        content: Select Alipay (radio) and click Pay now.
+      - keyword: THEN
+        content: Payment successful status appears and JD5162 remains visible for the same order.
+  - id: REQ-3.10
+    name: Remove one selected frequent passenger
+    type: ATOMIC
+    dependencies:
+    - REQ-3.2
+    description: |-
+      Within "Frequent passengers"(role=region), deselecting Li Si after selecting both Zhang San and Li Si removes only Li Si from "Selected passengers"(role=region). "Fee breakdown"(role=region) returns to one passenger at ¥530.
+
+      ![image](./reference/book2.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-PERSONAL-READ
+      - DATA-BOOKING
+    scenarios:
+    - name: Remove one selected frequent passenger
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530. The signed-in
+          user has checked Zhang San and Li Si through Frequent passengers, producing total ¥1060.
+      - keyword: WHEN
+        content: Uncheck Li Si within Frequent passengers.
+      - keyword: THEN
+        content: 'Selected passengers retains exactly Zhang San and excludes Li Si; Fee breakdown shows Passengers:
+          1 and total ¥530.'
+  - id: REQ-3.11
+    name: Reject order submission with an invalid passenger ID
+    type: ATOMIC
+    dependencies:
+    - REQ-2.12
+    description: |-
+      ID 123 in "Passenger details"(role=region) prevents "Submit order"(role=button) from creating a payable order even with valid "Contact mobile"(role=textbox) and selected "Agree to booking terms"(role=checkbox). Enter a valid ID number remains visible; Book flight stays open and Payment does not appear.
+
+      ![image](./reference/book2.png)
+    data:
+      requires:
+      - DATA-BOOKING
+    scenarios:
+    - name: Reject order submission with an invalid passenger ID
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530.
+      - keyword: WHEN
+        content: Enter Full name Wang Wu and ID number 123 in Passenger details, Contact mobile 13800000014 and checked
+          Agree to booking terms, then click Submit order.
+      - keyword: THEN
+        content: Enter a valid ID number appears in Passenger details; Book flight remains and Payment is absent.
+  - id: REQ-3.12
+    name: Require booking terms before order submission
+    type: ATOMIC
+    dependencies:
+    - REQ-2.12
+    description: |-
+      "Agree to booking terms"(role=checkbox) starts unchecked. Even with valid "Passenger details"(role=region) and "Contact mobile"(role=textbox), clicking "Submit order"(role=button) without agreement shows a visible validation alert, retains Book flight, and never advances to Payment. Alert wording is unrestricted.
+
+      ![image](./reference/book2.png)
+    data:
+      requires:
+      - DATA-BOOKING
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Require booking terms before order submission
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530. Agree to booking
+          terms starts unchecked.
+      - keyword: WHEN
+        content: Enter Wang Wu and valid ID 110101199001011237 in Passenger details and Contact mobile 13800000014,
+          leave agreement unchecked and click Submit order.
+      - keyword: THEN
+        content: A visible validation alert appears; Book flight remains open and Payment is absent.
+  - id: REQ-3.13
+    name: Remove purchased extra baggage
+    type: ATOMIC
+    dependencies:
+    - REQ-3.6
+    - REQ-3.7
+    description: |-
+      Deselecting Extra 10 kg in "Baggage allowance"(role=region) removes its ¥60 fee and restores the free 20 kg baseline and one-passenger JD5162 total ¥530. Clicking "Fee details"(role=button) displays "Fee details"(role=region) without the removed baggage line.
+
+      ![image](./reference/book3.png)
+    data:
+      requires:
+      - DATA-BOOKING
+      - DATA-FLIGHTS
+    scenarios:
+    - name: Remove purchased extra baggage
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530. Extra 10 kg has
+          been checked, producing 30 kg baggage and total ¥590.
+      - keyword: WHEN
+        content: Uncheck Extra 10 kg and click Fee details.
+      - keyword: THEN
+        content: 'The checkbox is cleared, total returns to ¥530, Fee details omits Extra 10 kg: ¥60, Free checked baggage:
+          20 kg returns and Checked baggage: 30 kg disappears.'
+  - id: REQ-3.14
+    name: Remove airport drop-off reservation
+    type: ATOMIC
+    dependencies:
+    - REQ-3.6
+    - REQ-3.7
+    description: |-
+      Deselecting Airport drop-off within "Airport transfer"(role=region) removes its ¥42 fee and restores the one-passenger JD5162 total ¥530. "Fee details"(role=button) opens "Fee details"(role=region), where that fee is absent.
+
+      ![image](./reference/book3.png)
+    data:
+      requires:
+      - DATA-BOOKING
+      - DATA-FLIGHTS
+    scenarios:
+    - name: Remove airport drop-off reservation
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530. Pickup address
+          No. 1 Tianfu Avenue, Chengdu has been entered and Airport drop-off selected, producing total ¥572.
+      - keyword: WHEN
+        content: Uncheck Airport drop-off and click Fee details.
+      - keyword: THEN
+        content: 'The checkbox is cleared, total returns to ¥530 and Fee details omits Airport drop-off: ¥42.'
+  - id: REQ-3.15
+    name: Remove airport lounge service
+    type: ATOMIC
+    dependencies:
+    - REQ-3.6
+    - REQ-3.7
+    description: |-
+      Deselecting Tianfu T2 lounge within "Airport services"(role=region) removes its ¥80 fee and restores the one-passenger JD5162 total ¥530. Opening "Fee details"(role=button) shows "Fee details"(role=region) without the lounge line.
+
+      ![image](./reference/book3.png)
+    data:
+      requires:
+      - DATA-BOOKING
+      - DATA-FLIGHTS
+    scenarios:
+    - name: Remove airport lounge service
+      steps:
+      - keyword: GIVEN
+        content: The visitor has searched Chengdu–Guangzhou for July 21, clicked Show fares in Flight JD5162 and Book
+          in Economy fare; Book flight is open with one-passenger fare ¥460 plus tax ¥70, total ¥530. Tianfu T2 lounge
+          has been checked, producing total ¥610.
+      - keyword: WHEN
+        content: Uncheck Tianfu T2 lounge and click Fee details.
+      - keyword: THEN
+        content: 'The checkbox is cleared, total returns to ¥530 and Fee details omits Tianfu T2 lounge: ¥80.'
+- id: REQ-4
+  name: Inspect and cancel orders
+  type: FOLDER
+  dependencies: []
+  description: |-
+    My account Orders shows list entries with number, booking date, itinerary, flight, total and display status. Not traveled/Pending review are distinct from payment state. Type/date-range filtering and detail fields such as terminals, operating carrier, non-flight services, masked passengers and fee summary remain source context without concrete fixtures/oracles.
+    ![image](./reference/enter_order.png)
+    ![image](./reference/order1.png)
+    ![image](./reference/order2.png)
+
+
+    Order records are uniquely named Record <order number> within their list region. Record actions are scoped to that identity. Non-destructive cancellation confirmation provides Keep order.
+  children:
+  - id: REQ-4.1
+    name: Open account order list
+    type: ATOMIC
+    dependencies:
+    - REQ-1.3
+    description: |-
+      "My account"(role=button) opens an account menu with Orders. Selecting Orders displays the heading and "Order list"(role=region), containing only orders owned by the signed-in account.
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-ORDERS
+    scenarios:
+    - name: Open orders from account menu
+      steps:
+      - keyword: GIVEN
+        content: order_read has signed in through Log in with ctrip_order_read@example.com / Travel1234 and accepted
+          terms.
+      - keyword: WHEN
+        content: Click My account, inspect the menu, then activate Orders.
+      - keyword: THEN
+        content: The menu contains Orders; Orders heading and Order list open for this account.
+  - id: REQ-4.2
+    name: Filter orders by lifecycle state
+    type: ATOMIC
+    dependencies:
+    - REQ-4.1
+    description: |-
+      "All orders"(role=tab), "Not traveled"(role=tab), "Pending payment"(role=tab), and "Pending review"(role=tab) filter "Order list"(role=region) by registry display states. All orders for order_read contains exactly its three entries with flight, total, and status; the pending entry offers Pay now.
+
+      ![image](./reference/order1.png)
+    data:
+      requires:
+      - DATA-ORDERS
+    scenarios:
+    - name: Filter pending payment
+      steps:
+      - keyword: GIVEN
+        content: order_read has signed in using ctrip_order_read@example.com / Travel1234 and checked Agree to terms,
+          then opened My account → Orders. Its seeded orders are CTRIP20260721001/JD5162/¥530/Pending payment, CTRIP20260722002/CZ3401/¥390/Not
+          traveled and CTRIP20260718003/MU5234/¥650/Pending review.
+      - keyword: WHEN
+        content: Select Pending payment (tab).
+      - keyword: THEN
+        content: Exactly CTRIP20260721001 remains with Pending payment and Pay now; the other two orders are excluded.
+    - name: Filter not traveled
+      steps:
+      - keyword: GIVEN
+        content: order_read has signed in using ctrip_order_read@example.com / Travel1234 and checked Agree to terms,
+          then opened My account → Orders. Its seeded orders are CTRIP20260721001/JD5162/¥530/Pending payment, CTRIP20260722002/CZ3401/¥390/Not
+          traveled and CTRIP20260718003/MU5234/¥650/Pending review.
+      - keyword: WHEN
+        content: Select Not traveled (tab).
+      - keyword: THEN
+        content: Exactly CTRIP20260722002 remains with Not traveled; the pending-payment and pending-review orders are
+          excluded.
+    - name: Filter pending review
+      steps:
+      - keyword: GIVEN
+        content: order_read has signed in using ctrip_order_read@example.com / Travel1234 and checked Agree to terms,
+          then opened My account → Orders. Its seeded orders are CTRIP20260721001/JD5162/¥530/Pending payment, CTRIP20260722002/CZ3401/¥390/Not
+          traveled and CTRIP20260718003/MU5234/¥650/Pending review.
+      - keyword: WHEN
+        content: Select Pending review (tab).
+      - keyword: THEN
+        content: Exactly CTRIP20260718003 remains with Pending review; the other two orders are excluded.
+    - name: Show all account orders
+      steps:
+      - keyword: GIVEN
+        content: order_read has signed in using ctrip_order_read@example.com / Travel1234 and checked Agree to terms,
+          then opened My account → Orders. Its seeded orders are CTRIP20260721001/JD5162/¥530/Pending payment, CTRIP20260722002/CZ3401/¥390/Not
+          traveled and CTRIP20260718003/MU5234/¥650/Pending review.
+      - keyword: WHEN
+        content: Select All orders (tab).
+      - keyword: THEN
+        content: Exactly the three owned orders appear with their corresponding JD5162/¥530, CZ3401/¥390 and MU5234/¥650
+          flight/total values and registry statuses.
+  - id: REQ-4.3
+    name: Search order by business number
+    type: ATOMIC
+    dependencies:
+    - REQ-4.1
+    description: |-
+      Entering CTRIP20260721001 in "Order number"(role=textbox) and clicking "Search orders"(role=button) filters "Order list"(role=region) to that account-owned JD5162 order only.
+    data:
+      requires:
+      - DATA-ORDERS
+    scenarios:
+    - name: Find exact order number
+      steps:
+      - keyword: GIVEN
+        content: order_read has signed in using ctrip_order_read@example.com / Travel1234 and checked Agree to terms,
+          then opened My account → Orders. Its seeded orders are CTRIP20260721001/JD5162/¥530/Pending payment, CTRIP20260722002/CZ3401/¥390/Not
+          traveled and CTRIP20260718003/MU5234/¥650/Pending review.
+      - keyword: WHEN
+        content: Enter CTRIP20260721001 in Order number and click Search orders.
+      - keyword: THEN
+        content: Exactly that JD5162 record remains; CTRIP20260722002 and CTRIP20260718003 are excluded.
+  - id: REQ-4.4
+    name: Inspect identified order details
+    type: ATOMIC
+    dependencies:
+    - REQ-4.1
+    description: |-
+      View details within CTRIP20260721001 opens its Order details with number, "Flight itinerary"(role=region) showing JD5162 and Chengdu–Guangzhou, and Refund and change rules. "Payment status"(role=region) displays Pending payment, a decreasing Time remaining timer, expiry reminder, Pay now, and Cancel order. Browser time may be advanced for countdown observation while server dates remain externally fixed.
+
+      ![image](./reference/order2.png)
+    data:
+      requires:
+      - DATA-ORDERS
+    scenarios:
+    - name: Inspect unpaid itinerary and payment countdown
+      steps:
+      - keyword: GIVEN
+        content: order_read has signed in using ctrip_order_read@example.com / Travel1234 and checked Agree to terms,
+          then opened My account → Orders. Its seeded orders are CTRIP20260721001/JD5162/¥530/Pending payment, CTRIP20260722002/CZ3401/¥390/Not
+          traveled and CTRIP20260718003/MU5234/¥650/Pending review. View details has been clicked within CTRIP20260721001.
+      - keyword: WHEN
+        content: Inspect Order details, Flight itinerary and Payment status; record Time remaining and advance browser
+          elapsed time by 1.1 seconds.
+      - keyword: THEN
+        content: The order number, JD5162 and Chengdu to Guangzhou are visible; itinerary offers Refund and change rules;
+          Payment status displays Pending payment, expiry reminder, Pay now and Cancel order, and its positive Time
+          remaining decreases.
+    - name: Read refund and change conditions
+      steps:
+      - keyword: GIVEN
+        content: order_read has signed in using ctrip_order_read@example.com / Travel1234 and checked Agree to terms,
+          then opened My account → Orders. Its seeded orders are CTRIP20260721001/JD5162/¥530/Pending payment, CTRIP20260722002/CZ3401/¥390/Not
+          traveled and CTRIP20260718003/MU5234/¥650/Pending review. View details has been clicked within CTRIP20260721001.
+      - keyword: WHEN
+        content: Click Refund and change rules within Flight itinerary.
+      - keyword: THEN
+        content: 'Flight itinerary displays Refund fee: ¥100 and Changes allowed before departure.'
+  - id: REQ-4.5
+    name: Cancel an unpaid order after confirmation
+    type: ATOMIC
+    dependencies:
+    - REQ-4.4
+    description: |-
+      The independent order_cancel account owns CTRIP20260721004. Clicking "Cancel order"(role=button) in "Payment status"(role=region) opens "Cancel order"(role=dialog); Confirm cancellation changes that same order to Closed, persisting after reload.
+
+      ![image](./reference/order2.png)
+    data:
+      requires:
+      - DATA-ORDERS
+    scenarios:
+    - name: Confirm unpaid order cancellation
+      steps:
+      - keyword: GIVEN
+        content: order_cancel has signed in as ctrip_order_cancel@example.com / Travel1234 and opened Orders → CTRIP20260721004
+          → View details; Payment status is Pending payment.
+      - keyword: WHEN
+        content: Click Cancel order within Payment status, then Confirm cancellation within Cancel order dialog; reload.
+      - keyword: THEN
+        content: The same CTRIP20260721004 displays Closed in Payment status before and after reload.
+  - id: REQ-4.6
+    name: Keep an unpaid order when cancellation is declined
+    type: ATOMIC
+    dependencies:
+    - REQ-4.4
+    description: |-
+      In "Cancel order"(role=dialog), "Keep order"(role=button) closes confirmation without mutation. "Payment status"(role=region) retains Pending payment and Pay now for the identified order_read order. Only confirmed cancellation closes the order.
+
+      ![image](./reference/order2.png)
+    data:
+      requires:
+      - DATA-ORDERS
+    scenarios:
+    - name: Keep an unpaid order when cancellation is declined
+      steps:
+      - keyword: GIVEN
+        content: order_read has signed in using ctrip_order_read@example.com / Travel1234 and checked Agree to terms,
+          then opened My account → Orders. Its seeded orders are CTRIP20260721001/JD5162/¥530/Pending payment, CTRIP20260722002/CZ3401/¥390/Not
+          traveled and CTRIP20260718003/MU5234/¥650/Pending review. View details has been clicked within CTRIP20260721001.
+      - keyword: WHEN
+        content: Click Cancel order in Payment status, then Keep order within the dialog.
+      - keyword: THEN
+        content: The dialog closes; CTRIP20260721001 remains identified with Pending payment and Pay now available.
+  - id: REQ-4.7
+    name: Keep order lists scoped to the current account
+    type: ATOMIC
+    dependencies:
+    - REQ-4.1
+    - REQ-4.2
+    description: |-
+      Selecting "All orders"(role=tab) shows only the signed-in account's orders in "Order list"(role=region). Since profile_read owns none, its list must not borrow orders belonging to order_read or order_cancel.
+
+      ![image](./reference/order1.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-ORDERS
+    scenarios:
+    - name: Keep order lists scoped to the current account
+      steps:
+      - keyword: GIVEN
+        content: profile_read has signed in as ctrip_profile_read@example.com / Travel1234 and opened Orders; this account
+          owns no orders.
+      - keyword: WHEN
+        content: Select All orders.
+      - keyword: THEN
+        content: Order list has no records and none of CTRIP20260721001, CTRIP20260722002, CTRIP20260718003 or CTRIP20260721004
+          are exposed from other accounts.
+- id: REQ-5
+  name: Manage reusable booking information
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Personal center Common information sidebar expands/collapses Travelers, Contacts, Invoice titles and Addresses. Saved records are owned by the signed-in account. Creation and deletion tests create records through UI rather than preloading deletion targets. Source broader fields (traveler nationality/gender/birth/mobile, linked address province, international contact dialing, institutional/personal invoice types ) remain context; concrete acceptance uses the source-defined fields.
+    ![image](./reference/enter_self.png)
+    ![image](./reference/passenger.png)
+    ![image](./reference/address.png)
+    ![image](./reference/addressShow.png)
+    ![image](./reference/contact.png)
+    ![image](./reference/reimbursement.png)
+     Saved-traveler editing and address detail viewing have explicit contracts in REQ-5.14 and REQ-5.15.
+
+    Repeated business records may be rows, listitems or groups named Record <business identity>, using traveler/contact name, address recipient or invoice title. Exactly one record per identity appears in its named list region; header rows and decorative groups do not use the Record prefix. Add traveler, Add address, Add contact, Add invoice title and Edit traveler forms are named regions. Company Type uses combobox semantics. Address records expose View address and traveler records expose Edit; non-destructive deletion confirmation provides Keep traveler.
+  children:
+  - id: REQ-5.1
+    name: Open personal center and reusable information
+    type: ATOMIC
+    dependencies:
+    - REQ-1.3
+    description: |-
+      "My account"(role=button) exposes Personal center. Opening it displays Personal center heading and "Common information"(role=button), which toggles exactly four reusable-information links from an initially collapsed state.
+
+      ![image](./reference/enter_self.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+    scenarios:
+    - name: Open personal center
+      steps:
+      - keyword: GIVEN
+        content: personal_read has signed in with ctrip_personal_read@example.com / Travel1234 and accepted terms.
+      - keyword: WHEN
+        content: Click My account, inspect the menu, then activate Personal center.
+      - keyword: THEN
+        content: The menu offers Personal center; its heading opens with Common information available.
+    - name: Expand and collapse reusable information navigation
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. The owner is personal_read; Common information starts collapsed.
+      - keyword: WHEN
+        content: Click Common information, inspect its links, then click it again.
+      - keyword: THEN
+        content: Travelers, Contacts, Invoice titles and Addresses become visible; collapsing hides all four links.
+  - id: REQ-5.2
+    name: Search saved travelers
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1
+    description: |-
+      Entering a name in "Traveler name"(role=textbox) and clicking "Search travelers"(role=button) filters "Traveler list"(role=region). The personal_read account contains Li Si; a nonmatching query shows No travelers found and no records.
+
+      ![image](./reference/passenger.png)
+    data:
+      requires:
+      - DATA-PERSONAL-READ
+    scenarios:
+    - name: Find matching traveler
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. personal_read owns seeded Li Si and has opened Common information
+          → Travelers.
+      - keyword: WHEN
+        content: Enter Li Si in Traveler name and click Search travelers.
+      - keyword: THEN
+        content: Traveler list contains exactly the Li Si record.
+    - name: Show traveler search empty state
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. personal_read owns seeded Li Si and has opened Travelers.
+      - keyword: WHEN
+        content: Enter Nobody Example in Traveler name and click Search travelers.
+      - keyword: THEN
+        content: Traveler list contains no records and displays No travelers found.
+  - id: REQ-5.3
+    name: Save a reusable traveler
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1
+    description: |-
+      Add traveler opens "Add traveler"(role=region) with "Full name"(role=textbox), "ID number"(role=textbox), and "Save traveler"(role=button). Saving the isolated Wang Wu name and a valid ID adds that owner-specific traveler to "Traveler list"(role=region), displaying masked 110101********1237 and persisting after reload. Empty name shows Enter a full name within the form, keeps it open, and creates no record.
+
+      ![image](./reference/addpassenger.png)
+    data:
+      requires:
+      - DATA-CREATED-PERSONAL
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Save traveler and retain masked identity
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. traveler_create starts with an empty Traveler list; the isolated
+          Wang Wu name and ID 110101199001011237 are available.
+      - keyword: WHEN
+        content: Open Common information → Travelers, click Add traveler, enter the isolated Wang Wu name and ID 110101199001011237,
+          click Save traveler, then reload.
+      - keyword: THEN
+        content: Exactly one traveler is added with the submitted name and masked ID 110101********1237; the same name
+          and masked identity remain after reload.
+    - name: Reject traveler without full name
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. traveler_create has opened Travelers; the current record count
+          is recorded.
+      - keyword: WHEN
+        content: Click Add traveler, leave Full name empty and click Save traveler.
+      - keyword: THEN
+        content: Enter a full name appears within Add traveler; the form remains open and Traveler list count is unchanged.
+  - id: REQ-5.4
+    name: Read saved mailing address
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1
+    description: |-
+      The personal_read account's "Address list"(role=region) displays exactly one Zhang San record with Shanghai, Pudong New Area, and No. 100 Century Avenue.
+
+      ![image](./reference/address.png)
+    data:
+      requires:
+      - DATA-PERSONAL-READ
+    scenarios:
+    - name: Read recipient and delivery location
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. personal_read has opened Addresses and owns seeded Zhang San
+          at Shanghai, Pudong New Area, No. 100 Century Avenue.
+      - keyword: WHEN
+        content: Inspect Address list.
+      - keyword: THEN
+        content: Exactly one Zhang San record displays the seeded city, district and street.
+  - id: REQ-5.5
+    name: Save a mailing address
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1
+    description: |-
+      "Add address"(role=region) collects "Recipient"(role=textbox), "City"(role=textbox), "District"(role=textbox), "Street address"(role=textbox), and "Mobile number"(role=textbox). "Save address"(role=button) stores the current account's submitted address in "Address list"(role=region), accepting Shanghai, Pudong New Area, No. 100 Century Avenue, and 13800000027. The saved address persists after reload.
+
+      ![image](./reference/addaddress.png)
+    data:
+      requires:
+      - DATA-CREATED-PERSONAL
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Save recipient delivery address
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. address_create starts with an empty Address list; use an isolated
+          Wang Wu recipient name.
+      - keyword: WHEN
+        content: Open Addresses; click Add address, enter the isolated Recipient, City Shanghai, District Pudong New
+          Area, Street address No. 100 Century Avenue and Mobile number 13800000027, click Save address and reload.
+      - keyword: THEN
+        content: Exactly one record displays the submitted recipient and location; the saved record and address values
+          remain after reload.
+  - id: REQ-5.6
+    name: Search notification contacts
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1
+    description: |-
+      Entering a value in "Contact name"(role=textbox) and clicking "Search contacts"(role=button) filters "Contact list"(role=region). The contact_search source account contains Zhang San as the matching example.
+
+      ![image](./reference/contact.png)
+    data:
+      requires:
+      - DATA-PERSONAL-READ
+    scenarios:
+    - name: Search a saved contact by name
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. contact_search has opened Contacts and owns seeded Zhang San.
+      - keyword: WHEN
+        content: Enter Zhang San in Contact name and click Search contacts.
+      - keyword: THEN
+        content: Contact list contains exactly the Zhang San record.
+  - id: REQ-5.7
+    name: Save a default notification contact
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1
+    description: |-
+      "Add contact"(role=region) collects "Contact name"(role=textbox), "Mobile number"(role=textbox), and "Email"(role=textbox), with "Default contact"(role=checkbox). "Save contact"(role=button) creates an account-owned entry in "Contact list"(role=region) showing the submitted values and Default state, persisting after reload.
+
+      ![image](./reference/add_contact.png)
+    data:
+      requires:
+      - DATA-CREATED-PERSONAL
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Save contact with default designation
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. contact_create starts with an empty Contact list; use an isolated
+          Wang Wu name.
+      - keyword: WHEN
+        content: Open Contacts, click Add contact, enter Contact name as the isolated Wang Wu, Mobile number 13800000017
+          and Email wang.wu@example.com, check Default contact and click Save contact; reload.
+      - keyword: THEN
+        content: Exactly one saved record shows the name, mobile, email and Default; the same values and default designation
+          remain after reload.
+  - id: REQ-5.8
+    name: Search invoice titles
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1
+    description: |-
+      Entering Shanghai Example in "Search invoice titles"(role=textbox) and clicking "Search"(role=button) filters "Invoice title list"(role=region) to the matching company title with taxpayer ID 91310000123456789A.
+
+      ![image](./reference/reimbursement.png)
+    data:
+      requires:
+      - DATA-PERSONAL-READ
+    scenarios:
+    - name: Find company title by keyword
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. invoice_search has opened Invoice titles with seeded Shanghai
+          Example Technology Co., Ltd., taxpayer ID 91310000123456789A.
+      - keyword: WHEN
+        content: Enter Shanghai Example in Search invoice titles and click Search.
+      - keyword: THEN
+        content: Exactly that company record remains with taxpayer ID 91310000123456789A.
+  - id: REQ-5.9
+    name: Save company invoice title
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1
+    description: |-
+      Opening "Add invoice title"(role=region) provides "Type"(role=combobox) with Company, "Invoice title"(role=textbox), required company "Taxpayer ID"(role=textbox), and "Save"(role=button). Saving the isolated source company name with 91310000123456789B adds a persistent current-account record to "Invoice title list"(role=region). "Special VAT invoice"(role=checkbox) exposes the fields Registered address, Registered phone, Bank name, and Bank account.
+
+      ![image](./reference/add_reimbursement.png)
+    data:
+      requires:
+      - DATA-CREATED-PERSONAL
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Save company title and taxpayer identity
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. invoice_create starts with an empty Invoice title list; use
+          an isolated Shanghai Create Technology Co., Ltd. title.
+      - keyword: WHEN
+        content: Open Invoice titles, click Add invoice title, select Type Company, enter the isolated Invoice title
+          and Taxpayer ID 91310000123456789B, click Save and reload.
+      - keyword: THEN
+        content: Exactly one record displays the submitted title and taxpayer ID; both remain after reload.
+    - name: Reveal special VAT fields
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. invoice_vat has opened Invoice titles.
+      - keyword: WHEN
+        content: Click Add invoice title and check Special VAT invoice within its region.
+      - keyword: THEN
+        content: Registered address, Registered phone, Bank name and Bank account fields become visible.
+    - name: Require company taxpayer ID
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. invoice_create has opened Invoice titles and its current list
+          count is recorded.
+      - keyword: WHEN
+        content: Click Add invoice title, select Type Company, enter an isolated Missing tax ID title, leave Taxpayer
+          ID empty and click Save.
+      - keyword: THEN
+        content: The form remains visible, the list count is unchanged and no record with the submitted title is created.
+  - id: REQ-5.10
+    name: Remove saved traveler records
+    type: ATOMIC
+    dependencies:
+    - REQ-5.3
+    description: |-
+      In "Traveler list"(role=region), "Delete"(role=button) for an identified record opens "Delete traveler"(role=dialog), where Confirm deletion removes only that traveler. Selecting records through "{business identity}"(role=checkbox) choices and clicking "Delete selected"(role=button) opens "Delete travelers"(role=dialog); Confirm deletion removes only selected travelers. Removal persists, and setup creates targets through UI add/save rather than seed injection.
+
+      ![image](./reference/passenger.png)
+    data:
+      requires:
+      - DATA-CREATED-PERSONAL
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Delete one traveler after confirmation
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. traveler_delete has created isolated Traveler Delete A/110101199001011237
+          and Traveler Keep A/110101199001021232. Use Common information → Travelers; create each stated traveler with
+          Add traveler, Full name, its stated ID number and Save traveler. Names include the deterministic run/worker/scenario
+          suffix from isolatedName.
+      - keyword: WHEN
+        content: Click Delete within Traveler Delete A, verify that record remains while Delete traveler dialog is open,
+          click Confirm deletion and reload.
+      - keyword: THEN
+        content: Only Traveler Delete A disappears; Traveler Keep A remains before and after reload.
+    - name: Delete only selected traveler records
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. traveler_batch has created isolated Traveler Batch A/110101199001011237,
+          Traveler Batch B/110101199001021232 and Traveler Keep/110101199001031238. Use Common information → Travelers;
+          create each stated traveler with Add traveler, Full name, its stated ID number and Save traveler. Names include
+          the deterministic run/worker/scenario suffix from isolatedName.
+      - keyword: WHEN
+        content: Check the named Traveler Batch A and Traveler Batch B checkboxes in Traveler list, leave Traveler Keep
+          unselected, click Delete selected and Confirm deletion within Delete travelers; reload.
+      - keyword: THEN
+        content: Both selected records disappear, while Traveler Keep remains before and after reload.
+  - id: REQ-5.11
+    name: Remove saved address records
+    type: ATOMIC
+    dependencies:
+    - REQ-5.5
+    description: |-
+      In "Address list"(role=region), "Delete"(role=button) for an identified record opens "Delete address"(role=dialog); Confirm deletion removes only that address. "{business identity}"(role=checkbox) selections with "Delete selected"(role=button) expose "Delete addresses"(role=button) and "Delete addresses"(role=dialog); confirmation removes only selected entries. Removal persists, and targets are created through UI add/save.
+
+      ![image](./reference/address.png)
+    data:
+      requires:
+      - DATA-CREATED-PERSONAL
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Delete one address after confirmation
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. address_delete has created isolated Address Delete A and Address
+          Keep A. Use Common information → Addresses; create each stated address with Add address, Recipient set to
+          its isolated name, City Shanghai, District Pudong New Area, Street address No. 100 Century Avenue, Mobile
+          number 13800000027 and Save address.
+      - keyword: WHEN
+        content: Click Delete within Address Delete A, verify the record remains while Delete address dialog is open,
+          click Confirm deletion and reload.
+      - keyword: THEN
+        content: Only Address Delete A disappears; Address Keep A remains before and after reload.
+    - name: Delete only selected address records
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. address_batch has created isolated Address Batch A, Address
+          Batch B and Address Keep. Use Common information → Addresses; create each stated address with Add address,
+          Recipient set to its isolated name, City Shanghai, District Pudong New Area, Street address No. 100 Century
+          Avenue, Mobile number 13800000027 and Save address.
+      - keyword: WHEN
+        content: Check Address Batch A and Address Batch B in Address list, leave Address Keep unselected, click Delete
+          selected and Confirm deletion in Delete addresses; reload.
+      - keyword: THEN
+        content: Both selected addresses disappear, while Address Keep remains before and after reload.
+  - id: REQ-5.12
+    name: Remove saved contact records
+    type: ATOMIC
+    dependencies:
+    - REQ-5.7
+    description: |-
+      Within "Contact list"(role=region), "Delete"(role=button) opens "Delete contact"(role=dialog) for the identified contact; confirmation removes only it. Selecting "{business identity}"(role=checkbox) choices and clicking "Delete selected"(role=button) opens "Delete contacts"(role=dialog), whose confirmation removes only selected contacts. Deletions persist; setup creates records through the specified UI.
+
+      ![image](./reference/contact.png)
+    data:
+      requires:
+      - DATA-CREATED-PERSONAL
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Delete one contact after confirmation
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. contact_delete has created isolated Contact Delete A and Contact
+          Keep A. Use Common information → Contacts; create each stated contact with Add contact, Contact name set to
+          its isolated name, Mobile number 13800000017, Email wang.wu@example.com, checked Default contact and Save
+          contact.
+      - keyword: WHEN
+        content: Click Delete within Contact Delete A, verify that record remains while Delete contact dialog is open,
+          click Confirm deletion and reload.
+      - keyword: THEN
+        content: Only Contact Delete A disappears; Contact Keep A remains before and after reload.
+    - name: Delete only selected contact records
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. contact_batch_1 has created isolated Contact Batch One A, Contact
+          Batch One B and Contact Keep One. Use Common information → Contacts; create each stated contact with Add contact,
+          Contact name set to its isolated name, Mobile number 13800000017, Email wang.wu@example.com, checked Default
+          contact and Save contact.
+      - keyword: WHEN
+        content: Check Contact Batch One A and Contact Batch One B in Contact list, leave Contact Keep One unselected,
+          click Delete selected and Confirm deletion in Delete contacts; reload.
+      - keyword: THEN
+        content: Both selected contacts disappear, while Contact Keep One remains before and after reload.
+    - name: Delete only selected contact records in second account
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. contact_batch_2 has created isolated Contact Batch Two A, Contact
+          Batch Two B and Contact Keep Two. Use Common information → Contacts; create each stated contact with Add contact,
+          Contact name set to its isolated name, Mobile number 13800000017, Email wang.wu@example.com, checked Default
+          contact and Save contact.
+      - keyword: WHEN
+        content: Check Contact Batch Two A and Contact Batch Two B, leave Contact Keep Two unselected, click Delete
+          selected and Confirm deletion in Delete contacts; reload.
+      - keyword: THEN
+        content: Both selected contacts disappear, while Contact Keep Two remains before and after reload under the
+          independent account.
+  - id: REQ-5.13
+    name: Remove saved invoice title records
+    type: ATOMIC
+    dependencies:
+    - REQ-5.9
+    description: |-
+      In "Invoice title list"(role=region), "Delete"(role=button) opens "Delete invoice title"(role=dialog) for the identified title; confirmation removes only that record. "{business identity}"(role=checkbox) selections and "Delete selected"(role=button) expose "Delete invoice titles"(role=button) and "Delete invoice titles"(role=dialog); confirmation removes only selected titles. Removal persists, and scenario targets are UI-created.
+
+      ![image](./reference/reimbursement.png)
+    data:
+      requires:
+      - DATA-CREATED-PERSONAL
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Delete one invoice title after confirmation
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. invoice_delete has created isolated Invoice Delete One/91310000123456780B
+          and Invoice Keep One/91310000123456781B. Use Common information → Invoice titles; create each stated title
+          with Add invoice title, Type Company, Invoice title set to its isolated name, its stated Taxpayer ID and Save.
+      - keyword: WHEN
+        content: Click Delete within Invoice Delete One, verify it remains while Delete invoice title dialog is open,
+          click Confirm deletion and reload.
+      - keyword: THEN
+        content: Only Invoice Delete One disappears; Invoice Keep One remains before and after reload.
+    - name: Delete only selected invoice title records
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. invoice_batch has created isolated Invoice Batch One/91310000123456780B,
+          Invoice Batch Two/91310000123456781B and Invoice Keep Two/91310000123456782B. Use Common information → Invoice
+          titles; create each stated title with Add invoice title, Type Company, Invoice title set to its isolated name,
+          its stated Taxpayer ID and Save.
+      - keyword: WHEN
+        content: Check Invoice Batch One and Invoice Batch Two in Invoice title list, leave Invoice Keep Two unselected,
+          click Delete selected and Confirm deletion in Delete invoice titles; reload.
+      - keyword: THEN
+        content: Both selected titles disappear, while Invoice Keep Two remains before and after reload.
+  - id: REQ-5.14
+    name: Edit a saved traveler name
+    type: ATOMIC
+    dependencies:
+    - REQ-5.3
+    description: |-
+      Clicking "Edit"(role=button) within an identified "Traveler list"(role=region) record opens "Edit traveler"(role=region), prefilled with Full name and ID number and offering Save traveler. Changing only the name updates that same record while retaining its ID rather than creating another. The new name and masked ID persist after reload.
+
+      ![image](./reference/passenger.png)
+      ![image](./reference/addpassenger.png)
+    data:
+      requires:
+      - DATA-CREATED-PERSONAL
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Edit a saved traveler name
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. traveler_edit has created isolated Original Traveler with ID
+          110101199001011237 through Add traveler and Save traveler; its list count is recorded.
+      - keyword: WHEN
+        content: Click Edit within Original Traveler, inspect the prefilled name and ID, replace Full name with isolated
+          Updated Traveler, click Save traveler and reload.
+      - keyword: THEN
+        content: The form retains the original identity; Original Traveler disappears, Updated Traveler displays 110101********1237
+          and the record count stays unchanged before and after reload.
+  - id: REQ-5.15
+    name: Inspect a saved mailing address detail
+    type: ATOMIC
+    dependencies:
+    - REQ-5.5
+    description: |-
+      Each record in "Address list"(role=region) offers keyboard-accessible "View address"(role=button). Opening it displays Address details heading and "Address details"(role=region) with that address's recipient, city, district, street, and mobile. The action's position inside the record is unrestricted.
+
+      ![image](./reference/addressShow.png)
+    data:
+      requires:
+      - DATA-CREATED-PERSONAL
+    scenarios:
+    - name: Inspect a saved mailing address detail
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. address_detail has created isolated Address Detail Reader. Use
+          Common information → Addresses; create each stated address with Add address, Recipient set to its isolated
+          name, City Shanghai, District Pudong New Area, Street address No. 100 Century Avenue, Mobile number 13800000027
+          and Save address.
+      - keyword: WHEN
+        content: Activate View address within that saved record.
+      - keyword: THEN
+        content: Address details heading and region display the selected recipient, Shanghai, Pudong New Area, No. 100
+          Century Avenue and 13800000027.
+  - id: REQ-5.16
+    name: Find a traveler created in the current session
+    type: ATOMIC
+    dependencies:
+    - REQ-5.2
+    - REQ-5.3
+    description: |-
+      After saving a traveler through UI, entering its exact isolated name in "Traveler name"(role=textbox) and clicking "Search travelers"(role=button) finds that same record and masked identity in "Traveler list"(role=region), without an additional seed.
+
+      ![image](./reference/passenger.png)
+    data:
+      requires:
+      - DATA-CREATED-PERSONAL
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Find a traveler created in the current session
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. traveler_search_created has created isolated Search New Traveler
+          with ID 110101199001011237 through Add traveler and Save traveler.
+      - keyword: WHEN
+        content: Enter the exact created name in Traveler name and click Search travelers.
+      - keyword: THEN
+        content: Exactly that record remains in Traveler list with masked identity 110101********1237.
+  - id: REQ-5.17
+    name: Exclude nonmatching notification contacts
+    type: ATOMIC
+    dependencies:
+    - REQ-5.6
+    description: |-
+      Entering a nonmatching isolated keyword in "Contact name"(role=textbox) and clicking "Search contacts"(role=button) returns zero records in contact_search's "Contact list"(role=region). Nonmatching contacts are excluded; no particular empty-state wording is required.
+
+      ![image](./reference/contact.png)
+    data:
+      requires:
+      - DATA-PERSONAL-READ
+    scenarios:
+    - name: Exclude nonmatching notification contacts
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. contact_search has opened Contacts and owns seeded Zhang San.
+      - keyword: WHEN
+        content: Enter an isolated Absent Contact keyword in Contact name and click Search contacts.
+      - keyword: THEN
+        content: Contact list contains no records and Zhang San is excluded.
+  - id: REQ-5.18
+    name: Exclude nonmatching invoice titles
+    type: ATOMIC
+    dependencies:
+    - REQ-5.8
+    description: |-
+      Entering a nonmatching isolated keyword in "Search invoice titles"(role=textbox) and clicking "Search"(role=button) returns zero records in invoice_search's "Invoice title list"(role=region). Nonmatching titles are excluded without prescribing empty-state wording.
+
+      ![image](./reference/reimbursement.png)
+    data:
+      requires:
+      - DATA-PERSONAL-READ
+    scenarios:
+    - name: Exclude nonmatching invoice titles
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. invoice_search has opened Invoice titles and owns seeded Shanghai
+          Example Technology Co., Ltd..
+      - keyword: WHEN
+        content: Enter an isolated Absent Invoice keyword in Search invoice titles and click Search.
+      - keyword: THEN
+        content: Invoice title list contains no records and the seeded company is excluded.
+  - id: REQ-5.19
+    name: Keep a traveler when deletion is declined
+    type: ATOMIC
+    dependencies:
+    - REQ-5.3
+    description: |-
+      "Delete traveler"(role=dialog) offers "Keep traveler"(role=button) to dismiss without deleting. The same record and masked ID remain in "Traveler list"(role=region), including after reload. Only Confirm deletion is destructive.
+
+      ![image](./reference/passenger.png)
+    data:
+      requires:
+      - DATA-CREATED-PERSONAL
+      - DATA-IDENTITIES
+    scenarios:
+    - name: Keep a traveler when deletion is declined
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. traveler_decline has created isolated Keep Declined Traveler
+          with ID 110101199001011237 through UI and recorded its list count.
+      - keyword: WHEN
+        content: Click Delete within that traveler, then Keep traveler in Delete traveler dialog; reload.
+      - keyword: THEN
+        content: The dialog closes; the same traveler and masked identity 110101********1237 remain and the list count
+          is unchanged before and after reload.
+- id: REQ-6
+  name: Manage profile and account security
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Personal center exposes My information and Account security. Profile fields are masked where stated. Password change verifies existing credentials; phone and email binding include staged identity verification. Avatar settings and final phone/email completion are mentioned without executable outcomes and are retained as untested context.
+    ![image](./reference/myinfo.png)
+    ![image](./reference/modifyinfo.png)
+    ![image](./reference/safecenter.png)
+
+
+    Profile Gender uses combobox semantics. Security verification attempts are context-scoped: an accepted code must have been sent in the current attempt.
+  children:
+  - id: REQ-6.1
+    name: Read masked personal profile
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1
+    description: |-
+      Opening "My information"(role=button) for profile_read displays mobile 138****0013, email c***@example.com, Profile Reader, Li Ming, Male, and 1990-01-01.
+
+      ![image](./reference/myinfo.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+    scenarios:
+    - name: Read personal information with masking
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. profile_read has seeded mobile 13800000013, email ctrip_profile_read@example.com,
+          nickname Profile Reader, real name Li Ming, Male and birth 1990-01-01.
+      - keyword: WHEN
+        content: Activate My information.
+      - keyword: THEN
+        content: The visible profile shows masked mobile 138****0013 and email c***@example.com with Profile Reader,
+          Li Ming, Male and 1990-01-01.
+  - id: REQ-6.2
+    name: Save personal profile changes
+    type: ATOMIC
+    dependencies:
+    - REQ-6.1
+    description: |-
+      Under "My information"(role=button), profile_edit clicks "Edit"(role=button) to open "Nickname"(role=textbox), "Real name"(role=textbox), "Gender"(role=combobox) with Female, and "Date of birth"(role=textbox). "Save"(role=button) persists submitted edits and displays the updated values.
+
+      ![image](./reference/modifyinfo.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+    scenarios:
+    - name: Persist edited profile fields
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks Agree to
+          terms and opens My account → Personal center. The owner is profile_edit.
+      - keyword: WHEN
+        content: Open My information and Edit; enter Nickname Profile Editor, Real name Wang Lin, Gender Female and
+          Date of birth 1992-05-16, click Save and reload.
+      - keyword: THEN
+        content: All four submitted values are visible before and after reload.
+  - id: REQ-6.3
+    name: Inspect account security settings
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1
+    description: |-
+      Account security displays named Login password, Bound phone, and Bound email regions with Change your password regularly. Each setting has a Change action scoped to its own region.
+
+      ![image](./reference/safecenter.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+    scenarios:
+    - name: Inspect security settings and reminder
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in with its DATA-ACCOUNTS email / Travel1234 and accepted terms, opens My account
+          → Personal center → Account security. The owner is profile_read.
+      - keyword: WHEN
+        content: Inspect Login password, Bound phone and Bound email.
+      - keyword: THEN
+        content: Each named region has its own Change button and Change your password regularly is visible.
+  - id: REQ-6.4
+    name: Change login password using current password
+    type: ATOMIC
+    dependencies:
+    - REQ-6.3
+    - REQ-1.3
+    description: |-
+      Change within "Login password"(role=region) opens "Current password"(role=textbox), "New password"(role=textbox), "Confirm new password"(role=textbox), and "Complete"(role=button). Entering Travel1234 and matching NewTravel1234! shows Strong in "Password strength"(role=region); completion changes the password and requires Sign in again. Using "Account"(role=textbox), "Password"(role=textbox), "Agree to terms"(role=checkbox), and "Log in"(role=button), the new password reaches "My account"(role=button), while the old password no longer authenticates.
+    data:
+      requires:
+      - DATA-ACCOUNTS
+    scenarios:
+    - name: Replace password and require reauthentication
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in with its DATA-ACCOUNTS email / Travel1234 and accepted terms, opens My account
+          → Personal center → Account security. The owner is password_change with email ctrip_password_change@example.com.
+      - keyword: WHEN
+        content: Click Change within Login password; enter Current password Travel1234, New password NewTravel1234!
+          and the same Confirm new password; inspect strength and click Complete. Return to Log in, try the old password
+          with accepted terms, then submit the new password.
+      - keyword: THEN
+        content: Password strength displays Strong and completion says Sign in again; the old password shows Incorrect
+          account or password, while NewTravel1234! authenticates and exposes My account.
+  - id: REQ-6.5
+    name: Verify identity before changing bound phone
+    type: ATOMIC
+    dependencies:
+    - REQ-6.3
+    description: |-
+      Change within "Bound phone"(role=region) opens Verify identity with "Login password"(role=textbox) and "New phone"(role=textbox). Travel1234 and 13900000018 followed by "Next, verify new phone"(role=button) opens Verify new phone with "Verification code"(role=textbox) and Code sent to 13900000018. Final binding completion is unspecified.
+
+      ![image](./reference/modifyphone.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-SMS
+    scenarios:
+    - name: Advance to new-phone verification
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in with its DATA-ACCOUNTS email / Travel1234 and accepted terms, opens My account
+          → Personal center → Account security. The owner is phone_binding.
+      - keyword: WHEN
+        content: Click Change within Bound phone; enter Login password Travel1234 and New phone 13900000018 and click
+          Next, verify new phone.
+      - keyword: THEN
+        content: Verify identity initially opens; successful verification opens Verify new phone with Verification code
+          and Code sent to 13900000018.
+  - id: REQ-6.6
+    name: Verify current email before new-email step
+    type: ATOMIC
+    dependencies:
+    - REQ-6.3
+    description: |-
+      Change in "Bound email"(role=region) shows c***@example.com. "Send verification code"(role=button) enables accepted 123456; entering it in "Verification code"(role=textbox) and clicking "Next, verify new email"(role=button) exposes "New email"(role=textbox). Final new-email verification and binding are unspecified.
+
+      ![image](./reference/modifyemail.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-SMS
+    scenarios:
+    - name: Advance after current-email verification
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in with its DATA-ACCOUNTS email / Travel1234 and accepted terms, opens My account
+          → Personal center → Account security. The owner is email_binding.
+      - keyword: WHEN
+        content: Click Change within Bound email, inspect masked c***@example.com, click Send verification code, enter
+          123456 and click Next, verify new email.
+      - keyword: THEN
+        content: Current-email verification succeeds and New email becomes visible; final binding is outside this scenario.
+  - id: REQ-6.7
+    name: Reject a password change with an incorrect current password
+    type: ATOMIC
+    dependencies:
+    - REQ-6.3
+    - REQ-1.8
+    description: |-
+      In "Login password"(role=region), an incorrect "Current password"(role=textbox) with otherwise valid matching "New password"(role=textbox) and "Confirm new password"(role=textbox) is rejected by "Complete"(role=button). A visible alert retains the change form without Sign in again, and original credentials remain usable to reach "My account"(role=button). Alert wording is unrestricted.
+
+      ![image](./reference/modifypassword.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+    scenarios:
+    - name: Reject a password change with an incorrect current password
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in with its DATA-ACCOUNTS email / Travel1234 and accepted terms, opens My account
+          → Personal center → Account security. The owner is profile_read.
+      - keyword: WHEN
+        content: Click Change within Login password; enter Current password WrongPass123 and matching NewTravel1234!
+          replacement fields, then Complete. Return Home, use My account → Log out and sign in again with the original
+          credentials.
+      - keyword: THEN
+        content: A visible alert retains Current password without Sign in again; original Travel1234 still authenticates
+          profile_read.
+  - id: REQ-6.8
+    name: Reject phone-change identity verification with wrong password
+    type: ATOMIC
+    dependencies:
+    - REQ-6.3
+    description: |-
+      In "Bound phone"(role=region), entering WrongPass123 in "Login password"(role=textbox) and 13900000018 in "New phone"(role=textbox), then clicking "Next, verify new phone"(role=button), shows a visible alert and retains Verify identity. Verify new phone and Code sent to 13900000018 do not appear, because failed identity verification cannot send the new-phone code.
+
+      ![image](./reference/modifyphone.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-SMS
+    scenarios:
+    - name: Reject phone-change identity verification with wrong password
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in with its DATA-ACCOUNTS email / Travel1234 and accepted terms, opens My account
+          → Personal center → Account security. The owner is phone_binding.
+      - keyword: WHEN
+        content: Click Change in Bound phone, enter Login password WrongPass123 and New phone 13900000018 and click
+          Next, verify new phone.
+      - keyword: THEN
+        content: A visible alert retains Verify identity; Verify new phone and Code sent to 13900000018 are absent.
+  - id: REQ-6.9
+    name: Reject an incorrect current-email verification code
+    type: ATOMIC
+    dependencies:
+    - REQ-6.3
+    description: |-
+      Within "Bound email"(role=region), "Send verification code"(role=button) enables only accepted 123456. Entering 000000 in "Verification code"(role=textbox) and clicking "Next, verify new email"(role=button) shows a visible alert and retains current verification; "New email"(role=textbox) remains unavailable. Alert wording is unrestricted.
+
+      ![image](./reference/modifyemail.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-SMS
+    scenarios:
+    - name: Reject an incorrect current-email verification code
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in with its DATA-ACCOUNTS email / Travel1234 and accepted terms, opens My account
+          → Personal center → Account security. The owner is email_binding.
+      - keyword: WHEN
+        content: Click Change in Bound email, click Send verification code, enter Verification code 000000 and click
+          Next, verify new email.
+      - keyword: THEN
+        content: A visible alert retains Verification code and New email remains unavailable.
+- id: REQ-7
+  name: Query flight status and reuse history
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Flights Flight status supports Flight number and Route search options (radios), flight detail or route list, automatic account-owned history, reuse and clearing. Flight status is a deterministic supplied observation, not live external data.
+    ![image](./reference/status1.png)
+    ![image](./reference/status2.png)
+    ![image](./reference/status3.png)
+    ![image](./reference/status4.png)
+
+
+    Flight status records are uniquely named Record <flight-status identity>. Flight details and Baggage carousel are named regions for status observations.
+  children:
+  - id: REQ-7.1
+    name: Open flight status search
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1
+    description: |-
+      "Flights"(role=button) followed by "Flight status"(role=link) opens Flight status heading and query choices "Flight number"(role=radio) and "Route"(role=radio).
+
+      ![image](./reference/status1.png)
+    data:
+      requires: *id001
+    scenarios:
+    - name: Open flight status service
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Activate Flights and then Flight status (link).
+      - keyword: THEN
+        content: Flight status heading and Flight number and Route radios are visible.
+  - id: REQ-7.2
+    name: Query exact flight dynamic details
+    type: ATOMIC
+    dependencies:
+    - REQ-7.1
+    description: |-
+      In number mode, users enter JD5162 in "Flight number"(role=textbox), July 21 in "Departure date"(role=textbox), and click "Search"(role=button). "Flight details"(role=region) shows the identified flight with Chengdu, Guangzhou, Scheduled, H14-H25, B12, and baggage carousel 6; a named Baggage carousel region disambiguates that numeric observation.
+
+      ![image](./reference/status1.png)
+      ![image](./reference/status4.png)
+    data:
+      requires:
+      - DATA-STATUS
+    scenarios:
+    - name: Show identified flight ground service details
+      steps:
+      - keyword: GIVEN
+        content: The visitor has opened Flights → Flight status; DATA-STATUS provides July 21 JD5162 Chengdu–Guangzhou
+          and MU5234 Shanghai–Beijing observations.
+      - keyword: WHEN
+        content: Select Flight number, enter JD5162, fill Departure date 2026-07-21 and click Search.
+      - keyword: THEN
+        content: Flight details identifies JD5162, Chengdu, Guangzhou, Scheduled, H14-H25 and B12; its Baggage carousel
+          region displays 6.
+  - id: REQ-7.3
+    name: Query route flight status
+    type: ATOMIC
+    dependencies:
+    - REQ-7.1
+    description: |-
+      Choosing "Route"(role=radio) exposes "Origin"(role=textbox), "Destination"(role=textbox), and "Departure date"(role=textbox). Shanghai–Beijing on July 21 followed by "Search"(role=button) displays exactly MU5234 in "Flight status results"(role=region), with China Eastern, 09:00, 11:30, and Scheduled. "Swap cities"(role=button) exchanges city values without running a query.
+
+      ![image](./reference/status2.png)
+      ![image](./reference/status3.png)
+    data:
+      requires:
+      - DATA-STATUS
+    scenarios:
+    - name: Show matching route flight statuses
+      steps:
+      - keyword: GIVEN
+        content: The visitor has opened Flights → Flight status; DATA-STATUS provides July 21 JD5162 Chengdu–Guangzhou
+          and MU5234 Shanghai–Beijing observations.
+      - keyword: WHEN
+        content: Select Route, enter Origin Shanghai, Destination Beijing and Departure date 2026-07-21, then click
+          Search.
+      - keyword: THEN
+        content: Flight status results contains exactly MU5234 displaying Shanghai, Beijing, China Eastern, 09:00, 11:30
+          and Scheduled.
+    - name: Exchange status route without running query
+      steps:
+      - keyword: GIVEN
+        content: The visitor has opened Flights → Flight status; DATA-STATUS provides July 21 JD5162 Chengdu–Guangzhou
+          and MU5234 Shanghai–Beijing observations. No status query has been submitted.
+      - keyword: WHEN
+        content: Select Route, fill Origin Shanghai and Destination Beijing, then click Swap cities.
+      - keyword: THEN
+        content: Origin becomes Beijing and Destination Shanghai; Flight status results is not displayed.
+  - id: REQ-7.4
+    name: Record and reuse status searches
+    type: ATOMIC
+    dependencies:
+    - REQ-7.2
+    - REQ-1.3
+    description: |-
+      A completed query showing "Flight details"(role=region) records its account-owned criteria in "Search history"(role=region). Each flight-number-named history action reopens that flight and date. Returning through Flights and Flight status reveals saved history, which tests establish through query UI rather than legacy preloaded examples.
+    data:
+      requires:
+      - DATA-STATUS-HISTORY
+      - DATA-ACCOUNTS
+      - DATA-STATUS
+    scenarios:
+    - name: Record and reuse a flight query
+      steps:
+      - keyword: GIVEN
+        content: status_history_use has signed in with its registry credentials and starts with no status history; Flight
+          status is open.
+      - keyword: WHEN
+        content: Select Flight number, query JD5162 for July 21 through Search, reopen Flights → Flight status, then
+          activate JD5162 in Search history.
+      - keyword: THEN
+        content: Flight details reopens for JD5162, Chengdu and Guangzhou with the original July 21 date restored.
+  - id: REQ-7.5
+    name: Clear recorded status history
+    type: ATOMIC
+    dependencies:
+    - REQ-7.4
+    description: |-
+      Clear history removes only the current account's records from "Search history"(role=region), showing No search history. Removed entries stay absent after reopening or reload.
+    data:
+      requires:
+      - DATA-STATUS-HISTORY
+      - DATA-ACCOUNTS
+      - DATA-STATUS
+    scenarios:
+    - name: Clear account search history
+      steps:
+      - keyword: GIVEN
+        content: status_history_clear has signed in with registry credentials and queried MU5234 for July 21 through
+          Flight number and Search, then reopened Flight status; Search history shows MU5234.
+      - keyword: WHEN
+        content: Click Clear history within Search history and reload.
+      - keyword: THEN
+        content: MU5234 history action disappears and No search history is displayed, both before and after reload.
+  - id: REQ-7.6
+    name: Switch flight-status query dimensions
+    type: ATOMIC
+    dependencies:
+    - REQ-7.1
+    description: |-
+      "Route"(role=radio) exposes "Origin"(role=textbox), "Destination"(role=textbox), and "Departure date"(role=textbox), while hiding the flight-number textbox. "Flight number"(role=radio) instead exposes number and date inputs without city fields. Switching dimensions alone performs no query and does not itself create "Flight status results"(role=region) or "Flight details"(role=region).
+
+      ![image](./reference/status1.png)
+      ![image](./reference/status2.png)
+    data:
+      requires: []
+    scenarios:
+    - name: Switch flight-status query dimensions
+      steps:
+      - keyword: GIVEN
+        content: The visitor has opened Flights → Flight status; DATA-STATUS provides July 21 JD5162 Chengdu–Guangzhou
+          and MU5234 Shanghai–Beijing observations. No query has been submitted.
+      - keyword: WHEN
+        content: Select Route, inspect its fields, then select Flight number.
+      - keyword: THEN
+        content: Route selects and shows Origin, Destination and Departure date while hiding the number textbox; Flight
+          number selects and shows number/date while hiding both city fields; neither Flight status results nor Flight
+          details is created by switching modes.
+  - id: REQ-7.7
+    name: Record and reuse a flight-status route query
+    type: ATOMIC
+    dependencies:
+    - REQ-7.3
+    - REQ-7.4
+    description: |-
+      Selecting "Route"(role=radio), entering Shanghai and Beijing in "Origin"(role=textbox) and "Destination"(role=textbox), setting July 21 in "Departure date"(role=textbox), and clicking "Search"(role=button) displays "Flight status results"(role=region) and records "Shanghai - Beijing"(role=button) in "Search history"(role=region). Activating that history action restores the route and date and reruns the route query rather than treating it as a flight number. Route history names follow Origin - Destination.
+
+      ![image](./reference/status2.png)
+      ![image](./reference/status3.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-STATUS
+      - DATA-STATUS-HISTORY
+    scenarios:
+    - name: Record and reuse a flight-status route query
+      steps:
+      - keyword: GIVEN
+        content: status_route_history has signed in with registry credentials and starts with no history; Flight status
+          is open.
+      - keyword: WHEN
+        content: Select Route, enter Shanghai, Beijing and July 21 and click Search; verify MU5234, reopen Flight status
+          and activate Shanghai - Beijing within Search history.
+      - keyword: THEN
+        content: The route query reruns with exactly MU5234 displaying Shanghai and Beijing; route fields and Departure
+          date restore the same criteria.
+  - id: REQ-7.8
+    name: Keep status search history private to its account
+    type: ATOMIC
+    dependencies:
+    - REQ-7.4
+    - REQ-1.8
+    description: |-
+      After querying under a dedicated history-isolation account, switching accounts through "My account"(role=button) must not expose its query in profile_read's "Search history"(role=region). Profile_read starts with no history and no other scenario queries under it; history remains private to the account.
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-STATUS
+      - DATA-STATUS-HISTORY
+    scenarios:
+    - name: Keep status search history private to its account
+      steps:
+      - keyword: GIVEN
+        content: history_isolation and profile_read are separate verified accounts with initially empty status history.
+      - keyword: WHEN
+        content: Sign in as history_isolation, open Flight status and query JD5162 for July 21; return Home, hover My
+          account and activate Log out, sign in as profile_read and reopen Flight status.
+      - keyword: THEN
+        content: profile_read Search history contains no JD5162 action and displays No search history.
+- id: REQ-8
+  name: Inspect reimbursement vouchers
+  type: FOLDER
+  dependencies: []
+  description: |-
+    More services Reimbursement vouchers is a service hub with Pending, In progress, Completed lifecycle tabs and issuance rules notice. Pending lists eligible paid orders, including older orders through View more orders from the past year. Source explicitly reserves invoice/itinerary application and logistics flow; in-progress/download/delivery records remain context without a defined executable transition.
+    ![image](./reference/moreservice.png)
+    ![image](./reference/reimbursement2.png)
+
+
+    Issuance rules is a named region.
+  children:
+  - id: REQ-8.1
+    name: View issued vouchers by lifecycle
+    type: ATOMIC
+    dependencies:
+    - REQ-1.3
+    description: |-
+      More services and Reimbursement vouchers expose Pending, In progress, and "Completed"(role=tab). The voucher_read account's "Completed vouchers"(role=region) contains exactly paid completed CTRIP20260718004 with its issued voucher. "Issuance rules"(role=region) communicates availability within 365 days of payment.
+
+      ![image](./reference/reimbursement2.png)
+    data:
+      requires:
+      - DATA-VOUCHERS
+    scenarios:
+    - name: Read completed voucher and issuance rules
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in with its DATA-ACCOUNTS email / Travel1234 and accepted terms, then opens More
+          services → Reimbursement vouchers; the business clock is July 19, 2026. voucher_read owns paid, traveled and
+          issued CTRIP20260718004.
+      - keyword: WHEN
+        content: Inspect Pending, In progress and Completed tabs and Issuance rules, then select Completed.
+      - keyword: THEN
+        content: All three tabs are visible, Issuance rules mentions the 365-day window, and Completed vouchers contains
+          exactly CTRIP20260718004.
+  - id: REQ-8.2
+    name: Find voucher-eligible paid orders
+    type: ATOMIC
+    dependencies:
+    - REQ-8.1
+    description: |-
+      At benchmark July 19, choosing "Pending"(role=tab) displays "Pending vouchers"(role=region) for paid eligible orders without applications. Voucher_pending includes CTRIP20260721005 paid July 19; "View more orders from the past year"(role=button) allows voucher_history to load CTRIP20260514001 paid May 14. Accounts without eligible entries show No vouchers available.
+    data:
+      requires:
+      - DATA-VOUCHERS
+    scenarios:
+    - name: Show currently eligible pending order
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in with its DATA-ACCOUNTS email / Travel1234 and accepted terms, then opens More
+          services → Reimbursement vouchers; the business clock is July 19, 2026. voucher_pending owns paid CTRIP20260721005
+          with payment date July 19 and no voucher application.
+      - keyword: WHEN
+        content: Select Pending.
+      - keyword: THEN
+        content: Pending vouchers contains exactly the eligible CTRIP20260721005 record.
+    - name: Load older eligible order from past year
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in with its DATA-ACCOUNTS email / Travel1234 and accepted terms, then opens More
+          services → Reimbursement vouchers; the business clock is July 19, 2026. voucher_history owns paid CTRIP20260514001,
+          payment date 2026-05-14, without a voucher.
+      - keyword: WHEN
+        content: Select Pending and activate View more orders from the past year.
+      - keyword: THEN
+        content: Pending vouchers contains exactly CTRIP20260514001 and displays its 2026-05-14 date.
+    - name: Show empty pending voucher state
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in with its DATA-ACCOUNTS email / Travel1234 and accepted terms, then opens More
+          services → Reimbursement vouchers; the business clock is July 19, 2026. voucher_read owns only its already
+          completed voucher and has no eligible pending application.
+      - keyword: WHEN
+        content: Select Pending.
+      - keyword: THEN
+        content: Pending vouchers contains no records and displays No vouchers available.
+  - id: REQ-8.3
+    name: Keep eligible reimbursement orders scoped to account
+    type: ATOMIC
+    dependencies:
+    - REQ-8.2
+    description: |-
+      "Pending"(role=tab) displays only the current account's eligible paid orders in "Pending vouchers"(role=region). Profile_read owns no orders and therefore sees no eligible vouchers; another owner's eligible order must not be offered.
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-VOUCHERS
+    scenarios:
+    - name: Keep eligible reimbursement orders scoped to account
+      steps:
+      - keyword: GIVEN
+        content: The named owner signs in with its DATA-ACCOUNTS email / Travel1234 and accepted terms, then opens More
+          services → Reimbursement vouchers; the business clock is July 19, 2026. profile_read owns no orders or vouchers;
+          other accounts own eligible CTRIP20260721005 and CTRIP20260514001.
+      - keyword: WHEN
+        content: Select Pending.
+      - keyword: THEN
+        content: Pending vouchers contains no records, displays No vouchers available and exposes neither other account's
+          order.
+- id: REQ-9
+  name: Browse airport travel information
+  type: FOLDER
+  dependencies: []
+  description: |-
+    Flights More services Airport guide provides Popular airports, domestic and international/Hong Kong/Macau/Taiwan indexes, deterministic weather snapshot and Boarding process link. Airport detail defaults to Overview and has four core subsections in source, of which Overview/Transportation/Phone numbers are named; no fourth section name is invented. Transport context includes buses, rail, shuttles and taxis; concrete fixture is Fangzhuang line.
+    ![image](./reference/airport1.png)
+    ![image](./reference/airport2.png)
+    ![image](./reference/airport3.png)
+    ![image](./reference/airport4.png)
+    ![image](./reference/airport5.png)
+
+
+    Airport-service records are uniquely named Record <airport-service name> within their list region.
+  children:
+  - id: REQ-9.1
+    name: Open airport information service
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1
+    description: |-
+      Clicking "Flights"(role=button), then "More services"(role=button), then "Airport guide"(role=button) opens Airport guide heading.
+
+      ![image](./reference/airport1.png)
+    data:
+      requires:
+      - DATA-AIRPORTS
+    scenarios:
+    - name: Open airport guide
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Activate Flights, More services and Airport guide in sequence.
+      - keyword: THEN
+        content: Airport guide heading is visible.
+  - id: REQ-9.2
+    name: Browse airport indexes and weather
+    type: ATOMIC
+    dependencies:
+    - REQ-9.1
+    description: |-
+      "Popular airports"(role=region) links Beijing Capital, Shanghai Pudong, and Guangzhou Baiyun airports. Choosing C within "Domestic airports"(role=region) exposes Chengdu, Chongqing, and Changchun links. "Today weather"(role=region) shows Beijing, -5°C to 3°C, and Boarding process.
+
+      ![image](./reference/airport1.png)
+    data:
+      requires:
+      - DATA-AIRPORTS
+    scenarios:
+    - name: Read popular airport links
+      steps:
+      - keyword: GIVEN
+        content: The visitor has opened Flights → More services → Airport guide; the supplied airport directory and
+          deterministic weather snapshot are available.
+      - keyword: WHEN
+        content: Inspect Popular airports.
+      - keyword: THEN
+        content: Beijing Capital Airport, Shanghai Pudong Airport and Guangzhou Baiyun Airport links are visible.
+    - name: Browse domestic cities by initial
+      steps:
+      - keyword: GIVEN
+        content: The visitor has opened Flights → More services → Airport guide; the supplied airport directory and
+          deterministic weather snapshot are available.
+      - keyword: WHEN
+        content: Click C within Domestic airports.
+      - keyword: THEN
+        content: Domestic airports displays Chengdu, Chongqing and Changchun links.
+    - name: Read city weather snapshot
+      steps:
+      - keyword: GIVEN
+        content: The visitor has opened Flights → More services → Airport guide; the supplied airport directory and
+          deterministic weather snapshot are available.
+      - keyword: WHEN
+        content: Inspect Today weather.
+      - keyword: THEN
+        content: The supplied Beijing snapshot displays -5°C to 3°C and a Boarding process link.
+  - id: REQ-9.3
+    name: Read an identified airport overview and services
+    type: ATOMIC
+    dependencies:
+    - REQ-9.2
+    description: |-
+      Opening Beijing Capital Airport defaults to selected "Overview"(role=tab), with "Airport overview"(role=region) showing Beijing, three runways, and China's first national gateway. "Transportation"(role=tab) displays "City buses"(role=region) with Fangzhuang line, Fangzhuang, 06:00, 21:00, and 30 minutes. "Phone numbers"(role=tab) shows the business record named "Record Medical first aid center"(role=listitem, row or group) with 010-64541100.
+
+      ![image](./reference/airport2.png)
+      ![image](./reference/airport3.png)
+      ![image](./reference/airport4.png)
+      ![image](./reference/airport5.png)
+    data:
+      requires:
+      - DATA-AIRPORTS
+    scenarios:
+    - name: Read default airport overview
+      steps:
+      - keyword: GIVEN
+        content: The visitor has opened Flights → More services → Airport guide; the supplied airport directory and
+          deterministic weather snapshot are available. Beijing Capital Airport has been opened from Popular airports.
+      - keyword: WHEN
+        content: Inspect the default Overview selection and activate Overview.
+      - keyword: THEN
+        content: Overview is initially selected; Airport overview displays Beijing, 3 runways and China's first national
+          gateway.
+    - name: Read airport bus timetable
+      steps:
+      - keyword: GIVEN
+        content: The visitor has opened Flights → More services → Airport guide; the supplied airport directory and
+          deterministic weather snapshot are available. Beijing Capital Airport has been opened from Popular airports.
+      - keyword: WHEN
+        content: Select Transportation.
+      - keyword: THEN
+        content: City buses contains Fangzhuang line with Fangzhuang, first service 06:00, last service 21:00 and headway
+          30 minutes.
+    - name: Read airport medical hotline
+      steps:
+      - keyword: GIVEN
+        content: The visitor has opened Flights → More services → Airport guide; the supplied airport directory and
+          deterministic weather snapshot are available. Beijing Capital Airport has been opened from Popular airports.
+      - keyword: WHEN
+        content: Select Phone numbers.
+      - keyword: THEN
+        content: The Medical first aid center business record displays 010-64541100.
+  - id: REQ-9.4
+    name: Enter the selected regional airport directory
+    type: ATOMIC
+    dependencies:
+    - REQ-9.1
+    description: |-
+      Under "Flights"(role=button) and "More services"(role=button), "Domestic airport directory"(role=button) opens Airport guide with "Domestic airports"(role=tab) selected and "Domestic airports"(role=region) visible. "International airport directory"(role=button) selects "International and Hong Kong, Macau, Taiwan airports"(role=tab) and displays the matching "International and Hong Kong, Macau, Taiwan airports"(role=region).
+
+      ![image](./reference/moreservice.png)
+      ![image](./reference/airport1.png)
+    data:
+      requires:
+      - DATA-AIRPORTS
+    scenarios:
+    - name: Open domestic airport directory
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Activate Flights, More services and Domestic airport directory.
+      - keyword: THEN
+        content: Airport guide opens with Domestic airports selected and its Chengdu link visible.
+    - name: Open international airport directory
+      steps:
+      - keyword: GIVEN
+        content: The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai.
+      - keyword: WHEN
+        content: Activate Flights, More services and International airport directory.
+      - keyword: THEN
+        content: Airport guide opens with International and Hong Kong, Macau, Taiwan airports selected and Hong Kong
+          International Airport visible in its matching region.
