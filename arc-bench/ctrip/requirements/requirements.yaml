@@ -416,14 +416,9 @@ children:
   name: Account access
   type: FOLDER
   dependencies: []
+  pages: []
   description: |-
     Visitors can enter password or verification-code login and register through agreement, phone verification and password setup. Legal acceptance is required. Logout removes the session.
-    ![image](./reference/index.png)
-    ![image](./reference/login1.png)
-    ![image](./reference/login2.png)
-    ![image](./reference/register1.png)
-    ![image](./reference/register2.png)
-    ![image](./reference/enter_self.png)
 
 
     Global navigation is a single navigation landmark named Global navigation. Fields have associated labels. Actions described only as controls may be buttons or links; explicit tabs, radios, checkboxes, dialogs and fields retain their declared semantics. Verification delivery is simulated and codes are valid only after being sent in the current attempt. Password strength is a named region.
@@ -432,10 +427,11 @@ children:
     name: Enter the travel application
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: home
+      reference: ./reference/index.png
     description: |-
       Signed-out entry displays exactly one Ctrip Travel heading and one Log in and Register link in Global navigation, alongside a search box and quick-flight form containing "Origin"(role=textbox) and "Destination"(role=textbox).
-
-      ![image](./reference/index.png)
     data:
       requires: &id001
       - DATA-IDENTITIES
@@ -455,11 +451,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.1
+    pages:
+    - name: login
+      reference: ./reference/login1.png
+    - name: login
+      reference: ./reference/login2.png
     description: |-
       Log in navigation opens the password form with Log in heading and "Account"(role=textbox) and "Password"(role=textbox). "Verification code login"(role=link) switches to "Mobile number"(role=textbox) and "Verification code"(role=textbox); "Password login"(role=link) switches back freely.
-
-      ![image](./reference/login1.png)
-      ![image](./reference/login2.png)
     data:
       requires: *id001
     scenarios:
@@ -485,10 +483,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.2
+    pages:
+    - name: login
+      reference: ./reference/login1.png
     description: |-
       Users enter a verified mobile, username, or email in "Account"(role=textbox), enter "Password"(role=textbox), select the initially unchecked "Agree to terms"(role=checkbox), and click "Log in"(role=button). Agreement is required. Missing credentials or incorrect credentials show the specified alert without signing in; success returns home and replaces the login entry with "My account"(role=button).
-
-      ![image](./reference/login1.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -567,10 +566,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.2
+    pages:
+    - name: login
+      reference: ./reference/login2.png
     description: |-
       SMS login defaults to +86 and provides "Mobile number"(role=textbox), "Verification code"(role=textbox), and "Send code"(role=button), which becomes "Resend code"(role=button). With a sent code 123456 and "Agree to terms"(role=checkbox) selected, "Log in"(role=button) authenticates and displays "My account"(role=button). Missing mobile or code, an incorrect code, or absent agreement shows the declared alert and retains the signed-out form; required fields cannot substitute for each other.
-
-      ![image](./reference/login2.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -639,10 +639,11 @@ children:
     dependencies:
     - REQ-1.1
     - REQ-1.2
+    pages:
+    - name: register
+      reference: ./reference/register1.png
     description: |-
       Register navigation displays Register heading and "Registration agreement and privacy policy"(role=dialog); "Free registration"(role=button) from password login opens the same agreement. The agreement remains accessible through "Registration agreement and privacy policy"(role=button). Agree and continue opens Verify mobile number with "Mobile number"(role=textbox) and "Verification code"(role=textbox), while Decline returns to the signed-out homepage without creating an account or displaying "My account"(role=button).
-
-      ![image](./reference/register1.png)
     data:
       requires: *id001
     scenarios:
@@ -677,10 +678,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.5
+    pages:
+    - name: register
+      reference: ./reference/register2.png
     description: |-
       After "Register"(role=link) opens "Registration agreement and privacy policy"(role=dialog), "Agree and continue"(role=button) advances to Verify mobile number. Users enter an unused isolated phone in "Mobile number"(role=textbox) and click "Send code"(role=button), enabling accepted code 123456 and changing the action to "Resend code"(role=button). Entering that code in "Verification code"(role=textbox) and clicking "Next, set password"(role=button) opens Set password with "Password"(role=textbox) and "Confirm password"(role=textbox).
-
-      ![image](./reference/register2.png)
     data:
       requires:
       - DATA-SMS
@@ -702,10 +704,11 @@ children:
     dependencies:
     - REQ-1.6
     - REQ-1.3
+    pages:
+    - name: register
+      reference: ./reference/register2.png
     description: |-
       Users enter matching "Password"(role=textbox) and "Confirm password"(role=textbox) values containing both letters and numbers and at least eight characters, then click "Complete registration"(role=button). Success shows Registration successful and opens password login; invalid submissions display the exact scenario validation message and stay on Set password. The created mobile account must authenticate through "Account"(role=textbox), Password, "Agree to terms"(role=checkbox), and "Log in"(role=button), resulting in "My account"(role=button).
-
-      ![image](./reference/register2.png)
     data:
       requires:
       - DATA-REGISTERED
@@ -752,10 +755,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.3
+    pages:
+    - name: home
+      reference: ./reference/enter_self.png
     description: |-
       Hovering "My account"(role=button) reveals the Log out menuitem. Activating it clears the session and replaces My account with Log in on the signed-out homepage, including after reload.
-
-      ![image](./reference/enter_self.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -775,10 +779,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.5
+    pages:
+    - name: register
+      reference: ./reference/register2.png
     description: |-
       Following acceptance in "Registration agreement and privacy policy"(role=dialog), users enter an isolated "Mobile number"(role=textbox), click "Send code"(role=button), and enter an incorrect "Verification code"(role=textbox). "Next, set password"(role=button) shows Incorrect verification code, retains mobile verification and the entered phone, and does not expose password setup.
-
-      ![image](./reference/register2.png)
     data:
       requires:
       - DATA-SMS
@@ -800,10 +805,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.6
+    pages:
+    - name: register
+      reference: ./reference/register2.png
     description: |-
       After mobile verification, entering abcdefgh in "Password"(role=textbox) and "Confirm password"(role=textbox), then clicking "Complete registration"(role=button), shows Password must contain letters and numbers and be at least 8 characters. Eight letters alone are insufficient; Set password remains visible without authentication or "My account"(role=button).
-
-      ![image](./reference/register2.png)
     data:
       requires:
       - DATA-SMS
@@ -826,10 +832,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.6
+    pages:
+    - name: register
+      reference: ./reference/register2.png
     description: |-
       After mobile verification, entering 12345678 in "Password"(role=textbox) and "Confirm password"(role=textbox), then clicking "Complete registration"(role=button), shows Password must contain letters and numbers and be at least 8 characters. Eight digits alone are insufficient; Set password remains visible without authentication or "My account"(role=button).
-
-      ![image](./reference/register2.png)
     data:
       requires:
       - DATA-SMS
@@ -853,10 +860,11 @@ children:
     dependencies:
     - REQ-1.6
     - REQ-1.3
+    pages:
+    - name: register
+      reference: ./reference/register2.png
     description: |-
       Entering Abcd1234 identically in "Password"(role=textbox) and "Confirm password"(role=textbox) satisfies the inclusive eight-character mixed-password boundary. "Complete registration"(role=button) creates the account, whose mobile and password subsequently authenticate through "Account"(role=textbox), Password, "Agree to terms"(role=checkbox), and "Log in"(role=button), showing "My account"(role=button).
-
-      ![image](./reference/register2.png)
     data:
       requires:
       - DATA-REGISTERED
@@ -880,10 +888,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.2
+    pages:
+    - name: login
+      reference: ./reference/login2.png
     description: |-
       Entering "Mobile number"(role=textbox) and the otherwise accepted 123456 in "Verification code"(role=textbox), selecting "Agree to terms"(role=checkbox), and clicking "Log in"(role=button) without sending a code in the current attempt must reject authentication. The SMS form remains and "My account"(role=button) does not appear.
-
-      ![image](./reference/login2.png)
     data:
       requires:
       - DATA-SMS
@@ -906,10 +915,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.6
+    pages:
+    - name: register
+      reference: ./reference/register2.png
     description: |-
       Entering matching Abcd123 in "Password"(role=textbox) and "Confirm password"(role=textbox) fails the independent eight-character minimum despite containing both letters and numbers. "Complete registration"(role=button) shows Password must contain letters and numbers and be at least 8 characters, retains Set password, and does not sign in.
-
-      ![image](./reference/register2.png)
     data:
       requires:
       - DATA-SMS
@@ -932,10 +942,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.5
+    pages:
+    - name: register
+      reference: ./reference/register2.png
     description: |-
       "Register"(role=link) opens "Registration agreement and privacy policy"(role=dialog), and "Agree and continue"(role=button) opens mobile verification. After entering "Mobile number"(role=textbox) and clicking "Send code"(role=button), leaving "Verification code"(role=textbox) empty and clicking "Next, set password"(role=button) shows Enter your verification code, retains Verify mobile number and the entered phone, and does not expose Set password.
-
-      ![image](./reference/register2.png)
     data:
       requires:
       - DATA-SMS
@@ -956,11 +967,15 @@ children:
   name: Find flights and select a fare
   type: FOLDER
   dependencies: []
+  pages:
+  - name: flight_search
+    reference: ./reference/search.png
+  - name: flight_search
+    reference: ./reference/search_panel.png
+  - name: flight_results
+    reference: ./reference/search_results.png
   description: |-
     Domestic/international route search uses fixed current date 2026-07-19. Quick-search supports trip type, cities, dates, children and cabin preferences. Results allow criterion updates, nearby fares, filtering and sorting. Multi-city, time and airport filter details are not specified beyond capability context.
-    ![image](./reference/search.png)
-    ![image](./reference/search_panel.png)
-    ![image](./reference/search_results.png)
 
 
     Flight results expose a list with listitems named Flight <number>. Cabin class and Airline use combobox semantics; All airlines removes only the airline restriction.
@@ -970,10 +985,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.1
+    pages:
+    - name: flight_search
+      reference: ./reference/search.png
     description: |-
       "One way"(role=radio) is initially selected, with "Add return"(role=button) available and "Return date"(role=textbox) absent. Selecting "Round trip"(role=radio) reveals Return date, while returning to One way hides it. "Multi-city"(role=radio) is also available.
-
-      ![image](./reference/search.png)
     data:
       requires: *id001
     scenarios:
@@ -992,10 +1008,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.1
+    pages:
+    - name: flight_search
+      reference: ./reference/city_selection.png
     description: |-
       "Origin"(role=textbox) and "Destination"(role=textbox) accept cities; "Swap cities"(role=button) exchanges their values without searching. "City selection"(role=button) opens "City selection"(role=dialog), with its "City selection"(role=tab) choices: origin defaults to Popular with Chengdu, while the destination's GHIJ tab includes Guangzhou. Choosing a city closes the dialog and fills the city and airport code.
-
-      ![image](./reference/city_selection.png)
     data:
       requires:
       - DATA-CITIES
@@ -1029,11 +1046,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.1
+    pages:
+    - name: flight_search
+      reference: ./reference/date_selection.png
+    - name: flight_search
+      reference: ./reference/date_selection_2.png
     description: |-
       Opening "Departure date"(role=textbox) displays a calendar with daily fares and full-date actions. "2026-07-21"(role=button) shows ¥460 and sets departure before closing; "2026-07-18"(role=button) is disabled because it precedes July 19. "Add return"(role=button) selects "Round trip"(role=radio) and opens "Return date"(role=textbox). Selecting "2026-07-25"(role=button) after July 21 displays a four-day trip, while "2026-07-20"(role=button) is disabled as a return before departure.
-
-      ![image](./reference/date_selection.png)
-      ![image](./reference/date_selection_2.png)
     data:
       requires:
       - DATA-FLIGHTS
@@ -1079,10 +1098,11 @@ children:
     dependencies:
     - REQ-2.2
     - REQ-2.3
+    pages:
+    - name: flight_results
+      reference: ./reference/search_results.png
     description: |-
       Users fill "Origin"(role=textbox), "Destination"(role=textbox), and "Departure date"(role=textbox), then click "Search flights"(role=button). Flight results preserves criteria and shows "Flight list"(role=region); Chengdu–Guangzhou on July 21 contains exactly CZ3401, JD5162, and MU5234 with DATA-FLIGHTS fare, airline, stops, departure, and on-time facts. Equal cities show Origin and destination cannot be the same. Beihai–Mars City on July 23 displays No flights found and Modify search.
-
-      ![image](./reference/search_results.png)
     data:
       requires:
       - DATA-FLIGHTS
@@ -1173,10 +1193,11 @@ children:
     dependencies:
     - REQ-2.4
     - REQ-2.5
+    pages:
+    - name: flight_search
+      reference: ./reference/search_panel.png
     description: |-
       Flight results permits changing route criteria, "Departure date"(role=textbox), and "Cabin class"(role=combobox). "Update results"(role=button) after selecting July 22 and Economy retains the results view and updated criteria while refreshing "Flight list"(role=region) for that day.
-
-      ![image](./reference/search_panel.png)
     data:
       requires:
       - DATA-FLIGHTS
@@ -1198,10 +1219,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.4
+    pages:
+    - name: flight_results
+      reference: ./reference/more_date.png
     description: |-
       "Date bar"(role=region) shows nearby minimum fares and next-week navigation. Selecting its July 22 action with ¥320 updates "Departure date"(role=textbox) and "Flight list"(role=region). "More dates"(role=button) opens "Monthly fares"(role=dialog) with July 22 and ¥320; Next week exposes July 28.
-
-      ![image](./reference/more_date.png)
     data:
       requires:
       - DATA-FLIGHTS
@@ -1326,10 +1348,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.11
+    pages:
+    - name: booking
+      reference: ./reference/book2.png
     description: |-
       Within "Flight JD5162"(role=listitem), "Show fares"(role=button) exposes "Economy fare"(role=group). Clicking its "Book"(role=button) opens Book flight for JD5162 with the selected route, date, and fare preserved. Signed-out booking is allowed.
-
-      ![image](./reference/book2.png)
     data:
       requires:
       - DATA-BOOKING
@@ -1350,10 +1373,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.7
+    pages:
+    - name: flight_search
+      reference: ./reference/search_panel.png
     description: |-
       Users can edit "Origin"(role=textbox), "Destination"(role=textbox), and "Departure date"(role=textbox) on results. "Update results"(role=button) queries the changed route rather than retaining old flights; Beihai–Mars City on July 23 shows the defined empty "Flight list"(role=region) with updated criteria.
-
-      ![image](./reference/search_panel.png)
     data:
       requires:
       - DATA-FLIGHTS
@@ -1376,10 +1400,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.4
+    pages:
+    - name: flight_results
+      reference: ./reference/search_results.png
     description: |-
       Modify search from an empty "Flight list"(role=region) reveals editable "Origin"(role=textbox) and "Destination"(role=textbox) criteria, either inline or in quick search. Correcting the route and date and using "Search flights"(role=button) or "Update results"(role=button), as appropriate to the current form, restores published matches. The form's location is unrestricted.
-
-      ![image](./reference/search_results.png)
     data:
       requires:
       - DATA-FLIGHTS
@@ -1442,12 +1467,17 @@ children:
   name: Book, price and pay for flights
   type: FOLDER
   dependencies: []
+  pages:
+  - name: booking
+    reference: ./reference/book1_mention.png
+  - name: booking
+    reference: ./reference/book2.png
+  - name: booking
+    reference: ./reference/book3.png
+  - name: payment
+    reference: ./reference/book4.png
   description: |-
     Booking supports reminders, passengers, contact mobile, optional protection, baggage, transfer and lounge services. Fee summary includes fare/taxes and chosen services. Guest submission and simulated payment are allowed. Insurance variants, fast-track security and fulfillment beyond stated examples remain broad context.
-    ![image](./reference/book1_mention.png)
-    ![image](./reference/book2.png)
-    ![image](./reference/book3.png)
-    ![image](./reference/book4.png)
 
 
     Contact information is the booking contact-validation region. Public countdown timers are named Time remaining and render MM:SS or HH:MM:SS. Payment is simulated.
@@ -1457,10 +1487,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.12
+    pages:
+    - name: booking
+      reference: ./reference/book1_mention.png
     description: |-
       Within "Travel reminders"(role=region), Show reminder details reveals Power banks and Baggage allowance notices for the chosen flight.
-
-      ![image](./reference/book1_mention.png)
     data:
       requires: *id001
     scenarios:
@@ -1479,10 +1510,11 @@ children:
     dependencies:
     - REQ-2.12
     - REQ-1.3
+    pages:
+    - name: booking
+      reference: ./reference/book2.png
     description: |-
       Signed-in users choose Zhang San and Li Si using the "Zhang San"(role=checkbox) and "Li Si"(role=checkbox) choices within "Frequent passengers"(role=region). Their identities appear in "Selected passengers"(role=region), and "Fee breakdown"(role=region) updates from Passengers: 1 and Order total: ¥530 to Passengers: 2 and Order total: ¥1060, using ¥460 fare plus ¥70 tax per passenger.
-
-      ![image](./reference/book2.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1508,10 +1540,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.12
+    pages:
+    - name: booking
+      reference: ./reference/book2.png
     description: |-
       "Passenger details"(role=region) provides Full name and ID number for an ad hoc passenger, alongside "Contact mobile"(role=textbox). Leaving ID number validates its checksum: the source valid ID is accepted, while 123 shows Enter a valid ID number. The passenger is not saved as a frequent traveler, and no civil-identity registry lookup is required.
-
-      ![image](./reference/book2.png)
     data:
       requires:
       - DATA-BOOKING
@@ -1541,10 +1574,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.12
+    pages:
+    - name: booking
+      reference: ./reference/book2.png
     description: |-
       Clicking "Add passenger"(role=button) opens "Add passenger"(role=dialog) with passenger entry inputs, including "Full name"(role=textbox) and "ID number"(role=textbox). The source requires opening this dialog but specifies no save outcome.
-
-      ![image](./reference/book2.png)
     data:
       requires: *id001
     scenarios:
@@ -1587,10 +1621,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.12
+    pages:
+    - name: booking
+      reference: ./reference/book3.png
     description: |-
       JD5162 starts at ¥530 in "Fee breakdown"(role=region). Selecting "Combo insurance"(role=checkbox) within "Trip protection"(role=region) adds ¥40; "Insurance terms"(role=dialog) describes Flight delay coverage, Coverage limit: ¥1000, and How to claim. "Extra 10 kg"(role=checkbox) in "Baggage allowance"(role=region) adds ¥60 and raises the free 20 kg baseline to 30 kg. "Airport drop-off"(role=checkbox) with "Pickup address"(role=textbox) in "Airport transfer"(role=region) adds an estimated ¥42. "Tianfu T2 lounge"(role=checkbox) in "Airport services"(role=region) adds ¥80. Every selected service remains checked and appears in the breakdown.
-
-      ![image](./reference/book3.png)
     data:
       requires:
       - DATA-FLIGHTS
@@ -1658,10 +1693,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.6
+    pages:
+    - name: booking
+      reference: ./reference/book3.png
     description: |-
       Opening fee details displays "Fee details"(role=region). "Combo insurance"(role=checkbox) and "Extra 10 kg"(role=checkbox) compose to a one-passenger total ¥630; removing insurance removes its ¥40 line while retaining ¥60 baggage and total ¥590. Changes apply only to the current booking.
-
-      ![image](./reference/book3.png)
     data:
       requires:
       - DATA-BOOKING
@@ -1693,10 +1729,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.3
+    pages:
+    - name: payment
+      reference: ./reference/book4.png
     description: |-
       A guest completes "Full name"(role=textbox) and "ID number"(role=textbox) in "Passenger details"(role=region) with Wang Wu and checksum-valid 110101199001011237, enters 13800000014 in "Contact mobile"(role=textbox), selects "Agree to booking terms"(role=checkbox), and clicks "Submit order"(role=button). The JD5162 order awaits payment, showing Payment heading, "Time remaining"(role=timer) with textual remaining duration, and Unpaid orders are cancelled when the timer expires.
-
-      ![image](./reference/book4.png)
     data:
       requires:
       - DATA-SUBMITTED-ORDERS
@@ -1720,10 +1757,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.8
+    pages:
+    - name: payment
+      reference: ./reference/book4.png
     description: |-
       At the cashier, selecting "Alipay"(role=radio) and clicking "Pay now"(role=button) simulates payment for the submitted JD5162 order and displays Payment successful for that same order.
-
-      ![image](./reference/book4.png)
     data:
       requires:
       - DATA-SUBMITTED-ORDERS
@@ -1745,10 +1783,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.2
+    pages:
+    - name: booking
+      reference: ./reference/book2.png
     description: |-
       Within "Frequent passengers"(role=region), deselecting Li Si after selecting both Zhang San and Li Si removes only Li Si from "Selected passengers"(role=region). "Fee breakdown"(role=region) returns to one passenger at ¥530.
-
-      ![image](./reference/book2.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1771,10 +1810,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.12
+    pages:
+    - name: booking
+      reference: ./reference/book2.png
     description: |-
       ID 123 in "Passenger details"(role=region) prevents "Submit order"(role=button) from creating a payable order even with valid "Contact mobile"(role=textbox) and selected "Agree to booking terms"(role=checkbox). Enter a valid ID number remains visible; Book flight stays open and Payment does not appear.
-
-      ![image](./reference/book2.png)
     data:
       requires:
       - DATA-BOOKING
@@ -1794,10 +1834,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.12
+    pages:
+    - name: booking
+      reference: ./reference/book2.png
     description: |-
       "Agree to booking terms"(role=checkbox) starts unchecked. Even with valid "Passenger details"(role=region) and "Contact mobile"(role=textbox), clicking "Submit order"(role=button) without agreement shows a visible validation alert, retains Book flight, and never advances to Payment. Alert wording is unrestricted.
-
-      ![image](./reference/book2.png)
     data:
       requires:
       - DATA-BOOKING
@@ -1820,10 +1861,11 @@ children:
     dependencies:
     - REQ-3.6
     - REQ-3.7
+    pages:
+    - name: booking
+      reference: ./reference/book3.png
     description: |-
       Deselecting Extra 10 kg in "Baggage allowance"(role=region) removes its ¥60 fee and restores the free 20 kg baseline and one-passenger JD5162 total ¥530. Clicking "Fee details"(role=button) displays "Fee details"(role=region) without the removed baggage line.
-
-      ![image](./reference/book3.png)
     data:
       requires:
       - DATA-BOOKING
@@ -1846,10 +1888,11 @@ children:
     dependencies:
     - REQ-3.6
     - REQ-3.7
+    pages:
+    - name: booking
+      reference: ./reference/book3.png
     description: |-
       Deselecting Airport drop-off within "Airport transfer"(role=region) removes its ¥42 fee and restores the one-passenger JD5162 total ¥530. "Fee details"(role=button) opens "Fee details"(role=region), where that fee is absent.
-
-      ![image](./reference/book3.png)
     data:
       requires:
       - DATA-BOOKING
@@ -1871,10 +1914,11 @@ children:
     dependencies:
     - REQ-3.6
     - REQ-3.7
+    pages:
+    - name: booking
+      reference: ./reference/book3.png
     description: |-
       Deselecting Tianfu T2 lounge within "Airport services"(role=region) removes its ¥80 fee and restores the one-passenger JD5162 total ¥530. Opening "Fee details"(role=button) shows "Fee details"(role=region) without the lounge line.
-
-      ![image](./reference/book3.png)
     data:
       requires:
       - DATA-BOOKING
@@ -1894,11 +1938,15 @@ children:
   name: Inspect and cancel orders
   type: FOLDER
   dependencies: []
+  pages:
+  - name: orders
+    reference: ./reference/enter_order.png
+  - name: orders
+    reference: ./reference/order1.png
+  - name: order_details
+    reference: ./reference/order2.png
   description: |-
     My account Orders shows list entries with number, booking date, itinerary, flight, total and display status. Not traveled/Pending review are distinct from payment state. Type/date-range filtering and detail fields such as terminals, operating carrier, non-flight services, masked passengers and fee summary remain source context without concrete fixtures/oracles.
-    ![image](./reference/enter_order.png)
-    ![image](./reference/order1.png)
-    ![image](./reference/order2.png)
 
 
     Order records are uniquely named Record <order number> within their list region. Record actions are scoped to that identity. Non-destructive cancellation confirmation provides Keep order.
@@ -1929,10 +1977,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-4.1
+    pages:
+    - name: orders
+      reference: ./reference/order1.png
     description: |-
       "All orders"(role=tab), "Not traveled"(role=tab), "Pending payment"(role=tab), and "Pending review"(role=tab) filter "Order list"(role=region) by registry display states. All orders for order_read contains exactly its three entries with flight, total, and status; the pending entry offers Pay now.
-
-      ![image](./reference/order1.png)
     data:
       requires:
       - DATA-ORDERS
@@ -2005,10 +2054,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-4.1
+    pages:
+    - name: order_details
+      reference: ./reference/order2.png
     description: |-
       View details within CTRIP20260721001 opens its Order details with number, "Flight itinerary"(role=region) showing JD5162 and Chengdu–Guangzhou, and Refund and change rules. "Payment status"(role=region) displays Pending payment, a decreasing Time remaining timer, expiry reminder, Pay now, and Cancel order. Browser time may be advanced for countdown observation while server dates remain externally fixed.
-
-      ![image](./reference/order2.png)
     data:
       requires:
       - DATA-ORDERS
@@ -2041,10 +2091,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-4.4
+    pages:
+    - name: order_details
+      reference: ./reference/order2.png
     description: |-
       The independent order_cancel account owns CTRIP20260721004. Clicking "Cancel order"(role=button) in "Payment status"(role=region) opens "Cancel order"(role=dialog); Confirm cancellation changes that same order to Closed, persisting after reload.
-
-      ![image](./reference/order2.png)
     data:
       requires:
       - DATA-ORDERS
@@ -2063,10 +2114,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-4.4
+    pages:
+    - name: order_details
+      reference: ./reference/order2.png
     description: |-
       In "Cancel order"(role=dialog), "Keep order"(role=button) closes confirmation without mutation. "Payment status"(role=region) retains Pending payment and Pay now for the identified order_read order. Only confirmed cancellation closes the order.
-
-      ![image](./reference/order2.png)
     data:
       requires:
       - DATA-ORDERS
@@ -2087,10 +2139,11 @@ children:
     dependencies:
     - REQ-4.1
     - REQ-4.2
+    pages:
+    - name: orders
+      reference: ./reference/order1.png
     description: |-
       Selecting "All orders"(role=tab) shows only the signed-in account's orders in "Order list"(role=region). Since profile_read owns none, its list must not borrow orders belonging to order_read or order_cancel.
-
-      ![image](./reference/order1.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -2110,14 +2163,21 @@ children:
   name: Manage reusable booking information
   type: FOLDER
   dependencies: []
+  pages:
+  - name: home
+    reference: ./reference/enter_self.png
+  - name: travelers
+    reference: ./reference/passenger.png
+  - name: addresses
+    reference: ./reference/address.png
+  - name: address_details
+    reference: ./reference/addressShow.png
+  - name: contacts
+    reference: ./reference/contact.png
+  - name: invoice_titles
+    reference: ./reference/reimbursement.png
   description: |-
     Personal center Common information sidebar expands/collapses Travelers, Contacts, Invoice titles and Addresses. Saved records are owned by the signed-in account. Creation and deletion tests create records through UI rather than preloading deletion targets. Source broader fields (traveler nationality/gender/birth/mobile, linked address province, international contact dialing, institutional/personal invoice types ) remain context; concrete acceptance uses the source-defined fields.
-    ![image](./reference/enter_self.png)
-    ![image](./reference/passenger.png)
-    ![image](./reference/address.png)
-    ![image](./reference/addressShow.png)
-    ![image](./reference/contact.png)
-    ![image](./reference/reimbursement.png)
      Saved-traveler editing and address detail viewing have explicit contracts in REQ-5.14 and REQ-5.15.
 
     Repeated business records may be rows, listitems or groups named Record <business identity>, using traveler/contact name, address recipient or invoice title. Exactly one record per identity appears in its named list region; header rows and decorative groups do not use the Record prefix. Add traveler, Add address, Add contact, Add invoice title and Edit traveler forms are named regions. Company Type uses combobox semantics. Address records expose View address and traveler records expose Edit; non-destructive deletion confirmation provides Keep traveler.
@@ -2127,10 +2187,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.3
+    pages:
+    - name: home
+      reference: ./reference/enter_self.png
     description: |-
       "My account"(role=button) exposes Personal center. Opening it displays Personal center heading and "Common information"(role=button), which toggles exactly four reusable-information links from an initially collapsed state.
-
-      ![image](./reference/enter_self.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -2157,10 +2218,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.1
+    pages:
+    - name: travelers
+      reference: ./reference/passenger.png
     description: |-
       Entering a name in "Traveler name"(role=textbox) and clicking "Search travelers"(role=button) filters "Traveler list"(role=region). The personal_read account contains Li Si; a nonmatching query shows No travelers found and no records.
-
-      ![image](./reference/passenger.png)
     data:
       requires:
       - DATA-PERSONAL-READ
@@ -2189,10 +2251,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.1
+    pages:
+    - name: traveler_form
+      reference: ./reference/addpassenger.png
     description: |-
       Add traveler opens "Add traveler"(role=region) with "Full name"(role=textbox), "ID number"(role=textbox), and "Save traveler"(role=button). Saving the isolated Wang Wu name and a valid ID adds that owner-specific traveler to "Traveler list"(role=region), displaying masked 110101********1237 and persisting after reload. Empty name shows Enter a full name within the form, keeps it open, and creates no record.
-
-      ![image](./reference/addpassenger.png)
     data:
       requires:
       - DATA-CREATED-PERSONAL
@@ -2225,10 +2288,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.1
+    pages:
+    - name: addresses
+      reference: ./reference/address.png
     description: |-
       The personal_read account's "Address list"(role=region) displays exactly one Zhang San record with Shanghai, Pudong New Area, and No. 100 Century Avenue.
-
-      ![image](./reference/address.png)
     data:
       requires:
       - DATA-PERSONAL-READ
@@ -2248,10 +2312,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.1
+    pages:
+    - name: address_form
+      reference: ./reference/addaddress.png
     description: |-
       "Add address"(role=region) collects "Recipient"(role=textbox), "City"(role=textbox), "District"(role=textbox), "Street address"(role=textbox), and "Mobile number"(role=textbox). "Save address"(role=button) stores the current account's submitted address in "Address list"(role=region), accepting Shanghai, Pudong New Area, No. 100 Century Avenue, and 13800000027. The saved address persists after reload.
-
-      ![image](./reference/addaddress.png)
     data:
       requires:
       - DATA-CREATED-PERSONAL
@@ -2274,10 +2339,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.1
+    pages:
+    - name: contacts
+      reference: ./reference/contact.png
     description: |-
       Entering a value in "Contact name"(role=textbox) and clicking "Search contacts"(role=button) filters "Contact list"(role=region). The contact_search source account contains Zhang San as the matching example.
-
-      ![image](./reference/contact.png)
     data:
       requires:
       - DATA-PERSONAL-READ
@@ -2296,10 +2362,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.1
+    pages:
+    - name: contact_form
+      reference: ./reference/add_contact.png
     description: |-
       "Add contact"(role=region) collects "Contact name"(role=textbox), "Mobile number"(role=textbox), and "Email"(role=textbox), with "Default contact"(role=checkbox). "Save contact"(role=button) creates an account-owned entry in "Contact list"(role=region) showing the submitted values and Default state, persisting after reload.
-
-      ![image](./reference/add_contact.png)
     data:
       requires:
       - DATA-CREATED-PERSONAL
@@ -2322,10 +2389,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.1
+    pages:
+    - name: invoice_titles
+      reference: ./reference/reimbursement.png
     description: |-
       Entering Shanghai Example in "Search invoice titles"(role=textbox) and clicking "Search"(role=button) filters "Invoice title list"(role=region) to the matching company title with taxpayer ID 91310000123456789A.
-
-      ![image](./reference/reimbursement.png)
     data:
       requires:
       - DATA-PERSONAL-READ
@@ -2345,10 +2413,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.1
+    pages:
+    - name: invoice_title_form
+      reference: ./reference/add_reimbursement.png
     description: |-
       Opening "Add invoice title"(role=region) provides "Type"(role=combobox) with Company, "Invoice title"(role=textbox), required company "Taxpayer ID"(role=textbox), and "Save"(role=button). Saving the isolated source company name with 91310000123456789B adds a persistent current-account record to "Invoice title list"(role=region). "Special VAT invoice"(role=checkbox) exposes the fields Registered address, Registered phone, Bank name, and Bank account.
-
-      ![image](./reference/add_reimbursement.png)
     data:
       requires:
       - DATA-CREATED-PERSONAL
@@ -2390,10 +2459,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.3
+    pages:
+    - name: travelers
+      reference: ./reference/passenger.png
     description: |-
       In "Traveler list"(role=region), "Delete"(role=button) for an identified record opens "Delete traveler"(role=dialog), where Confirm deletion removes only that traveler. Selecting records through "{business identity}"(role=checkbox) choices and clicking "Delete selected"(role=button) opens "Delete travelers"(role=dialog); Confirm deletion removes only selected travelers. Removal persists, and setup creates targets through UI add/save rather than seed injection.
-
-      ![image](./reference/passenger.png)
     data:
       requires:
       - DATA-CREATED-PERSONAL
@@ -2430,10 +2500,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.5
+    pages:
+    - name: addresses
+      reference: ./reference/address.png
     description: |-
       In "Address list"(role=region), "Delete"(role=button) for an identified record opens "Delete address"(role=dialog); Confirm deletion removes only that address. "{business identity}"(role=checkbox) selections with "Delete selected"(role=button) expose "Delete addresses"(role=button) and "Delete addresses"(role=dialog); confirmation removes only selected entries. Removal persists, and targets are created through UI add/save.
-
-      ![image](./reference/address.png)
     data:
       requires:
       - DATA-CREATED-PERSONAL
@@ -2470,10 +2541,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.7
+    pages:
+    - name: contacts
+      reference: ./reference/contact.png
     description: |-
       Within "Contact list"(role=region), "Delete"(role=button) opens "Delete contact"(role=dialog) for the identified contact; confirmation removes only it. Selecting "{business identity}"(role=checkbox) choices and clicking "Delete selected"(role=button) opens "Delete contacts"(role=dialog), whose confirmation removes only selected contacts. Deletions persist; setup creates records through the specified UI.
-
-      ![image](./reference/contact.png)
     data:
       requires:
       - DATA-CREATED-PERSONAL
@@ -2524,10 +2596,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.9
+    pages:
+    - name: invoice_titles
+      reference: ./reference/reimbursement.png
     description: |-
       In "Invoice title list"(role=region), "Delete"(role=button) opens "Delete invoice title"(role=dialog) for the identified title; confirmation removes only that record. "{business identity}"(role=checkbox) selections and "Delete selected"(role=button) expose "Delete invoice titles"(role=button) and "Delete invoice titles"(role=dialog); confirmation removes only selected titles. Removal persists, and scenario targets are UI-created.
-
-      ![image](./reference/reimbursement.png)
     data:
       requires:
       - DATA-CREATED-PERSONAL
@@ -2563,11 +2636,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.3
+    pages:
+    - name: travelers
+      reference: ./reference/passenger.png
+    - name: traveler_form
+      reference: ./reference/addpassenger.png
     description: |-
       Clicking "Edit"(role=button) within an identified "Traveler list"(role=region) record opens "Edit traveler"(role=region), prefilled with Full name and ID number and offering Save traveler. Changing only the name updates that same record while retaining its ID rather than creating another. The new name and masked ID persist after reload.
-
-      ![image](./reference/passenger.png)
-      ![image](./reference/addpassenger.png)
     data:
       requires:
       - DATA-CREATED-PERSONAL
@@ -2590,10 +2665,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.5
+    pages:
+    - name: address_details
+      reference: ./reference/addressShow.png
     description: |-
       Each record in "Address list"(role=region) offers keyboard-accessible "View address"(role=button). Opening it displays Address details heading and "Address details"(role=region) with that address's recipient, city, district, street, and mobile. The action's position inside the record is unrestricted.
-
-      ![image](./reference/addressShow.png)
     data:
       requires:
       - DATA-CREATED-PERSONAL
@@ -2617,10 +2693,11 @@ children:
     dependencies:
     - REQ-5.2
     - REQ-5.3
+    pages:
+    - name: travelers
+      reference: ./reference/passenger.png
     description: |-
       After saving a traveler through UI, entering its exact isolated name in "Traveler name"(role=textbox) and clicking "Search travelers"(role=button) finds that same record and masked identity in "Traveler list"(role=region), without an additional seed.
-
-      ![image](./reference/passenger.png)
     data:
       requires:
       - DATA-CREATED-PERSONAL
@@ -2641,10 +2718,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.6
+    pages:
+    - name: contacts
+      reference: ./reference/contact.png
     description: |-
       Entering a nonmatching isolated keyword in "Contact name"(role=textbox) and clicking "Search contacts"(role=button) returns zero records in contact_search's "Contact list"(role=region). Nonmatching contacts are excluded; no particular empty-state wording is required.
-
-      ![image](./reference/contact.png)
     data:
       requires:
       - DATA-PERSONAL-READ
@@ -2663,10 +2741,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.8
+    pages:
+    - name: invoice_titles
+      reference: ./reference/reimbursement.png
     description: |-
       Entering a nonmatching isolated keyword in "Search invoice titles"(role=textbox) and clicking "Search"(role=button) returns zero records in invoice_search's "Invoice title list"(role=region). Nonmatching titles are excluded without prescribing empty-state wording.
-
-      ![image](./reference/reimbursement.png)
     data:
       requires:
       - DATA-PERSONAL-READ
@@ -2686,10 +2765,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.3
+    pages:
+    - name: travelers
+      reference: ./reference/passenger.png
     description: |-
       "Delete traveler"(role=dialog) offers "Keep traveler"(role=button) to dismiss without deleting. The same record and masked ID remain in "Traveler list"(role=region), including after reload. Only Confirm deletion is destructive.
-
-      ![image](./reference/passenger.png)
     data:
       requires:
       - DATA-CREATED-PERSONAL
@@ -2710,11 +2790,15 @@ children:
   name: Manage profile and account security
   type: FOLDER
   dependencies: []
+  pages:
+  - name: profile
+    reference: ./reference/myinfo.png
+  - name: profile_edit
+    reference: ./reference/modifyinfo.png
+  - name: account_security
+    reference: ./reference/safecenter.png
   description: |-
     Personal center exposes My information and Account security. Profile fields are masked where stated. Password change verifies existing credentials; phone and email binding include staged identity verification. Avatar settings and final phone/email completion are mentioned without executable outcomes and are retained as untested context.
-    ![image](./reference/myinfo.png)
-    ![image](./reference/modifyinfo.png)
-    ![image](./reference/safecenter.png)
 
 
     Profile Gender uses combobox semantics. Security verification attempts are context-scoped: an accepted code must have been sent in the current attempt.
@@ -2724,10 +2808,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.1
+    pages:
+    - name: profile
+      reference: ./reference/myinfo.png
     description: |-
       Opening "My information"(role=button) for profile_read displays mobile 138****0013, email c***@example.com, Profile Reader, Li Ming, Male, and 1990-01-01.
-
-      ![image](./reference/myinfo.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -2748,10 +2833,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-6.1
+    pages:
+    - name: profile_edit
+      reference: ./reference/modifyinfo.png
     description: |-
       Under "My information"(role=button), profile_edit clicks "Edit"(role=button) to open "Nickname"(role=textbox), "Real name"(role=textbox), "Gender"(role=combobox) with Female, and "Date of birth"(role=textbox). "Save"(role=button) persists submitted edits and displays the updated values.
-
-      ![image](./reference/modifyinfo.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -2771,10 +2857,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.1
+    pages:
+    - name: account_security
+      reference: ./reference/safecenter.png
     description: |-
       Account security displays named Login password, Bound phone, and Bound email regions with Change your password regularly. Each setting has a Change action scoped to its own region.
-
-      ![image](./reference/safecenter.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -2817,10 +2904,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-6.3
+    pages:
+    - name: change_phone
+      reference: ./reference/modifyphone.png
     description: |-
       Change within "Bound phone"(role=region) opens Verify identity with "Login password"(role=textbox) and "New phone"(role=textbox). Travel1234 and 13900000018 followed by "Next, verify new phone"(role=button) opens Verify new phone with "Verification code"(role=textbox) and Code sent to 13900000018. Final binding completion is unspecified.
-
-      ![image](./reference/modifyphone.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -2842,10 +2930,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-6.3
+    pages:
+    - name: change_email
+      reference: ./reference/modifyemail.png
     description: |-
       Change in "Bound email"(role=region) shows c***@example.com. "Send verification code"(role=button) enables accepted 123456; entering it in "Verification code"(role=textbox) and clicking "Next, verify new email"(role=button) exposes "New email"(role=textbox). Final new-email verification and binding are unspecified.
-
-      ![image](./reference/modifyemail.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -2867,10 +2956,11 @@ children:
     dependencies:
     - REQ-6.3
     - REQ-1.8
+    pages:
+    - name: change_password
+      reference: ./reference/modifypassword.png
     description: |-
       In "Login password"(role=region), an incorrect "Current password"(role=textbox) with otherwise valid matching "New password"(role=textbox) and "Confirm new password"(role=textbox) is rejected by "Complete"(role=button). A visible alert retains the change form without Sign in again, and original credentials remain usable to reach "My account"(role=button). Alert wording is unrestricted.
-
-      ![image](./reference/modifypassword.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -2892,10 +2982,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-6.3
+    pages:
+    - name: change_phone
+      reference: ./reference/modifyphone.png
     description: |-
       In "Bound phone"(role=region), entering WrongPass123 in "Login password"(role=textbox) and 13900000018 in "New phone"(role=textbox), then clicking "Next, verify new phone"(role=button), shows a visible alert and retains Verify identity. Verify new phone and Code sent to 13900000018 do not appear, because failed identity verification cannot send the new-phone code.
-
-      ![image](./reference/modifyphone.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -2916,10 +3007,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-6.3
+    pages:
+    - name: change_email
+      reference: ./reference/modifyemail.png
     description: |-
       Within "Bound email"(role=region), "Send verification code"(role=button) enables only accepted 123456. Entering 000000 in "Verification code"(role=textbox) and clicking "Next, verify new email"(role=button) shows a visible alert and retains current verification; "New email"(role=textbox) remains unavailable. Alert wording is unrestricted.
-
-      ![image](./reference/modifyemail.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -2939,12 +3031,17 @@ children:
   name: Query flight status and reuse history
   type: FOLDER
   dependencies: []
+  pages:
+  - name: flight_status
+    reference: ./reference/status1.png
+  - name: flight_status
+    reference: ./reference/status2.png
+  - name: flight_status
+    reference: ./reference/status3.png
+  - name: flight_status
+    reference: ./reference/status4.png
   description: |-
     Flights Flight status supports Flight number and Route search options (radios), flight detail or route list, automatic account-owned history, reuse and clearing. Flight status is a deterministic supplied observation, not live external data.
-    ![image](./reference/status1.png)
-    ![image](./reference/status2.png)
-    ![image](./reference/status3.png)
-    ![image](./reference/status4.png)
 
 
     Flight status records are uniquely named Record <flight-status identity>. Flight details and Baggage carousel are named regions for status observations.
@@ -2954,10 +3051,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.1
+    pages:
+    - name: flight_status
+      reference: ./reference/status1.png
     description: |-
       "Flights"(role=button) followed by "Flight status"(role=link) opens Flight status heading and query choices "Flight number"(role=radio) and "Route"(role=radio).
-
-      ![image](./reference/status1.png)
     data:
       requires: *id001
     scenarios:
@@ -2974,11 +3072,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-7.1
+    pages:
+    - name: flight_status
+      reference: ./reference/status1.png
+    - name: flight_status
+      reference: ./reference/status4.png
     description: |-
       In number mode, users enter JD5162 in "Flight number"(role=textbox), July 21 in "Departure date"(role=textbox), and click "Search"(role=button). "Flight details"(role=region) shows the identified flight with Chengdu, Guangzhou, Scheduled, H14-H25, B12, and baggage carousel 6; a named Baggage carousel region disambiguates that numeric observation.
-
-      ![image](./reference/status1.png)
-      ![image](./reference/status4.png)
     data:
       requires:
       - DATA-STATUS
@@ -2998,11 +3098,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-7.1
+    pages:
+    - name: flight_status
+      reference: ./reference/status2.png
+    - name: flight_status
+      reference: ./reference/status3.png
     description: |-
       Choosing "Route"(role=radio) exposes "Origin"(role=textbox), "Destination"(role=textbox), and "Departure date"(role=textbox). Shanghai–Beijing on July 21 followed by "Search"(role=button) displays exactly MU5234 in "Flight status results"(role=region), with China Eastern, 09:00, 11:30, and Scheduled. "Swap cities"(role=button) exchanges city values without running a query.
-
-      ![image](./reference/status2.png)
-      ![image](./reference/status3.png)
     data:
       requires:
       - DATA-STATUS
@@ -3078,11 +3180,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-7.1
+    pages:
+    - name: flight_status
+      reference: ./reference/status1.png
+    - name: flight_status
+      reference: ./reference/status2.png
     description: |-
       "Route"(role=radio) exposes "Origin"(role=textbox), "Destination"(role=textbox), and "Departure date"(role=textbox), while hiding the flight-number textbox. "Flight number"(role=radio) instead exposes number and date inputs without city fields. Switching dimensions alone performs no query and does not itself create "Flight status results"(role=region) or "Flight details"(role=region).
-
-      ![image](./reference/status1.png)
-      ![image](./reference/status2.png)
     data:
       requires: []
     scenarios:
@@ -3103,11 +3207,13 @@ children:
     dependencies:
     - REQ-7.3
     - REQ-7.4
+    pages:
+    - name: flight_status
+      reference: ./reference/status2.png
+    - name: flight_status
+      reference: ./reference/status3.png
     description: |-
       Selecting "Route"(role=radio), entering Shanghai and Beijing in "Origin"(role=textbox) and "Destination"(role=textbox), setting July 21 in "Departure date"(role=textbox), and clicking "Search"(role=button) displays "Flight status results"(role=region) and records "Shanghai - Beijing"(role=button) in "Search history"(role=region). Activating that history action restores the route and date and reruns the route query rather than treating it as a flight number. Route history names follow Origin - Destination.
-
-      ![image](./reference/status2.png)
-      ![image](./reference/status3.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -3152,10 +3258,13 @@ children:
   name: Inspect reimbursement vouchers
   type: FOLDER
   dependencies: []
+  pages:
+  - name: services
+    reference: ./reference/moreservice.png
+  - name: reimbursement_vouchers
+    reference: ./reference/reimbursement2.png
   description: |-
     More services Reimbursement vouchers is a service hub with Pending, In progress, Completed lifecycle tabs and issuance rules notice. Pending lists eligible paid orders, including older orders through View more orders from the past year. Source explicitly reserves invoice/itinerary application and logistics flow; in-progress/download/delivery records remain context without a defined executable transition.
-    ![image](./reference/moreservice.png)
-    ![image](./reference/reimbursement2.png)
 
 
     Issuance rules is a named region.
@@ -3165,10 +3274,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.3
+    pages:
+    - name: reimbursement_vouchers
+      reference: ./reference/reimbursement2.png
     description: |-
       More services and Reimbursement vouchers expose Pending, In progress, and "Completed"(role=tab). The voucher_read account's "Completed vouchers"(role=region) contains exactly paid completed CTRIP20260718004 with its issued voucher. "Issuance rules"(role=region) communicates availability within 365 days of payment.
-
-      ![image](./reference/reimbursement2.png)
     data:
       requires:
       - DATA-VOUCHERS
@@ -3252,13 +3362,19 @@ children:
   name: Browse airport travel information
   type: FOLDER
   dependencies: []
+  pages:
+  - name: airport_guide
+    reference: ./reference/airport1.png
+  - name: airport_details
+    reference: ./reference/airport2.png
+  - name: airport_details
+    reference: ./reference/airport3.png
+  - name: airport_details
+    reference: ./reference/airport4.png
+  - name: airport_details
+    reference: ./reference/airport5.png
   description: |-
     Flights More services Airport guide provides Popular airports, domestic and international/Hong Kong/Macau/Taiwan indexes, deterministic weather snapshot and Boarding process link. Airport detail defaults to Overview and has four core subsections in source, of which Overview/Transportation/Phone numbers are named; no fourth section name is invented. Transport context includes buses, rail, shuttles and taxis; concrete fixture is Fangzhuang line.
-    ![image](./reference/airport1.png)
-    ![image](./reference/airport2.png)
-    ![image](./reference/airport3.png)
-    ![image](./reference/airport4.png)
-    ![image](./reference/airport5.png)
 
 
     Airport-service records are uniquely named Record <airport-service name> within their list region.
@@ -3268,10 +3384,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.1
+    pages:
+    - name: airport_guide
+      reference: ./reference/airport1.png
     description: |-
       Clicking "Flights"(role=button), then "More services"(role=button), then "Airport guide"(role=button) opens Airport guide heading.
-
-      ![image](./reference/airport1.png)
     data:
       requires:
       - DATA-AIRPORTS
@@ -3289,10 +3406,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-9.1
+    pages:
+    - name: airport_guide
+      reference: ./reference/airport1.png
     description: |-
       "Popular airports"(role=region) links Beijing Capital, Shanghai Pudong, and Guangzhou Baiyun airports. Choosing C within "Domestic airports"(role=region) exposes Chengdu, Chongqing, and Changchun links. "Today weather"(role=region) shows Beijing, -5°C to 3°C, and Boarding process.
-
-      ![image](./reference/airport1.png)
     data:
       requires:
       - DATA-AIRPORTS
@@ -3329,13 +3447,17 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-9.2
+    pages:
+    - name: airport_details
+      reference: ./reference/airport2.png
+    - name: airport_details
+      reference: ./reference/airport3.png
+    - name: airport_details
+      reference: ./reference/airport4.png
+    - name: airport_details
+      reference: ./reference/airport5.png
     description: |-
       Opening Beijing Capital Airport defaults to selected "Overview"(role=tab), with "Airport overview"(role=region) showing Beijing, three runways, and China's first national gateway. "Transportation"(role=tab) displays "City buses"(role=region) with Fangzhuang line, Fangzhuang, 06:00, 21:00, and 30 minutes. "Phone numbers"(role=tab) shows the business record named "Record Medical first aid center"(role=listitem, row or group) with 010-64541100.
-
-      ![image](./reference/airport2.png)
-      ![image](./reference/airport3.png)
-      ![image](./reference/airport4.png)
-      ![image](./reference/airport5.png)
     data:
       requires:
       - DATA-AIRPORTS
@@ -3374,11 +3496,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-9.1
+    pages:
+    - name: services
+      reference: ./reference/moreservice.png
+    - name: airport_guide
+      reference: ./reference/airport1.png
     description: |-
       Under "Flights"(role=button) and "More services"(role=button), "Domestic airport directory"(role=button) opens Airport guide with "Domestic airports"(role=tab) selected and "Domestic airports"(role=region) visible. "International airport directory"(role=button) selects "International and Hong Kong, Macau, Taiwan airports"(role=tab) and displays the matching "International and Hong Kong, Macau, Taiwan airports"(role=region).
-
-      ![image](./reference/moreservice.png)
-      ![image](./reference/airport1.png)
     data:
       requires:
       - DATA-AIRPORTS

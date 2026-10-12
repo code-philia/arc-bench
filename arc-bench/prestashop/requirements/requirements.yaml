@@ -360,10 +360,11 @@ children:
     name: Discover storefront content
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: home
+      reference: ./reference/homepage.png
     description: |-
       Opening the storefront while logged out displays "Global navigation"(role=navigation), "Carousel"(role=region), "Popular Products"(role=region) containing Hummingbird detail t-shirt, "Promotions"(role=region), "Newsletter"(role=region), and the footer. Users navigate through "Logo"(role=link), "CLOTHES"(role=link), "Sign in"(role=button), and "Cart"(role=link), search with "Search"(role=searchbox), and access language selection through "Language"(role=combobox). Cart count starts at 0. All controls are keyboard-accessible, and mobile navigation collapses behind "Menu"(role=button).
-
-      ![image](./reference/homepage.png)
     data:
       requires:
       - DATA-CATALOG
@@ -391,10 +392,11 @@ children:
     name: Navigate categories and return home
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: home
+      reference: ./reference/navigation.png
     description: |-
       Hovering or keyboard-focusing and activating "CLOTHES"(role=link) reveals "Men"(role=link) and "Women"(role=link). Men opens its product listing with Hummingbird detail t-shirt and Sort by; activating CLOTHES itself opens the parent category. From any catalog page, "Logo"(role=link) returns home to Popular Products.
-
-      ![image](./reference/navigation.png)
     data:
       requires:
       - DATA-CATALOG
@@ -420,10 +422,11 @@ children:
     name: Search products
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: home
+      reference: ./reference/search.png
     description: |-
       Focusing "Search"(role=searchbox) and entering shirt displays "Search suggestions"(role=region) with Hummingbird detail t-shirt. Pressing Enter submits the search and displays a "Product list"(role=region) containing that product.
-
-      ![image](./reference/search.png)
     data:
       requires:
       - DATA-CATALOG
@@ -440,10 +443,11 @@ children:
     name: Browse carousel promotions
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: home
+      reference: ./reference/homepage.png
     description: |-
       "Carousel"(role=region) contains at least two visually distinct promotion slides. Its visible image source or accessible name changes automatically within five seconds; clicking "Next"(role=button) changes the slide immediately. "Shop now"(role=link) opens a product or category containing Hummingbird detail t-shirt.
-
-      ![image](./reference/homepage.png)
     data:
       requires:
       - DATA-CATALOG
@@ -476,10 +480,11 @@ children:
     name: Open popular product
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: home
+      reference: ./reference/homepage.png
     description: |-
       Within "Popular Products"(role=region), "Hummingbird detail t-shirt"(role=link) is keyboard-accessible. Activating it opens that same product's detail with its heading and Add to cart action.
-
-      ![image](./reference/homepage.png)
     data:
       requires:
       - DATA-CATALOG
@@ -496,10 +501,11 @@ children:
     name: Open empty cart
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: cart
+      reference: ./reference/cart.png
     description: |-
       With an empty visitor cart, clicking "Cart"(role=link) opens Shopping cart with an empty-cart message and no cart t-shirt row.
-
-      ![image](./reference/cart.png)
     data:
       requires:
       - DATA-FLOW
@@ -517,10 +523,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.5
+    pages:
+    - name: home
+      reference: ./reference/homepage.png
     description: |-
       Hovering "Product Hummingbird detail t-shirt"(role=region) within Popular Products reveals "Quick view"(role=button). Clicking it opens "Quick view Hummingbird detail t-shirt"(role=dialog) with that exact product and its current price 24. "Close"(role=button) dismisses the preview and restores the homepage's Popular Products without adding anything to the cart.
-
-      ![image](./reference/homepage.png)
     data:
       requires:
       - DATA-CATALOG
@@ -549,10 +556,11 @@ children:
     name: Browse category hierarchy
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: category
+      reference: ./reference/category.png
     description: |-
       The Men category displays its heading, "Category description"(role=region), numeric "Product count"(role=status), "Sort by"(role=combobox), and product grid. "Breadcrumb"(role=navigation) presents Home, CLOTHES, and Men in order; its "CLOTHES"(role=link) returns to the parent category with CLOTHES heading and a Men entry. Parent-category Men and "Women"(role=link) entries are keyboard-accessible, and Women opens its own listing with Sort by.
-
-      ![image](./reference/category.png)
     data:
       requires:
       - DATA-CATALOG
@@ -587,10 +595,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.1
+    pages:
+    - name: category
+      reference: ./reference/category.png
     description: |-
       "Product Hummingbird detail t-shirt"(role=region) contains the product image, name, sale and regular prices, and Sale label. Hover reveals "Quick view"(role=button), "Wishlist"(role=link), and "White"(role=button) as the color preview. The keyboard-accessible "Hummingbird detail t-shirt"(role=link) opens that same product's detail with Add to cart.
-
-      ![image](./reference/category.png)
     data:
       requires:
       - DATA-CATALOG
@@ -617,10 +626,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.1
+    pages:
+    - name: category
+      reference: ./reference/category.png
     description: |-
       Selecting "In stock"(role=checkbox) retains the White t-shirt and excludes the out-of-stock Black mug. Selecting "White"(role=checkbox) as the color filter also retains that t-shirt and excludes the Black mug. Entering a number in "Minimum price"(role=spinbutton) retains only products at or above that amount and updates "Product count"(role=status); entering 20 includes the White t-shirt and excludes the Black mug. "Clear all"(role=button) removes applied filters and restores the original results and count.
-
-      ![image](./reference/category.png)
     data:
       requires:
       - DATA-CATALOG
@@ -663,10 +673,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.1
+    pages:
+    - name: category
+      reference: ./reference/sort.png
     description: |-
       Selecting Price, low to high in "Sort by"(role=combobox) orders the current prices in "Product list"(role=region) ascending while retaining the White t-shirt. Equal-price products have no prescribed tie order.
-
-      ![image](./reference/sort.png)
     data:
       requires:
       - DATA-CATALOG
@@ -685,10 +696,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.1
+    pages:
+    - name: category
+      reference: ./reference/category.png
     description: |-
       The unfiltered Men listing initially shows 12 of 13 products. "Product count"(role=status) displays Showing <start>-<end> of <total> item(s). Clicking "Next"(role=button) within "Pagination"(role=navigation) opens the remaining product slice and updates the range to 13-13 of 13 without changing the total.
-
-      ![image](./reference/category.png)
     data:
       requires:
       - DATA-CATALOG
@@ -707,10 +719,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.1
+    pages:
+    - name: category
+      reference: ./reference/category.png
     description: |-
       Selecting "On sale"(role=checkbox) within "Filters"(role=region) includes discounted products and excludes undiscounted products according to DATA-CATALOG. The visible results and "Product count"(role=status) update to the filtered set.
-
-      ![image](./reference/category.png)
     data:
       requires:
       - DATA-CATALOG
@@ -731,10 +744,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.1
+    pages:
+    - name: category
+      reference: ./reference/category.png
     description: |-
       Choosing "M"(role=checkbox) within "Filters"(role=region) includes products offering size M and excludes One size products, using DATA-CATALOG attributes. The displayed results and "Product count"(role=status) update accordingly.
-
-      ![image](./reference/category.png)
     data:
       requires:
       - DATA-CATALOG
@@ -755,10 +769,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.1
+    pages:
+    - name: category
+      reference: ./reference/category.png
     description: |-
       Choosing "Cotton"(role=checkbox) within "Filters"(role=region) includes cotton products and excludes ceramic and polyester products according to DATA-CATALOG. The result set and "Product count"(role=status) update together.
-
-      ![image](./reference/category.png)
     data:
       requires:
       - DATA-CATALOG
@@ -779,10 +794,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.1
+    pages:
+    - name: category
+      reference: ./reference/category.png
     description: |-
       Choosing "Hummingbird"(role=checkbox) within "Filters"(role=region) retains that brand and excludes Benchmark Basics using DATA-CATALOG. The displayed results and "Product count"(role=status) reflect the selected brand.
-
-      ![image](./reference/category.png)
     data:
       requires:
       - DATA-CATALOG
@@ -803,10 +819,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.3
+    pages:
+    - name: category
+      reference: ./reference/category.png
     description: |-
       Filters combine by intersection. Selecting "In stock"(role=checkbox) and entering 25 in "Minimum price"(role=spinbutton) retains the cart t-shirt while excluding the White t-shirt priced 22 and the out-of-stock Black mug priced 12. "Clear all"(role=button) restores original first-page product identities and count, clears In stock, and resets Minimum price to empty or 0.
-
-      ![image](./reference/category.png)
     data:
       requires:
       - DATA-CATALOG
@@ -836,10 +853,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.2
+    pages:
+    - name: product
+      reference: ./reference/product_detail.png
     description: |-
       Opening Hummingbird detail t-shirt displays its heading and "Add to cart"(role=button). "Product images"(role=region) contains exactly one main image named Hummingbird detail t-shirt, thumbnail choices, and "Zoom"(role=button). "Product information"(role=region) shows its name, sale and regular prices, 20% discount, tax information, and regular-fit description.
-
-      ![image](./reference/product_detail.png)
     data:
       requires:
       - DATA-CATALOG
@@ -859,10 +877,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.1
+    pages:
+    - name: product
+      reference: ./reference/product_detail.png
     description: |-
       Users choose M in "Size"(role=combobox) and "White"(role=radio), with price and stock reflecting that combination. "Quantity"(role=spinbutton) starts at 1; "Increase quantity"(role=button) changes it to 2, while "Decrease quantity"(role=button) returns it to 1 and cannot reduce it below 1. Direct entry of 3 is accepted. Entering 999 exceeds stock, so "Add to cart"(role=button) shows an insufficient-stock alert and adds no product.
-
-      ![image](./reference/product_detail.png)
     data:
       requires:
       - DATA-CATALOG
@@ -899,10 +918,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.1
+    pages:
+    - name: product
+      reference: ./reference/add_to_cart.png
     description: |-
       Clicking "Add to cart"(role=button) for one default available Hummingbird cart t-shirt opens "Product successfully added to your shopping cart"(role=dialog) with that product and increases cart count. "Continue shopping"(role=link) closes the dialog and returns to the same detail; "Proceed to checkout"(role=link) opens Shopping cart with that product and its correct subtotal.
-
-      ![image](./reference/add_to_cart.png)
     data:
       requires:
       - DATA-CATALOG
@@ -938,10 +958,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.1
+    pages:
+    - name: product
+      reference: ./reference/product_detail.png
     description: |-
       Selecting "Description"(role=tab) displays its corresponding named tabpanel with the regular-fit description. Selecting "Product Details"(role=tab) displays the matching tabpanel with Reference HB-DETAIL, a cotton Data sheet, and regular-fit Features.
-
-      ![image](./reference/product_detail.png)
     data:
       requires:
       - DATA-CATALOG
@@ -968,10 +989,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.1
+    pages:
+    - name: product
+      reference: ./reference/product_detail.png
     description: |-
       "Reviews"(role=region) shows the seeded Good fit review and average rating 4. For an anonymous visitor, "Write your review"(role=button) opens "Sign in required"(role=dialog), identifying Hummingbird detail t-shirt, without submitting a review. "Wishlist"(role=link) produces the same product-specific sign-in prompt without storing wishlist membership.
-
-      ![image](./reference/product_detail.png)
     data:
       requires:
       - DATA-CATALOG
@@ -1008,10 +1030,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.1
+    pages:
+    - name: product
+      reference: ./reference/product_detail.png
     description: |-
       After visiting Hummingbird detail t-shirt, "Recently viewed"(role=region) includes that product. "Related products"(role=region) contains a different Men product with a keyboard-accessible opening entry.
-
-      ![image](./reference/product_detail.png)
     data:
       requires:
       - DATA-CATALOG
@@ -1031,10 +1054,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.1
+    pages:
+    - name: product
+      reference: ./reference/product_detail.png
     description: |-
       "Product images"(role=region) offers keyboard-accessible "Front"(role=button) and "Back"(role=button) thumbnails. Back replaces the single main image with the distinct back view while retaining the product's accessible name; Front restores the original front image. Switching images does not change the selected product.
-
-      ![image](./reference/product_detail.png)
     data:
       requires:
       - DATA-CATALOG
@@ -1054,10 +1078,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.7
+    pages:
+    - name: product
+      reference: ./reference/product_detail.png
     description: |-
       Clicking "Zoom"(role=button) in Product images opens "Product image"(role=dialog) with the currently selected product image and a visible Front view or Back view caption. "Close"(role=button) dismisses the enlargement without changing the product or selected image.
-
-      ![image](./reference/product_detail.png)
     data:
       requires:
       - DATA-CATALOG
@@ -1077,10 +1102,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.2
+    pages:
+    - name: product
+      reference: ./reference/product_detail.png
     description: |-
       Choosing L in "Size"(role=combobox) and "Black"(role=radio) updates "Product information"(role=region) to the DATA-CATALOG variant's sale price 36, regular price 45, and "Stock"(role=status) displaying Available stock: 2. Selecting M and "White"(role=radio) restores sale price 24, regular price 30, and Available stock: 50. Both monetary values and stock must follow the actual selected combination rather than only changing the selection controls.
-
-      ![image](./reference/product_detail.png)
     data:
       requires:
       - DATA-CATALOG
@@ -1109,10 +1135,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.3
+    pages:
+    - name: cart
+      reference: ./reference/cart.png
     description: |-
       After UI addition, Shopping cart contains exactly one "Hummingbird cart t-shirt"(role=row) with image, M/White combination, Unit price 25, "Quantity"(role=spinbutton) set to 1, Subtotal 25, and "Delete"(role=button). "Cart summary"(role=region) reconciles Items subtotal 25, Shipping 5, and Total 30 including tax. Discount appears only when applicable and is absent for this undiscounted product.
-
-      ![image](./reference/cart.png)
     data:
       requires:
       - DATA-CATALOG
@@ -1134,10 +1161,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-4.1
+    pages:
+    - name: cart
+      reference: ./reference/cart.png
     description: |-
       Clicking "Increase quantity"(role=button) within "Hummingbird cart t-shirt"(role=row) changes quantity from 1 to 2, row Subtotal to 50, and Total in "Cart summary"(role=region) to 55. "Delete"(role=button) on that row removes it, displays the empty-cart message, and recalculates Items subtotal and Total to 0.
-
-      ![image](./reference/cart.png)
     data:
       requires:
       - DATA-CATALOG
@@ -1167,10 +1195,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-4.1
+    pages:
+    - name: checkout
+      reference: ./reference/checkout.png
     description: |-
       From Shopping cart, "Continue shopping"(role=link) opens Men with the cart t-shirt available. "Proceed to checkout"(role=link) opens "Personal Information"(role=region) and "Order summary"(role=region) containing the selected product. Both transitions retain the cart.
-
-      ![image](./reference/checkout.png)
     data:
       requires:
       - DATA-CATALOG
@@ -1198,10 +1227,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-4.1
+    pages:
+    - name: cart
+      reference: ./reference/cart.png
     description: |-
       Entering 3 in "Quantity"(role=spinbutton) within "Hummingbird cart t-shirt"(role=row) and committing on blur updates its Subtotal to 75 and "Cart summary"(role=region) to Items subtotal 75 and Total 80. The header "Cart"(role=link) reports a count of three units.
-
-      ![image](./reference/cart.png)
     data:
       requires:
       - DATA-CATALOG
@@ -1223,10 +1253,11 @@ children:
     dependencies:
     - REQ-3.9
     - REQ-4.1
+    pages:
+    - name: cart
+      reference: ./reference/cart.png
     description: |-
       Users choose L in "Size"(role=combobox), select "Black"(role=radio), enter 2 in "Quantity"(role=spinbutton), and click "Add to cart"(role=button). Shopping cart displays "Hummingbird detail t-shirt"(role=row) with that exact variant, quantity, and sale unit price 36. "Cart summary"(role=region) shows Items subtotal 72, Shipping 5, Total 77, and informational Discount 18, calculated as 2×(45−36). The already-discounted subtotal is not discounted a second time.
-
-      ![image](./reference/cart.png)
     data:
       requires:
       - DATA-CATALOG
@@ -1259,10 +1290,11 @@ children:
     dependencies:
     - REQ-4.3
     - REQ-6.1
+    pages:
+    - name: checkout
+      reference: ./reference/checkout.png
     description: |-
       Anonymous checkout with the checkout-step t-shirt opens "Personal Information"(role=region) and "Order summary"(role=region). For signed-in checkout_user, Personal Information displays prestashop_checkout_user@example.com; its "Continue"(role=button) opens "Addresses"(role=region) if that step is not already active.
-
-      ![image](./reference/checkout.png)
     data:
       requires:
       - DATA-CATALOG
@@ -1296,10 +1328,11 @@ children:
     dependencies:
     - REQ-5.1
     - REQ-7.3
+    pages:
+    - name: checkout
+      reference: ./reference/checkout_address.png
     description: |-
       After checkout_address_user creates Home through UI, "Addresses"(role=region) offers "Home"(role=radio) with 1 Commerce Road. Selecting it visibly marks that address; "Continue"(role=button) progresses to Shipping Method while retaining the same order product.
-
-      ![image](./reference/checkout_address.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1322,10 +1355,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.1
+    pages:
+    - name: checkout
+      reference: ./reference/checkout_address.png
     description: |-
       In checkout Addresses, checkout_new_address_user clicks "Add new address"(role=button) and completes "Alias"(role=textbox), "First name"(role=textbox), "Last name"(role=textbox), "Address"(role=textbox), "Postal code"(role=textbox), "City"(role=textbox), "Country"(role=combobox), and "Phone"(role=textbox). "Save"(role=button) saves Office for Store User at 1 Commerce Road, 200000 Shanghai, China, 13800000020. The saved Office address appears in checkout as "Office"(role=radio).
-
-      ![image](./reference/checkout_address.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1348,10 +1382,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.2
+    pages:
+    - name: checkout
+      reference: ./reference/checkout_shipping.png
     description: |-
       With checkout_invoice_user's UI-created Home available, clearing "Use same address"(role=checkbox) reveals "Invoice address"(role=region), including Home. Continuing with Home opens "Shipping Method"(role=region), where "Delivery"(role=radio) displays cost 5 and visibly reflects selection. "Order summary"(role=region) includes the checkout-step t-shirt price 26 plus shipping 5, totaling 31.
-
-      ![image](./reference/checkout_shipping.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1383,10 +1418,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.4
+    pages:
+    - name: checkout
+      reference: ./reference/checkout_payment.png
     description: |-
       Continuing after Delivery selection opens "Payment"(role=region), where users select "Bank wire"(role=radio) and agree through "Terms and conditions"(role=checkbox). The separate "Terms and conditions"(role=link) opens "Terms and conditions"(role=region) with agreement content. "Place order"(role=button) completes the order only after agreement.
-
-      ![image](./reference/checkout_payment.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1419,10 +1455,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.5
+    pages:
+    - name: order_confirmation
+      reference: ./reference/checkout_summary.png
     description: |-
       Using checkout_6_6_user with the order-confirmation t-shirt or checkout_6_7_user with the order-complete t-shirt, users complete Home, Delivery, Bank wire, and agreement, then click "Place order"(role=button). Order confirmation displays the chosen product; "Order reference"(role=region) contains a nonempty assigned reference, and "Order details"(role=region) shows product, quantity, amounts, shipping, and payment. "Continue shopping"(role=link) returns home with Search, My account, and Cart.
-
-      ![image](./reference/checkout_summary.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1459,10 +1496,11 @@ children:
     dependencies:
     - REQ-5.2
     - REQ-7.4
+    pages:
+    - name: checkout
+      reference: ./reference/checkout_address.png
     description: |-
       Within "Addresses"(role=region), "Edit address Home"(role=button) opens the existing Home address form. Changing its street to 88 Market Street and clicking "Save"(role=button) updates the saved address, which remains selectable through "Home"(role=radio), without altering the cart product or summary. Continue then opens Shipping Method with the updated address available.
-
-      ![image](./reference/checkout_address.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1485,10 +1523,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.5
+    pages:
+    - name: checkout
+      reference: ./reference/checkout_shipping.png
     description: |-
       At "Payment"(role=region) after completing Home and Delivery, clicking "Edit Shipping Method"(role=button) reopens "Shipping Method"(role=region) with "Delivery"(role=radio) still selected. "Continue"(role=button) returns to Payment while preserving the cart product and total 31. Reopening the step does not place an order.
-
-      ![image](./reference/checkout_shipping.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1512,10 +1551,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.2
+    pages:
+    - name: checkout
+      reference: ./reference/checkout.png
     description: |-
       Completing "Addresses"(role=region) hides its editable controls, retains its summary and "Edit Addresses"(role=button), and activates "Shipping Method"(role=region). Clicking Edit Addresses reopens "Home"(role=radio) selection without losing the chosen address or order product. Available controls, rather than DOM layout, make completion and reopening observable.
-
-      ![image](./reference/checkout.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1545,10 +1585,11 @@ children:
     name: Sign in with password visibility and remember option
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: login
+      reference: ./reference/login.png
     description: |-
       Clicking "Sign in"(role=button) opens "Email"(role=textbox), masked "Password"(role=textbox), a Sign in submit action, and "No account? Create one here"(role=link). "SHOW"(role=button) reveals the password and "Remember me"(role=checkbox) is selectable. Valid verified Store User credentials sign in, showing Store User, "My account"(role=link), and "Sign out"(role=button). Registration does not replace the source's verified-account fixture.
-
-      ![image](./reference/login.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1577,10 +1618,11 @@ children:
     name: Register customer
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: register
+      reference: ./reference/register.png
     description: |-
       From Sign in, "No account? Create one here"(role=link) opens registration with "Mr."(role=radio), "First name"(role=textbox), "Last name"(role=textbox), "Email"(role=textbox), "Password"(role=textbox), "Birthdate"(role=textbox), and "Receive offers"(role=checkbox), "Newsletter"(role=checkbox), and "Terms"(role=checkbox). Entering New Customer, unused new_customer_7_3@example.com, ShopPass123!, 1995-08-21, and all stated choices, then clicking "Save"(role=button), creates a signed-in account showing New Customer.
-
-      ![image](./reference/register.png)
     data:
       requires:
       - DATA-CUSTOMER
@@ -1599,10 +1641,11 @@ children:
     name: Request password reset
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: password_recovery
+      reference: ./reference/forgot_password.png
     description: |-
       Clicking "Forgot your password?"(role=link) from Sign in opens "Email"(role=textbox) and "Send"(role=button). Submitting existing prestashop_user@example.com displays an email-sent confirmation mentioning that address; actual mailbox delivery is not asserted.
-
-      ![image](./reference/forgot_password.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1622,10 +1665,11 @@ children:
     dependencies:
     - REQ-6.1
     - REQ-7.1
+    pages:
+    - name: home
+      reference: ./reference/logout.png
     description: |-
       The signed-in Store User clicks "Sign out"(role=button) from My account and returns home, which shows "Sign in"(role=button), Cart, and Hummingbird detail t-shirt. Sign out is no longer available.
-
-      ![image](./reference/logout.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1654,10 +1698,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-6.1
+    pages:
+    - name: account
+      reference: ./reference/my_account.png
     description: |-
       Clicking "My account"(role=link) after signing in displays My account heading, Store User, and "Information"(role=link), "Addresses"(role=link), "Order history and details"(role=link), and "Wishlist"(role=link) entry points.
-
-      ![image](./reference/my_account.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1677,10 +1722,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-7.1
+    pages:
+    - name: account_information
+      reference: ./reference/my_account_info.png
     description: |-
       The profile_user opens "Information"(role=link) with "Email"(role=textbox), "Current password"(role=textbox), and "New password"(role=textbox). Entering ShopPass123! as the current password, changing Email to prestashop_profile_user_next@example.com, and clicking "Save"(role=button) displays "Profile update"(role=status) confirmation and the new email while retaining the old password. A subsequent save with current password ShopPass123! and new password ShopPass456! confirms the password change. The resulting credentials permit sign-in.
-
-      ![image](./reference/my_account_info.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1702,10 +1748,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-7.1
+    pages:
+    - name: account_addresses
+      reference: ./reference/my_account_address.png
     description: |-
       Clicking "Addresses"(role=link) displays each saved address as "{alias}"(role=article), containing its values and Update and Delete actions. "Create new address"(role=button) opens "Alias"(role=textbox), "First name"(role=textbox), "Last name"(role=textbox), "Address"(role=textbox), "Postal code"(role=textbox), "City"(role=textbox), "Country"(role=combobox), and "Phone"(role=textbox), displaying entered values before submission. "Save"(role=button) with Office and registry address values creates one Office article; Home setup uses the same creation behavior and values.
-
-      ![image](./reference/my_account_address.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1736,10 +1783,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-7.3
+    pages:
+    - name: account_addresses
+      reference: ./reference/my_account_address.png
     description: |-
       The address_edit_user or address_delete_user first creates Home through UI. In "Home"(role=article), "Update"(role=button) opens its current Alias and street values. Editing the street to 88 Market Street and clicking "Save"(role=button) updates that same article. Alternatively, "Delete"(role=button) within Home removes only that address and returns to the address list.
-
-      ![image](./reference/my_account_address.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1767,10 +1815,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-7.1
+    pages:
+    - name: account_orders
+      reference: ./reference/my_account_order.png
     description: |-
       Clicking "Order history and details"(role=link) shows the historical "PS-HISTORY-001"(role=row), with the order-history t-shirt, reference, date 2026-07-18, Delivered status, and Total 34. "Details"(role=link) opens "Order details"(role=region) for that order, containing its product, registry shipping information, and Bank wire payment.
-
-      ![image](./reference/my_account_order.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1801,10 +1850,11 @@ children:
     dependencies:
     - REQ-7.5
     - REQ-3.3
+    pages:
+    - name: account_orders
+      reference: ./reference/my_account_order.png
     description: |-
       Within historical "PS-HISTORY-001"(role=row), "Reorder"(role=link) adds the available order-history t-shirt to Shopping cart with subtotal 29. "PDF"(role=link) downloads a valid invoice PDF for that reference, identified by its suggested filename. No internal order query is required.
-
-      ![image](./reference/my_account_order.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1835,10 +1885,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-7.1
+    pages:
+    - name: account_wishlists
+      reference: ./reference/my_account_wishlist.png
     description: |-
       "Wishlist"(role=link) opens saved collections, each represented by "{wishlist title}"(role=listitem) with a named opening entry and Edit and Delete actions. Clicking "Create new wishlist"(role=button) opens "Create new wishlist"(role=dialog), where "Name"(role=textbox) and "Save"(role=button) create exactly one Holiday Picks listitem. Favorites may similarly be created empty for rename and delete prerequisites. Opening seeded "Favorites"(role=link) shows its membership-bearing "Hummingbird wishlist t-shirt"(role=listitem) with Remove and Add to cart actions.
-
-      ![image](./reference/my_account_wishlist.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1867,10 +1918,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-7.7
+    pages:
+    - name: account_wishlists
+      reference: ./reference/my_account_wishlist.png
     description: |-
       For wishlist_rename_user or wishlist_delete_user, the UI-created "Favorites"(role=listitem) offers scoped "Edit"(role=button) and "Delete"(role=button). Edit displays Favorites in "Name"(role=textbox); replacing it with Holiday Picks and clicking "Save"(role=button) leaves one Holiday Picks and no Favorites. Delete instead removes Favorites from the collection list.
-
-      ![image](./reference/my_account_wishlist.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1899,10 +1951,11 @@ children:
     dependencies:
     - REQ-7.7
     - REQ-3.3
+    pages:
+    - name: account_wishlists
+      reference: ./reference/my_account_wishlist.png
     description: |-
       Seeded Favorites for wishlist_remove_user or wishlist_cart_user contains "Hummingbird wishlist t-shirt"(role=listitem). "Remove"(role=button) deletes that product's wishlist membership; "Add to cart"(role=button) instead adds that exact default available product to the cart. If the wishlist remains visible after addition, "Cart"(role=link) opens the cart to inspect the selected product.
-
-      ![image](./reference/my_account_wishlist.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1934,10 +1987,11 @@ children:
     dependencies:
     - REQ-7.3
     - REQ-7.4
+    pages:
+    - name: account_addresses
+      reference: ./reference/my_account_address.png
     description: |-
       After creating "Home"(role=article) and "Office"(role=article) through UI under the same account, clicking "Delete"(role=button) within Home removes only Home and preserves Office with its original values. Business identity, rather than row position, determines the target.
-
-      ![image](./reference/my_account_address.png)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -1958,10 +2012,11 @@ children:
     dependencies:
     - REQ-7.7
     - REQ-7.8
+    pages:
+    - name: account_wishlists
+      reference: ./reference/my_account_wishlist.png
     description: |-
       For UI-created "Favorites"(role=listitem) and "Holiday Picks"(role=listitem) under wishlist_delete_user, "Delete"(role=button) scoped to Favorites removes only that collection. Holiday Picks remains exactly once and its "Holiday Picks"(role=link) still opens the surviving wishlist with a Holiday Picks heading, independent of list ordering.
-
-      ![image](./reference/my_account_wishlist.png)
     data:
       requires:
       - DATA-ACCOUNTS

@@ -52,10 +52,11 @@ children:
     name: Open the application
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: home
+      reference: ./reference/index.png
     description: |-
       Opening the application homepage at / while logged out displays "Login"(role=link), "Shelves"(role=link), and "Books"(role=link) as its public entry points.
-
-      ![image](./reference/index.png)
     data:
       requires: []
     scenarios:
@@ -73,11 +74,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.1
+    pages:
+    - name: home
+      reference: ./reference/index.png
+    - name: shelves
+      reference: ./reference/shelves.png
     description: |-
       Opening / from the shelves list returns to the homepage, which exposes "Login"(role=link), "Shelves"(role=link), and "Books"(role=link).
-
-      ![image](./reference/index.png)
-      ![image](./reference/shelves.png)
     data:
       requires: []
     scenarios:
@@ -102,10 +105,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.1
+    pages:
+    - name: login
+      reference: ./reference/login.png
     description: |-
       Clicking "Login"(role=link) in navigation opens a login form containing "Email"(role=textbox), "Password"(role=textbox), an initially unchecked "Remember Me"(role=checkbox), and a Login submit action.
-
-      ![image](./reference/login.png)
     data:
       requires: []
     scenarios:
@@ -122,11 +126,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.1
+    pages:
+    - name: login
+      reference: ./reference/login.png
+    - name: home
+      reference: ./reference/index_after_login.png
     description: |-
       Users enter a verified account's credentials in "Email"(role=textbox) and "Password"(role=textbox), select "Remember Me"(role=checkbox), and submit the form reached through "Login"(role=link). Successful authentication returns to the homepage, shows BookStack User in the top-right user area, and enables the personal dashboard lists. Invalid-credential wording is unspecified.
-
-      ![image](./reference/login.png)
-      ![image](./reference/index_after_login.png)
     data:
       requires:
       - DATA-ACCOUNT
@@ -155,10 +161,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.2
+    pages:
+    - name: home
+      reference: ./reference/index_after_login.png
     description: |-
       Successful login displays an authenticated dashboard with "My Recent Drafts"(role=region), "My Recently Viewed"(role=region), "My Most Viewed Favorites"(role=region), and "Recently Updated Pages"(role=region), each containing its corresponding personal or content list. Recent activity and dashboard controls also follow the visual reference.
-
-      ![image](./reference/index_after_login.png)
     data:
       requires:
       - DATA-ACCOUNT
@@ -188,10 +195,11 @@ children:
     dependencies:
     - REQ-1.1
     - REQ-4.3
+    pages:
+    - name: shelves
+      reference: ./reference/shelves.png
     description: |-
       Activating "Shelves"(role=link) on the page displays "Shelf list"(role=region). Each shelf appears exactly once as a keyboard-accessible "{item name}"(role=button) identified by its business name; a semantically equivalent link is also permitted. No total list size is prescribed.
-
-      ![image](./reference/shelves.png)
     data:
       requires:
       - DATA-CONTENT
@@ -211,10 +219,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-4.1
+    pages:
+    - name: shelf
+      reference: ./reference/shelf.png
     description: |-
       Choosing "{item name}"(role=button) in "Shelf list"(role=region), or the allowed equivalent link, opens that shelf's details with a heading bearing its name and information belonging to the selected shelf. Its included books and related actions are available from these details.
-
-      ![image](./reference/shelf.png)
     data:
       requires:
       - DATA-CONTENT
@@ -234,10 +243,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.1
+    pages:
+    - name: create_shelf
+      reference: ./reference/create_shelf.png
     description: |-
       While logged out, users open the bootstrap shelf through Shelves and Shelf list, then click "New Shelf"(role=button) to enter "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox). "Save Shelf"(role=button) creates exactly one shelf with that metadata and returns to Shelf list; the metadata persists across navigation and reload. "Cancel"(role=button) instead returns to Shelfs without creating the entered object. Runtime names may append the evaluator's run, worker, and case identity to source examples.
-
-      ![image](./reference/create_shelf.png)
     data:
       requires:
       - DATA-CONTENT
@@ -270,10 +280,11 @@ children:
     dependencies:
     - REQ-4.2
     - REQ-4.3
+    pages:
+    - name: edit_shelf
+      reference: ./reference/edit_shelve.png
     description: |-
       On the selected shelf's details, "Edit"(role=button) opens "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox) prefilled with saved values. "Save Shelf"(role=button) updates that same shelf and returns to its details with the updated heading and description; changes survive reload. "Cancel"(role=button) discards all pending changes and returns to the unchanged details. Related-book editing is also supported.
-
-      ![image](./reference/edit_shelve.png)
     data:
       requires:
       - DATA-CONTENT
@@ -307,10 +318,11 @@ children:
     dependencies:
     - REQ-4.2
     - REQ-4.3
+    pages:
+    - name: shelf
+      reference: ./reference/delete_shelves.png
     description: |-
       Clicking "Delete"(role=button) on a selected shelf opens confirmation. "Confirm Delete"(role=button) removes that shelf and returns to Shelfs, where its entry is absent from "Shelf list"(role=region); the deletion remains effective across navigation. "Cancel"(role=button) keeps the shelf and preserves its original heading and description.
-
-      ![image](./reference/delete_shelves.png)
     data:
       requires:
       - DATA-CONTENT
@@ -350,10 +362,11 @@ children:
     dependencies:
     - REQ-1.1
     - REQ-5.3
+    pages:
+    - name: books
+      reference: ./reference/books.png
     description: |-
       Clicking "Books"(role=link) on the page displays "Book list"(role=region). Each book appears exactly once as a keyboard-accessible "{item name}"(role=button) identified by its business name, with an equivalent link also allowed. No total list size is prescribed.
-
-      ![image](./reference/books.png)
     data:
       requires:
       - DATA-CONTENT
@@ -373,10 +386,11 @@ children:
     dependencies:
     - REQ-5.1
     - REQ-5.6
+    pages:
+    - name: book
+      reference: ./reference/book.png
     description: |-
       Selecting "{item name}"(role=button), or its allowed equivalent link, in "Book list"(role=region) opens the corresponding book's details with its name as the heading and information belonging to that book. The same selection behavior is available from the Book list on its containing shelf.
-
-      ![image](./reference/book.png)
     data:
       requires:
       - DATA-CONTENT
@@ -406,10 +420,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.1
+    pages:
+    - name: create_book
+      reference: ./reference/create_book.png
     description: |-
       While logged out, users open Books and click "Create New Book"(role=button), then enter "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox). "Save Book"(role=button) creates one book with that metadata and opens its details with the saved name and description. Description supports rich text, a cover is optional, and a default page template can be chosen. "Cancel"(role=button) returns to Books without creating the entered book. Saved metadata survives navigation and reload; runtime names may append evaluator run, worker, and case identity to source examples.
-
-      ![image](./reference/create_book.png)
     data:
       requires:
       - DATA-CONTENT
@@ -440,10 +455,11 @@ children:
     dependencies:
     - REQ-5.2
     - REQ-5.3
+    pages:
+    - name: edit_book
+      reference: ./reference/edit_book.png
     description: |-
       On the selected book's details, "Edit"(role=button) opens "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox) prefilled with their saved values. "Save Book"(role=button) changes that same book and returns to its details with the updated heading and description, persisting after reload. "Cancel"(role=button) returns to the unchanged details and discards all pending edits.
-
-      ![image](./reference/edit_book.png)
     data:
       requires:
       - DATA-CONTENT
@@ -475,10 +491,11 @@ children:
     dependencies:
     - REQ-5.2
     - REQ-5.3
+    pages:
+    - name: book
+      reference: ./reference/delete_book.png
     description: |-
       Clicking "Delete"(role=button) on the selected book opens confirmation. "Confirm Delete"(role=button) removes that book and returns to Books, with its entry absent from "Book list"(role=region) across subsequent navigation. "Cancel"(role=button) keeps the book's original heading and description unchanged.
-
-      ![image](./reference/delete_book.png)
     data:
       requires:
       - DATA-CONTENT
@@ -505,12 +522,15 @@ children:
     dependencies:
     - REQ-4.2
     - REQ-5.3
+    pages:
+    - name: shelf
+      reference: ./reference/shelf.png
+    - name: create_book
+      reference: ./reference/create_book.png
+    - name: book
+      reference: ./reference/book.png
     description: |-
       Clicking "Create New Book"(role=button) on a shelf's details opens a creation form with "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox). "Save Book"(role=button) creates the book under that specific shelf and opens its details with its name and a "{containing shelf name}"(role=button) parent action, for which an equivalent link is also permitted. Following the parent action opens the containing shelf, whose "Book list"(role=region) includes the created book.
-
-      ![image](./reference/shelf.png)
-      ![image](./reference/create_book.png)
-      ![image](./reference/book.png)
     data:
       requires:
       - DATA-CONTENT
@@ -540,11 +560,13 @@ children:
     dependencies:
     - REQ-5.3
     - REQ-2.2
+    pages:
+    - name: page_editor
+      reference: ./reference/page_draft.png
+    - name: home
+      reference: ./reference/index_after_login.png
     description: |-
       Clicking "New Page"(role=button) on a book opens "Page title"(role=textbox) and "Write your page content here..."(role=textbox). "Save Page"(role=button) publishes the entered title and body, returns to the book, and adds exactly one entry to "Page list"(role=region), including while logged out. When authenticated, users can instead click "Save Draft"(role=button) to save an owned draft, which appears exactly once in the homepage's "My Recent Drafts"(role=region). Saved drafts can be reopened from the parent book's Page list to resume editing or delete them. REQ-2.2 is required only for the Save Draft branch.
-
-      ![image](./reference/page_draft.png)
-      ![image](./reference/index_after_login.png)
     data:
       requires:
       - DATA-CONTENT
@@ -578,10 +600,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-6.1
+    pages:
+    - name: page_editor
+      reference: ./reference/delete_draft.png
     description: |-
       Opening an owned draft while logged in offers "Delete Draft"(role=button). Clicking it opens confirmation with "Confirm Delete"(role=button); confirming returns to the parent book and removes that draft from "Page list"(role=region).
-
-      ![image](./reference/delete_draft.png)
     data:
       requires:
       - DATA-CONTENT
@@ -602,11 +625,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-5.3
+    pages:
+    - name: create_chapter
+      reference: ./reference/create_chapter.png
+    - name: chapter
+      reference: ./reference/chapter.png
     description: |-
       Clicking "New Chapter"(role=button) on a book opens "Name"(role=textbox) and "Description"(role=textbox). "Save Chapter"(role=button) saves the entered chapter and adds exactly one entry to "Chapter list"(role=region). Opening its "{chapter name}"(role=button) entry displays that chapter's heading and saved description.
-
-      ![image](./reference/create_chapter.png)
-      ![image](./reference/chapter.png)
     data:
       requires:
       - DATA-CONTENT
@@ -627,11 +652,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-6.1
+    pages:
+    - name: page
+      reference: ./reference/page.png
+    - name: page_editor
+      reference: ./reference/page_draft.png
     description: |-
       Selecting "{page title}"(role=button) from a book or chapter's "Page list"(role=region) displays the published page's title heading and saved body. "Edit"(role=button) on the reading page opens an editor prefilled with the current title in "Page title"(role=textbox) and body in "Write your page content here..."(role=textbox), with "Save Page"(role=button) available to save the page.
-
-      ![image](./reference/page.png)
-      ![image](./reference/page_draft.png)
     data:
       requires:
       - DATA-CONTENT
@@ -669,10 +696,11 @@ children:
     dependencies:
     - REQ-2.2
     - REQ-4.2
+    pages:
+    - name: home
+      reference: ./reference/index_after_login.png
     description: |-
       Authenticated visits to shelves, books, chapters, and pages record those items for the user. Opening / returns home, where "My Recently Viewed"(role=region) contains at most ten records and one entry per visited identity. Selecting "{visited item name}"(role=button), or the allowed equivalent link, opens the corresponding item.
-
-      ![image](./reference/index_after_login.png)
     data:
       requires:
       - DATA-CONTENT
@@ -712,11 +740,13 @@ children:
     dependencies:
     - REQ-2.2
     - REQ-5.3
+    pages:
+    - name: book
+      reference: ./reference/book.png
+    - name: favourites
+      reference: ./reference/favourites.png
     description: |-
       On an authenticated shelf, book, chapter, or page details view, "Favorite"(role=button) initially exposes aria-pressed=false. Clicking it stores a personal favorite and changes the action to "Unfavorite"(role=button) with aria-pressed=true. Clicking Unfavorite removes the preference and restores Favorite with aria-pressed=false. The selected state persists after reload and follows the same behavior for all four content types.
-
-      ![image](./reference/book.png)
-      ![image](./reference/favourites.png)
     data:
       requires:
       - DATA-CONTENT
@@ -745,11 +775,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-8.1
+    pages:
+    - name: home
+      reference: ./reference/index_after_login.png
+    - name: favourites
+      reference: ./reference/favourites.png
     description: |-
       After an item is favorited, the authenticated homepage's "My Most Viewed Favorites"(role=region) exposes that item as "{favorite item name}"(role=button), with an equivalent link also permitted. The region contains at most four items; selecting an entry opens the corresponding item. A dedicated favorites page exposes the complete collection.
-
-      ![image](./reference/index_after_login.png)
-      ![image](./reference/favourites.png)
     data:
       requires:
       - DATA-CONTENT
@@ -777,11 +809,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-6.1
+    pages:
+    - name: home
+      reference: ./reference/index.png
+    - name: page
+      reference: ./reference/page.png
     description: |-
       Creating or editing a page updates "Recently Updated Pages"(role=region) on the homepage. This region contains at most five items, and selecting "{page title}"(role=button), or the permitted equivalent link, opens that page with its saved title and body.
-
-      ![image](./reference/index.png)
-      ![image](./reference/page.png)
     data:
       requires:
       - DATA-CONTENT

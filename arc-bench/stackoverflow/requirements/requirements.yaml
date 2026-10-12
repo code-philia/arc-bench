@@ -444,9 +444,11 @@ children:
   name: Discover the community
   type: FOLDER
   dependencies: []
+  pages:
+  - name: home
+    reference: ./reference/homepage.jpeg
   description: |-
     Anonymous and authenticated visitors discover populated public questions. Header, left navigation, main feed and right widgets follow the homepage reference. Right widgets expose The Overflow Blog, meta items, Hot Network Questions and custom filter/tag watchlists.
-    ![image](./reference/homepage.jpeg)
 
     Global header is a banner and main navigation is named Main navigation. Question feed contains summary regions named Question <title>. Navigational actions may be links or buttons; status metrics expose plain numeric text.
   children:
@@ -454,10 +456,11 @@ children:
     name: Open the populated community
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: home
+      reference: ./reference/homepage.jpeg
     description: |-
       Opening the application displays a banner with Stack Overflow identity, "Search"(role=searchbox), "Products"(role=button), Log in, and Sign up. "Main navigation"(role=navigation) provides Home, Questions, Tags, and Users. "Question feed"(role=region) displays Ask Question, Newest and Active ordering controls, and summaries containing titles, tags, votes, answers, and views. Linked editorial and network content appears in "The Overflow Blog"(role=region) and "Hot Network Questions"(role=region). Desktop appearance follows the reference.
-
-      ![image](./reference/homepage.jpeg)
     data:
       requires:
       - DATA-HISTORY
@@ -504,10 +507,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.1
+    pages:
+    - name: question
+      reference: ./reference/question-page.jpeg
     description: |-
       An anonymous visitor can open a published question through the public feed or search and read its title, rendered body, tags, and existing answers in "Question post"(role=region). Reading public knowledge requires no session; the header continues to offer "Log in"(role=button) and "Sign up"(role=button). This public access is independent of the authenticated comment controls in REQ-3.1.
-
-      ![image](./reference/question-page.jpeg)
     data:
       requires:
       - DATA-HISTORY
@@ -527,9 +531,11 @@ children:
   name: Account and public identity
   type: FOLDER
   dependencies: []
+  pages:
+  - name: login
+    reference: ./reference/login.jpeg
   description: |-
     Email/password account creation and login; social/SSO excluded. Verified source accounts are initialized by evaluator. Owners can edit their profile and access protected activity. No moderator threshold is invented.
-    ![image](./reference/login.jpeg)
 
     Login and Sign up each expose a named form region and submit button. Form errors are visible within their form. Public profile is a named region; user catalog profile actions combine display name and email to distinguish identical display names. Unavailable unauthorized actions may be absent or disabled.
   children:
@@ -538,10 +544,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.1
+    pages:
+    - name: login
+      reference: ./reference/login.jpeg
     description: |-
       Clicking "Log in"(role=button) opens "Log in"(role=region) containing "Email"(role=textbox), "Password"(role=textbox), a "Show password"(role=button) toggle, Forgot password? and Sign up entry points. "Show password" reveals the current password without changing its value and becomes "Hide password"(role=button), which restores masking. "Forgot password?"(role=button) remains available as the recovery entry. Submitting valid credentials returns home with "Stack User"(role=button) as the profile action and a session that survives reload. Empty credentials show Email cannot be empty and Password cannot be empty; malformed email shows The email is not a valid email address; an absent account shows No account found with this email; an incorrect password shows The email or password does not match any account. Rejections retain the form and anonymous state.
-
-      ![image](./reference/login.jpeg)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -609,10 +616,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.1
+    pages:
+    - name: register
+      reference: ./reference/sign-up.jpeg
     description: |-
       Clicking "Sign up"(role=button) opens "Sign up"(role=region) with Join Stack Overflow heading, "Email"(role=textbox), "Password"(role=textbox), password help, consent text, and a Log in entry. Submitting a unique valid email and password creates the account and signs it in automatically, exposing "<registered email>"(role=button) as the profile action when no display name was entered. An existing email shows Email is already in use; a short password shows visible requirements including a minimum of eight characters. Rejections retain the form without an authenticated session. Registration emails use deterministic run, worker, and case suffixes; verification is not added.
-
-      ![image](./reference/sign-up.jpeg)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -654,10 +662,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.1
+    pages:
+    - name: profile
+      reference: ./reference/profile-page.jpeg
     description: |-
       A signed-in user clicks the unique "Stack User"(role=button) header profile action to open Activity Summary. The profile displays numeric "Reputation"(role=status), "Badges"(role=region), and "Recent activity"(role=region); "Profile navigation"(role=navigation) offers Activity and Reputation views.
-
-      ![image](./reference/profile-page.jpeg)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -677,10 +686,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.3
+    pages:
+    - name: profile_edit
+      reference: ./reference/edit-profile.jpeg
     description: |-
       The profile_editor account clicks "Edit profile"(role=button) to open Edit your profile with "Display name"(role=textbox), "Full name"(role=textbox), "Location"(role=textbox), "Title"(role=textbox), "About me"(role=textbox), "Website"(role=textbox), "X"(role=textbox), and "GitHub"(role=textbox) prefilled from DATA-ACCOUNTS. "Save and copy changes to all public communities"(role=button) saves the supplied values, updates the display name, location, title, and about text in "Public profile"(role=region), and shows a success status. Source examples www.example.dev and github.com/example are accepted; an added https:// prefix is allowed. Reopening confirms every submitted field, including full name and URLs. Preview is required only if supplied, and unspecified length or URL thresholds are not invented.
-
-      ![image](./reference/edit-profile.jpeg)
     data:
       requires:
       - DATA-ACCOUNTS
@@ -705,11 +715,13 @@ children:
     dependencies:
     - REQ-2.1
     - REQ-2.2
+    pages:
+    - name: login
+      reference: ./reference/login.jpeg
+    - name: register
+      reference: ./reference/sign-up.jpeg
     description: |-
       The anonymous user can move from "Log in"(role=region) to "Sign up"(role=region) through its Sign up entry and return through Log in. Each visible form provides correctly labeled "Email"(role=textbox) and "Password"(role=textbox), with "Sign up"(role=button) or "Log in"(role=button) as its matching submit action. Switching forms preserves anonymous status and adds no social login behavior.
-
-      ![image](./reference/login.jpeg)
-      ![image](./reference/sign-up.jpeg)
     data:
       requires: []
     scenarios:
@@ -729,10 +741,11 @@ children:
     dependencies:
     - REQ-2.2
     - REQ-2.1
+    pages:
+    - name: register
+      reference: ./reference/sign-up.jpeg
     description: |-
       An account created by entering "Email"(role=textbox) and "Password"(role=textbox) and submitting "Sign up"(role=button) can authenticate with those credentials in a fresh browser context through "Log in"(role=button). Successful login displays the homepage feed and "<registered email>"(role=button) as the profile action, demonstrating that registration and credential login compose without a verification workflow.
-
-      ![image](./reference/sign-up.jpeg)
     data:
       requires:
       - DATA-RUNTIME
@@ -752,9 +765,11 @@ children:
   name: Publish and maintain questions
   type: FOLDER
   dependencies: []
+  pages:
+  - name: questions
+    reference: ./reference/questions-page.jpeg
   description: |-
     Questions carry title, rendered body, tags, engagement metadata and author attribution. Owner deletion hides the post from public lists; database preservation is outside the observable oracle.
-    ![image](./reference/questions-page.jpeg)
 
     Question details use Question post and Answers regions. Author information is scoped to Author. Score, Answer count, View count and Title character count are named numeric status outputs; active votes expose pressed state.
   children:
@@ -764,10 +779,11 @@ children:
     dependencies:
     - REQ-1.1
     - REQ-2.1
+    pages:
+    - name: question
+      reference: ./reference/question-page.jpeg
     description: |-
       Selecting "How can I safely retry an idempotent HTTP request in Node.js?"(role=button) from the feed opens that question's heading and "Question post"(role=region), with its rendered source body, node.js/http/retry tags, Ask Question entry, numeric "Score"(role=status), and "Up vote"(role=button), "Down vote"(role=button), "Save"(role=button), "Timeline"(role=button), "Share"(role=button), "Edit"(role=button), and "Follow"(role=button) controls. "Asked"(role=status) and "Modified"(role=status) display registry timestamps or an unambiguous UTC equivalent; "View count"(role=status) is at least the initial 42 because opening may increase views. "Author"(role=region) shows Helpful User's identity, avatar, initial reputation, current badges, and time. Authenticated users also see Comments with "Add a comment"(role=button). Feed tags, score, and answer count agree with the detail. Unrequested Share, Follow, and Timeline behavior is not invented.
-
-      ![image](./reference/question-page.jpeg)
     data:
       requires:
       - DATA-HISTORY
@@ -790,10 +806,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.1
+    pages:
+    - name: ask_question
+      reference: ./reference/ask-question-page.jpeg
     description: |-
       A signed-in user clicks "Ask Question"(role=button), enters "Title"(role=textbox) with at least 15 characters and "Body"(role=textbox) with at least 220 characters, and selects at least one tag through "Tags"(role=textbox). Markdown renders live in "Preview"(role=region), while "Title character count"(role=status) shows the title length. Entering node.js displays "Suggestions"(role=region) including node.js, http, and retry; the tag input accepts comma-separated selected names. "Post Your Question"(role=button) publishes the entered title, body, and tags, opens their detail, and adds the title to the owner's Questions activity. Missing or insufficient inputs show Title is required (minimum 15 characters), Question body is required (minimum 220 characters), or Please add at least one tag as applicable, retaining the editor without publishing. No upper tag-count limit is invented.
-
-      ![image](./reference/ask-question-page.jpeg)
     data:
       requires:
       - DATA-TAGS
@@ -840,10 +857,11 @@ children:
     dependencies:
     - REQ-3.2
     - REQ-3.1
+    pages:
+    - name: edit_question
+      reference: ./reference/edit-question.jpeg
     description: |-
       The owner clicks "Edit"(role=button) within Question post to open "Title"(role=textbox), "Body"(role=textbox), and "Tags"(role=textbox) prefilled from that question. The editor provides "Bold"(role=button), "Italic"(role=button), and "Code"(role=button), live "Preview"(role=region), "How to Edit"(role=region) guidance, and "Rev"(role=combobox) for selecting prior revisions. Users record their reason in "Edit Summary"(role=textbox); "Save edits"(role=button) updates the question, shows edited metadata, and adds a revision with the reason available through "Timeline"(role=button) in "Revision history"(role=region). "Cancel"(role=button) returns to the original view without applying a draft. The preview and save scenarios independently UI-create their case-suffixed SO Question Edit Preview and SO Question Edit Save examples.
-
-      ![image](./reference/edit-question.jpeg)
     data:
       requires:
       - DATA-RUNTIME
@@ -945,10 +963,11 @@ children:
     dependencies:
     - REQ-3.2
     - REQ-2.3
+    pages:
+    - name: profile
+      reference: ./reference/user-feed.jpeg
     description: |-
       After publishing a question, the author opens "Questions"(role=button) in activity. "Activity content"(role=region) contains "<created question title>"(role=button); selecting it opens that exact question with its saved body and tags rather than another feed item.
-
-      ![image](./reference/user-feed.jpeg)
     data:
       requires:
       - DATA-RUNTIME
@@ -969,10 +988,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-3.3
+    pages:
+    - name: edit_question
+      reference: ./reference/edit-question.jpeg
     description: |-
       The owner saves a revision through "Title"(role=textbox), "Body"(role=textbox), "Tags"(role=textbox), and "Edit Summary"(role=textbox), then "Save edits"(role=button). The public question reflects the saved title, body, and tags, and "Timeline"(role=button) exposes the retained summary in "Revision history"(role=region). Reopening through public discovery under another account shows saved values rather than an editor-only draft.
-
-      ![image](./reference/edit-question.jpeg)
     data:
       requires:
       - DATA-RUNTIME
@@ -1015,9 +1035,11 @@ children:
   name: Answer and evaluate solutions
   type: FOLDER
   dependencies: []
+  pages:
+  - name: question
+    reference: ./reference/post-answer.jpeg
   description: |-
     Authenticated answers, votes, acceptance, ordering and owner maintenance. An answer belongs to exactly its question. Only question owner accepts a single answer; accepted answer is marked green and Accepted answer.
-    ![image](./reference/post-answer.jpeg)
 
     Answers contains answer regions named Answer by <display name>, unique per parent in the supplied data. Author information is scoped to Author. Score is a named numeric status and active votes expose pressed state.
   children:
@@ -1027,10 +1049,11 @@ children:
     dependencies:
     - REQ-3.2
     - REQ-2.1
+    pages:
+    - name: question
+      reference: ./reference/post-answer.jpeg
     description: |-
       The authenticated answer_submitter opens the UI-created SO Answer Submission Question, enters the DATA-RUNTIME answer in "Your Answer"(role=textbox), and clicks "Post Your Answer"(role=button). The detail adds "Answer by Stack User"(role=region) under that question's "Answers"(role=region), showing its author and updating "Answer count"(role=status). The owner's Answers activity links the correct parent and shows the excerpt; reload retains the answer.
-
-      ![image](./reference/post-answer.jpeg)
     data:
       requires:
       - DATA-RUNTIME
@@ -1193,10 +1216,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-4.4
+    pages:
+    - name: question
+      reference: ./reference/question-page.jpeg
     description: |-
       Selecting Date modified in "Sorted by"(role=combobox) orders "Answers"(role=region) by newest modification first. The historical question's distinct timestamps place Recent answer before Highest score answer. Switching from Highest score visibly reverses their sequence without changing "Answer count"(role=status) or their parent question.
-
-      ![image](./reference/question-page.jpeg)
     data:
       requires:
       - DATA-HISTORY
@@ -1281,9 +1305,11 @@ children:
   name: Discuss posts
   type: FOLDER
   dependencies: []
+  pages:
+  - name: question
+    reference: ./reference/add-comment.jpeg
   description: |-
     Question and answer comments display author and timestamp in chronological order. Own comments may be edited within five minutes; deletion is immediate. Replies belong to their parent. Comments support upvotes only.
-    ![image](./reference/add-comment.jpeg)
 
     Comments is scoped to its post; each comment is a region named Comment <body>, and Replies is scoped to its parent comment. Comment votes is a named numeric status; active votes expose pressed state.
   children:
@@ -1504,9 +1530,11 @@ children:
   name: Discover by tags and search
   type: FOLDER
   dependencies: []
+  pages:
+  - name: search
+    reference: ./reference/search-and-filter.jpeg
   description: |-
     Public tags and search; watching and saved custom filters are personal authenticated preferences. General keyword/tag/user/date criteria remain capability context; executable examples cover react state and python unanswered newest.
-    ![image](./reference/search-and-filter.jpeg)
 
     Tag entry regions are named Tag <name>. Selected combobox options expose their visible label. Search accepts a full published question title and returns that exact matching record, including UI-created posts.
   children:
@@ -1515,10 +1543,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.2
+    pages:
+    - name: tags
+      reference: ./reference/tags-page.jpeg
     description: |-
       Tag navigation displays "Tags"(role=region) with "Tag <name>"(role=region) entries ordered by current popularity, each showing description and numeric "Question count"(role=status). Clicking "python"(role=button) opens "Python tag"(role=region), its description, "Related tags"(role=region), and a Question feed containing only python-tagged questions with tag identity visible in each summary. "Next page"(role=button) provides pagination and may be disabled because the fixture fits one page. Counts include UI-created posts and never fall below the immutable catalog baseline; ranking uses current counts rather than totals hard-coded after earlier cases.
-
-      ![image](./reference/tags-page.jpeg)
     data:
       requires:
       - DATA-TAGS
@@ -1564,10 +1593,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-1.1
+    pages:
+    - name: search
+      reference: ./reference/search-and-filter.jpeg
     description: |-
       Entering react state in the banner's "Search"(role=searchbox) displays real-time "Search suggestions"(role=region). Pressing Enter opens "Search results"(role=region) with relevant public question links ranked by relevance. The initial index includes one known React-state match and nonmatching retry and python posts, which are excluded. Keyword, tag, user, and date criteria remain general capability context; unspecified syntax and ranking examples are not invented.
-
-      ![image](./reference/search-and-filter.jpeg)
     data:
       requires:
       - DATA-HISTORY
@@ -1636,10 +1666,11 @@ children:
     dependencies:
     - REQ-6.1
     - REQ-1.3
+    pages:
+    - name: tags
+      reference: ./reference/tags-page.jpeg
     description: |-
       Clicking "python"(role=button) opens "Python tag"(role=region) with navigable public question titles. Selecting "SO Python Unanswered Recent"(role=button) opens that same public question with its python tag, preserving the business identity selected during discovery.
-
-      ![image](./reference/tags-page.jpeg)
     data:
       requires:
       - DATA-HISTORY
@@ -1704,9 +1735,11 @@ children:
   name: Inspect contributions and achievements
   type: FOLDER
   dependencies: []
+  pages:
+  - name: profile
+    reference: ./reference/user-feed.jpeg
   description: |-
     Owner activity views, reputation and private votes, badge categories and seeded earned notification. Privilege thresholds and new badge qualification triggers are unspecified and not invented.
-    ![image](./reference/user-feed.jpeg)
 
     Profile navigation and Activity navigation are distinct named navigation scopes. Reputation, Question count and Earn count <badge> are numeric status outputs. Badge notification is a named status containing its message.
   children:
@@ -1778,10 +1811,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.3
+    pages:
+    - name: profile
+      reference: ./reference/user-feed.jpeg
     description: |-
       The activity_user opens its unique "Stack User activity_user@example.com"(role=button) profile action and selects "Activity"(role=button). "Activity navigation"(role=navigation) offers Summary, "Answers"(role=button), "Questions"(role=button), Tags, Articles, Badges, Following, Bounties, "Reputation"(role=button), All actions, "Responses"(role=button), and "Votes"(role=button), marking the selected item current=page. "Activity content"(role=region) updates to the chosen view. Answers offers "Score"(role=button), Activity, "Newest"(role=button), and "Next page"(role=button), plus correct parent titles and accepted status. Questions shows the owner's title with numeric "Score"(role=status), "Answer count"(role=status), and "View count"(role=status) representing Votes 3, Answers 1, and Views 11. Responses links actual parents; Reputation history and the private Votes log show source contributions and actions. No particular route, DOM, or full-reload implementation is required.
-
-      ![image](./reference/user-feed.jpeg)
     data:
       requires:
       - DATA-ACTIVITY
@@ -1825,10 +1859,11 @@ children:
     dependencies:
     - REQ-7.4
     - REQ-3.1
+    pages:
+    - name: profile
+      reference: ./reference/user-feed.jpeg
     description: |-
       The owner selects "Answers"(role=button) in activity and opens "How does React state update?"(role=button), the actual parent of the historical answer. That public question displays "Answer by Stack User"(role=region), containing Batch state updates safely. with "Accepted answer"(role=button). Activity entries therefore navigate to real posts rather than disconnected summaries.
-
-      ![image](./reference/user-feed.jpeg)
     data:
       requires:
       - DATA-ACTIVITY

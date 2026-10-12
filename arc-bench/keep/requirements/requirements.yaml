@@ -79,12 +79,15 @@ children:
     name: Open and navigate the personal workspace
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: notes
+      reference: ./reference/home_page.png
+    - name: notes
+      reference: ./reference/sidebar.png
+    - name: notes
+      reference: ./reference/sidebar_collapsed.png
     description: |-
       Opening the application displays a personal notes workspace with the "Sidebar"(role=navigation) expanded and "Notes"(role=button) selected. The sidebar provides "Reminders"(role=button), user-label actions, "Edit Labels"(role=button), "Archived"(role=button), and "Trash"(role=button), each with an identifiable icon; Reminders is a default label with its own icon. Users can find notes through "Search"(role=searchbox), begin creation with "Take a note"(role=button), open settings through "Settings menu"(role=button), and switch the initial layout through "List view"(role=button). "Toggle sidebar"(role=button) collapses the sidebar to icons and expands it again, exposing its expanded state while preserving accessible navigation names. Text labels disappear when collapsed and return when expanded. Alignment, hover feedback, selected-item highlighting, and appearance follow the visual references; screenshot similarity is not a functional oracle.
-
-      ![image](./reference/home_page.png)
-      ![image](./reference/sidebar.png)
-      ![image](./reference/sidebar_collapsed.png)
     data:
       requires:
       - DATA-REMINDERS
@@ -127,10 +130,11 @@ children:
     dependencies:
     - REQ-2.2
     - REQ-2.9
+    pages:
+    - name: notes
+      reference: ./reference/home_page.png
     description: |-
       The active Notes view separates pinned notes into exactly one "Pinned notes"(role=region) and regular notes into exactly one "Other notes"(role=region). Every active note appears once in the appropriate section as "{title}"(role=region), whose accessible name equals that note's visible title. Archived and trashed notes do not appear in either section. Business identity identifies each note regardless of whether the presentation uses cards, a table, or another layout.
-
-      ![image](./reference/home_page.png)
     data:
       requires:
       - DATA-NOTES
@@ -151,11 +155,13 @@ children:
     name: Create and autosave a personal note
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: notes
+      reference: ./reference/create_note_home_page.png
+    - name: notes
+      reference: ./reference/create_note_form.png
     description: |-
       Clicking "Take a note"(role=button) opens "Note editor"(role=dialog), where users enter "Title"(role=textbox) and "Content"(role=textbox). Clicking "Close"(role=button) closes the editor and automatically saves one active note with the entered title and content; the note survives reload without an explicit save action. Creation accepts the nonempty titles and multiline content used in the scenarios; empty-input rules are unspecified. The editor also provides Pin note, Background color, and Change labels for their corresponding behaviors.
-
-      ![image](./reference/create_note_home_page.png)
-      ![image](./reference/create_note_form.png)
     data:
       requires:
       - DATA-NOTES
@@ -186,10 +192,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.2
+    pages:
+    - name: notes
+      reference: ./reference/note_editing.png
     description: |-
       Clicking "Open {title}"(role=button) on a particular note opens Note editor with that note's existing title and content. Changing Content and closing the editor saves the replacement content on the same note without changing its title or creating a duplicate. The updated content remains visible after reload.
-
-      ![image](./reference/note_editing.png)
     data:
       requires:
       - DATA-NOTES
@@ -210,11 +217,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.2
+    pages:
+    - name: notes
+      reference: ./reference/note_more_options_dropdown.png
+    - name: notes
+      reference: ./reference/note_delete_notification.png
     description: |-
       Users reveal a note's actions by hovering if necessary, then click "More options {title}"(role=button) and choose "Delete Note"(role=menuitem). Deletion immediately removes that note from active Notes, moves it to Trash without an additional confirmation, and displays "Note deleted"(role=status) with "Undo"(role=button) and "Dismiss notification"(role=button). Undo restores the same title and content to active Notes, removes the note from Trash, and displays "Action undone"(role=status). Dismiss notification closes the notification without reversing deletion. The notification also disappears automatically after an implementation-selected lifetime; the evaluator's 60-second waiting budget does not prescribe an exact product timer.
-
-      ![image](./reference/note_more_options_dropdown.png)
-      ![image](./reference/note_delete_notification.png)
     data:
       requires:
       - DATA-NOTES
@@ -256,10 +265,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.4
+    pages:
+    - name: trash
+      reference: ./reference/trash_list.png
     description: |-
       Clicking "Trash"(role=button) displays deleted notes in "Deleted notes"(role=region), excluding active and archived notes. "Empty Trash"(role=button) permanently removes all currently deleted notes while preserving active notes. If confirmation is offered, it appears as "Empty Trash"(role=dialog) with an "Empty Trash"(role=button) confirmation action. Notes deleted at least seven elapsed 24-hour days ago disappear from user-visible Trash by the next visit or refresh, using UTC benchmark time rather than the real date. Historical deletions are seeded because users cannot backdate them. The retention scenario uses an independently initialized historical world; the destructive emptying scenario uses the normal world without sharing mutable history with the retention scenario.
-
-      ![image](./reference/trash_list.png)
     data:
       requires:
       - DATA-NOTES
@@ -303,12 +313,15 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.2
+    pages:
+    - name: notes
+      reference: ./reference/archive_button.png
+    - name: archived_notes
+      reference: ./reference/archived_notes_page.png
+    - name: archived_notes
+      reference: ./reference/unarchive_button.png
     description: |-
       Clicking "Archive {title}"(role=button) moves the selected active note out of Notes into "Archived notes"(role=region) and displays "Note archived"(role=status) with "Undo"(role=button). Undo restores the same note and content to Notes, removes it from the archive, and shows Action undone. Clicking "Archived"(role=button) displays archived notes separately from active notes; "Unarchive {title}"(role=button) returns the chosen note to Notes. Every transition addresses that note's business identity and remains observable after reload.
-
-      ![image](./reference/archive_button.png)
-      ![image](./reference/archived_notes_page.png)
-      ![image](./reference/unarchive_button.png)
     data:
       requires:
       - DATA-NOTES
@@ -349,10 +362,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.2
+    pages:
+    - name: notes
+      reference: ./reference/note_coloring.png
     description: |-
       Clicking "Background color {title}"(role=button) on an existing note, or "Background color"(role=button) in Note editor, opens a palette where "Light green"(role=button) applies a visibly light-green background to the note itself. The existing-note control then identifies the selection as "Background color {title}: Light green"(role=button). Notes created with this selection autosave with the same background, and selected colors persist after reload. Changing only a palette or badge is insufficient; the reference guides the appearance without prescribing a CSS token or exact RGB value.
-
-      ![image](./reference/note_coloring.png)
     data:
       requires:
       - DATA-NOTES
@@ -383,10 +397,11 @@ children:
     dependencies:
     - REQ-2.2
     - REQ-3.1
+    pages:
+    - name: notes
+      reference: ./reference/assign_label_to_note.png
     description: |-
       Users open a note's More options menu and choose "Change labels"(role=menuitem), or click "Change labels"(role=button) in Note editor, to open "Note labels"(role=dialog). Each available label is selectable through "{label}"(role=checkbox). Users may assign one or more labels, or clear a checked label to remove its assignment; "Done"(role=button) closes the chooser and retains the selections. Assigned labels appear visibly on the note, drive sidebar filtering consistently, and persist after closing and reload. The default Reminders label is available when creating a note.
-
-      ![image](./reference/assign_label_to_note.png)
     data:
       requires:
       - DATA-NOTES
@@ -430,10 +445,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.2
+    pages:
+    - name: notes
+      reference: ./reference/pin_button.png
     description: |-
       Clicking "Pin {title}"(role=button) moves that regular active note into Pinned notes exactly once and changes its pin action to "Unpin {title}"(role=button) with pressed=true. Unpin moves it back to Other notes and restores Pin with pressed=false. In Note editor, "Pin note"(role=button) toggles pressed state so closing the editor creates the note with the chosen pin state. These transitions preserve content, never duplicate the note, and survive reload.
-
-      ![image](./reference/pin_button.png)
     data:
       requires:
       - DATA-NOTES
@@ -474,10 +490,11 @@ children:
     name: Create user labels
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: notes
+      reference: ./reference/manage_labels.png
     description: |-
       Clicking "Edit Labels"(role=button) opens "Edit Labels"(role=dialog). Users enter a nonempty name in "New label"(role=textbox) and click "Create label"(role=button), adding that label exactly once to management and the sidebar. Its editable name appears in "Label name {label}"(role=textbox), and the sidebar exposes "{label}"(role=button) for filtering. "Done"(role=button) closes management, and the created label persists after reload. Each scenario creates its own business identity; empty-name and duplicate-name validation are unspecified.
-
-      ![image](./reference/manage_labels.png)
     data:
       requires:
       - DATA-LABELS
@@ -497,10 +514,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.8
+    pages:
+    - name: notes
+      reference: ./reference/sidebar.png
     description: |-
       Clicking "{label}"(role=button) within "Sidebar"(role=navigation) displays only active notes assigned that label, each exactly once, and exposes current=true on the selected navigation action. "Notes"(role=button) clears the label filter and restores the complete active list. The always-present "Reminders"(role=button), with its own icon, filters by the default label in the same way. Both sidebar actions and labels on notes are identified by business identity rather than position.
-
-      ![image](./reference/sidebar.png)
     data:
       requires:
       - DATA-LABELS
@@ -542,10 +560,11 @@ children:
     dependencies:
     - REQ-3.1
     - REQ-2.8
+    pages:
+    - name: notes
+      reference: ./reference/manage_labels.png
     description: |-
       Clicking "Edit Labels"(role=button) opens "Edit Labels"(role=dialog), where each user label is identified by its business name. Users change "Label name {label}"(role=textbox) and click "Save label {label}"(role=button), whose original action identity remains available until saving. Rename updates the sidebar's "{label}"(role=button) and labels on notes without losing membership. Clicking "Delete label {label}"(role=button) removes the label from the sidebar and assigned notes while preserving their content. "Done"(role=button) closes management; renames and deletions persist after reload. Modifying Reminders is outside scope.
-
-      ![image](./reference/manage_labels.png)
     data:
       requires:
       - DATA-LABELS
@@ -583,10 +602,11 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.8
+    pages:
+    - name: search
+      reference: ./reference/search_suggested_filters.png
     description: |-
       Entering a keyword in "Search"(role=searchbox) filters active notes by case-insensitive title or content matches. Each matching fragment appears as "Highlight {keyword}"(role=region) within its note, displays only the matching text, and is visibly distinguished from surrounding text without requiring a particular element or CSS class. Searching st includes Study schedule by title and a separate note containing st only in its content, while excluding notes with neither match. Focusing Search displays "Suggested filters"(role=region); choosing "Reminders"(role=button) there filters active notes by the default label. Clearing Search and selecting Notes restores the full active list.
-
-      ![image](./reference/search_suggested_filters.png)
     data:
       requires:
       - DATA-NOTES
@@ -623,11 +643,13 @@ children:
     name: Open and save or cancel application settings
     type: ATOMIC
     dependencies: []
+    pages:
+    - name: notes
+      reference: ./reference/settings_dropdown.png
+    - name: notes
+      reference: ./reference/settings_settings.png
     description: |-
       Clicking "Settings menu"(role=button) opens a menu; choosing "Settings"(role=menuitem) opens "Settings"(role=dialog). Users configure "Add new items to the bottom"(role=checkbox) and "Move checked items to bottom"(role=checkbox), then click "Save"(role=button) to commit the options and close, or "Cancel"(role=button) to close without applying pending changes. Reopening reflects saved selections and discards canceled edits, and saved selections survive reload. These options do not introduce additional checklist or list-item behavior beyond the source.
-
-      ![image](./reference/settings_dropdown.png)
-      ![image](./reference/settings_settings.png)
     data:
       requires:
       - DATA-SETTINGS
@@ -648,11 +670,13 @@ children:
     type: ATOMIC
     dependencies:
     - REQ-2.2
+    pages:
+    - name: notes
+      reference: ./reference/home_page.png
+    - name: notes
+      reference: ./reference/list_view.png
     description: |-
       A fresh workspace displays a grid in "Notes"(role=region) with an accessible description identifying Grid view. Clicking "List view"(role=button) changes the same notes to a single-column list, updates that description to List view, and offers "Grid view"(role=button). Grid view restores the grid and List view action. At the evaluator desktop viewport, populated grid cards occupy multiple columns while list surfaces align in one column; switching preserves titles, content, and note count. Appearance follows the visual references.
-
-      ![image](./reference/home_page.png)
-      ![image](./reference/list_view.png)
     data:
       requires:
       - DATA-NOTES
