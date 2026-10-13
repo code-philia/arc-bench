@@ -1051,9 +1051,9 @@ children:
     type: FOLDER
     dependencies: []
     pages:
-      - name: flight_search
+      - name: home
         reference: ./reference/search.png
-      - name: flight_search
+      - name: flight_results
         reference: ./reference/search_panel.png
       - name: flight_results
         reference: ./reference/search_results.png
@@ -1074,7 +1074,7 @@ children:
         dependencies:
           - REQ-1.1
         pages:
-          - name: flight_search
+          - name: home
             reference: ./reference/search.png
         description: |-
           "One way"(role=radio) is initially selected, with "Add return"(role=button) available and "Return date"(role=textbox) absent. Selecting "Round trip"(role=radio) reveals Return date, while returning to One way hides it. "Multi-city"(role=radio) is also available.
@@ -1100,7 +1100,7 @@ children:
         dependencies:
           - REQ-1.1
         pages:
-          - name: flight_search
+          - name: home
             reference: ./reference/city_selection.png
         description: |-
           "Origin"(role=textbox) and "Destination"(role=textbox) accept cities; "Swap cities"(role=button) exchanges their values without searching. "City selection"(role=button) opens "City selection"(role=dialog), with its "City selection"(role=tab) choices: origin defaults to Popular with Chengdu, while the destination's GHIJ tab includes Guangzhou. Choosing a city closes the dialog and fills the city and airport code.
@@ -1141,9 +1141,9 @@ children:
         dependencies:
           - REQ-2.1
         pages:
-          - name: flight_search
+          - name: home
             reference: ./reference/date_selection.png
-          - name: flight_search
+          - name: home
             reference: ./reference/date_selection_2.png
         description: |-
           Opening "Departure date"(role=textbox) displays a calendar with daily fares and full-date actions. "2026-07-21"(role=button) shows ¥460 and sets departure before closing; "2026-07-18"(role=button) is disabled because it precedes July 19. "Add return"(role=button) selects "Round trip"(role=radio) and opens "Return date"(role=textbox). Selecting "2026-07-25"(role=button) after July 21 displays a four-day trip, while "2026-07-20"(role=button) is disabled as a return before departure.
@@ -1314,7 +1314,7 @@ children:
           - REQ-2.4
           - REQ-2.5
         pages:
-          - name: flight_search
+          - name: flight_results
             reference: ./reference/search_panel.png
         description: |-
           Flight results permits changing route criteria, "Departure date"(role=textbox), and "Cabin class"(role=combobox). "Update results"(role=button) after selecting July 22 and Economy retains the results view and updated criteria while refreshing "Flight list"(role=region) for that day.
@@ -1529,7 +1529,7 @@ children:
         dependencies:
           - REQ-2.7
         pages:
-          - name: flight_search
+          - name: flight_results
             reference: ./reference/search_panel.png
         description: |-
           Users can edit "Origin"(role=textbox), "Destination"(role=textbox), and "Departure date"(role=textbox) on results. "Update results"(role=button) queries the changed route rather than retaining old flights; Beihai–Mars City on July 23 shows the defined empty "Flight list"(role=region) with updated criteria.
@@ -2234,7 +2234,7 @@ children:
     type: FOLDER
     dependencies: []
     pages:
-      - name: orders
+      - name: home
         reference: ./reference/enter_order.png
       - name: orders
         reference: ./reference/order1.png
@@ -3229,7 +3229,7 @@ children:
     pages:
       - name: profile
         reference: ./reference/myinfo.png
-      - name: profile_edit
+      - name: profile
         reference: ./reference/modifyinfo.png
       - name: account_security
         reference: ./reference/safecenter.png
@@ -3279,7 +3279,7 @@ children:
         dependencies:
           - REQ-6.1
         pages:
-          - name: profile_edit
+          - name: profile
             reference: ./reference/modifyinfo.png
         description: |-
           Under "My information"(role=button), profile_edit clicks "Edit"(role=button) to open "Nickname"(role=textbox), "Real name"(role=textbox), "Gender"(role=combobox) with Female, and "Date of birth"(role=textbox). "Save"(role=button) persists submitted edits and displays the updated values.
@@ -3807,7 +3807,7 @@ children:
         dependencies:
           - REQ-1.3
         pages:
-          - name: services
+          - name: home
             reference: ./reference/moreservice.png
           - name: reimbursement_vouchers
             reference: ./reference/reimbursement2.png
@@ -3847,7 +3847,7 @@ children:
         pages:
           - name: reimbursement_vouchers
             reference: ./reference/reimbursement2.png
-          - name: services
+          - name: home
         description: |-
           More services and Reimbursement vouchers expose Pending, In progress, and "Completed"(role=tab). The voucher_read account's "Completed vouchers"(role=region) contains exactly paid completed CTRIP20260718004 with its issued voucher. "Issuance rules"(role=region) communicates availability within 365 days of payment.
 
@@ -3931,7 +3931,7 @@ children:
               - keyword: THEN
                 content: Pending vouchers contains no records and displays No vouchers available.
         pages:
-          - name: services
+          - name: home
           - name: reimbursement_vouchers
       - id: REQ-8.4
         name: Keep eligible reimbursement orders scoped to account
@@ -3965,7 +3965,7 @@ children:
                 content: Pending vouchers contains no records, displays No vouchers available and exposes neither
                   other account's order.
         pages:
-          - name: services
+          - name: home
           - name: reimbursement_vouchers
   - id: REQ-9
     name: Browse airport travel information
@@ -4134,7 +4134,7 @@ children:
         dependencies:
           - REQ-9.1
         pages:
-          - name: services
+          - name: home
             reference: ./reference/moreservice.png
           - name: airport_guide
             reference: ./reference/airport1.png

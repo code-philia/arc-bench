@@ -663,7 +663,7 @@ children:
         dependencies:
           - REQ-1.1
         pages:
-          - name: register
+          - name: questions
             reference: ./reference/sign-up.jpeg
         description: |-
           Clicking "Sign up"(role=button) opens "Sign up"(role=region) with Join Stack Overflow heading, "Email"(role=textbox), "Password"(role=textbox), password help, consent text, and a Log in entry. Submitting a unique valid email and password creates the account and signs it in automatically, exposing "<registered email>"(role=button) as the profile action when no display name was entered. An existing email shows Email is already in use; a short password shows visible requirements including a minimum of eight characters. Rejections retain the form without an authenticated session. Registration emails use deterministic run, worker, and case suffixes; verification is not added.
@@ -746,7 +746,7 @@ children:
         dependencies:
           - REQ-2.3
         pages:
-          - name: profile_edit
+          - name: profile
             reference: ./reference/edit-profile.jpeg
         description: |-
           The profile_editor account clicks "Edit profile"(role=button) to open Edit your profile with "Display name"(role=textbox), "Full name"(role=textbox), "Location"(role=textbox), "Title"(role=textbox), "About me"(role=textbox), "Website"(role=textbox), "X"(role=textbox), and "GitHub"(role=textbox) prefilled from DATA-ACCOUNTS. "Save and copy changes to all public communities"(role=button) saves the supplied values, updates the display name, location, title, and about text in "Public profile"(role=region), and shows a success status. Source examples www.example.dev and github.com/example are accepted; an added https:// prefix is allowed. Reopening confirms every submitted field, including full name and URLs. Preview is required only if supplied, and unspecified length or URL thresholds are not invented.
@@ -783,7 +783,7 @@ children:
         pages:
           - name: login
             reference: ./reference/login.jpeg
-          - name: register
+          - name: questions
             reference: ./reference/sign-up.jpeg
         description: |-
           The anonymous user can move from "Log in"(role=region) to "Sign up"(role=region) through its Sign up entry and return through Log in. Each visible form provides correctly labeled "Email"(role=textbox) and "Password"(role=textbox), with "Sign up"(role=button) or "Log in"(role=button) as its matching submit action. Switching forms preserves anonymous status and adds no social login behavior.
@@ -811,7 +811,7 @@ children:
           - REQ-2.2
           - REQ-2.1
         pages:
-          - name: register
+          - name: questions
             reference: ./reference/sign-up.jpeg
         description: |-
           An account created by entering "Email"(role=textbox) and "Password"(role=textbox) and submitting "Sign up"(role=button) can authenticate with those credentials in a fresh browser context through "Log in"(role=button). Successful login displays the homepage feed and "<registered email>"(role=button) as the profile action, demonstrating that registration and credential login compose without a verification workflow.
@@ -928,7 +928,7 @@ children:
           - REQ-3.1
           - REQ-2.1
         pages:
-          - name: ask_question
+          - name: question_editor
             reference: ./reference/ask-question-page.jpeg
           - name: questions
         description: |-
@@ -1000,7 +1000,7 @@ children:
           - REQ-3.3
           - REQ-3.2
         pages:
-          - name: edit_question
+          - name: question_editor
             reference: ./reference/edit-question.jpeg
           - name: questions
         description: |-
@@ -1180,7 +1180,7 @@ children:
           - REQ-3.1
           - REQ-3.4
         pages:
-          - name: edit_question
+          - name: question_editor
             reference: ./reference/edit-question.jpeg
           - name: questions
         description: |-
@@ -1937,7 +1937,7 @@ children:
     type: FOLDER
     dependencies: []
     pages:
-      - name: search
+      - name: questions
         reference: ./reference/search-and-filter.jpeg
     description: |-
       Public tags and search; watching and saved custom filters are personal authenticated preferences. General keyword/tag/user/date criteria remain capability context; executable examples cover react state and python unanswered newest.
@@ -2015,7 +2015,7 @@ children:
         dependencies:
           - REQ-1.1
         pages:
-          - name: search
+          - name: questions
             reference: ./reference/search-and-filter.jpeg
         description: |-
           Entering react state in the banner's "Search"(role=searchbox) displays real-time "Search suggestions"(role=region). Pressing Enter opens "Search results"(role=region) with relevant public question links ranked by relevance. The initial index includes one known React-state match and nonmatching retry and python posts, which are excluded. Keyword, tag, user, and date criteria remain general capability context; unspecified syntax and ranking examples are not invented.

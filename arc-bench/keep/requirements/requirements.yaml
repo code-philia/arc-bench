@@ -683,7 +683,7 @@ children:
         dependencies:
           - REQ-2.8
         pages:
-          - name: search
+          - name: notes
             reference: ./reference/search_suggested_filters.png
         description: |-
           Entering a keyword in "Search"(role=searchbox) filters active notes by case-insensitive title or content matches. Each matching fragment appears as "Highlight {keyword}"(role=region) within its note, displays only the matching text, and is visibly distinguished from surrounding text without requiring a particular element or CSS class. Searching st includes Study schedule by title and a separate note containing st only in its content, while excluding notes with neither match. Focusing Search displays "Suggested filters"(role=region); choosing "Reminders"(role=button) there filters active notes by the default label. Clearing Search and selecting Notes restores the full active list.

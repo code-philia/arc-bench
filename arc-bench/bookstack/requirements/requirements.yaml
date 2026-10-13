@@ -279,7 +279,7 @@ children:
         dependencies:
           - REQ-1.1
         pages:
-          - name: create_shelf
+          - name: shelf_form
             reference: ./reference/create_shelf.png
         description: |-
           While logged out, users open the bootstrap shelf through Shelves and Shelf list, then click "New Shelf"(role=button) to enter "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox). "Save Shelf"(role=button) creates exactly one shelf with that metadata and returns to Shelf list; the metadata persists across navigation and reload. "Cancel"(role=button) instead returns to Shelfs without creating the entered object. Runtime names may append the evaluator's run, worker, and case identity to source examples.
@@ -326,7 +326,7 @@ children:
           - REQ-4.2
           - REQ-4.3
         pages:
-          - name: edit_shelf
+          - name: shelf_form
             reference: ./reference/edit_shelve.png
         description: |-
           On the selected shelf's details, "Edit"(role=button) opens "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox) prefilled with saved values. "Save Shelf"(role=button) updates that same shelf and returns to its details with the updated heading and description; changes survive reload. "Cancel"(role=button) discards all pending changes and returns to the unchanged details. Related-book editing is also supported.
@@ -489,7 +489,7 @@ children:
         dependencies:
           - REQ-1.1
         pages:
-          - name: create_book
+          - name: book_form
             reference: ./reference/create_book.png
         description: |-
           While logged out, users open Books and click "Create New Book"(role=button), then enter "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox). "Save Book"(role=button) creates one book with that metadata and opens its details with the saved name and description. Description supports rich text, a cover is optional, and a default page template can be chosen. "Cancel"(role=button) returns to Books without creating the entered book. Saved metadata survives navigation and reload; runtime names may append evaluator run, worker, and case identity to source examples.
@@ -527,7 +527,7 @@ children:
           - REQ-5.2
           - REQ-5.3
         pages:
-          - name: edit_book
+          - name: book_form
             reference: ./reference/edit_book.png
         description: |-
           On the selected book's details, "Edit"(role=button) opens "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox) prefilled with their saved values. "Save Book"(role=button) changes that same book and returns to its details with the updated heading and description, persisting after reload. "Cancel"(role=button) returns to the unchanged details and discards all pending edits.
@@ -606,7 +606,7 @@ children:
         pages:
           - name: shelf
             reference: ./reference/shelf.png
-          - name: create_book
+          - name: book_form
             reference: ./reference/create_book.png
           - name: book
             reference: ./reference/book.png
