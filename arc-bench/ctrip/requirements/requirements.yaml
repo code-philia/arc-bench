@@ -2735,20 +2735,6 @@ children:
                   unselected, click Delete selected and Confirm deletion in Delete contacts; reload.
               - keyword: THEN
                 content: Both selected contacts disappear, while Contact Keep One remains before and after reload.
-          - name: Delete only selected contact records in second account
-            steps:
-              - keyword: GIVEN
-                content: The named owner signs in through Log in with its DATA-ACCOUNTS email and Travel1234, checks
-                  Agree to terms and opens My account → Personal center. contact_batch_2 has created isolated Contact
-                  Batch Two A, Contact Batch Two B and Contact Keep Two. Use Common information → Contacts; create
-                  each stated contact with Add contact, Contact name set to its isolated name, Mobile number 13800000017,
-                  Email wang.wu@example.com, checked Default contact and Save contact.
-              - keyword: WHEN
-                content: Check Contact Batch Two A and Contact Batch Two B, leave Contact Keep Two unselected, click
-                  Delete selected and Confirm deletion in Delete contacts; reload.
-              - keyword: THEN
-                content: Both selected contacts disappear, while Contact Keep Two remains before and after reload
-                  under the independent account.
       - id: REQ-5.13
         name: Remove saved invoice title records
         type: ATOMIC

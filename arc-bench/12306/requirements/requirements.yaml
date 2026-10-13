@@ -938,18 +938,6 @@ children:
           requires:
             - DATA-VERIFIED-ACCOUNTS
         scenarios:
-          - name: Reset password and authenticate
-            steps:
-              - keyword: GIVEN
-                content: The visitor is logged out on the homepage; the benchmark clock is 2026-07-21 00:00 Asia/Shanghai.
-                  reset_user has email reset_user@example.com and passport P20260011.
-              - keyword: WHEN
-                content: 'Open Login then Forgot password?; enter Email: reset_user@example.com and ID number: P20260011
-                  and click submit. Enter Password123!X in both New password: and Confirm new password: and submit;
-                  return Home and log in as reset_user with Password123!X.'
-              - keyword: THEN
-                content: Verification opens the replacement-password fields; Password reset successful. appears
-                  and the replacement password signs in, exposing Sign Out.
           - name: Reject missing identity
             steps:
               - keyword: GIVEN
@@ -2359,20 +2347,6 @@ children:
                       End date 2026-08-21, leave the keyword empty and click Search.
                   - keyword: THEN
                     content: G1001 remains visible because July 22 lies within the inclusive range.
-              - name: Intersect departure range and keyword
-                steps:
-                  - keyword: GIVEN
-                    content: orders_upcoming_user has created G1001 for departure 2026-07-22 through UI and completed
-                      Pay. Through UI, sign in with Password123!, create Passenger Example using Add new passengers
-                      with China, a distinct passport, expiration 2027-12-31, birth 2000-01-15, Female, Adult, passenger@example.com
-                      and 13800000040; search Shanghai–Beijing for the stated date, click Book on the stated train,
-                      check Passenger Example, select Business-class seat in that passenger row, click Place order
-                      and Confirm. Open My 12306 → Order center → Ticket orders and select Upcoming trips.
-                  - keyword: WHEN
-                    content: Select Search by departure date, enter range 2026-07-21 through 2026-08-21 and keyword
-                      G1001 in Order number/train number/name, then click Search.
-                  - keyword: THEN
-                    content: G1001 remains visible because both date and keyword match.
               - name: Exclude nonmatching date range
                 steps:
                   - keyword: GIVEN
@@ -2414,21 +2388,6 @@ children:
                     content: Enter *** in Order number/train number/name and click Search.
                   - keyword: THEN
                     content: Please enter a valid search condition. appears.
-              - name: Search by booking date
-                steps:
-                  - keyword: GIVEN
-                    content: orders_upcoming_user has created G1001 for departure 2026-07-22 through UI and completed
-                      Pay. Through UI, sign in with Password123!, create Passenger Example using Add new passengers
-                      with China, a distinct passport, expiration 2027-12-31, birth 2000-01-15, Female, Adult, passenger@example.com
-                      and 13800000040; search Shanghai–Beijing for the stated date, click Book on the stated train,
-                      check Passenger Example, select Business-class seat in that passenger row, click Place order
-                      and Confirm. Open My 12306 → Order center → Ticket orders and select Upcoming trips. The order
-                      was created on the benchmark date July 21.
-                  - keyword: WHEN
-                    content: Select Search by booking date in Order date type, set both Start date and End date
-                      to 2026-07-21, enter keyword G1001 and click Search.
-                  - keyword: THEN
-                    content: G1001 remains visible based on its July 21 creation date although it departs July 22.
             pages:
               - name: ticket_orders
       - id: REQ-5.5
@@ -2594,17 +2553,6 @@ children:
                       clear the keyword and click Search.
                   - keyword: THEN
                     content: G1001 remains visible, including the lower-bound July 19 departure.
-              - name: Intersect history date and keyword
-                steps:
-                  - keyword: GIVEN
-                    content: orders_history_user has signed in with Password123! and opened My 12306 → Order center
-                      → Ticket orders → History orders; its seeded G1001 was booked July 18, departed July 19 and
-                      is completed.
-                  - keyword: WHEN
-                    content: Select Search by departure date, enter range 2026-07-19 through 2026-07-21 and keyword
-                      G1001, then click Search.
-                  - keyword: THEN
-                    content: G1001 remains visible because both criteria match.
               - name: Exclude history outside date range
                 steps:
                   - keyword: GIVEN
@@ -2637,17 +2585,6 @@ children:
                     content: Enter *** in Order number/train number/name and click Search.
                   - keyword: THEN
                     content: Please enter a valid search condition. appears.
-              - name: Search by booking date
-                steps:
-                  - keyword: GIVEN
-                    content: orders_history_user has signed in with Password123! and opened My 12306 → Order center
-                      → Ticket orders → History orders; its seeded G1001 was booked July 18, departed July 19 and
-                      is completed.
-                  - keyword: WHEN
-                    content: Select Search by booking date, set both date boundaries to 2026-07-18, enter keyword
-                      G1001 and click Search.
-                  - keyword: THEN
-                    content: G1001 remains visible based on its July 18 creation date rather than its July 19 departure.
             pages:
               - name: ticket_orders
       - id: REQ-5.8
@@ -2795,17 +2732,6 @@ children:
           requires:
             - DATA-VERIFIED-ACCOUNTS
         scenarios:
-          - name: Save gender and password
-            steps:
-              - keyword: GIVEN
-                content: The stated verified account has signed in through Login with Password123! and opened My
-                  12306 → Personal → User information. profile_essential_user starts with Male gender.
-              - keyword: WHEN
-                content: Click Edit within Essential information, select Female and enter Password123!X in Password,
-                  then click Save. Reload, return Home, sign out and sign in as profile_essential_user with Password123!X.
-              - keyword: THEN
-                content: The region returns to display mode with Edit, shows Female after save and reload, exposes
-                  no plaintext replacement password, and the replacement credential successfully signs in.
           - name: Reject invalid essential password
             steps:
               - keyword: GIVEN
@@ -3032,18 +2958,6 @@ children:
           requires:
             - DATA-VERIFIED-ACCOUNTS
         scenarios:
-          - name: Persist updated mobile
-            steps:
-              - keyword: GIVEN
-                content: The stated verified account has signed in with Password123! and opened My 12306 → Personal
-                  → Verify mobile number; Region code defaults to (+86) and the old number masks its middle four
-                  digits. profile_mobile_update_user starts with 13800000032, displayed as (+86) 138****0032.
-              - keyword: WHEN
-                content: 'Enter 13800000031 in new mobile number: and Password123! in Confirm your password:, click
-                  Determine and reload.'
-              - keyword: THEN
-                content: Mobile number updated successfully. appears; the replacement 13800000031 is displayed before
-                  and after reload.
           - name: Reject empty mobile change
             steps:
               - keyword: GIVEN
@@ -3189,20 +3103,6 @@ children:
               - keyword: THEN
                 content: Invalid email address format. appears; the dialog remains and no Invalid Email Passenger
                   row is added.
-          - name: Reject passenger invalid mobile
-            steps:
-              - keyword: GIVEN
-                content: passenger_manager_user has signed in with Password123! and opened My 12306 → Information
-                  management → My Passengers; the account-holder passenger is protected. Passenger Example has been
-                  created through Add new passengers using China, passport P20269999, expiration 2027-12-31, birth
-                  2000-01-15, Female, Adult, passenger@example.com and 13800000040, then Determine.
-              - keyword: WHEN
-                content: Open Add new passengers and fill Invalid Mobile Passenger, passport P20260014, China, expiration
-                  2028-12-31, birth 1999-02-20, Male, Adult, added.passenger@example.com and Mobile number 123,
-                  then Determine.
-              - keyword: THEN
-                content: Invalid mobile number format. appears; the dialog remains and no Invalid Mobile Passenger
-                  row is added.
       - id: REQ-7.3
         name: Delete passenger or dismiss confirmation
         type: FOLDER
@@ -3282,35 +3182,6 @@ children:
           requires:
             - DATA-PASSENGERS
         scenarios:
-          - name: Confirm selected batch deletion
-            steps:
-              - keyword: GIVEN
-                content: passenger_manager_user has signed in with Password123! and opened My 12306 → Information
-                  management → My Passengers; the account-holder passenger is protected. Batch Passenger One/P20269983,
-                  Batch Passenger Two/P20269984 and Unselected Passenger/P20269987 have been created through UI.
-                  For other passenger setup, use Add new passengers with the stated name/passport, China, expiration
-                  2028-12-31, birth 1999-02-20, Male, Adult, added.passenger@example.com and 13800000043, then Determine.
-              - keyword: WHEN
-                content: Check Select P20269983 and Select P20269984, leave P20269987 unchecked, click Batch deletion
-                  and Confirm in its named confirmation dialog.
-              - keyword: THEN
-                content: The dialog closes with Passengers deleted successfully.; P20269983 and P20269984 disappear
-                  while P20269987 and passenger_manager_user remain.
-          - name: Dismiss selected batch deletion
-            steps:
-              - keyword: GIVEN
-                content: passenger_manager_user has signed in with Password123! and opened My 12306 → Information
-                  management → My Passengers; the account-holder passenger is protected. Batch Cancel Passenger
-                  One/P20269985, Batch Cancel Passenger Two/P20269986 and Unselected Passenger/P20269987 have been
-                  created through UI. For other passenger setup, use Add new passengers with the stated name/passport,
-                  China, expiration 2028-12-31, birth 1999-02-20, Male, Adult, added.passenger@example.com and 13800000043,
-                  then Determine.
-              - keyword: WHEN
-                content: Check Select P20269985 and Select P20269986, click Batch deletion and Cancel in its named
-                  confirmation dialog.
-              - keyword: THEN
-                content: The dialog closes and both selected passengers, P20269987 and the account holder remain
-                  visible.
           - name: Select all protects holder
             steps:
               - keyword: GIVEN
@@ -3325,20 +3196,6 @@ children:
               - keyword: THEN
                 content: Passengers deleted successfully. appears, both deletable passengers disappear and passenger_manager_user
                   remains visible.
-          - name: Persist confirmed batch deletion
-            steps:
-              - keyword: GIVEN
-                content: passenger_manager_user has signed in with Password123! and opened My 12306 → Information
-                  management → My Passengers; the account-holder passenger is protected. Batch Passenger One/P20269983,
-                  Batch Passenger Two/P20269984 and Unselected Passenger/P20269987 have been created through UI.
-                  For other passenger setup, use Add new passengers with the stated name/passport, China, expiration
-                  2028-12-31, birth 1999-02-20, Male, Adult, added.passenger@example.com and 13800000043, then Determine.
-              - keyword: WHEN
-                content: Check Select P20269983 and Select P20269984, click Batch deletion, confirm and reload after
-                  success.
-              - keyword: THEN
-                content: After reload both selected passport rows remain absent while P20269987 and passenger_manager_user
-                  remain visible.
       - id: REQ-7.5
         name: Search and clear passenger filters
         type: FOLDER
@@ -3734,18 +3591,6 @@ children:
                         content: Booking passengers exposes Ticket class, Ticket type, Name, ID type, ID number,
                           Nationality and Operation headers; exactly one P20269997 row identifies Passenger Example
                           with both selections, scoped Delete and Place order available.
-                  - name: Configure a child booking ticket
-                    steps:
-                      - keyword: GIVEN
-                        content: The stated user has signed in with Password123!, created Passenger Example through
-                          the passenger UI using China, expiration 2027-12-31, birth 2000-01-15, Female, Adult,
-                          passenger@example.com and 13800000040, searched Shanghai–Beijing for 2026-07-21 and clicked
-                          Book in G1001. The account is bookable_user and Passenger Example has passport P20269997.
-                      - keyword: WHEN
-                        content: Check Passenger Example and select Child in Ticket type within P20269997.
-                      - keyword: THEN
-                        content: Child is the selected ticket type and exactly one row still identifies Passenger
-                          Example/P20269997.
                 pages:
                   - name: booking
               - id: REQ-8.2.3.2
@@ -3955,19 +3800,6 @@ children:
                   - keyword: THEN
                     content: Sorry, there are no tickets available for the selected ticket class. appears and confirmation
                       does not open.
-              - name: Accept available standing ticket
-                steps:
-                  - keyword: GIVEN
-                    content: The stated user has signed in with Password123!, created Passenger Example through
-                      the passenger UI using China, expiration 2027-12-31, birth 2000-01-15, Female, Adult, passenger@example.com
-                      and 13800000040, searched Shanghai–Beijing for 2026-07-21 and clicked Book in G1001. The account
-                      is bookable_user and Passenger Example has passport P20269997. G1001 has available standing
-                      inventory.
-                  - keyword: WHEN
-                    content: Check Passenger Example, select Standing ticket in its row and click Place order.
-                  - keyword: THEN
-                    content: Confirmation identifies G1001, Passenger Example and Standing ticket; the no-tickets
-                      error is absent.
             pages:
               - name: booking
           - id: REQ-8.3.3

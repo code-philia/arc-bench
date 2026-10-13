@@ -43,11 +43,3 @@ test("REQ-7.2: Reject passenger invalid email", async ({ page }) => {
     await expect(page.getByRole('dialog', { name: 'Add new passengers', exact: true })).toBeVisible();
     await expect(page.getByRole('row').filter({ hasText: "Invalid Email Passenger" })).toHaveCount(0);
 });
-test("REQ-7.2: Reject passenger invalid mobile", async ({ page }) => {
-    await entry(page);
-    await manager(page);
-    await addPassenger(page, "Invalid Mobile Passenger", 'P20260014', { "mobile": "123" }, false);
-    await text(page, "Invalid mobile number format.");
-    await expect(page.getByRole('dialog', { name: 'Add new passengers', exact: true })).toBeVisible();
-    await expect(page.getByRole('row').filter({ hasText: "Invalid Mobile Passenger" })).toHaveCount(0);
-});

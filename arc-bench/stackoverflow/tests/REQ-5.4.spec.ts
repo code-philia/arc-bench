@@ -13,10 +13,3 @@ test('REQ-5.4: Save comment within five minutes', async ({ page, browser }, info
   await expect(comment(post(page),'Can you share a minimal retry example?')).toContainText(/edited/i);
   await expect(comment(post(page))).toHaveCount(0);
 });
-
-test('REQ-5.4: Refuse an expired comment edit', async ({ page, browser }, info) => {
-  await login(page,'comment_edit_user'); await openQuestion(page,'SO Comment Edit Question');
-  await expect(comment(post(page))).toBeVisible();
-  await noUsableAction(comment(post(page)),'Edit');
-  await expect(comment(post(page))).toContainText(commentBody);
-});

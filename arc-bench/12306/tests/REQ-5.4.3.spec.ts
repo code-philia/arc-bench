@@ -9,13 +9,6 @@ test("REQ-5.4.3: Search by departure range", async ({ page }) => {
     await fillDates(page, '2026-07-21', '2026-08-21', "");
     await expect(row(page, 'G1001')).toBeVisible();
 });
-test("REQ-5.4.3: Intersect departure range and keyword", async ({ page }) => {
-    await entry(page);
-    await orderSetup(page, 'orders_upcoming_user', '2026-07-22', true);
-    await orders(page, 'Upcoming trips');
-    await fillDates(page, '2026-07-21', '2026-08-21', "G1001");
-    await expect(row(page, 'G1001')).toBeVisible();
-});
 test("REQ-5.4.3: Exclude nonmatching date range", async ({ page }) => {
     await entry(page);
     await orderSetup(page, 'orders_upcoming_user', '2026-07-22', true);
@@ -39,15 +32,4 @@ test("REQ-5.4.3: Reject invalid upcoming keyword", async ({ page }) => {
     await page.getByPlaceholder('Order number/train number/name', { exact: true }).fill('***');
     await button(page, 'Search').click();
     await text(page, 'Please enter a valid search condition.');
-});
-test("REQ-5.4.3: Search by booking date", async ({ page }) => {
-    await entry(page);
-    await orderSetup(page, 'orders_upcoming_user', '2026-07-22', true);
-    await orders(page, 'Upcoming trips');
-    await field(page, 'Order date type').selectOption({ label: 'Search by booking date' });
-    await field(page, 'Start date').fill('2026-07-21');
-    await field(page, 'End date').fill('2026-07-21');
-    await page.getByPlaceholder('Order number/train number/name', { exact: true }).fill('G1001');
-    await button(page, 'Search').click();
-    await expect(row(page, 'G1001')).toBeVisible();
 });

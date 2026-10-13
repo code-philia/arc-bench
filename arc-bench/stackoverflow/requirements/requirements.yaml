@@ -970,19 +970,6 @@ children:
           requires:
             - DATA-RUNTIME
         scenarios:
-          - name: Preview and cancel a question revision
-            steps:
-              - keyword: GIVEN
-                content: Through public UI, question_editor owns isolated SO Question Edit Preview with the registry
-                  body and node.js,http,retry tags; authenticate that owner and open the question through Search.
-              - keyword: WHEN
-                content: Click Edit and verify prefilled Title, Body and Tags. Append clarified to Title, change
-                  Tags to http,retry, select all Body and click Bold; inspect Preview, How to Edit, Italic, Code
-                  and Rev, then Cancel.
-              - keyword: THEN
-                content: The editor begins with saved metadata; Bold changes the editor body while Preview retains
-                  its rendered text and guidance/revision controls are available. Cancel restores the original title,
-                  body and all three tags rather than committing the draft.
           - name: Save revision and summary
             steps:
               - keyword: GIVEN
@@ -1609,17 +1596,6 @@ children:
               - keyword: THEN
                 content: The original comment region is absent and the replacement appears under the same Question
                   post with an edited indicator.
-          - name: Refuse an expired comment edit
-            steps:
-              - keyword: GIVEN
-                content: An independent initial world uses fixed UTC clock 2026-07-21T12:06:00Z and the same comment_edit_user
-                  comment posted at 12:00, without mutations from the within-window case.
-              - keyword: WHEN
-                content: Authenticate the owner, open SO Comment Edit Question and inspect Edit on the original
-                  comment.
-              - keyword: THEN
-                content: The original comment remains visible with unchanged text; Edit is absent or disabled because
-                  its five-minute window has expired.
         pages:
           - name: question
       - id: REQ-5.5

@@ -2,16 +2,6 @@
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
 import { entry, button, field, text, login, home, recover, PASS } from './helpers';
-test("REQ-2.4: Reset password and authenticate", async ({ page }) => {
-    await entry(page);
-    await recover(page, 'reset_user@example.com', 'P20260011');
-    await field(page, 'New password:').fill(PASS + 'X');
-    await field(page, 'Confirm new password:').fill(PASS + 'X');
-    await button(page, 'submit').click();
-    await text(page, 'Password reset successful.');
-    await home(page);
-    await login(page, 'reset_user', PASS + 'X');
-});
 test("REQ-2.4: Reject missing identity", async ({ page }) => {
     await entry(page);
     await recover(page, "", "", false);

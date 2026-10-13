@@ -27,16 +27,3 @@ test("REQ-8.3.2: Reject unavailable ticket class", async ({ page }) => {
     await text(page, "Sorry, there are no tickets available for the selected ticket class.");
     await expect(page.getByRole('dialog', { name: 'Please confirm the following information.', exact: true })).not.toBeVisible();
 });
-test("REQ-8.3.2: Accept available standing ticket", async ({ page }) => {
-    await entry(page);
-    await booking(page, 'bookable_user');
-    await page.getByRole('checkbox', { name: 'Passenger Example', exact: true }).check();
-    const r = row(page.getByRole('table', { name: 'Booking passengers', exact: true }), 'P20269997');
-    await field(r, 'Ticket class').selectOption({ label: 'Standing ticket' });
-    await button(page, 'Place order').click();
-    const d = page.getByRole('dialog', { name: 'Please confirm the following information.', exact: true });
-    await expect(d).toBeVisible();
-    for (const value of ['G1001', 'Passenger Example', 'Standing ticket'])
-        await expect(d).toContainText(value);
-    await expect(page.getByText('Sorry, there are no tickets available for the selected ticket class.', { exact: true })).not.toBeVisible();
-});

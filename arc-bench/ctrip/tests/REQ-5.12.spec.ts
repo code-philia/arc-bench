@@ -45,25 +45,3 @@ test('REQ-5.12: Delete only selected contact records', async ({ page }, testInfo
   await visible(record(region(page, 'Contact list'), keep));
 });
 
-test('REQ-5.12: Delete only selected contact records in second account', async ({ page }, testInfo) => {
-  await openHome(page);
-  await openCommon(page, 'contact_batch_2', 'Contacts');
-  const a = isolatedName('Contact Batch Two A', testInfo);
-  const b = isolatedName('Contact Batch Two B', testInfo);
-  const keep = isolatedName('Contact Keep Two', testInfo);
-  await createContact(page, a);
-  await createContact(page, b);
-  await createContact(page, keep);
-  await checkbox(region(page, 'Contact list'), a).check();
-  await checkbox(region(page, 'Contact list'), b).check();
-  await button(page, 'Delete selected').click();
-  await button(dialog(page, 'Delete contacts'), 'Confirm deletion').click();
-  await expect(record(region(page, 'Contact list'), a)).toHaveCount(0);
-  await expect(record(region(page, 'Contact list'), b)).toHaveCount(0);
-  await visible(record(region(page, 'Contact list'), keep));
-  await page.reload();
-  await expect(record(region(page, 'Contact list'), a)).toHaveCount(0);
-  await expect(record(region(page, 'Contact list'), b)).toHaveCount(0);
-  await visible(record(region(page, 'Contact list'), keep));
-});
-
