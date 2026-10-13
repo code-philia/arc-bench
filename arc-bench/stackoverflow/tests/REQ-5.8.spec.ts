@@ -1,12 +1,19 @@
-import { test, expect, login, openQuestion, post, comment, createQuestion, createComment, noUsableAction } from './helpers';
-import { commentBody } from './fixtures/data';
+import { test, expect, login, openQuestion, action, field, region, post, comment, createQuestion, createComment } from './helpers';
+import {  } from './fixtures/data';
 
 // requirement: REQ-5.8
 
-test('REQ-5.8: Refuse another user comment maintenance', async ({ page, browser }, info) => {
-  const title=await createQuestion(browser,info,'question_creator','SO Protected Comment Ownership');
-  await createComment(browser,title,'helpful_user'); await login(page,'stack_user'); await openQuestion(page,title);
-  const target=comment(post(page));
-  await noUsableAction(target,'Edit'); await noUsableAction(target,'Delete');
-  await expect(target).toContainText(commentBody); await expect(target).toContainText('Helpful User');
+test('REQ-5.8: Attach a nested reply to its parent', async ({ page, browser }, info) => {
+  const title=await createQuestion(browser,info,'question_creator','SO Comment Reply Question');
+  await createComment(browser,title,'helpful_user');
+  await login(page,'comment_reply_user'); await openQuestion(page,title);
+  const parent=comment(post(page));
+  await expect(parent).toContainText('Helpful User');
+  await action(parent,'Reply').click();
+  await field(parent,'Reply').fill('Thanks, I will add the retry case.');
+  await action(parent,'Add Reply').click();
+  await expect(region(parent,'Replies')).toContainText('Thanks, I will add the retry case.');
+  await expect(region(parent,'Replies')).toContainText('@Helpful User');
+  await page.reload();
+  await expect(region(comment(post(page)),'Replies')).toContainText('Thanks, I will add the retry case.');
 });

@@ -1,19 +1,15 @@
-import { test, expect, login, openQuestion, action, field, region, post, comment, createQuestion, createComment } from './helpers';
+import { test, expect, login, openQuestion, post, answer, comment, publishComment, createQuestion, createAnswer } from './helpers';
 import {  } from './fixtures/data';
 
 // requirement: REQ-5.7
 
-test('REQ-5.7: Attach a nested reply to its parent', async ({ page, browser }, info) => {
-  const title=await createQuestion(browser,info,'question_creator','SO Comment Reply Question');
-  await createComment(browser,title,'helpful_user');
-  await login(page,'comment_reply_user'); await openQuestion(page,title);
-  const parent=comment(post(page));
-  await expect(parent).toContainText('Helpful User');
-  await action(parent,'Reply').click();
-  await field(parent,'Reply').fill('Thanks, I will add the retry case.');
-  await action(parent,'Add Reply').click();
-  await expect(region(parent,'Replies')).toContainText('Thanks, I will add the retry case.');
-  await expect(region(parent,'Replies')).toContainText('@Helpful User');
+test('REQ-5.7: Publish in the answer thread', async ({ page, browser }, info) => {
+  const title=await createQuestion(browser,info,'question_creator','SO Answer Comment Question');
+  await createAnswer(browser,title);
+  await login(page,'answer_comment_user'); await openQuestion(page,title);
+  await publishComment(answer(page));
+  await expect(comment(answer(page))).toContainText('Stack User');
+  await expect(comment(answer(page))).toContainText(/2026|ago|just now/);
+  await expect(comment(post(page))).toHaveCount(0);
   await page.reload();
-  await expect(region(comment(post(page)),'Replies')).toContainText('Thanks, I will add the retry case.');
 });

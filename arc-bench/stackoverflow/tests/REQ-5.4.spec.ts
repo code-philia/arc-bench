@@ -1,14 +1,22 @@
-import { test, expect, login, openQuestion, action, post, comment, createQuestion, createComment } from './helpers';
-import { body } from './fixtures/data';
+import { test, expect, login, openQuestion, action, field, post, comment, noUsableAction } from './helpers';
+import { commentBody } from './fixtures/data';
 
 // requirement: REQ-5.4
 
-test('REQ-5.4: Remove comment without confirmation', async ({ page, browser }, info) => {
-  const title=await createQuestion(browser,info,'question_creator','SO Comment Delete Question');
-  await createComment(browser,title,'comment_delete_user');
-  await login(page,'comment_delete_user'); await openQuestion(page,title);
-  await action(comment(post(page)),'Delete').click();
+test('REQ-5.4: Save comment within five minutes', async ({ page, browser }, info) => {
+  await login(page,'comment_edit_user'); await openQuestion(page,'SO Comment Edit Question');
+  const original=comment(post(page));
+  await action(original,'Edit').click();
+  await expect(field(original,'Comment')).toHaveValue(commentBody);
+  await field(original,'Comment').fill('Can you share a minimal retry example?');
+  await field(original,'Comment').press('Enter');
+  await expect(comment(post(page),'Can you share a minimal retry example?')).toContainText(/edited/i);
   await expect(comment(post(page))).toHaveCount(0);
-  await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page.getByRole('heading',{name:title,exact:true})).toBeVisible();
+});
+
+test('REQ-5.4: Refuse an expired comment edit', async ({ page, browser }, info) => {
+  await login(page,'comment_edit_user'); await openQuestion(page,'SO Comment Edit Question');
+  await expect(comment(post(page))).toBeVisible();
+  await noUsableAction(comment(post(page)),'Edit');
+  await expect(comment(post(page))).toContainText(commentBody);
 });

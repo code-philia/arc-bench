@@ -3,13 +3,21 @@ import {  } from './fixtures/data';
 
 // requirement: REQ-3.6
 
-test('REQ-3.6: Apply question downvote', async ({ page, browser }, info) => {
-  await login(page,'question_downvoter');
-  await openQuestion(page,'SO Downvote Question');
+test('REQ-3.6: Apply and remove question upvote', async ({ page, browser }, info) => {
+  await login(page,'question_upvoter');
+  await openQuestion(page,'SO Upvote Question');
   const author=region(post(page),'Author'), reputation=await numeric(author,'Reputation');
-  await expectNumeric(post(page),'Score',3);
-  await action(post(page),'Down vote').click();
-  await expectNumeric(post(page),'Score',2);
-  await expect(action(post(page),'Down vote')).toHaveAttribute('aria-pressed','true');
-  await expectNumeric(author,'Reputation',reputation-2);
+  await expectNumeric(post(page),'Score',7);
+  await action(post(page),'Up vote').click();
+  await expectNumeric(post(page),'Score',8);
+  await expect(action(post(page),'Up vote')).toHaveAttribute('aria-pressed','true');
+  await expectNumeric(author,'Reputation',reputation+10);
+  await page.reload();
+  await expectNumeric(post(page),'Score',8);
+  await expect(action(post(page),'Up vote')).toHaveAttribute('aria-pressed','true');
+  await expectNumeric(region(post(page),'Author'),'Reputation',reputation+10);
+  await action(post(page),'Up vote').click();
+  await expectNumeric(post(page),'Score',7);
+  await expect(action(post(page),'Up vote')).toHaveAttribute('aria-pressed','false');
+  await expectNumeric(region(post(page),'Author'),'Reputation',reputation);
 });

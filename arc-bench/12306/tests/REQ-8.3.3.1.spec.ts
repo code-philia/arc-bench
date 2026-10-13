@@ -1,8 +1,8 @@
-// requirement: REQ-8.3.2.1
+// requirement: REQ-8.3.3.1
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
 import { entry, button, text, region, confirmation, payment } from './helpers';
-test("REQ-8.3.2.1: Confirm order and reach payment", async ({ page }) => {
+test("REQ-8.3.3.1: Confirm order and reach payment", async ({ page }) => {
     await entry(page);
     await confirmation(page, 'booking_confirm_user');
     await button(page.getByRole('dialog', { name: 'Please confirm the following information.', exact: true }), 'Confirm').click();

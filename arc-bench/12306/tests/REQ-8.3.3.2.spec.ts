@@ -1,8 +1,8 @@
-// requirement: REQ-8.3.2.2
+// requirement: REQ-8.3.3.2
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
 import { entry, button, row, orders, confirmation } from './helpers';
-test("REQ-8.3.2.2: Edit without submitting", async ({ page }) => {
+test("REQ-8.3.3.2: Edit without submitting", async ({ page }) => {
     await entry(page);
     await confirmation(page, 'booking_edit_user');
     const d = page.getByRole('dialog', { name: 'Please confirm the following information.', exact: true });

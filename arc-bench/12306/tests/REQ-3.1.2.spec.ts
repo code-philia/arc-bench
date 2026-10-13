@@ -1,24 +1,24 @@
 // requirement: REQ-3.1.2
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, button, field, text, region, search } from './helpers';
-test("REQ-3.1.2: Select departure date", async ({ page }) => {
+import { entry, button } from './helpers';
+test("REQ-3.1.2: Choose Shanghai using pinyin and Chinese", async ({ page }) => {
     await entry(page);
-    await field(page, 'Date').click();
-    await button(page, '2026-07-21').click();
-    await expect(field(page, 'Date')).toHaveValue('2026-07-21');
+    for (const query of ['shang', '上海']) {
+        await page.getByPlaceholder('From', { exact: true }).fill(query);
+        await expect(page.getByRole('heading', { name: 'Top destinations', exact: true })).toBeVisible();
+        await expect(button(page, 'Shanghai (上海)')).toHaveCount(1);
+        await button(page, 'Shanghai (上海)').click();
+        await expect(page.getByPlaceholder('From', { exact: true })).toHaveValue('Shanghai');
+    }
 });
-test("REQ-3.1.2: Reject past date", async ({ page }) => {
+test("REQ-3.1.2: Choose Beijing from alphabetical selector", async ({ page }) => {
     await entry(page);
-    await field(page, 'Date').fill('2026-07-20');
-    await button(page, 'Search').click();
-    await text(page, 'Please choose a departure date from 2026-07-21 through 2026-08-04.');
-    await expect(region(page, 'Ticket search')).toBeVisible();
-});
-test("REQ-3.1.2: Reject date beyond sale window", async ({ page }) => {
-    await entry(page);
-    await field(page, 'Date').fill('2026-08-05');
-    await button(page, 'Search').click();
-    await text(page, 'Please choose a departure date from 2026-07-21 through 2026-08-04.');
-    await expect(region(page, 'Ticket search')).toBeVisible();
+    await page.getByPlaceholder('From', { exact: true }).click();
+    for (const name of ['Popular', 'ABCDE', 'FGHIJ', 'KLMNO', 'PQRST', 'UVWXYZ'])
+        await expect(page.getByRole('tab', { name, exact: true })).toBeVisible();
+    await page.getByRole('tab', { name: 'ABCDE', exact: true }).click();
+    await expect(button(page, 'Beijing (北京)')).toHaveCount(1);
+    await button(page, 'Beijing (北京)').click();
+    await expect(page.getByPlaceholder('From', { exact: true })).toHaveValue('Beijing');
 });

@@ -1,23 +1,19 @@
-import { test, expect, login, openQuestion, action, region, post, numeric, expectNumeric } from './helpers';
-import {  } from './fixtures/data';
+import { test, expect, login, openQuestion, action, region, mainNav, post, createQuestion, confirmDeletion } from './helpers';
+import { retryTitle } from './fixtures/data';
 
 // requirement: REQ-3.5
 
-test('REQ-3.5: Apply and remove question upvote', async ({ page, browser }, info) => {
-  await login(page,'question_upvoter');
-  await openQuestion(page,'SO Upvote Question');
-  const author=region(post(page),'Author'), reputation=await numeric(author,'Reputation');
-  await expectNumeric(post(page),'Score',7);
-  await action(post(page),'Up vote').click();
-  await expectNumeric(post(page),'Score',8);
-  await expect(action(post(page),'Up vote')).toHaveAttribute('aria-pressed','true');
-  await expectNumeric(author,'Reputation',reputation+10);
-  await page.reload();
-  await expectNumeric(post(page),'Score',8);
-  await expect(action(post(page),'Up vote')).toHaveAttribute('aria-pressed','true');
-  await expectNumeric(region(post(page),'Author'),'Reputation',reputation+10);
-  await action(post(page),'Up vote').click();
-  await expectNumeric(post(page),'Score',7);
-  await expect(action(post(page),'Up vote')).toHaveAttribute('aria-pressed','false');
-  await expectNumeric(region(post(page),'Author'),'Reputation',reputation);
+test('REQ-3.5: Confirm own question deletion', async ({ page, browser }, info) => {
+  const title = await createQuestion(browser,info,'question_deleter','SO Deletable Question');
+  await login(page,'question_deleter');
+  await openQuestion(page,title);
+  await action(post(page),'Delete').click();
+  await confirmDeletion(page);
+  await expect(region(page,'Question feed')).toBeVisible();
+  await expect(action(region(page,'Question feed'),retryTitle)).toBeVisible();
+  await action(mainNav(page),'Questions').click();
+  await expect(action(region(page,'Question feed'),title)).toHaveCount(0);
+  const search=page.getByRole('banner').getByRole('searchbox',{name:'Search',exact:true});
+  await search.fill(title); await search.press('Enter');
+  await expect(action(region(page,'Search results'),title)).toHaveCount(0);
 });

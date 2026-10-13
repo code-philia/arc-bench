@@ -1,12 +1,20 @@
 // requirement: REQ-9.2.2
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, link, region } from './helpers';
-test("REQ-9.2.2: Open dropdown question anchor", async ({ page }) => {
+import { entry, link, region, home } from './helpers';
+test("REQ-9.2.2: Open all dropdown guide categories", async ({ page }) => {
     await entry(page);
-    await link(page.getByRole('navigation'), 'Travel guide').hover();
-    await link(region(region(page, 'Travel guide categories'), 'Ticketing'), 'How to book tickets online?').click();
-    await expect(page.getByRole('tab', { name: 'Ticketing', exact: true })).toHaveAttribute('aria-selected', 'true');
-    await expect(page.getByRole('heading', { name: 'How to book tickets online?', exact: true })).toBeInViewport();
-    await expect(page.getByRole('tabpanel', { name: 'Ticketing', exact: true })).toContainText(/\S+/);
+    for (const category of ['Ticketing', 'Endorsement and refund', 'Miscellaneous']) {
+        await home(page);
+        await link(page.getByRole('navigation'), 'Travel guide').hover();
+        const dropdown = region(page, 'Travel guide categories');
+        for (const name of ['Ticketing', 'Endorsement and refund', 'Miscellaneous']) {
+            const group = region(dropdown, name);
+            await expect(group.getByRole('link')).toHaveCount(5);
+            await expect(link(group, 'More')).toHaveCount(1);
+        }
+        await link(region(dropdown, category), 'More').click();
+        await expect(page.getByRole('tab', { name: category, exact: true })).toHaveAttribute('aria-selected', 'true');
+        await expect(page.getByRole('tabpanel', { name: category, exact: true })).toContainText(/\S+/);
+    }
 });

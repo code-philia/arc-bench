@@ -1,17 +1,14 @@
-import { test, expect, login, openQuestion, action, post, comment, expectNumeric } from './helpers';
-import {  } from './fixtures/data';
+import { test, expect, login, openQuestion, action, post, comment, createQuestion, createComment } from './helpers';
+import { body } from './fixtures/data';
 
 // requirement: REQ-5.5
 
-test('REQ-5.5: Apply and remove a helpful-comment vote', async ({ page, browser }, info) => {
-  await login(page,'comment_vote_user'); await openQuestion(page,'SO Comment Vote Question');
-  const target=comment(post(page));
-  await expect(action(target,'Down vote')).toHaveCount(0);
-  await expectNumeric(target,'Comment votes',1);
-  await action(target,'Up vote').click();
-  await expectNumeric(target,'Comment votes',2);
-  await expect(action(target,'Up vote')).toHaveAttribute('aria-pressed','true');
-  await action(target,'Up vote').click();
-  await expectNumeric(target,'Comment votes',1);
-  await expect(action(target,'Up vote')).toHaveAttribute('aria-pressed','false');
+test('REQ-5.5: Remove comment without confirmation', async ({ page, browser }, info) => {
+  const title=await createQuestion(browser,info,'question_creator','SO Comment Delete Question');
+  await createComment(browser,title,'comment_delete_user');
+  await login(page,'comment_delete_user'); await openQuestion(page,title);
+  await action(comment(post(page)),'Delete').click();
+  await expect(comment(post(page))).toHaveCount(0);
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('heading',{name:title,exact:true})).toBeVisible();
 });

@@ -1,8 +1,8 @@
-// requirement: REQ-8.2.2.2
+// requirement: REQ-8.2.3.2
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
 import { entry, button, text, row, booking } from './helpers';
-test("REQ-8.2.2.2: Remove selected booking passenger", async ({ page }) => {
+test("REQ-8.2.3.2: Remove selected booking passenger", async ({ page }) => {
     await entry(page);
     await booking(page, 'bookable_user');
     await page.getByRole('checkbox', { name: 'Passenger Example', exact: true }).check();

@@ -1,13 +1,15 @@
-import { test, expect, login, activity, action, post, titleFor, composeQuestion } from './helpers';
-import { body } from './fixtures/data';
+import { test, expect, login, openQuestion, action, region, post, numeric, expectNumeric } from './helpers';
+import {  } from './fixtures/data';
 
 // requirement: REQ-3.7
 
-test('REQ-3.7: Follow an owned question to its detail', async ({ page, browser }, info) => {
-  await login(page,'question_creator');
-  const title=titleFor(info,'SO Activity Question Navigation'); await composeQuestion(page,title);
-  const content=await activity(page,'Questions'); await action(content,title).click();
-  await expect(page.getByRole('heading',{name:title,exact:true})).toBeVisible();
-  await expect(post(page)).toContainText(body);
-  for (const tag of ['node.js','http','retry']) await expect(action(post(page),tag)).toBeVisible();
+test('REQ-3.7: Apply question downvote', async ({ page, browser }, info) => {
+  await login(page,'question_downvoter');
+  await openQuestion(page,'SO Downvote Question');
+  const author=region(post(page),'Author'), reputation=await numeric(author,'Reputation');
+  await expectNumeric(post(page),'Score',3);
+  await action(post(page),'Down vote').click();
+  await expectNumeric(post(page),'Score',2);
+  await expect(action(post(page),'Down vote')).toHaveAttribute('aria-pressed','true');
+  await expectNumeric(author,'Reputation',reputation-2);
 });

@@ -1,8 +1,8 @@
-// requirement: REQ-8.2.3
+// requirement: REQ-8.2.4
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
 import { entry, link, booking } from './helpers';
-test("REQ-8.2.3: Read booking terms", async ({ page }) => {
+test("REQ-8.2.4: Read booking terms", async ({ page }) => {
     await entry(page);
     await booking(page, 'bookable_user');
     await link(page, 'I have read and agree to the Terms of Service').click();

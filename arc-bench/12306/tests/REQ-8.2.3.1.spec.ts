@@ -1,8 +1,8 @@
-// requirement: REQ-8.2.2.1
+// requirement: REQ-8.2.3.1
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
 import { entry, button, field, row, booking, checkHeaders } from './helpers';
-test("REQ-8.2.2.1: Select and configure booking passenger", async ({ page }) => {
+test("REQ-8.2.3.1: Select and configure booking passenger", async ({ page }) => {
     await entry(page);
     await booking(page, 'bookable_user');
     await page.getByRole('checkbox', { name: 'Passenger Example', exact: true }).check();
@@ -18,7 +18,7 @@ test("REQ-8.2.2.1: Select and configure booking passenger", async ({ page }) => 
     await expect(button(r, 'Delete')).toBeVisible();
     await expect(button(page, 'Place order')).toBeVisible();
 });
-test("REQ-8.2.2.1: Configure a child booking ticket", async ({ page }) => {
+test("REQ-8.2.3.1: Configure a child booking ticket", async ({ page }) => {
     await entry(page);
     await booking(page, 'bookable_user');
     await page.getByRole('checkbox', { name: 'Passenger Example', exact: true }).check();
