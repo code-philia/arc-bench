@@ -464,6 +464,9 @@ children:
       Anonymous and authenticated visitors discover populated public questions. Header, left navigation, main feed and right widgets follow the homepage reference. Right widgets expose The Overflow Blog, meta items, Hot Network Questions and custom filter/tag watchlists.
 
       Global header is a banner and main navigation is named Main navigation. Question feed contains summary regions named Question <title>. Navigational actions may be links or buttons; status metrics expose plain numeric text.
+
+      Optional visual reference:
+      ![image](./reference/homepage.jpeg)
     children:
       - id: REQ-1.1
         name: Open the populated community
@@ -472,12 +475,11 @@ children:
         pages:
           - name: home
             reference: ./reference/homepage.jpeg
-        description: Opening the application displays a banner with Stack Overflow identity, "Search"(role=searchbox),
-          "Products"(role=button), Log in, and Sign up. "Main navigation"(role=navigation) provides Home, Questions,
-          Tags, and Users. "Question feed"(role=region) displays Ask Question, Newest and Active ordering controls,
-          and summaries containing titles, tags, votes, answers, and views. Linked editorial and network content
-          appears in "The Overflow Blog"(role=region) and "Hot Network Questions"(role=region). Desktop appearance
-          follows the reference.
+        description: |-
+          Opening the application displays a banner with Stack Overflow identity, "Search"(role=searchbox), "Products"(role=button), Log in, and Sign up. "Main navigation"(role=navigation) provides Home, Questions, Tags, and Users. "Question feed"(role=region) displays Ask Question, Newest and Active ordering controls, and summaries containing titles, tags, votes, answers, and views. Linked editorial and network content appears in "The Overflow Blog"(role=region) and "Hot Network Questions"(role=region). Desktop appearance follows the reference.
+
+          Optional visual reference:
+          ![image](./reference/homepage.jpeg)
         data:
           requires:
             - DATA-HISTORY
@@ -485,8 +487,11 @@ children:
           - name: Show the anonymous homepage
             steps:
               - keyword: GIVEN
-                content: A fresh anonymous browser opens the initialized public world, including DATA-HISTORY's
-                  retry question, DATA-TAGS and linked editorial/network content; no account session exists.
+                content: |-
+                  A fresh anonymous browser opens the initialized public world, including DATA-HISTORY's retry question, DATA-TAGS and linked editorial/network content; no account session exists.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How can I safely retry an idempotent HTTP request in Node.js?", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["node.js", "http", "retry"], "author": "helpful_user", "score": 7, "answers": 0, "views": 42, "asked": "2026-07-01T12:00:00Z", "modified": "2026-07-10T12:00:00Z"}]}
               - keyword: WHEN
                 content: Open the application entry and inspect banner, Search, Products, Log in, Sign up, Main
                   navigation, Question feed and its retry-question summary, then the two linked widgets.
@@ -531,10 +536,11 @@ children:
         pages:
           - name: question
             reference: ./reference/question-page.jpeg
-        description: An anonymous visitor can open a published question through the public feed or search and read
-          its title, rendered body, tags, and existing answers in "Question post"(role=region). Reading public knowledge
-          requires no session; the header continues to offer "Log in"(role=button) and "Sign up"(role=button). This
-          public access is independent of the authenticated comment controls in REQ-3.2.
+        description: |-
+          An anonymous visitor can open a published question through the public feed or search and read its title, rendered body, tags, and existing answers in "Question post"(role=region). Reading public knowledge requires no session; the header continues to offer "Log in"(role=button) and "Sign up"(role=button). This public access is independent of the authenticated comment controls in REQ-3.2.
+
+          Optional visual reference:
+          ![image](./reference/question-page.jpeg)
         data:
           requires:
             - DATA-HISTORY
@@ -542,8 +548,11 @@ children:
           - name: Read without an account
             steps:
               - keyword: GIVEN
-                content: The browser has no session and DATA-HISTORY includes How can I safely retry an idempotent
-                  HTTP request in Node.js? with its body, tags and answers.
+                content: |-
+                  The browser has no session and DATA-HISTORY includes How can I safely retry an idempotent HTTP request in Node.js? with its body, tags and answers.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How can I safely retry an idempotent HTTP request in Node.js?", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["node.js", "http", "retry"], "author": "helpful_user", "score": 7, "answers": 0, "views": 42, "asked": "2026-07-01T12:00:00Z", "modified": "2026-07-10T12:00:00Z"}]}
               - keyword: WHEN
                 content: Open Questions, enter the exact title in banner Search, press Enter and choose that title
                   from Search results.
@@ -561,6 +570,9 @@ children:
       Email/password account creation and login; social/SSO excluded. Verified source accounts are initialized by evaluator. Owners can edit their profile and access protected activity. No moderator threshold is invented.
 
       Login and Sign up each expose a named form region and submit button. Form errors are visible within their form. Public profile is a named region; user catalog profile actions combine display name and email to distinguish identical display names. Unavailable unauthorized actions may be absent or disabled.
+
+      Optional visual reference:
+      ![image](./reference/login.jpeg)
     children:
       - id: REQ-2.1
         name: Sign in with email and password
@@ -570,15 +582,11 @@ children:
         pages:
           - name: login
             reference: ./reference/login.jpeg
-        description: Clicking "Log in"(role=button) opens "Log in"(role=region) containing "Email"(role=textbox),
-          "Password"(role=textbox), a "Show password"(role=button) toggle, Forgot password? and Sign up entry points.
-          "Show password" reveals the current password without changing its value and becomes "Hide password"(role=button),
-          which restores masking. "Forgot password?"(role=button) remains available as the recovery entry. Submitting
-          valid credentials returns home with "Stack User"(role=button) as the profile action and a session that
-          survives reload. Empty credentials show Email cannot be empty and Password cannot be empty; malformed
-          email shows The email is not a valid email address; an absent account shows No account found with this
-          email; an incorrect password shows The email or password does not match any account. Rejections retain
-          the form and anonymous state.
+        description: |-
+          Clicking "Log in"(role=button) opens "Log in"(role=region) containing "Email"(role=textbox), "Password"(role=textbox), a "Show password"(role=button) toggle, Forgot password? and Sign up entry points. "Show password" reveals the current password without changing its value and becomes "Hide password"(role=button), which restores masking. "Forgot password?"(role=button) remains available as the recovery entry. Submitting valid credentials returns home with "Stack User"(role=button) as the profile action and a session that survives reload. Empty credentials show Email cannot be empty and Password cannot be empty; malformed email shows The email is not a valid email address; an absent account shows No account found with this email; an incorrect password shows The email or password does not match any account. Rejections retain the form and anonymous state.
+
+          Optional visual reference:
+          ![image](./reference/login.jpeg)
         data:
           requires:
             - DATA-ACCOUNTS
@@ -587,8 +595,10 @@ children:
           - name: Sign in and retain session
             steps:
               - keyword: GIVEN
-                content: DATA-ACCOUNTS contains stack_user@example.com with Password123! and display name Stack
-                  User; the browser is anonymous.
+                content: |-
+                  DATA-ACCOUNTS contains stack_user@example.com with Password123! and display name Stack User; the browser is anonymous.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"stack_user": {"email": "stack_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
               - keyword: WHEN
                 content: Open Log in from the banner, enter the account Email and Password, submit Log in, and reload
                   the returned homepage.
@@ -627,7 +637,10 @@ children:
           - name: Reject wrong password
             steps:
               - keyword: GIVEN
-                content: The anonymous Log in form is open and stack_user@example.com exists with Password123!.
+                content: |-
+                  The anonymous Log in form is open and stack_user@example.com exists with Password123!.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"stack_user": {"email": "stack_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
               - keyword: WHEN
                 content: Enter that email and WrongPassword123!, then submit Log in.
               - keyword: THEN
@@ -652,13 +665,11 @@ children:
         pages:
           - name: register
             reference: ./reference/sign-up.jpeg
-        description: Clicking "Sign up"(role=button) opens "Sign up"(role=region) with Join Stack Overflow heading,
-          "Email"(role=textbox), "Password"(role=textbox), password help, consent text, and a Log in entry. Submitting
-          a unique valid email and password creates the account and signs it in automatically, exposing "<registered
-          email>"(role=button) as the profile action when no display name was entered. An existing email shows Email
-          is already in use; a short password shows visible requirements including a minimum of eight characters.
-          Rejections retain the form without an authenticated session. Registration emails use deterministic run,
-          worker, and case suffixes; verification is not added.
+        description: |-
+          Clicking "Sign up"(role=button) opens "Sign up"(role=region) with Join Stack Overflow heading, "Email"(role=textbox), "Password"(role=textbox), password help, consent text, and a Log in entry. Submitting a unique valid email and password creates the account and signs it in automatically, exposing "<registered email>"(role=button) as the profile action when no display name was entered. An existing email shows Email is already in use; a short password shows visible requirements including a minimum of eight characters. Rejections retain the form without an authenticated session. Registration emails use deterministic run, worker, and case suffixes; verification is not added.
+
+          Optional visual reference:
+          ![image](./reference/sign-up.jpeg)
         data:
           requires:
             - DATA-ACCOUNTS
@@ -679,7 +690,10 @@ children:
           - name: Reject duplicate email
             steps:
               - keyword: GIVEN
-                content: The anonymous Sign up form is open and DATA-ACCOUNTS already contains stack_user@example.com.
+                content: |-
+                  The anonymous Sign up form is open and DATA-ACCOUNTS already contains stack_user@example.com.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"stack_user": {"email": "stack_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
               - keyword: WHEN
                 content: Enter stack_user@example.com and Password123! and submit Sign up.
               - keyword: THEN
@@ -703,9 +717,11 @@ children:
         pages:
           - name: profile
             reference: ./reference/profile-page.jpeg
-        description: A signed-in user clicks the unique "Stack User"(role=button) header profile action to open
-          Activity Summary. The profile displays numeric "Reputation"(role=status), "Badges"(role=region), and "Recent
-          activity"(role=region); "Profile navigation"(role=navigation) offers Activity and Reputation views.
+        description: |-
+          A signed-in user clicks the unique "Stack User"(role=button) header profile action to open Activity Summary. The profile displays numeric "Reputation"(role=status), "Badges"(role=region), and "Recent activity"(role=region); "Profile navigation"(role=navigation) offers Activity and Reputation views.
+
+          Optional visual reference:
+          ![image](./reference/profile-page.jpeg)
         data:
           requires:
             - DATA-ACCOUNTS
@@ -714,8 +730,11 @@ children:
           - name: View personal summary
             steps:
               - keyword: GIVEN
-                content: Authenticate stack_user@example.com through Log in with Password123!; the banner exposes
-                  Stack User.
+                content: |-
+                  Authenticate stack_user@example.com through Log in with Password123!; the banner exposes Stack User.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"stack_user": {"email": "stack_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-BADGES (badge catalog and earned event): {"catalog": [{"name": "Great Answer", "category": "Gold", "description": "Recognizes a great answer", "earn_count": 2}, {"name": "Teacher", "category": "Bronze", "description": "Recognizes a helpful first answer", "earn_count": 5}, {"name": "Good Answer", "category": "Silver", "description": "Recognizes a good answer", "earn_count": 3}]}
               - keyword: WHEN
                 content: Click Stack User to open the personal profile and inspect its summary and navigation.
               - keyword: THEN
@@ -729,14 +748,11 @@ children:
         pages:
           - name: profile_edit
             reference: ./reference/edit-profile.jpeg
-        description: The profile_editor account clicks "Edit profile"(role=button) to open Edit your profile with
-          "Display name"(role=textbox), "Full name"(role=textbox), "Location"(role=textbox), "Title"(role=textbox),
-          "About me"(role=textbox), "Website"(role=textbox), "X"(role=textbox), and "GitHub"(role=textbox) prefilled
-          from DATA-ACCOUNTS. "Save and copy changes to all public communities"(role=button) saves the supplied
-          values, updates the display name, location, title, and about text in "Public profile"(role=region), and
-          shows a success status. Source examples www.example.dev and github.com/example are accepted; an added
-          https:// prefix is allowed. Reopening confirms every submitted field, including full name and URLs. Preview
-          is required only if supplied, and unspecified length or URL thresholds are not invented.
+        description: |-
+          The profile_editor account clicks "Edit profile"(role=button) to open Edit your profile with "Display name"(role=textbox), "Full name"(role=textbox), "Location"(role=textbox), "Title"(role=textbox), "About me"(role=textbox), "Website"(role=textbox), "X"(role=textbox), and "GitHub"(role=textbox) prefilled from DATA-ACCOUNTS. "Save and copy changes to all public communities"(role=button) saves the supplied values, updates the display name, location, title, and about text in "Public profile"(role=region), and shows a success status. Source examples www.example.dev and github.com/example are accepted; an added https:// prefix is allowed. Reopening confirms every submitted field, including full name and URLs. Preview is required only if supplied, and unspecified length or URL thresholds are not invented.
+
+          Optional visual reference:
+          ![image](./reference/edit-profile.jpeg)
         data:
           requires:
             - DATA-ACCOUNTS
@@ -744,9 +760,10 @@ children:
           - name: Save and reopen public identity
             steps:
               - keyword: GIVEN
-                content: Authenticate profile_editor and open its own profile. The seeded fields are Stack User,
-                  Existing User, Beijing, Developer, Existing biography, https://example.org, https://x.com/example
-                  and https://github.com/existing.
+                content: |-
+                  Authenticate profile_editor and open its own profile. The seeded fields are Stack User, Existing User, Beijing, Developer, Existing biography, https://example.org, https://x.com/example and https://github.com/existing.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"profile_editor": {"email": "profile_editor@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
               - keyword: WHEN
                 content: Click Edit profile and verify all eight prefilled fields. Set Display name to Stack User
                   Updated, Full name to Stack Overflow User, Location to Shanghai, Title to Backend Engineer, About
@@ -768,10 +785,12 @@ children:
             reference: ./reference/login.jpeg
           - name: register
             reference: ./reference/sign-up.jpeg
-        description: The anonymous user can move from "Log in"(role=region) to "Sign up"(role=region) through its
-          Sign up entry and return through Log in. Each visible form provides correctly labeled "Email"(role=textbox)
-          and "Password"(role=textbox), with "Sign up"(role=button) or "Log in"(role=button) as its matching submit
-          action. Switching forms preserves anonymous status and adds no social login behavior.
+        description: |-
+          The anonymous user can move from "Log in"(role=region) to "Sign up"(role=region) through its Sign up entry and return through Log in. Each visible form provides correctly labeled "Email"(role=textbox) and "Password"(role=textbox), with "Sign up"(role=button) or "Log in"(role=button) as its matching submit action. Switching forms preserves anonymous status and adds no social login behavior.
+
+          Optional visual reference:
+          ![image](./reference/login.jpeg)
+          ![image](./reference/sign-up.jpeg)
         data:
           requires: []
         scenarios:
@@ -794,11 +813,11 @@ children:
         pages:
           - name: register
             reference: ./reference/sign-up.jpeg
-        description: An account created by entering "Email"(role=textbox) and "Password"(role=textbox) and submitting
-          "Sign up"(role=button) can authenticate with those credentials in a fresh browser context through "Log
-          in"(role=button). Successful login displays the homepage feed and "<registered email>"(role=button) as
-          the profile action, demonstrating that registration and credential login compose without a verification
-          workflow.
+        description: |-
+          An account created by entering "Email"(role=textbox) and "Password"(role=textbox) and submitting "Sign up"(role=button) can authenticate with those credentials in a fresh browser context through "Log in"(role=button). Successful login displays the homepage feed and "<registered email>"(role=button) as the profile action, demonstrating that registration and credential login compose without a verification workflow.
+
+          Optional visual reference:
+          ![image](./reference/sign-up.jpeg)
         data:
           requires:
             - DATA-RUNTIME
@@ -843,11 +862,17 @@ children:
           Questions carry title, rendered body, tags, engagement metadata and author attribution. Owner deletion hides the post from public lists; database preservation is outside the observable oracle.
 
           Question details use Question post and Answers regions. Author information is scoped to Author. Score, Answer count, View count and Title character count are named numeric status outputs; active votes expose pressed state.
+
+          Optional visual reference:
+          ![image](./reference/questions-page.jpeg)
         scenarios:
           - name: Open public Questions listing
             steps:
               - keyword: GIVEN
-                content: A visitor is on the populated public homepage.
+                content: |-
+                  A visitor is on the populated public homepage.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How can I safely retry an idempotent HTTP request in Node.js?", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["node.js", "http", "retry"], "author": "helpful_user", "score": 7, "answers": 0, "views": 42, "asked": "2026-07-01T12:00:00Z", "modified": "2026-07-10T12:00:00Z"}, {"title": "SO Upvote Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 7, "answers": 0, "views": 12}, {"title": "SO Downvote Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 3, "answers": 0, "views": 8}, {"title": "How does React state update?", "body": "React state updates and rendering examples.", "tags": ["javascript"], "author": "helpful_user", "score": 2, "answers": [{"body": "Batch state updates safely.", "author": "activity_user", "score": 5, "accepted": true}], "views": 18, "asked": "2026-07-20T10:00:00Z", "modified": "2026-07-20T11:00:00Z"}, {"title": "SO Python Unanswered Recent", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["python"], "author": "helpful_user", "score": 0, "answers": 0, "views": 5, "asked": "2026-07-20T12:00:00Z", "modified": "2026-07-20T12:00:00Z"}, {"title": "SO Python Answered Active", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["python"], "author": "helpful_user", "score": 4, "answers": 1, "views": 10, "asked": "2026-07-19T12:00:00Z", "modified": "2026-07-21T11:00:00Z"}, {"title": "SO Answer Sorting Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 1, "views": 10, "answers": [{"body": "Highest score answer: use bounded retries.", "author": "helpful_user", "score": 9, "modified": "2026-07-18T12:00:00Z"}, {"body": "Recent answer: log each retry attempt.", "author": "stack_user", "score": 2, "modified": "2026-07-20T12:00:00Z"}], "initial_sort": "Date modified"}, {"title": "SO Expanded Comment Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 0, "answers": 0, "views": 7, "comments": [{"body": "Retry discussion comment 1", "author": "helpful_user", "posted": "2026-07-20T12:01:00Z"}, {"body": "Retry discussion comment 2", "author": "helpful_user", "posted": "2026-07-20T12:02:00Z"}, {"body": "Retry discussion comment 3", "author": "helpful_user", "posted": "2026-07-20T12:03:00Z"}, {"body": "Retry discussion comment 4", "author": "helpful_user", "posted": "2026-07-20T12:04:00Z"}, {"body": "Retry discussion comment 5", "author": "helpful_user", "posted": "2026-07-20T12:05:00Z"}, {"body": "Retry discussion comment 6", "author": "helpful_user", "posted": "2026-07-20T12:06:00Z"}, {"body": "Retry discussion comment 7", "author": "helpful_user", "posted": "2026-07-20T12:07:00Z"}]}, {"title": "SO Comment Edit Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 0, "answers": 0, "views": 2, "comments": [{"body": "Can you share what you tried so far?", "author": "comment_edit_user", "posted": "2026-07-21T12:00:00Z"}]}, {"title": "SO Comment Vote Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 0, "answers": 0, "views": 2, "comments": [{"body": "Can you share what you tried so far?", "author": "helpful_user", "upvotes": 1, "voters": ["stack_user"]}]}]}
               - keyword: WHEN
                 content: Follow Questions in Main navigation.
               - keyword: THEN
@@ -870,6 +895,9 @@ children:
           Questions carry title, rendered body, tags, engagement metadata and author attribution. Owner deletion hides the post from public lists; database preservation is outside the observable oracle.
 
           Question details use Question post and Answers regions. Author information is scoped to Author. Score, Answer count, View count and Title character count are named numeric status outputs; active votes expose pressed state.
+
+          Optional visual reference:
+          ![image](./reference/question-page.jpeg)
         data:
           requires:
             - DATA-HISTORY
@@ -878,8 +906,13 @@ children:
           - name: Read a published question
             steps:
               - keyword: GIVEN
-                content: Authenticate stack_user and use public Search to open the seeded retry question, whose
-                  score is 7, initial views 42, Asked July 1 and Modified July 10, with Helpful User as author.
+                content: |-
+                  Authenticate stack_user and use public Search to open the seeded retry question, whose score is 7, initial views 42, Asked July 1 and Modified July 10, with Helpful User as author.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"stack_user": {"email": "stack_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How can I safely retry an idempotent HTTP request in Node.js?", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["node.js", "http", "retry"], "author": "helpful_user", "score": 7, "answers": 0, "views": 42, "asked": "2026-07-01T12:00:00Z", "modified": "2026-07-10T12:00:00Z"}]}
+                  - DATA-BADGES (badge catalog and earned event): {"catalog": [{"name": "Great Answer", "category": "Gold", "description": "Recognizes a great answer", "earn_count": 2}, {"name": "Teacher", "category": "Bronze", "description": "Recognizes a helpful first answer", "earn_count": 5}, {"name": "Good Answer", "category": "Silver", "description": "Recognizes a good answer", "earn_count": 3}]}
               - keyword: WHEN
                 content: Inspect the heading, Question post, named Asked/Modified/View count outputs, tags, vote/save/timeline/share/edit/follow
                   controls, Author information and Comments entry.
@@ -905,6 +938,9 @@ children:
           Questions carry title, rendered body, tags, engagement metadata and author attribution. Owner deletion hides the post from public lists; database preservation is outside the observable oracle.
 
           Question details use Question post and Answers regions. Author information is scoped to Author. Score, Answer count, View count and Title character count are named numeric status outputs; active votes expose pressed state.
+
+          Optional visual reference:
+          ![image](./reference/ask-question-page.jpeg)
         data:
           requires:
             - DATA-TAGS
@@ -913,9 +949,11 @@ children:
           - name: Publish with preview and tags
             steps:
               - keyword: GIVEN
-                content: Authenticate question_creator with no question having the isolated How can I safely retry
-                  an idempotent HTTP request in Node.js without duplicating side effects? title; DATA-RUNTIME supplies
-                  a valid body longer than 220 characters.
+                content: |-
+                  Authenticate question_creator with no question having the isolated How can I safely retry an idempotent HTTP request in Node.js without duplicating side effects? title; DATA-RUNTIME supplies a valid body longer than 220 characters.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Click Ask Question in Question feed, fill Title with that isolated title and Body with
                   Markdown Retry safety followed by the registry body; inspect Title character count and Preview.
@@ -928,8 +966,11 @@ children:
           - name: Reject missing required fields
             steps:
               - keyword: GIVEN
-                content: Authenticate question_creator and open an empty Ask Question editor with no current draft
-                  published.
+                content: |-
+                  Authenticate question_creator and open an empty Ask Question editor with no current draft published.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Click Post Your Question with all fields empty; enter a valid isolated title and submit
                   again with Body empty; enter the valid registry body and submit again with Tags empty.
@@ -940,8 +981,11 @@ children:
           - name: Reject too-short title and body
             steps:
               - keyword: GIVEN
-                content: Authenticate question_creator and open Ask Question with a valid registry body and http
-                  tag available.
+                content: |-
+                  Authenticate question_creator and open Ask Question with a valid registry body and http tag available.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Enter the 14-character title 12345678901234 with valid Body and Tags and submit; replace
                   it with a valid isolated title, set Body to 219 a characters and submit again.
@@ -966,6 +1010,9 @@ children:
           Questions carry title, rendered body, tags, engagement metadata and author attribution. Owner deletion hides the post from public lists; database preservation is outside the observable oracle.
 
           Question details use Question post and Answers regions. Author information is scoped to Author. Score, Answer count, View count and Title character count are named numeric status outputs; active votes expose pressed state.
+
+          Optional visual reference:
+          ![image](./reference/edit-question.jpeg)
         data:
           requires:
             - DATA-RUNTIME
@@ -973,8 +1020,11 @@ children:
           - name: Save revision and summary
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Question Edit Save under question_editor with registry body and node.js,http,retry,
-                  then authenticate its owner and open Edit.
+                content: |-
+                  UI-create isolated SO Question Edit Save under question_editor with registry body and node.js,http,retry, then authenticate its owner and open Edit.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_editor": {"email": "question_editor@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Append clarified to Title and Include bounded retry budgets. to Body, set Tags to http,retry
                   and Edit Summary to Fixed a typo in the second paragraph; Save edits and open Timeline.
@@ -1001,8 +1051,12 @@ children:
           - name: Confirm own question deletion
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Deletable Question under question_deleter, unanswered and minimally
-                  engaged; authenticate that author and open its detail.
+                content: |-
+                  UI-create isolated SO Deletable Question under question_deleter, unanswered and minimally engaged; authenticate that author and open its detail.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_deleter": {"email": "question_deleter@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How can I safely retry an idempotent HTTP request in Node.js?", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["node.js", "http", "retry"], "author": "helpful_user", "score": 7, "answers": 0, "views": 42, "asked": "2026-07-01T12:00:00Z", "modified": "2026-07-10T12:00:00Z"}]}
               - keyword: WHEN
                 content: Click Delete, inspect the Confirm deletion dialog's consequences, confirm, reopen Questions
                   and search the exact deleted title publicly.
@@ -1035,8 +1089,11 @@ children:
           - name: Apply and remove question upvote
             steps:
               - keyword: GIVEN
-                content: Authenticate question_upvoter and open SO Upvote Question with Score 7; record the author's
-                  current numeric Reputation from Author.
+                content: |-
+                  Authenticate question_upvoter and open SO Upvote Question with Score 7; record the author's current numeric Reputation from Author.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_upvoter": {"email": "question_upvoter@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "SO Upvote Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 7, "answers": 0, "views": 12}]}
               - keyword: WHEN
                 content: Click Up vote, reload the detail, then click Up vote again.
               - keyword: THEN
@@ -1066,8 +1123,11 @@ children:
           - name: Apply question downvote
             steps:
               - keyword: GIVEN
-                content: Authenticate question_downvoter and open SO Downvote Question with Score 3; record the
-                  author reputation baseline.
+                content: |-
+                  Authenticate question_downvoter and open SO Downvote Question with Score 3; record the author reputation baseline.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_downvoter": {"email": "question_downvoter@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "SO Downvote Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 3, "answers": 0, "views": 8}]}
               - keyword: WHEN
                 content: Click Down vote within Question post.
               - keyword: THEN
@@ -1092,6 +1152,9 @@ children:
           Questions carry title, rendered body, tags, engagement metadata and author attribution. Owner deletion hides the post from public lists; database preservation is outside the observable oracle.
 
           Question details use Question post and Answers regions. Author information is scoped to Author. Score, Answer count, View count and Title character count are named numeric status outputs; active votes expose pressed state.
+
+          Optional visual reference:
+          ![image](./reference/user-feed.jpeg)
         data:
           requires:
             - DATA-RUNTIME
@@ -1099,8 +1162,11 @@ children:
           - name: Follow an owned question to its detail
             steps:
               - keyword: GIVEN
-                content: Authenticate question_creator and publish isolated SO Activity Question Navigation through
-                  Ask Question with registry body and node.js,http,retry.
+                content: |-
+                  Authenticate question_creator and publish isolated SO Activity Question Navigation through Ask Question with registry body and node.js,http,retry.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Open the owner's profile Activity then Questions and click the exact newly created title
                   in Activity content.
@@ -1124,6 +1190,9 @@ children:
           Questions carry title, rendered body, tags, engagement metadata and author attribution. Owner deletion hides the post from public lists; database preservation is outside the observable oracle.
 
           Question details use Question post and Answers regions. Author information is scoped to Author. Score, Answer count, View count and Title character count are named numeric status outputs; active votes expose pressed state.
+
+          Optional visual reference:
+          ![image](./reference/edit-question.jpeg)
         data:
           requires:
             - DATA-RUNTIME
@@ -1131,8 +1200,11 @@ children:
           - name: Read saved revision as another user
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Persisted Question Revision under question_editor with registry body
-                  and node.js,http,retry, then open Edit as its owner.
+                content: |-
+                  UI-create isolated SO Persisted Question Revision under question_editor with registry body and node.js,http,retry, then open Edit as its owner.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"stack_user": {"email": "stack_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "question_editor": {"email": "question_editor@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Append clarified to Title and Use a bounded retry budget. to Body, set Tags to http,retry
                   and Edit Summary to Documented bounded retry budget.; Save edits. Authenticate stack_user in an
@@ -1161,8 +1233,11 @@ children:
           - name: Prevent non-owner question deletion
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Ownership Protected Question under question_deleter, then authenticate
-                  ordinary stack_user and open it through public Search.
+                content: |-
+                  UI-create isolated SO Ownership Protected Question under question_deleter, then authenticate ordinary stack_user and open it through public Search.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"stack_user": {"email": "stack_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "question_deleter": {"email": "question_deleter@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Inspect the Question post's Delete availability without invoking any private operation.
               - keyword: THEN
@@ -1181,6 +1256,9 @@ children:
       Authenticated answers, votes, acceptance, ordering and owner maintenance. An answer belongs to exactly its question. Only question owner accepts a single answer; accepted answer is marked green and Accepted answer.
 
       Answers contains answer regions named Answer by <display name>, unique per parent in the supplied data. Author information is scoped to Author. Score is a named numeric status and active votes expose pressed state.
+
+      Optional visual reference:
+      ![image](./reference/post-answer.jpeg)
     children:
       - id: REQ-4.1
         name: Publish an answer
@@ -1191,11 +1269,11 @@ children:
         pages:
           - name: question
             reference: ./reference/post-answer.jpeg
-        description: The authenticated answer_submitter opens the UI-created SO Answer Submission Question, enters
-          the DATA-RUNTIME answer in "Your Answer"(role=textbox), and clicks "Post Your Answer"(role=button). The
-          detail adds "Answer by Stack User"(role=region) under that question's "Answers"(role=region), showing
-          its author and updating "Answer count"(role=status). The owner's Answers activity links the correct parent
-          and shows the excerpt; reload retains the answer.
+        description: |-
+          The authenticated answer_submitter opens the UI-created SO Answer Submission Question, enters the DATA-RUNTIME answer in "Your Answer"(role=textbox), and clicks "Post Your Answer"(role=button). The detail adds "Answer by Stack User"(role=region) under that question's "Answers"(role=region), showing its author and updating "Answer count"(role=status). The owner's Answers activity links the correct parent and shows the excerpt; reload retains the answer.
+
+          Optional visual reference:
+          ![image](./reference/post-answer.jpeg)
         data:
           requires:
             - DATA-RUNTIME
@@ -1203,8 +1281,11 @@ children:
           - name: Publish and discover own answer
             steps:
               - keyword: GIVEN
-                content: question_creator has UI-published isolated SO Answer Submission Question with no answers.
-                  Authenticate answer_submitter and open that exact question.
+                content: |-
+                  question_creator has UI-published isolated SO Answer Submission Question with no answers. Authenticate answer_submitter and open that exact question.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_submitter": {"email": "answer_submitter@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Fill Your Answer with the DATA-RUNTIME answer body and click Post Your Answer; reload and
                   open the author's Answers activity.
@@ -1230,9 +1311,11 @@ children:
           - name: Apply and remove answer upvote
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Answer Voting Question and a Helpful User answer through Post Your
-                  Answer. Authenticate answer_voter, open it, record question Score and answer Author reputation;
-                  answer Score starts 0.
+                content: |-
+                  UI-create isolated SO Answer Voting Question and a Helpful User answer through Post Your Answer. Authenticate answer_voter, open it, record question Score and answer Author reputation; answer Score starts 0.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"helpful_user": {"email": "helpful_user@example.com", "password": "Password123!", "display_name": "Helpful User", "reputation": 100, "verified": true}, "question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_voter": {"email": "answer_voter@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Click Up vote inside Answer by Helpful User, then click the same action again.
               - keyword: THEN
@@ -1256,9 +1339,11 @@ children:
           - name: Accept and replace definitive solution
             steps:
               - keyword: GIVEN
-                content: answer_accept_owner UI-creates isolated SO Accepted Answer Question; Helpful User and answer_submitter
-                  each publish an answer, the latter saying Use a bounded retry budget with diagnostics. Authenticate
-                  the question owner.
+                content: |-
+                  answer_accept_owner UI-creates isolated SO Accepted Answer Question; Helpful User and answer_submitter each publish an answer, the latter saying Use a bounded retry budget with diagnostics. Authenticate the question owner.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"helpful_user": {"email": "helpful_user@example.com", "password": "Password123!", "display_name": "Helpful User", "reputation": 100, "verified": true}, "answer_submitter": {"email": "answer_submitter@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_accept_owner": {"email": "answer_accept_owner@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Click Accept answer in Helpful User's answer, reload, then click Accept answer in Answer
                   by Stack User.
@@ -1269,8 +1354,11 @@ children:
           - name: Prevent non-owner acceptance
             steps:
               - keyword: GIVEN
-                content: answer_accept_owner UI-creates the isolated question and Helpful User posts an answer;
-                  authenticate ordinary answer_voter, who does not own the question.
+                content: |-
+                  answer_accept_owner UI-creates the isolated question and Helpful User posts an answer; authenticate ordinary answer_voter, who does not own the question.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"helpful_user": {"email": "helpful_user@example.com", "password": "Password123!", "display_name": "Helpful User", "reputation": 100, "verified": true}, "answer_voter": {"email": "answer_voter@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_accept_owner": {"email": "answer_accept_owner@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Open the question and inspect Accept answer in Helpful User's visible answer.
               - keyword: THEN
@@ -1292,8 +1380,11 @@ children:
           - name: Select highest-score ordering
             steps:
               - keyword: GIVEN
-                content: The anonymous browser opens seeded SO Answer Sorting Question with two answers, initially
-                  Date modified ordering the recent two-point answer before the older nine-point answer.
+                content: |-
+                  The anonymous browser opens seeded SO Answer Sorting Question with two answers, initially Date modified ordering the recent two-point answer before the older nine-point answer.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "SO Answer Sorting Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 1, "views": 10, "answers": [{"body": "Highest score answer: use bounded retries.", "author": "helpful_user", "score": 9, "modified": "2026-07-18T12:00:00Z"}, {"body": "Recent answer: log each retry attempt.", "author": "stack_user", "score": 2, "modified": "2026-07-20T12:00:00Z"}], "initial_sort": "Date modified"}]}
               - keyword: WHEN
                 content: Inspect Sorted by options, then select Highest score.
               - keyword: THEN
@@ -1317,8 +1408,11 @@ children:
           - name: Record same-body answer revision
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Successful Answer Edit Question and its answer under answer_edit_user;
-                  authenticate that author and open the answer's Edit action.
+                content: |-
+                  UI-create isolated SO Successful Answer Edit Question and its answer under answer_edit_user; authenticate that author and open the answer's Edit action.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_edit_user": {"email": "answer_edit_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Verify Body is prefilled with the registry answer, keep that same Body, enter Clarified
                   retry safety. in Edit Summary, click Save edits and open the answer's Timeline.
@@ -1328,8 +1422,11 @@ children:
           - name: Reject empty answer edit
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Answer Validation Question with answer_validation_user's registry
-                  answer; authenticate that owner and open Edit.
+                content: |-
+                  UI-create isolated SO Answer Validation Question with answer_validation_user's registry answer; authenticate that owner and open Edit.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_validation_user": {"email": "answer_validation_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Clear Body, click Save edits, then Cancel after inspecting the rejection.
               - keyword: THEN
@@ -1338,8 +1435,11 @@ children:
           - name: Cancel answer edit
             steps:
               - keyword: GIVEN
-                content: UI-create an independent isolated SO Answer Validation Question and answer under answer_validation_user,
-                  then open Edit as that owner.
+                content: |-
+                  UI-create an independent isolated SO Answer Validation Question and answer under answer_validation_user, then open Edit as that owner.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_validation_user": {"email": "answer_validation_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Replace Body with Unsaved answer edit draft. and click Cancel.
               - keyword: THEN
@@ -1363,9 +1463,11 @@ children:
           - name: Delete answer and reverse vote reputation
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Answer Delete Question and answer_delete_user's unaccepted answer
-                  This answer is reserved for the answer deletion scenario. Record the answer author reputation;
-                  as answer_voter upvote it and verify the +10 increase.
+                content: |-
+                  UI-create isolated SO Answer Delete Question and answer_delete_user's unaccepted answer This answer is reserved for the answer deletion scenario. Record the answer author reputation; as answer_voter upvote it and verify the +10 increase.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"stack_user": {"email": "stack_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_voter": {"email": "answer_voter@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_delete_user": {"email": "answer_delete_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Authenticate answer_delete_user, open the answer, click Delete and confirm in Confirm deletion;
                   inspect answer count and the author's profile. Reopen the question as independent stack_user.
@@ -1380,10 +1482,11 @@ children:
         pages:
           - name: question
             reference: ./reference/question-page.jpeg
-        description: Selecting Date modified in "Sorted by"(role=combobox) orders "Answers"(role=region) by newest
-          modification first. The historical question's distinct timestamps place Recent answer before Highest score
-          answer. Switching from Highest score visibly reverses their sequence without changing "Answer count"(role=status)
-          or their parent question.
+        description: |-
+          Selecting Date modified in "Sorted by"(role=combobox) orders "Answers"(role=region) by newest modification first. The historical question's distinct timestamps place Recent answer before Highest score answer. Switching from Highest score visibly reverses their sequence without changing "Answer count"(role=status) or their parent question.
+
+          Optional visual reference:
+          ![image](./reference/question-page.jpeg)
         data:
           requires:
             - DATA-HISTORY
@@ -1391,8 +1494,11 @@ children:
           - name: Switch to latest-modified answers
             steps:
               - keyword: GIVEN
-                content: An anonymous visitor opens seeded SO Answer Sorting Question, whose two answers have distinct
-                  scores and modification dates.
+                content: |-
+                  An anonymous visitor opens seeded SO Answer Sorting Question, whose two answers have distinct scores and modification dates.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "SO Answer Sorting Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 1, "views": 10, "answers": [{"body": "Highest score answer: use bounded retries.", "author": "helpful_user", "score": 9, "modified": "2026-07-18T12:00:00Z"}, {"body": "Recent answer: log each retry attempt.", "author": "stack_user", "score": 2, "modified": "2026-07-20T12:00:00Z"}], "initial_sort": "Date modified"}]}
               - keyword: WHEN
                 content: Select Highest score in Sorted by and verify its sequence; then choose Date modified.
               - keyword: THEN
@@ -1414,8 +1520,11 @@ children:
           - name: Publish an actual answer correction
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Changed Answer Revision and answer_edit_user's registry answer; authenticate
-                  that author and open the answer's Edit action.
+                content: |-
+                  UI-create isolated SO Changed Answer Revision and answer_edit_user's registry answer; authenticate that author and open the answer's Edit action.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"stack_user": {"email": "stack_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_edit_user": {"email": "answer_edit_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Replace Body with Use bounded exponential backoff, an idempotency key, and a deadline so
                   retries remain safe and observable.; enter Added deadline guidance. in Edit Summary and Save edits.
@@ -1439,8 +1548,11 @@ children:
           - name: Prevent non-owner answer deletion
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Protected Answer Ownership with a Helpful User answer; authenticate
-                  answer_voter, a different ordinary user.
+                content: |-
+                  UI-create isolated SO Protected Answer Ownership with a Helpful User answer; authenticate answer_voter, a different ordinary user.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"helpful_user": {"email": "helpful_user@example.com", "password": "Password123!", "display_name": "Helpful User", "reputation": 100, "verified": true}, "question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_voter": {"email": "answer_voter@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Open the question and inspect Delete within the visible Answer by Helpful User region.
               - keyword: THEN
@@ -1463,8 +1575,11 @@ children:
           - name: Keep the accepted solution protected
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Protected Accepted Answer under answer_accept_owner; answer_delete_user
-                  posts its registry answer, and the question owner accepts that answer through Accept answer.
+                content: |-
+                  UI-create isolated SO Protected Accepted Answer under answer_accept_owner; answer_delete_user posts its registry answer, and the question owner accepts that answer through Accept answer.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"answer_accept_owner": {"email": "answer_accept_owner@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_delete_user": {"email": "answer_delete_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Authenticate answer_delete_user, open the question and inspect Accepted answer and Delete
                   within its own answer.
@@ -1497,11 +1612,18 @@ children:
           Question and answer comments display author and timestamp in chronological order. Own comments may be edited within five minutes; deletion is immediate. Replies belong to their parent. Comments support upvotes only.
 
           Comments is scoped to its post; each comment is a region named Comment <body>, and Replies is scoped to its parent comment. Comment votes is a named numeric status; active votes expose pressed state.
+
+          Optional visual reference:
+          ![image](./reference/add-comment.jpeg)
         scenarios:
           - name: Open a question comment thread
             steps:
               - keyword: GIVEN
-                content: The declared public retry question is available.
+                content: |-
+                  The declared public retry question is available.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How can I safely retry an idempotent HTTP request in Node.js?", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["node.js", "http", "retry"], "author": "helpful_user", "score": 7, "answers": 0, "views": 42, "asked": "2026-07-01T12:00:00Z", "modified": "2026-07-10T12:00:00Z"}]}
               - keyword: WHEN
                 content: Open the question through public navigation and search.
               - keyword: THEN
@@ -1527,8 +1649,11 @@ children:
           - name: Publish a question comment
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Question Comment Question under question_creator; authenticate question_comment_user
-                  and open that question.
+                content: |-
+                  UI-create isolated SO Question Comment Question under question_creator; authenticate question_comment_user and open that question.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "question_comment_user": {"email": "question_comment_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Click Add a comment within Question post, enter Can you share what you tried so far? in
                   Comment and press Enter; reload.
@@ -1557,8 +1682,11 @@ children:
           - name: Reveal the complete comment thread
             steps:
               - keyword: GIVEN
-                content: An anonymous visitor opens SO Expanded Comment Question with seven historical comments
-                  Retry discussion comment 1 through 7 in chronological order; only the first five initially show.
+                content: |-
+                  An anonymous visitor opens SO Expanded Comment Question with seven historical comments Retry discussion comment 1 through 7 in chronological order; only the first five initially show.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "SO Expanded Comment Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 0, "answers": 0, "views": 7, "comments": [{"body": "Retry discussion comment 1", "author": "helpful_user", "posted": "2026-07-20T12:01:00Z"}, {"body": "Retry discussion comment 2", "author": "helpful_user", "posted": "2026-07-20T12:02:00Z"}, {"body": "Retry discussion comment 3", "author": "helpful_user", "posted": "2026-07-20T12:03:00Z"}, {"body": "Retry discussion comment 4", "author": "helpful_user", "posted": "2026-07-20T12:04:00Z"}, {"body": "Retry discussion comment 5", "author": "helpful_user", "posted": "2026-07-20T12:05:00Z"}, {"body": "Retry discussion comment 6", "author": "helpful_user", "posted": "2026-07-20T12:06:00Z"}, {"body": "Retry discussion comment 7", "author": "helpful_user", "posted": "2026-07-20T12:07:00Z"}]}]}
               - keyword: WHEN
                 content: Verify first-five visibility and sixth/seventh hidden state, then click Show 2 more comments
                   in that post's Comments.
@@ -1588,8 +1716,12 @@ children:
           - name: Save comment within five minutes
             steps:
               - keyword: GIVEN
-                content: At fixed UTC clock 2026-07-21T12:02:00Z, authenticated comment_edit_user owns the seeded
-                  comment Can you share what you tried so far? posted at 12:00 on SO Comment Edit Question.
+                content: |-
+                  At fixed UTC clock 2026-07-21T12:02:00Z, authenticated comment_edit_user owns the seeded comment Can you share what you tried so far? posted at 12:00 on SO Comment Edit Question.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"comment_edit_user": {"email": "comment_edit_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "SO Comment Edit Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 0, "answers": 0, "views": 2, "comments": [{"body": "Can you share what you tried so far?", "author": "comment_edit_user", "posted": "2026-07-21T12:00:00Z"}]}]}
               - keyword: WHEN
                 content: Click Edit within that comment, verify Comment is prefilled, replace it with Can you share
                   a minimal retry example? and press Enter.
@@ -1618,8 +1750,11 @@ children:
           - name: Remove comment without confirmation
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Comment Delete Question and comment_delete_user's Can you share what
-                  you tried so far? comment through Add a comment and Enter; authenticate its author.
+                content: |-
+                  UI-create isolated SO Comment Delete Question and comment_delete_user's Can you share what you tried so far? comment through Add a comment and Enter; authenticate its author.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "comment_delete_user": {"email": "comment_delete_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Open the question and click Delete within that exact comment.
               - keyword: THEN
@@ -1649,8 +1784,11 @@ children:
           - name: Apply and remove a helpful-comment vote
             steps:
               - keyword: GIVEN
-                content: Authenticate comment_vote_user and open SO Comment Vote Question with a historical comment
-                  whose Comment votes is 1; no Down vote is offered.
+                content: |-
+                  Authenticate comment_vote_user and open SO Comment Vote Question with a historical comment whose Comment votes is 1; no Down vote is offered.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"comment_vote_user": {"email": "comment_vote_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "SO Comment Vote Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 0, "answers": 0, "views": 2, "comments": [{"body": "Can you share what you tried so far?", "author": "helpful_user", "upvotes": 1, "voters": ["stack_user"]}]}]}
               - keyword: WHEN
                 content: Click Up vote within that comment, then click it again.
               - keyword: THEN
@@ -1679,8 +1817,11 @@ children:
           - name: Publish in the answer thread
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Answer Comment Question and Helpful User's answer, then authenticate
-                  answer_comment_user and open the question.
+                content: |-
+                  UI-create isolated SO Answer Comment Question and Helpful User's answer, then authenticate answer_comment_user and open the question.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"helpful_user": {"email": "helpful_user@example.com", "password": "Password123!", "display_name": "Helpful User", "reputation": 100, "verified": true}, "question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_comment_user": {"email": "answer_comment_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Click Add a comment inside the answer, enter Can you share what you tried so far? in its
                   Comment field and press Enter; reload.
@@ -1709,8 +1850,11 @@ children:
           - name: Attach a nested reply to its parent
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Comment Reply Question and Helpful User's Can you share what you
-                  tried so far? comment; authenticate comment_reply_user and open that question.
+                content: |-
+                  UI-create isolated SO Comment Reply Question and Helpful User's Can you share what you tried so far? comment; authenticate comment_reply_user and open that question.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"helpful_user": {"email": "helpful_user@example.com", "password": "Password123!", "display_name": "Helpful User", "reputation": 100, "verified": true}, "question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "comment_reply_user": {"email": "comment_reply_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Click Reply within the identified parent comment, enter Thanks, I will add the retry case.
                   in its Reply field, click Add Reply and reload.
@@ -1741,8 +1885,11 @@ children:
           - name: Refuse another user comment maintenance
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Protected Comment Ownership and a Helpful User comment through UI
-                  at the within-window clock; authenticate stack_user, who is not its author.
+                content: |-
+                  UI-create isolated SO Protected Comment Ownership and a Helpful User comment through UI at the within-window clock; authenticate stack_user, who is not its author.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"stack_user": {"email": "stack_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "helpful_user": {"email": "helpful_user@example.com", "password": "Password123!", "display_name": "Helpful User", "reputation": 100, "verified": true}, "question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Open the question and inspect Edit and Delete within the visible comment.
               - keyword: THEN
@@ -1771,8 +1918,11 @@ children:
           - name: Preserve question and answer thread boundaries
             steps:
               - keyword: GIVEN
-                content: UI-create isolated SO Separate Comment Threads, Helpful User's answer and question_comment_user's
-                  question comment Can you share what you tried so far?. Authenticate answer_comment_user.
+                content: |-
+                  UI-create isolated SO Separate Comment Threads, Helpful User's answer and question_comment_user's question comment Can you share what you tried so far?. Authenticate answer_comment_user.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"helpful_user": {"email": "helpful_user@example.com", "password": "Password123!", "display_name": "Helpful User", "reputation": 100, "verified": true}, "question_creator": {"email": "question_creator@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "question_comment_user": {"email": "question_comment_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "answer_comment_user": {"email": "answer_comment_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
               - keyword: WHEN
                 content: Open the question, click Add a comment within the answer, enter Please explain the retry
                   deadline. and press Enter, then reload.
@@ -1793,6 +1943,9 @@ children:
       Public tags and search; watching and saved custom filters are personal authenticated preferences. General keyword/tag/user/date criteria remain capability context; executable examples cover react state and python unanswered newest.
 
       Tag entry regions are named Tag <name>. Selected combobox options expose their visible label. Search accepts a full published question title and returns that exact matching record, including UI-created posts.
+
+      Optional visual reference:
+      ![image](./reference/search-and-filter.jpeg)
     children:
       - id: REQ-6.1
         name: Browse tags and tagged questions
@@ -1802,13 +1955,11 @@ children:
         pages:
           - name: tags
             reference: ./reference/tags-page.jpeg
-        description: Tag navigation displays "Tags"(role=region) with "Tag <name>"(role=region) entries ordered
-          by current popularity, each showing description and numeric "Question count"(role=status). Clicking "python"(role=button)
-          opens "Python tag"(role=region), its description, "Related tags"(role=region), and a Question feed containing
-          only python-tagged questions with tag identity visible in each summary. "Next page"(role=button) provides
-          pagination and may be disabled because the fixture fits one page. Counts include UI-created posts and
-          never fall below the immutable catalog baseline; ranking uses current counts rather than totals hard-coded
-          after earlier cases.
+        description: |-
+          Tag navigation displays "Tags"(role=region) with "Tag <name>"(role=region) entries ordered by current popularity, each showing description and numeric "Question count"(role=status). Clicking "python"(role=button) opens "Python tag"(role=region), its description, "Related tags"(role=region), and a Question feed containing only python-tagged questions with tag identity visible in each summary. "Next page"(role=button) provides pagination and may be disabled because the fixture fits one page. Counts include UI-created posts and never fall below the immutable catalog baseline; ranking uses current counts rather than totals hard-coded after earlier cases.
+
+          Optional visual reference:
+          ![image](./reference/tags-page.jpeg)
         data:
           requires:
             - DATA-TAGS
@@ -1817,8 +1968,11 @@ children:
           - name: Browse popular tags and python questions
             steps:
               - keyword: GIVEN
-                content: The anonymous world includes DATA-TAGS with initial counts python 20, javascript 15, node.js
-                  10, http 8 and retry 5, plus seeded python questions; current counts may include UI-created posts.
+                content: |-
+                  The anonymous world includes DATA-TAGS with initial counts python 20, javascript 15, node.js 10, http 8 and retry 5, plus seeded python questions; current counts may include UI-created posts.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "python", "description": "python programming questions", "question_count": 20}, {"name": "javascript", "description": "javascript programming questions", "question_count": 15}, {"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How can I safely retry an idempotent HTTP request in Node.js?", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["node.js", "http", "retry"], "author": "helpful_user", "score": 7, "answers": 0, "views": 42, "asked": "2026-07-01T12:00:00Z", "modified": "2026-07-10T12:00:00Z"}, {"title": "SO Python Unanswered Recent", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["python"], "author": "helpful_user", "score": 0, "answers": 0, "views": 5, "asked": "2026-07-20T12:00:00Z", "modified": "2026-07-20T12:00:00Z"}, {"title": "SO Python Answered Active", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["python"], "author": "helpful_user", "score": 4, "answers": 1, "views": 10, "asked": "2026-07-19T12:00:00Z", "modified": "2026-07-21T11:00:00Z"}]}
               - keyword: WHEN
                 content: Click Tags in Main navigation, inspect each Tag <name> region, description, count and Next
                   page; click python in its tag entry.
@@ -1844,7 +1998,11 @@ children:
           - name: Toggle python watch preference
             steps:
               - keyword: GIVEN
-                content: Authenticate tag_watcher with no python watch, open Tags and choose python.
+                content: |-
+                  Authenticate tag_watcher with no python watch, open Tags and choose python.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"tag_watcher": {"email": "tag_watcher@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "python", "description": "python programming questions", "question_count": 20}]}
               - keyword: WHEN
                 content: Click Watch tag, navigate to Questions and reload, reopen python through Watched tags,
                   then click Unwatch tag and return to Questions.
@@ -1859,11 +2017,11 @@ children:
         pages:
           - name: search
             reference: ./reference/search-and-filter.jpeg
-        description: Entering react state in the banner's "Search"(role=searchbox) displays real-time "Search suggestions"(role=region).
-          Pressing Enter opens "Search results"(role=region) with relevant public question links ranked by relevance.
-          The initial index includes one known React-state match and nonmatching retry and python posts, which are
-          excluded. Keyword, tag, user, and date criteria remain general capability context; unspecified syntax
-          and ranking examples are not invented.
+        description: |-
+          Entering react state in the banner's "Search"(role=searchbox) displays real-time "Search suggestions"(role=region). Pressing Enter opens "Search results"(role=region) with relevant public question links ranked by relevance. The initial index includes one known React-state match and nonmatching retry and python posts, which are excluded. Keyword, tag, user, and date criteria remain general capability context; unspecified syntax and ranking examples are not invented.
+
+          Optional visual reference:
+          ![image](./reference/search-and-filter.jpeg)
         data:
           requires:
             - DATA-HISTORY
@@ -1871,8 +2029,11 @@ children:
           - name: Suggest and search react state
             steps:
               - keyword: GIVEN
-                content: The anonymous public index contains How does React state update? as the unique seeded react-state
-                  match and nonmatching retry and python questions.
+                content: |-
+                  The anonymous public index contains How does React state update? as the unique seeded react-state match and nonmatching retry and python questions.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "python", "description": "python programming questions", "question_count": 20}, {"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How can I safely retry an idempotent HTTP request in Node.js?", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["node.js", "http", "retry"], "author": "helpful_user", "score": 7, "answers": 0, "views": 42, "asked": "2026-07-01T12:00:00Z", "modified": "2026-07-10T12:00:00Z"}, {"title": "How does React state update?", "body": "React state updates and rendering examples.", "tags": ["javascript"], "author": "helpful_user", "score": 2, "answers": [{"body": "Batch state updates safely.", "author": "activity_user", "score": 5, "accepted": true}], "views": 18, "asked": "2026-07-20T10:00:00Z", "modified": "2026-07-20T11:00:00Z"}, {"title": "SO Python Unanswered Recent", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["python"], "author": "helpful_user", "score": 0, "answers": 0, "views": 5, "asked": "2026-07-20T12:00:00Z", "modified": "2026-07-20T12:00:00Z"}, {"title": "SO Python Answered Active", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["python"], "author": "helpful_user", "score": 4, "answers": 1, "views": 10, "asked": "2026-07-19T12:00:00Z", "modified": "2026-07-21T11:00:00Z"}]}
               - keyword: WHEN
                 content: Enter react state in the banner Search, inspect Search suggestions, then press Enter.
               - keyword: THEN
@@ -1894,8 +2055,11 @@ children:
           - name: Switch newest and active ordering
             steps:
               - keyword: GIVEN
-                content: Anonymous Questions contains SO Python Unanswered Recent with the newer asked date and
-                  SO Python Answered Active with the later modification date.
+                content: |-
+                  Anonymous Questions contains SO Python Unanswered Recent with the newer asked date and SO Python Answered Active with the later modification date.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "python", "description": "python programming questions", "question_count": 20}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "SO Python Unanswered Recent", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["python"], "author": "helpful_user", "score": 0, "answers": 0, "views": 5, "asked": "2026-07-20T12:00:00Z", "modified": "2026-07-20T12:00:00Z"}, {"title": "SO Python Answered Active", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["python"], "author": "helpful_user", "score": 4, "answers": 1, "views": 10, "asked": "2026-07-19T12:00:00Z", "modified": "2026-07-21T11:00:00Z"}]}
               - keyword: WHEN
                 content: Click Newest in Question feed, inspect ordering and selection, then click Active.
               - keyword: THEN
@@ -1922,8 +2086,12 @@ children:
           - name: Save and reapply python unanswered criteria
             steps:
               - keyword: GIVEN
-                content: Authenticate filter_user, open Questions and use a fresh isolated Python unanswered filter
-                  name; the catalog includes answered python and nonpython control questions.
+                content: |-
+                  Authenticate filter_user, open Questions and use a fresh isolated Python unanswered filter name; the catalog includes answered python and nonpython control questions.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"filter_user": {"email": "filter_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "python", "description": "python programming questions", "question_count": 20}, {"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How can I safely retry an idempotent HTTP request in Node.js?", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["node.js", "http", "retry"], "author": "helpful_user", "score": 7, "answers": 0, "views": 42, "asked": "2026-07-01T12:00:00Z", "modified": "2026-07-10T12:00:00Z"}, {"title": "How does React state update?", "body": "React state updates and rendering examples.", "tags": ["javascript"], "author": "helpful_user", "score": 2, "answers": [{"body": "Batch state updates safely.", "author": "activity_user", "score": 5, "accepted": true}], "views": 18, "asked": "2026-07-20T10:00:00Z", "modified": "2026-07-20T11:00:00Z"}, {"title": "SO Python Unanswered Recent", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["python"], "author": "helpful_user", "score": 0, "answers": 0, "views": 5, "asked": "2026-07-20T12:00:00Z", "modified": "2026-07-20T12:00:00Z"}, {"title": "SO Python Answered Active", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["python"], "author": "helpful_user", "score": 4, "answers": 1, "views": 10, "asked": "2026-07-19T12:00:00Z", "modified": "2026-07-21T11:00:00Z"}]}
               - keyword: WHEN
                 content: Open Filter, check Unanswered in Filter panel, select Newest in Sort and enter python in
                   Tags. Verify selections, click Save custom filter, enter the isolated Filter title in the dialog
@@ -1941,9 +2109,11 @@ children:
         pages:
           - name: tags
             reference: ./reference/tags-page.jpeg
-        description: Clicking "python"(role=button) opens "Python tag"(role=region) with navigable public question
-          titles. Selecting "SO Python Unanswered Recent"(role=button) opens that same public question with its
-          python tag, preserving the business identity selected during discovery.
+        description: |-
+          Clicking "python"(role=button) opens "Python tag"(role=region) with navigable public question titles. Selecting "SO Python Unanswered Recent"(role=button) opens that same public question with its python tag, preserving the business identity selected during discovery.
+
+          Optional visual reference:
+          ![image](./reference/tags-page.jpeg)
         data:
           requires:
             - DATA-HISTORY
@@ -1952,8 +2122,11 @@ children:
           - name: Follow a python question from tag discovery
             steps:
               - keyword: GIVEN
-                content: The anonymous world contains public SO Python Unanswered Recent with its body and python
-                  tag.
+                content: |-
+                  The anonymous world contains public SO Python Unanswered Recent with its body and python tag.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "python", "description": "python programming questions", "question_count": 20}, {"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "SO Python Unanswered Recent", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["python"], "author": "helpful_user", "score": 0, "answers": 0, "views": 5, "asked": "2026-07-20T12:00:00Z", "modified": "2026-07-20T12:00:00Z"}]}
               - keyword: WHEN
                 content: Click Tags, choose python in Tag python, then select SO Python Unanswered Recent from the
                   tagged Question feed.
@@ -1977,8 +2150,12 @@ children:
           - name: Isolate custom filters between accounts
             steps:
               - keyword: GIVEN
-                content: Authenticate filter_user and open Questions; stack_user is a separate account with no ownership
-                  of the proposed isolated Python unanswered filter.
+                content: |-
+                  Authenticate filter_user and open Questions; stack_user is a separate account with no ownership of the proposed isolated Python unanswered filter.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"stack_user": {"email": "stack_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "filter_user": {"email": "filter_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "python", "description": "python programming questions", "question_count": 20}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How can I safely retry an idempotent HTTP request in Node.js?", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["node.js", "http", "retry"], "author": "helpful_user", "score": 7, "answers": 0, "views": 42, "asked": "2026-07-01T12:00:00Z", "modified": "2026-07-10T12:00:00Z"}, {"title": "SO Upvote Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 7, "answers": 0, "views": 12}, {"title": "SO Downvote Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 3, "answers": 0, "views": 8}, {"title": "How does React state update?", "body": "React state updates and rendering examples.", "tags": ["javascript"], "author": "helpful_user", "score": 2, "answers": [{"body": "Batch state updates safely.", "author": "activity_user", "score": 5, "accepted": true}], "views": 18, "asked": "2026-07-20T10:00:00Z", "modified": "2026-07-20T11:00:00Z"}, {"title": "SO Python Unanswered Recent", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["python"], "author": "helpful_user", "score": 0, "answers": 0, "views": 5, "asked": "2026-07-20T12:00:00Z", "modified": "2026-07-20T12:00:00Z"}, {"title": "SO Python Answered Active", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["python"], "author": "helpful_user", "score": 4, "answers": 1, "views": 10, "asked": "2026-07-19T12:00:00Z", "modified": "2026-07-21T11:00:00Z"}, {"title": "SO Answer Sorting Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 1, "views": 10, "answers": [{"body": "Highest score answer: use bounded retries.", "author": "helpful_user", "score": 9, "modified": "2026-07-18T12:00:00Z"}, {"body": "Recent answer: log each retry attempt.", "author": "stack_user", "score": 2, "modified": "2026-07-20T12:00:00Z"}], "initial_sort": "Date modified"}, {"title": "SO Expanded Comment Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 0, "answers": 0, "views": 7, "comments": [{"body": "Retry discussion comment 1", "author": "helpful_user", "posted": "2026-07-20T12:01:00Z"}, {"body": "Retry discussion comment 2", "author": "helpful_user", "posted": "2026-07-20T12:02:00Z"}, {"body": "Retry discussion comment 3", "author": "helpful_user", "posted": "2026-07-20T12:03:00Z"}, {"body": "Retry discussion comment 4", "author": "helpful_user", "posted": "2026-07-20T12:04:00Z"}, {"body": "Retry discussion comment 5", "author": "helpful_user", "posted": "2026-07-20T12:05:00Z"}, {"body": "Retry discussion comment 6", "author": "helpful_user", "posted": "2026-07-20T12:06:00Z"}, {"body": "Retry discussion comment 7", "author": "helpful_user", "posted": "2026-07-20T12:07:00Z"}]}, {"title": "SO Comment Edit Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 0, "answers": 0, "views": 2, "comments": [{"body": "Can you share what you tried so far?", "author": "comment_edit_user", "posted": "2026-07-21T12:00:00Z"}]}, {"title": "SO Comment Vote Question", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["http"], "author": "helpful_user", "score": 0, "answers": 0, "views": 2, "comments": [{"body": "Can you share what you tried so far?", "author": "helpful_user", "upvotes": 1, "voters": ["stack_user"]}]}]}
               - keyword: WHEN
                 content: Open Filter, check Unanswered, choose Newest, enter python and save the isolated title
                   through Save custom filter and Save filter. Inspect Saved filters as independent stack_user, then
@@ -2003,8 +2180,11 @@ children:
           - name: Isolate tag watch preferences
             steps:
               - keyword: GIVEN
-                content: Authenticate tag_watcher with no python watch; stack_user independently starts without
-                  that watch.
+                content: |-
+                  Authenticate tag_watcher with no python watch; stack_user independently starts without that watch.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"stack_user": {"email": "stack_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}, "tag_watcher": {"email": "tag_watcher@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "python", "description": "python programming questions", "question_count": 20}]}
               - keyword: WHEN
                 content: Open python and Watch tag as the creator. In an independent stack_user context inspect
                   Questions/Watched tags and reopen python, then return to the creator and click Unwatch tag.
@@ -2022,6 +2202,9 @@ children:
       Owner activity views, reputation and private votes, badge categories and seeded earned notification. Privilege thresholds and new badge qualification triggers are unspecified and not invented.
 
       Profile navigation and Activity navigation are distinct named navigation scopes. Reputation, Question count and Earn count <badge> are numeric status outputs. Badge notification is a named status containing its message.
+
+      Optional visual reference:
+      ![image](./reference/user-feed.jpeg)
     children:
       - id: REQ-7.1
         name: Read reputation history
@@ -2038,8 +2221,12 @@ children:
           - name: Inspect reputation contributions
             steps:
               - keyword: GIVEN
-                content: Authenticate activity_user, whose seeded history contains newer answer upvoted +10 for
-                  How does React state update? and older question upvoted +5 for SO Activity Owned Question.
+                content: |-
+                  Authenticate activity_user, whose seeded history contains newer answer upvoted +10 for How does React state update? and older question upvoted +5 for SO Activity Owned Question.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"activity_user": {"email": "activity_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How does React state update?", "body": "React state updates and rendering examples.", "tags": ["javascript"], "author": "helpful_user", "score": 2, "answers": [{"body": "Batch state updates safely.", "author": "activity_user", "score": 5, "accepted": true}], "views": 18, "asked": "2026-07-20T10:00:00Z", "modified": "2026-07-20T11:00:00Z"}]}
+                  - DATA-ACTIVITY (owner activity and reputation history): {"account": "activity_user", "reputation": [{"reason": "answer upvoted", "change": 10, "post": "How does React state update?", "time": "2026-07-20T12:00:00Z"}, {"reason": "question upvoted", "change": 5, "post": "SO Activity Owned Question", "time": "2026-07-19T12:00:00Z"}]}
               - keyword: WHEN
                 content: Open the own profile and click Reputation in Profile navigation.
               - keyword: THEN
@@ -2060,8 +2247,11 @@ children:
           - name: Display seeded Teacher achievement
             steps:
               - keyword: GIVEN
-                content: Authenticate badge_user, whose initial world already includes earned Teacher and its unacknowledged
-                  notification event.
+                content: |-
+                  Authenticate badge_user, whose initial world already includes earned Teacher and its unacknowledged notification event.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"badge_user": {"email": "badge_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-BADGES (badge catalog and earned event): {"catalog": [{"name": "Great Answer", "category": "Gold", "description": "Recognizes a great answer", "earn_count": 2}, {"name": "Teacher", "category": "Bronze", "description": "Recognizes a helpful first answer", "earn_count": 5}, {"name": "Good Answer", "category": "Silver", "description": "Recognizes a good answer", "earn_count": 3}], "earned": {"account": "badge_user", "badge": "Teacher", "unacknowledged": true}}
               - keyword: WHEN
                 content: Open the account's own profile and inspect Badges and badge notification.
               - keyword: THEN
@@ -2082,8 +2272,10 @@ children:
           - name: Read categorized badges
             steps:
               - keyword: GIVEN
-                content: The anonymous world contains DATA-BADGES with Great Answer, Good Answer and Teacher catalog
-                  entries and seeded earn counts 2, 3 and 5.
+                content: |-
+                  The anonymous world contains DATA-BADGES with Great Answer, Good Answer and Teacher catalog entries and seeded earn counts 2, 3 and 5.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-BADGES (badge catalog and earned event): {"catalog": [{"name": "Great Answer", "category": "Gold", "description": "Recognizes a great answer", "earn_count": 2}, {"name": "Teacher", "category": "Bronze", "description": "Recognizes a helpful first answer", "earn_count": 5}, {"name": "Good Answer", "category": "Silver", "description": "Recognizes a good answer", "earn_count": 3}]}
               - keyword: WHEN
                 content: Click Badges and inspect Badge catalog and its Gold, Silver and Bronze groups.
               - keyword: THEN
@@ -2098,16 +2290,11 @@ children:
         pages:
           - name: profile
             reference: ./reference/user-feed.jpeg
-        description: The activity_user opens its unique "Stack User activity_user@example.com"(role=button) profile
-          action and selects "Activity"(role=button). "Activity navigation"(role=navigation) offers Summary, "Answers"(role=button),
-          "Questions"(role=button), Tags, Articles, Badges, Following, Bounties, "Reputation"(role=button), All
-          actions, "Responses"(role=button), and "Votes"(role=button), marking the selected item current=page. "Activity
-          content"(role=region) updates to the chosen view. Answers offers "Score"(role=button), Activity, "Newest"(role=button),
-          and "Next page"(role=button), plus correct parent titles and accepted status. Questions shows the owner's
-          title with numeric "Score"(role=status), "Answer count"(role=status), and "View count"(role=status) representing
-          Votes 3, Answers 1, and Views 11. Responses links actual parents; Reputation history and the private Votes
-          log show source contributions and actions. No particular route, DOM, or full-reload implementation is
-          required.
+        description: |-
+          The activity_user opens its unique "Stack User activity_user@example.com"(role=button) profile action and selects "Activity"(role=button). "Activity navigation"(role=navigation) offers Summary, "Answers"(role=button), "Questions"(role=button), Tags, Articles, Badges, Following, Bounties, "Reputation"(role=button), All actions, "Responses"(role=button), and "Votes"(role=button), marking the selected item current=page. "Activity content"(role=region) updates to the chosen view. Answers offers "Score"(role=button), Activity, "Newest"(role=button), and "Next page"(role=button), plus correct parent titles and accepted status. Questions shows the owner's title with numeric "Score"(role=status), "Answer count"(role=status), and "View count"(role=status) representing Votes 3, Answers 1, and Views 11. Responses links actual parents; Reputation history and the private Votes log show source contributions and actions. No particular route, DOM, or full-reload implementation is required.
+
+          Optional visual reference:
+          ![image](./reference/user-feed.jpeg)
         data:
           requires:
             - DATA-ACTIVITY
@@ -2115,8 +2302,13 @@ children:
           - name: Navigate answers and questions activity
             steps:
               - keyword: GIVEN
-                content: Authenticate activity_user with its historical React answer Batch state updates safely.,
-                  accepted state and SO Activity Owned Question metadata Score 3, Answer count 1, View count 11.
+                content: |-
+                  Authenticate activity_user with its historical React answer Batch state updates safely., accepted state and SO Activity Owned Question metadata Score 3, Answer count 1, View count 11.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"activity_user": {"email": "activity_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How does React state update?", "body": "React state updates and rendering examples.", "tags": ["javascript"], "author": "helpful_user", "score": 2, "answers": [{"body": "Batch state updates safely.", "author": "activity_user", "score": 5, "accepted": true}], "views": 18, "asked": "2026-07-20T10:00:00Z", "modified": "2026-07-20T11:00:00Z"}]}
+                  - DATA-ACTIVITY (owner activity and reputation history): {"account": "activity_user", "answers": [{"question": "How does React state update?", "reference": "DATA-HISTORY question answer by activity_user"}], "questions": [{"title": "SO Activity Owned Question", "votes": 3, "answers": 1, "views": 11, "tags": ["javascript"]}], "responses": [{"body": "Check the state updater callback.", "question": "How does React state update?"}], "reputation": [{"reason": "answer upvoted", "change": 10, "post": "How does React state update?", "time": "2026-07-20T12:00:00Z"}, {"reason": "question upvoted", "change": 5, "post": "SO Activity Owned Question", "time": "2026-07-19T12:00:00Z"}], "votes": [{"action": "upvote", "post": "How can I safely retry an idempotent HTTP request in Node.js?", "time": "2026-07-18T12:00:00Z"}]}
+                  - DATA-BADGES (badge catalog and earned event): {"catalog": [{"name": "Great Answer", "category": "Gold", "description": "Recognizes a great answer", "earn_count": 2}, {"name": "Teacher", "category": "Bronze", "description": "Recognizes a helpful first answer", "earn_count": 5}, {"name": "Good Answer", "category": "Silver", "description": "Recognizes a good answer", "earn_count": 3}]}
               - keyword: WHEN
                 content: Open the own profile and Activity, inspect all sidebar categories, choose Answers and inspect
                   sorting/pagination and answer content, then choose Questions.
@@ -2127,8 +2319,13 @@ children:
           - name: Read responses and private votes
             steps:
               - keyword: GIVEN
-                content: Authenticate activity_user with the seeded response Check the state updater callback.,
-                  private upvote on the retry question and reputation contribution history.
+                content: |-
+                  Authenticate activity_user with the seeded response Check the state updater callback., private upvote on the retry question and reputation contribution history.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"activity_user": {"email": "activity_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How can I safely retry an idempotent HTTP request in Node.js?", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["node.js", "http", "retry"], "author": "helpful_user", "score": 7, "answers": 0, "views": 42, "asked": "2026-07-01T12:00:00Z", "modified": "2026-07-10T12:00:00Z"}, {"title": "How does React state update?", "body": "React state updates and rendering examples.", "tags": ["javascript"], "author": "helpful_user", "score": 2, "answers": [{"body": "Batch state updates safely.", "author": "activity_user", "score": 5, "accepted": true}], "views": 18, "asked": "2026-07-20T10:00:00Z", "modified": "2026-07-20T11:00:00Z"}]}
+                  - DATA-ACTIVITY (owner activity and reputation history): {"account": "activity_user", "responses": [{"body": "Check the state updater callback.", "question": "How does React state update?"}], "reputation": [{"reason": "answer upvoted", "change": 10, "post": "How does React state update?", "time": "2026-07-20T12:00:00Z"}, {"reason": "question upvoted", "change": 5, "post": "SO Activity Owned Question", "time": "2026-07-19T12:00:00Z"}], "votes": [{"action": "upvote", "post": "How can I safely retry an idempotent HTTP request in Node.js?", "time": "2026-07-18T12:00:00Z"}]}
               - keyword: WHEN
                 content: Open own Activity and Responses, then choose Votes and Reputation from Activity navigation.
               - keyword: THEN
@@ -2137,8 +2334,13 @@ children:
           - name: Protect private voting history
             steps:
               - keyword: GIVEN
-                content: The browser is anonymous and the public Users catalog includes the unique Stack User activity_user@example.com
-                  action.
+                content: |-
+                  The browser is anonymous and the public Users catalog includes the unique Stack User activity_user@example.com action.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"activity_user": {"email": "activity_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-TAGS (tag catalog): {"tags": [{"name": "node.js", "description": "node.js programming questions", "question_count": 10}, {"name": "http", "description": "http programming questions", "question_count": 8}, {"name": "retry", "description": "retry programming questions", "question_count": 5}]}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How can I safely retry an idempotent HTTP request in Node.js?", "body": "I am building a Node.js service and need a safe retry pattern for idempotent HTTP requests. I have already tried a simple timeout wrapper, but I need guidance on exponential backoff, duplicate suppression, timeout handling, and observability across intermittent failures in production. What patterns should I use and how should I structure retries so the client remains correct, debuggable, and safe for repeated delivery attempts?", "tags": ["node.js", "http", "retry"], "author": "helpful_user", "score": 7, "answers": 0, "views": 42, "asked": "2026-07-01T12:00:00Z", "modified": "2026-07-10T12:00:00Z"}]}
+                  - DATA-ACTIVITY (owner activity and reputation history): {"account": "activity_user", "votes": [{"action": "upvote", "post": "How can I safely retry an idempotent HTTP request in Node.js?", "time": "2026-07-18T12:00:00Z"}]}
               - keyword: WHEN
                 content: Open Users, choose that exact profile, then open Activity and inspect Votes availability
                   and Activity content.
@@ -2154,10 +2356,11 @@ children:
         pages:
           - name: profile
             reference: ./reference/user-feed.jpeg
-        description: The owner selects "Answers"(role=button) in activity and opens "How does React state update?"(role=button),
-          the actual parent of the historical answer. That public question displays "Answer by Stack User"(role=region),
-          containing Batch state updates safely. with "Accepted answer"(role=button). Activity entries therefore
-          navigate to real posts rather than disconnected summaries.
+        description: |-
+          The owner selects "Answers"(role=button) in activity and opens "How does React state update?"(role=button), the actual parent of the historical answer. That public question displays "Answer by Stack User"(role=region), containing Batch state updates safely. with "Accepted answer"(role=button). Activity entries therefore navigate to real posts rather than disconnected summaries.
+
+          Optional visual reference:
+          ![image](./reference/user-feed.jpeg)
         data:
           requires:
             - DATA-ACTIVITY
@@ -2166,7 +2369,12 @@ children:
           - name: Follow an activity answer to its parent
             steps:
               - keyword: GIVEN
-                content: Authenticate activity_user with the seeded accepted React answer Batch state updates safely.
+                content: |-
+                  Authenticate activity_user with the seeded accepted React answer Batch state updates safely.
+                  Seed prerequisites (prepared before this scenario):
+                  - DATA-ACCOUNTS (verified accounts): {"activity_user": {"email": "activity_user@example.com", "password": "Password123!", "display_name": "Stack User", "reputation": 100, "verified": true}}
+                  - DATA-HISTORY (public historical question index): {"questions": [{"title": "How does React state update?", "body": "React state updates and rendering examples.", "tags": ["javascript"], "author": "helpful_user", "score": 2, "answers": [{"body": "Batch state updates safely.", "author": "activity_user", "score": 5, "accepted": true}], "views": 18, "asked": "2026-07-20T10:00:00Z", "modified": "2026-07-20T11:00:00Z"}]}
+                  - DATA-ACTIVITY (owner activity and reputation history): {"account": "activity_user", "answers": [{"question": "How does React state update?", "reference": "DATA-HISTORY question answer by activity_user"}]}
               - keyword: WHEN
                 content: Open own Activity then Answers and click How does React state update? in Activity content.
               - keyword: THEN
