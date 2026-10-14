@@ -480,6 +480,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/homepage.jpeg)
+
+          Global header is a banner, and main navigation is named "Main navigation". Question feed contains summary regions named "Question <title>". Navigational actions may be links or buttons; status metrics expose plain numeric text. Right widgets include The Overflow Blog, meta items, Hot Network Questions, custom filters, and tag watchlists.
         data:
           requires:
             - DATA-HISTORY
@@ -587,6 +589,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/login.jpeg)
+
+          Login and Sign up each expose a named form region and submit button. Form errors are visible within their form. Social login and SSO are excluded.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -670,6 +674,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/sign-up.jpeg)
+
+          Login and Sign up each expose a named form region and submit button. Form errors are visible within their form. Social login and SSO are excluded.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -722,6 +728,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/profile-page.jpeg)
+
+          Public profile is a named region. User catalog profile actions combine display name and email to distinguish identical display names.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -1274,6 +1282,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/post-answer.jpeg)
+
+          Answers contains answer regions named "Answer by <display name>", unique per question in the supplied data. Author information is scoped to Author. Score is a named numeric status; active votes expose pressed state. Each answer belongs to exactly its question.
         data:
           requires:
             - DATA-RUNTIME
@@ -1299,10 +1309,10 @@ children:
         dependencies:
           - REQ-4.1
           - REQ-2.1
-        description: The answer_voter clicks "Up vote"(role=button) within "Answer by Helpful User"(role=region)
-          on the UI-created SO Answer Voting Question. The new answer's "Score"(role=status) changes from 0 to 1,
-          the vote becomes active, and author "Reputation"(role=status) increases by 10. Clicking the same vote
-          again restores score 0, inactive state, and the prior reputation.
+        description: |-
+          The answer_voter clicks "Up vote"(role=button) within "Answer by Helpful User"(role=region) on the UI-created SO Answer Voting Question. The new answer's "Score"(role=status) changes from 0 to 1, the vote becomes active, and author "Reputation"(role=status) increases by 10. Clicking the same vote again restores score 0, inactive state, and the prior reputation.
+
+          Answers contains answer regions named "Answer by <display name>", unique per question in the supplied data. Author information is scoped to Author. Score is a named numeric status; active votes expose pressed state. Each answer belongs to exactly its question.
         data:
           requires:
             - DATA-RUNTIME
@@ -1328,10 +1338,10 @@ children:
         dependencies:
           - REQ-4.1
           - REQ-2.1
-        description: The question owner answer_accept_owner clicks "Accept answer"(role=button) in Helpful User's
-          answer to mark it with a green check and "Accepted answer"(role=button), persisting after reload. With
-          two answers, accepting the other transfers the marker and leaves exactly one accepted answer. Non-owners
-          have no usable Accept answer action; exclusivity is observed through public markers rather than storage.
+        description: |-
+          The question owner answer_accept_owner clicks "Accept answer"(role=button) in Helpful User's answer to mark it with a green check and "Accepted answer"(role=button), persisting after reload. With two answers, accepting the other transfers the marker and leaves exactly one accepted answer. Non-owners have no usable Accept answer action; exclusivity is observed through public markers rather than storage.
+
+          Answers contains answer regions named "Answer by <display name>", unique per question in the supplied data. Author information is scoped to Author. Score is a named numeric status; active votes expose pressed state. Each answer belongs to exactly its question.
         data:
           requires:
             - DATA-RUNTIME
@@ -1368,11 +1378,10 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-3.2
-        description: SO Answer Sorting Question shows numeric "Answer count"(role=status) and "Sorted by"(role=combobox)
-          with exactly Highest score, Trending, and Date modified. Initially Date modified shows the newer two-point
-          answer before the older nine-point answer in "Answers"(role=region). Selecting Highest score immediately
-          reverses their visible sequence. Sequential answer text makes ordering observable; no unspecified Trending
-          ranking is inferred.
+        description: |-
+          SO Answer Sorting Question shows numeric "Answer count"(role=status) and "Sorted by"(role=combobox) with exactly Highest score, Trending, and Date modified. Initially Date modified shows the newer two-point answer before the older nine-point answer in "Answers"(role=region). Selecting Highest score immediately reverses their visible sequence. Sequential answer text makes ordering observable; no unspecified Trending ranking is inferred.
+
+          Answers contains answer regions named "Answer by <display name>", unique per question in the supplied data. Author information is scoped to Author. Score is a named numeric status; active votes expose pressed state. Each answer belongs to exactly its question.
         data:
           requires:
             - DATA-HISTORY
@@ -1395,12 +1404,10 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-4.1
-        description: An answer owner clicks "Edit"(role=button) to open prefilled "Body"(role=textbox) and "Edit
-          Summary"(role=textbox). "Save edits"(role=button) updates visible content, adds a revision available through
-          "Timeline"(role=button) in "Revision history"(role=region), and shows edited metadata even if the submitted
-          body is unchanged. An empty body shows Body cannot be empty and retains the editor and original answer.
-          "Cancel"(role=button) discards pending changes. Successful-edit and validation scenarios independently
-          UI-create their respective questions.
+        description: |-
+          An answer owner clicks "Edit"(role=button) to open prefilled "Body"(role=textbox) and "Edit Summary"(role=textbox). "Save edits"(role=button) updates visible content, adds a revision available through "Timeline"(role=button) in "Revision history"(role=region), and shows edited metadata even if the submitted body is unchanged. An empty body shows Body cannot be empty and retains the editor and original answer. "Cancel"(role=button) discards pending changes. Successful-edit and validation scenarios independently UI-create their respective questions.
+
+          Answers contains answer regions named "Answer by <display name>", unique per question in the supplied data. Author information is scoped to Author. Score is a named numeric status; active votes expose pressed state. Each answer belongs to exactly its question.
         data:
           requires:
             - DATA-RUNTIME
@@ -1451,11 +1458,10 @@ children:
         dependencies:
           - REQ-4.1
           - REQ-4.2
-        description: The answer_delete_user clicks "Delete"(role=button) on its UI-created unaccepted answer This
-          answer is reserved for the answer deletion scenario. "Confirm deletion"(role=dialog) explains the consequences,
-          and "Confirm deletion"(role=button) hides the answer publicly, updates "Answer count"(role=status), and
-          reverses reputation gained from its vote. Setup creates one answer and applies one upvote from answer_voter
-          before owner deletion, using the established +10 rule.
+        description: |-
+          The answer_delete_user clicks "Delete"(role=button) on its UI-created unaccepted answer This answer is reserved for the answer deletion scenario. "Confirm deletion"(role=dialog) explains the consequences, and "Confirm deletion"(role=button) hides the answer publicly, updates "Answer count"(role=status), and reverses reputation gained from its vote. Setup creates one answer and applies one upvote from answer_voter before owner deletion, using the established +10 rule.
+
+          Answers contains answer regions named "Answer by <display name>", unique per question in the supplied data. Author information is scoped to Author. Score is a named numeric status; active votes expose pressed state. Each answer belongs to exactly its question.
         data:
           requires:
             - DATA-RUNTIME
@@ -1487,6 +1493,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/question-page.jpeg)
+
+          Answers contains answer regions named "Answer by <display name>", unique per question in the supplied data. Author information is scoped to Author. Score is a named numeric status; active votes expose pressed state. Each answer belongs to exactly its question.
         data:
           requires:
             - DATA-HISTORY
@@ -1509,10 +1517,10 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-4.5
-        description: The answer author clicks "Edit"(role=button), replaces the nonempty "Body"(role=textbox), records
-          "Edit Summary"(role=textbox), and clicks "Save edits"(role=button). The public answer displays the replacement
-          and edited metadata; "Timeline"(role=button) reveals its saved summary in "Revision history"(role=region).
-          A separate visitor sees the replacement after reload. The unchanged-body revision case remains in REQ-4.5.
+        description: |-
+          The answer author clicks "Edit"(role=button), replaces the nonempty "Body"(role=textbox), records "Edit Summary"(role=textbox), and clicks "Save edits"(role=button). The public answer displays the replacement and edited metadata; "Timeline"(role=button) reveals its saved summary in "Revision history"(role=region). A separate visitor sees the replacement after reload. The unchanged-body revision case remains in REQ-4.5.
+
+          Answers contains answer regions named "Answer by <display name>", unique per question in the supplied data. Author information is scoped to Author. Score is a named numeric status; active votes expose pressed state. Each answer belongs to exactly its question.
         data:
           requires:
             - DATA-RUNTIME
@@ -1538,9 +1546,10 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-4.6
-        description: An ordinary authenticated user other than the answer author cannot activate "Delete"(role=button)
-          on the target unaccepted answer. "Answer by Helpful User"(role=region) remains visible and "Answer count"(role=status)
-          stays unchanged; moderator actions are unspecified.
+        description: |-
+          An ordinary authenticated user other than the answer author cannot activate "Delete"(role=button) on the target unaccepted answer. "Answer by Helpful User"(role=region) remains visible and "Answer count"(role=status) stays unchanged; moderator actions are unspecified.
+
+          Answers contains answer regions named "Answer by <display name>", unique per question in the supplied data. Author information is scoped to Author. Score is a named numeric status; active votes expose pressed state. Each answer belongs to exactly its question.
         data:
           requires:
             - DATA-RUNTIME
@@ -1564,10 +1573,10 @@ children:
         dependencies:
           - REQ-4.3
           - REQ-4.6
-        description: Once the question owner clicks "Accept answer"(role=button), the answer displays "Accepted
-          answer"(role=button) and its author has no usable "Delete"(role=button). The accepted solution remains
-          public because ordinary own-answer deletion applies only to unaccepted answers. This single-answer scenario
-          makes no assertions about internal deleted or accepted records.
+        description: |-
+          Once the question owner clicks "Accept answer"(role=button), the answer displays "Accepted answer"(role=button) and its author has no usable "Delete"(role=button). The accepted solution remains public because ordinary own-answer deletion applies only to unaccepted answers. This single-answer scenario makes no assertions about internal deleted or accepted records.
+
+          Answers contains answer regions named "Answer by <display name>", unique per question in the supplied data. Author information is scoped to Author. Score is a named numeric status; active votes expose pressed state. Each answer belongs to exactly its question.
         data:
           requires:
             - DATA-RUNTIME
@@ -2022,6 +2031,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/search-and-filter.jpeg)
+
+          Search accepts a full published question title and returns that exact matching record, including UI-created questions.
         data:
           requires:
             - DATA-HISTORY
@@ -2211,9 +2222,10 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-2.3
-        description: The activity_user selects "Reputation"(role=button) in Profile navigation to display "Reputation
-          history"(role=region). Entries appear newest first, show answer upvoted and question upvoted reasons with
-          signed +10 and +5 changes, and link to their public parent posts.
+        description: |-
+          The activity_user selects "Reputation"(role=button) in Profile navigation to display "Reputation history"(role=region). Entries appear newest first, show answer upvoted and question upvoted reasons with signed +10 and +5 changes, and link to their public parent posts.
+
+          Profile navigation and Activity navigation are distinct named navigation scopes. Reputation is a numeric status output.
         data:
           requires:
             - DATA-ACTIVITY
@@ -2262,9 +2274,10 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-1.1
-        description: Clicking "Badges"(role=button) displays "Badge catalog"(role=region), grouped into "Gold"(role=region),
-          "Silver"(role=region), and "Bronze"(role=region). Entries include Great Answer and Teacher with registry
-          descriptions and numeric "Earn count <badge>"(role=status).
+        description: |-
+          Clicking "Badges"(role=button) displays "Badge catalog"(role=region), grouped into "Gold"(role=region), "Silver"(role=region), and "Bronze"(role=region). Entries include Great Answer and Teacher with registry descriptions and numeric "Earn count <badge>"(role=status).
+
+          New badge-qualification triggers and privilege thresholds are unspecified and must not be invented.
         data:
           requires:
             - DATA-BADGES

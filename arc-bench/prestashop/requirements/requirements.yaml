@@ -369,6 +369,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/homepage.png)
+
+          English action names are case-insensitive. Global navigation remains available across pages.
         data:
           requires:
             - DATA-CATALOG
@@ -473,6 +475,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/homepage.png)
+
+          The active carousel promotion is an image named for that promotion; exactly one promotion image is visible.
         data:
           requires:
             - DATA-CATALOG
@@ -516,6 +520,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/homepage.png)
+
+          Popular product cards include quick-view and wishlist controls.
         data:
           requires:
             - DATA-CATALOG
@@ -610,6 +616,10 @@ children:
 
           Optional visual reference:
           ![image](./reference/category.png)
+
+          The category sidebar provides availability, sale, category, size, color, composition, price, and brand filters. Concrete behavior is specified only where the source provides an oracle. Subcategories is a named region.
+
+          Product list contains one "Product <name>" region per product. Sale price contains only the current monetary amount; discounted cards also expose Regular price. Monetary amounts use USD and a decimal point, with one numeric amount per amount region and an optional currency marker.
         data:
           requires:
             - DATA-CATALOG
@@ -658,6 +668,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/category.png)
+
+          Product list contains one "Product <name>" region per product. Sale price contains only the current monetary amount; discounted cards also expose Regular price. Monetary amounts use USD and a decimal point, with one numeric amount per amount region and an optional currency marker.
         data:
           requires:
             - DATA-CATALOG
@@ -698,6 +710,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/category.png)
+
+          Product list contains one "Product <name>" region per product. Sale price contains only the current monetary amount; discounted cards also expose Regular price. Monetary amounts use USD and a decimal point, with one numeric amount per amount region and an optional currency marker.
         data:
           requires:
             - DATA-CATALOG
@@ -762,6 +776,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/sort.png)
+
+          Product list contains one "Product <name>" region per product. Sale price contains only the current monetary amount; discounted cards also expose Regular price. Monetary amounts use USD and a decimal point, with one numeric amount per amount region and an optional currency marker.
         data:
           requires:
             - DATA-CATALOG
@@ -791,6 +807,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/category.png)
+
+          Product list contains one "Product <name>" region per product. Sale price contains only the current monetary amount; discounted cards also expose Regular price. Monetary amounts use USD and a decimal point, with one numeric amount per amount region and an optional currency marker.
         data:
           requires:
             - DATA-CATALOG
@@ -820,6 +838,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/category.png)
+
+          Product list contains one "Product <name>" region per product. Sale price contains only the current monetary amount; discounted cards also expose Regular price. Monetary amounts use USD and a decimal point, with one numeric amount per amount region and an optional currency marker.
         data:
           requires:
             - DATA-CATALOG
@@ -850,6 +870,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/category.png)
+
+          Product list contains one "Product <name>" region per product. Sale price contains only the current monetary amount; discounted cards also expose Regular price. Monetary amounts use USD and a decimal point, with one numeric amount per amount region and an optional currency marker.
         data:
           requires:
             - DATA-CATALOG
@@ -880,6 +902,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/category.png)
+
+          Product list contains one "Product <name>" region per product. Sale price contains only the current monetary amount; discounted cards also expose Regular price. Monetary amounts use USD and a decimal point, with one numeric amount per amount region and an optional currency marker.
         data:
           requires:
             - DATA-CATALOG
@@ -910,6 +934,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/category.png)
+
+          Product list contains one "Product <name>" region per product. Sale price contains only the current monetary amount; discounted cards also expose Regular price. Monetary amounts use USD and a decimal point, with one numeric amount per amount region and an optional currency marker.
         data:
           requires:
             - DATA-CATALOG
@@ -940,6 +966,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/category.png)
+
+          Product list contains one "Product <name>" region per product. Sale price contains only the current monetary amount; discounted cards also expose Regular price. Monetary amounts use USD and a decimal point, with one numeric amount per amount region and an optional currency marker.
         data:
           requires:
             - DATA-CATALOG
@@ -981,6 +1009,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/product_detail.png)
+
+          Product information exposes named Sale price and Regular price amounts. Stock status displays "Available stock: <number>". Selected product and variant remain consistent across navigation within a flow.
         data:
           requires:
             - DATA-CATALOG
@@ -1156,6 +1186,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/product_detail.png)
+
+          Reviews displays "Average rating: <value>".
         data:
           requires:
             - DATA-CATALOG
@@ -1299,6 +1331,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/product_detail.png)
+
+          Product information exposes named Sale price and Regular price amounts. Stock status displays "Available stock: <number>". Selected product and variant remain consistent across navigation within a flow.
         data:
           requires:
             - DATA-CATALOG
@@ -1338,6 +1372,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/cart.png)
+
+          Cart rows expose named Unit price and Subtotal amounts. Cart summary exposes Items subtotal, Shipping, Total, and Discount when applicable. Variant text identifies "Size: <size>" and "Color: <color>". Cart count counts units, and cart state remains consistent across navigation within a flow.
         data:
           requires:
             - DATA-CATALOG
@@ -1369,6 +1405,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/cart.png)
+
+          Cart rows expose named Unit price and Subtotal amounts. Cart summary exposes Items subtotal, Shipping, Total, and Discount when applicable. Variant text identifies "Size: <size>" and "Color: <color>". Cart count counts units, and cart state remains consistent across navigation within a flow.
         data:
           requires:
             - DATA-CATALOG
@@ -1411,6 +1449,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/checkout.png)
+
+          Cart rows expose named Unit price and Subtotal amounts. Cart summary exposes Items subtotal, Shipping, Total, and Discount when applicable. Variant text identifies "Size: <size>" and "Color: <color>". Cart count counts units, and cart state remains consistent across navigation within a flow.
         data:
           requires:
             - DATA-CATALOG
@@ -1453,6 +1493,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/cart.png)
+
+          Cart rows expose named Unit price and Subtotal amounts. Cart summary exposes Items subtotal, Shipping, Total, and Discount when applicable. Variant text identifies "Size: <size>" and "Color: <color>". Cart count counts units, and cart state remains consistent across navigation within a flow.
         data:
           requires:
             - DATA-CATALOG
@@ -1485,6 +1527,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/cart.png)
+
+          Cart rows expose named Unit price and Subtotal amounts. Cart summary exposes Items subtotal, Shipping, Total, and Discount when applicable. Variant text identifies "Size: <size>" and "Color: <color>". Cart count counts units, and cart state remains consistent across navigation within a flow.
         data:
           requires:
             - DATA-CATALOG
@@ -1527,6 +1571,10 @@ children:
 
           Optional visual reference:
           ![image](./reference/checkout.png)
+
+          Anonymous checkout exposes login, registration, or guest-information entry. Concrete guest completion is unspecified.
+
+          Order summary and checkout steps Personal Information, Addresses, Shipping Method, and Payment are named regions. Continue actions are scoped to their step. Expanded steps expose inputs; completed collapsed steps expose summaries and edit actions and hide completed inputs. Shipping cost is a named amount region. Step data remain consistent across navigation within a flow.
         data:
           requires:
             - DATA-CATALOG
@@ -1574,6 +1622,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/checkout_address.png)
+
+          Order summary and checkout steps Personal Information, Addresses, Shipping Method, and Payment are named regions. Continue actions are scoped to their step. Expanded steps expose inputs; completed collapsed steps expose summaries and edit actions and hide completed inputs. Shipping cost is a named amount region. Step data remain consistent across navigation within a flow.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -1608,6 +1658,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/checkout_address.png)
+
+          Order summary and checkout steps Personal Information, Addresses, Shipping Method, and Payment are named regions. Continue actions are scoped to their step. Expanded steps expose inputs; completed collapsed steps expose summaries and edit actions and hide completed inputs. Shipping cost is a named amount region. Step data remain consistent across navigation within a flow.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -1643,6 +1695,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/checkout_shipping.png)
+
+          Order summary and checkout steps Personal Information, Addresses, Shipping Method, and Payment are named regions. Continue actions are scoped to their step. Expanded steps expose inputs; completed collapsed steps expose summaries and edit actions and hide completed inputs. Shipping cost is a named amount region. Step data remain consistent across navigation within a flow.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -1690,6 +1744,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/checkout_payment.png)
+
+          Order summary and checkout steps Personal Information, Addresses, Shipping Method, and Payment are named regions. Continue actions are scoped to their step. Expanded steps expose inputs; completed collapsed steps expose summaries and edit actions and hide completed inputs. Shipping cost is a named amount region. Step data remain consistent across navigation within a flow.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -1740,6 +1796,10 @@ children:
 
           Optional visual reference:
           ![image](./reference/checkout_summary.png)
+
+          Order summary and checkout steps Personal Information, Addresses, Shipping Method, and Payment are named regions. Continue actions are scoped to their step. Expanded steps expose inputs; completed collapsed steps expose summaries and edit actions and hide completed inputs. Shipping cost is a named amount region. Step data remain consistent across navigation within a flow.
+
+          Order details identifies "Quantity: <value>".
         data:
           requires:
             - DATA-ACCOUNTS
@@ -1793,6 +1853,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/checkout_address.png)
+
+          Order summary and checkout steps Personal Information, Addresses, Shipping Method, and Payment are named regions. Continue actions are scoped to their step. Expanded steps expose inputs; completed collapsed steps expose summaries and edit actions and hide completed inputs. Shipping cost is a named amount region. Step data remain consistent across navigation within a flow.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -1828,6 +1890,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/checkout_shipping.png)
+
+          Order summary and checkout steps Personal Information, Addresses, Shipping Method, and Payment are named regions. Continue actions are scoped to their step. Expanded steps expose inputs; completed collapsed steps expose summaries and edit actions and hide completed inputs. Shipping cost is a named amount region. Step data remain consistent across navigation within a flow.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -1863,6 +1927,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/checkout.png)
+
+          Order summary and checkout steps Personal Information, Addresses, Shipping Method, and Payment are named regions. Continue actions are scoped to their step. Expanded steps expose inputs; completed collapsed steps expose summaries and edit actions and hide completed inputs. Shipping cost is a named amount region. Step data remain consistent across navigation within a flow.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -1905,6 +1971,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/login.png)
+
+          Remember-me lifetime is unspecified.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -1971,6 +2039,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/forgot_password.png)
+
+          Password reset confirmation is a named status message.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -2041,6 +2111,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/my_account.png)
+
+          Account overview is a named region.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -2191,6 +2263,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/my_account_order.png)
+
+          Order history is a named region.
         data:
           requires:
             - DATA-ACCOUNTS

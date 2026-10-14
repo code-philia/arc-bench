@@ -95,6 +95,8 @@ children:
           ![image](./reference/home_page.png)
           ![image](./reference/sidebar.png)
           ![image](./reference/sidebar_collapsed.png)
+
+          The personal workspace requires no authentication or reminder scheduler. Sidebar navigation actions expose current state when selected.
         data:
           requires:
             - DATA-REMINDERS
@@ -152,6 +154,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/home_page.png)
+
+          Note actions revealed on hover remain keyboard-accessible. Actions are buttons except menu choices, which are menuitems; fields have associated accessible names. Note actions are scoped to the note region identified by its visible title.
         data:
           requires:
             - DATA-NOTES
@@ -184,6 +188,8 @@ children:
           Optional visual reference:
           ![image](./reference/create_note_home_page.png)
           ![image](./reference/create_note_form.png)
+
+          Note actions revealed on hover remain keyboard-accessible. Actions are buttons except menu choices, which are menuitems; fields have associated accessible names. Note actions are scoped to the note region identified by its visible title.
         data:
           requires:
             - DATA-NOTES
@@ -223,6 +229,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/note_editing.png)
+
+          Note actions revealed on hover remain keyboard-accessible. Actions are buttons except menu choices, which are menuitems; fields have associated accessible names. Note actions are scoped to the note region identified by its visible title.
         data:
           requires:
             - DATA-NOTES
@@ -255,6 +263,8 @@ children:
           Optional visual reference:
           ![image](./reference/note_more_options_dropdown.png)
           ![image](./reference/note_delete_notification.png)
+
+          Note actions revealed on hover remain keyboard-accessible. Actions are buttons except menu choices, which are menuitems; fields have associated accessible names. Note actions are scoped to the note region identified by its visible title.
         data:
           requires:
             - DATA-NOTES
@@ -307,6 +317,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/trash_list.png)
+
+          Note actions revealed on hover remain keyboard-accessible. Actions are buttons except menu choices, which are menuitems; fields have associated accessible names. Note actions are scoped to the note region identified by its visible title.
         data:
           requires:
             - DATA-NOTES
@@ -368,6 +380,8 @@ children:
           ![image](./reference/archive_button.png)
           ![image](./reference/archived_notes_page.png)
           ![image](./reference/unarchive_button.png)
+
+          Note actions revealed on hover remain keyboard-accessible. Actions are buttons except menu choices, which are menuitems; fields have associated accessible names. Note actions are scoped to the note region identified by its visible title.
         data:
           requires:
             - DATA-NOTES
@@ -418,6 +432,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/note_coloring.png)
+
+          Note actions revealed on hover remain keyboard-accessible. Actions are buttons except menu choices, which are menuitems; fields have associated accessible names. Note actions are scoped to the note region identified by its visible title.
         data:
           requires:
             - DATA-NOTES
@@ -457,6 +473,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/assign_label_to_note.png)
+
+          Note actions revealed on hover remain keyboard-accessible. Actions are buttons except menu choices, which are menuitems; fields have associated accessible names. Note actions are scoped to the note region identified by its visible title.
         data:
           requires:
             - DATA-NOTES
@@ -512,6 +530,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/pin_button.png)
+
+          Note actions revealed on hover remain keyboard-accessible. Actions are buttons except menu choices, which are menuitems; fields have associated accessible names. Note actions are scoped to the note region identified by its visible title.
         data:
           requires:
             - DATA-NOTES

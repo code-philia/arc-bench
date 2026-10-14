@@ -436,6 +436,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/index.png)
+
+          Global navigation is a single navigation landmark named "Global navigation". Fields have associated labels. Actions described only as controls may be buttons or links; explicitly declared tabs, radios, checkboxes, dialogs and fields retain their semantics.
         data:
           requires: &id001
             - DATA-IDENTITIES
@@ -600,6 +602,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/login2.png)
+
+          Verification delivery is simulated. A verification code is valid only after being sent in the current attempt.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -728,6 +732,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/register2.png)
+
+          Verification delivery is simulated. A verification code is valid only after being sent in the current attempt.
         data:
           requires:
             - DATA-SMS
@@ -760,6 +766,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/register2.png)
+
+          Password strength is a named region.
         data:
           requires:
             - DATA-REGISTERED
@@ -843,6 +851,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/register2.png)
+
+          Verification delivery is simulated. A verification code is valid only after being sent in the current attempt.
         data:
           requires:
             - DATA-SMS
@@ -874,6 +884,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/register2.png)
+
+          Password strength is a named region.
         data:
           requires:
             - DATA-SMS
@@ -904,6 +916,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/register2.png)
+
+          Password strength is a named region.
         data:
           requires:
             - DATA-SMS
@@ -935,6 +949,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/register2.png)
+
+          Password strength is a named region.
         data:
           requires:
             - DATA-REGISTERED
@@ -967,6 +983,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/login2.png)
+
+          Verification delivery is simulated. A verification code is valid only after being sent in the current attempt.
         data:
           requires:
             - DATA-SMS
@@ -998,6 +1016,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/register2.png)
+
+          Password strength is a named region.
         data:
           requires:
             - DATA-SMS
@@ -1028,6 +1048,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/register2.png)
+
+          Verification delivery is simulated. A verification code is valid only after being sent in the current attempt.
         data:
           requires:
             - DATA-SMS
@@ -1081,6 +1103,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/search.png)
+
+          Multi-city is retained as capability context; its detailed behavior is unspecified.
         data:
           requires: *id001
         scenarios:
@@ -1206,6 +1230,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/search_results.png)
+
+          Domestic and international route search use benchmark date 2026-07-19. Flight results expose a list with listitems named "Flight <number>".
         data:
           requires:
             - DATA-FLIGHTS
@@ -1398,9 +1424,10 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-2.4
-        description: Selecting "Nonstop only"(role=checkbox) removes JD5162 from "Flight list"(role=region). Selecting
-          China Southern in "Airline"(role=combobox) additionally leaves only CZ3401; the filters compose without
-          resetting each other.
+        description: |-
+          Selecting "Nonstop only"(role=checkbox) removes JD5162 from "Flight list"(role=region). Selecting China Southern in "Airline"(role=combobox) additionally leaves only CZ3401; the filters compose without resetting each other.
+
+          Time and airport filters remain capability context without specified detailed behavior.
         data:
           requires:
             - DATA-FLIGHTS
@@ -1842,6 +1869,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/book3.png)
+
+          Insurance variants, fast-track security, and fulfillment beyond the declared examples remain broad context without additional executable outcomes.
         data:
           requires:
             - DATA-FLIGHTS
@@ -1984,6 +2013,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/book4.png)
+
+          Public countdowns use "Time remaining"(role=timer) and render MM:SS or HH:MM:SS.
         data:
           requires:
             - DATA-SUBMITTED-ORDERS
@@ -2256,8 +2287,16 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-1.3
-        description: '"My account"(role=button) opens an account menu with Orders. Selecting Orders displays the
-          heading and "Order list"(role=region), containing only orders owned by the signed-in account.'
+        pages:
+        - name: home
+          reference: ./reference/enter_order.png
+        description: |-
+          "My account"(role=button) opens an account menu with Orders. Selecting Orders displays the heading and "Order list"(role=region), containing only orders owned by the signed-in account.
+
+          Order records are uniquely named "Record <order number>" within their list region, with actions scoped to that identity. Entries include order number, booking date, itinerary, flight, total, and display status. Not traveled and Pending review are distinct from payment state.
+
+          Optional visual reference:
+          ![image](./reference/enter_order.png)
         data:
           requires:
             - DATA-ACCOUNTS
@@ -2288,6 +2327,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/order1.png)
+
+          Order type and date-range filtering remain source context without concrete fixtures or oracles.
         data:
           requires:
             - DATA-ORDERS
@@ -2380,6 +2421,10 @@ children:
 
           Optional visual reference:
           ![image](./reference/order2.png)
+
+          Public countdowns use "Time remaining"(role=timer) and render MM:SS or HH:MM:SS.
+
+          Order-detail terminals, operating carrier, non-flight services, masked passengers, and fee summary remain source context without additional concrete fixtures or oracles.
         data:
           requires:
             - DATA-ORDERS
@@ -2547,6 +2592,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/enter_self.png)
+
+          Common information expands and collapses the Travelers, Contacts, Invoice titles, and Addresses links. Saved records belong to the signed-in account.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -2587,6 +2634,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/passenger.png)
+
+          Traveler list records may be rows, listitems, or groups named "Record <traveler name>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-PERSONAL-READ
@@ -2628,6 +2677,10 @@ children:
 
           Optional visual reference:
           ![image](./reference/addpassenger.png)
+
+          Traveler list records may be rows, listitems, or groups named "Record <traveler name>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
+
+          Traveler nationality, gender, birth date, and mobile remain broader source context; concrete acceptance uses the declared fields.
         data:
           requires:
             - DATA-CREATED-PERSONAL
@@ -2672,6 +2725,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/address.png)
+
+          Address list records may be rows, listitems, or groups named "Record <address recipient>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-PERSONAL-READ
@@ -2701,6 +2756,10 @@ children:
 
           Optional visual reference:
           ![image](./reference/addaddress.png)
+
+          Address list records may be rows, listitems, or groups named "Record <address recipient>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
+
+          Linked address province remains broader source context without additional concrete acceptance rules.
         data:
           requires:
             - DATA-CREATED-PERSONAL
@@ -2733,6 +2792,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/contact.png)
+
+          Contact list records may be rows, listitems, or groups named "Record <contact name>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-PERSONAL-READ
@@ -2762,6 +2823,10 @@ children:
 
           Optional visual reference:
           ![image](./reference/add_contact.png)
+
+          Contact list records may be rows, listitems, or groups named "Record <contact name>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
+
+          International contact dialing remains broader source context without additional concrete acceptance rules.
         data:
           requires:
             - DATA-CREATED-PERSONAL
@@ -2793,6 +2858,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/reimbursement.png)
+
+          Invoice title list records may be rows, listitems, or groups named "Record <invoice title>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-PERSONAL-READ
@@ -2823,6 +2890,10 @@ children:
 
           Optional visual reference:
           ![image](./reference/add_reimbursement.png)
+
+          Invoice title list records may be rows, listitems, or groups named "Record <invoice title>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
+
+          Institutional and personal invoice types remain broader source context; concrete acceptance uses the declared company fields.
         data:
           requires:
             - DATA-CREATED-PERSONAL
@@ -2878,6 +2949,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/passenger.png)
+
+          Traveler list records may be rows, listitems, or groups named "Record <traveler name>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-CREATED-PERSONAL
@@ -2923,6 +2996,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/address.png)
+
+          Address list records may be rows, listitems, or groups named "Record <address recipient>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-CREATED-PERSONAL
@@ -2965,6 +3040,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/contact.png)
+
+          Contact list records may be rows, listitems, or groups named "Record <contact name>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-CREATED-PERSONAL
@@ -3007,6 +3084,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/reimbursement.png)
+
+          Invoice title list records may be rows, listitems, or groups named "Record <invoice title>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-CREATED-PERSONAL
@@ -3054,6 +3133,8 @@ children:
           Optional visual reference:
           ![image](./reference/passenger.png)
           ![image](./reference/addpassenger.png)
+
+          Traveler list records may be rows, listitems, or groups named "Record <traveler name>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-CREATED-PERSONAL
@@ -3086,6 +3167,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/addressShow.png)
+
+          Address list records may be rows, listitems, or groups named "Record <address recipient>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-CREATED-PERSONAL
@@ -3116,6 +3199,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/passenger.png)
+
+          Traveler list records may be rows, listitems, or groups named "Record <traveler name>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-CREATED-PERSONAL
@@ -3146,6 +3231,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/contact.png)
+
+          Contact list records may be rows, listitems, or groups named "Record <contact name>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-PERSONAL-READ
@@ -3175,6 +3262,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/reimbursement.png)
+
+          Invoice title list records may be rows, listitems, or groups named "Record <invoice title>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-PERSONAL-READ
@@ -3204,6 +3293,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/passenger.png)
+
+          Traveler list records may be rows, listitems, or groups named "Record <traveler name>". Exactly one record per business identity appears in the named list region. Header rows and decorative groups do not use the Record prefix.
         data:
           requires:
             - DATA-CREATED-PERSONAL
@@ -3257,6 +3348,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/myinfo.png)
+
+          Avatar settings remain untested source context without specified executable outcomes.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -3404,6 +3497,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/modifyemail.png)
+
+          An accepted security verification code must have been sent in the current verification attempt.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -3499,6 +3594,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/modifyemail.png)
+
+          An accepted security verification code must have been sent in the current verification attempt.
         data:
           requires:
             - DATA-ACCOUNTS
@@ -3554,6 +3651,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/status1.png)
+
+          Flight status is a deterministic supplied observation rather than live external data.
         data:
           requires: *id001
         scenarios:
@@ -3581,6 +3680,8 @@ children:
           Optional visual reference:
           ![image](./reference/status1.png)
           ![image](./reference/status4.png)
+
+          Flight-status records are uniquely named "Record <flight-status identity>".
         data:
           requires:
             - DATA-STATUS
@@ -3613,6 +3714,8 @@ children:
           Optional visual reference:
           ![image](./reference/status2.png)
           ![image](./reference/status3.png)
+
+          Flight-status records are uniquely named "Record <flight-status identity>".
         data:
           requires:
             - DATA-STATUS
@@ -4033,6 +4136,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/airport1.png)
+
+          Today weather is a deterministic supplied snapshot, not live external weather.
         data:
           requires:
             - DATA-AIRPORTS
@@ -4089,6 +4194,8 @@ children:
           ![image](./reference/airport3.png)
           ![image](./reference/airport4.png)
           ![image](./reference/airport5.png)
+
+          Airport-service records are uniquely named "Record <airport-service name>" within their list region. Airport details have four source subsections, but only Overview, Transportation, and Phone numbers are named; no fourth name is invented. Transportation context includes buses, rail, shuttles, and taxis; Fangzhuang line is the concrete supplied example.
         data:
           requires:
             - DATA-AIRPORTS

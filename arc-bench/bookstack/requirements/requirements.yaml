@@ -59,6 +59,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/index.png)
+
+          The logged-out homepage also provides a search input; search behavior is not specified. Login, Shelves, and Books entry points remain available throughout the content flows.
         data:
           requires: []
         scenarios:
@@ -122,6 +124,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/login.png)
+
+          Registration is outside scope. Content browsing and the declared content mutations remain available while logged out; drafts and personal lists require login.
         data:
           requires: []
         scenarios:
@@ -496,6 +500,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/create_book.png)
+
+          The source specifies no cover-image format or default-template catalog rules.
         data:
           requires:
             - DATA-CONTENT
@@ -813,6 +819,8 @@ children:
 
           Optional visual reference:
           ![image](./reference/index_after_login.png)
+
+          The source does not define a tie-breaker or eviction order for recently viewed records.
         data:
           requires:
             - DATA-CONTENT
@@ -915,6 +923,8 @@ children:
           Optional visual reference:
           ![image](./reference/index_after_login.png)
           ![image](./reference/favourites.png)
+
+          Ranking ties and the name of the complete favorites collection entry are unspecified.
         data:
           requires:
             - DATA-CONTENT
@@ -956,6 +966,8 @@ children:
           Optional visual reference:
           ![image](./reference/index.png)
           ![image](./reference/page.png)
+
+          Ranking tie-breakers are unspecified.
         data:
           requires:
             - DATA-CONTENT
