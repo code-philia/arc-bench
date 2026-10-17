@@ -227,7 +227,6 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-1.1
-          - REQ-4.3
         pages:
           - name: home
             reference: ./reference/index.png
@@ -440,7 +439,6 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-1.1
-          - REQ-5.3
         pages:
           - name: home
             reference: ./reference/index.png
@@ -470,7 +468,6 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-5.1
-          - REQ-5.6
         pages:
           - name: books
             reference: ./reference/books.png

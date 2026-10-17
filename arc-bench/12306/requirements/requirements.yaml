@@ -2384,7 +2384,6 @@ children:
         name: Inspect and resume unpaid orders capability
         type: FOLDER
         dependencies:
-          - REQ-8.3.3.1
           - REQ-5.1.2
         description: Organize the page-entry and independent user behaviors for Inspect and resume unpaid orders.
           REQ-5.3.1 establishes the concrete reference pages first; the remaining siblings apply their explicitly
@@ -2394,7 +2393,6 @@ children:
             name: Open unpaid-order view
             type: ATOMIC
             dependencies:
-              - REQ-8.3.3.1
               - REQ-5.1.2
             pages:
               - name: personal_center
@@ -2437,7 +2435,6 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-5.3.1
-              - REQ-8.3.3.1
               - REQ-5.1.2
             description: |-
               Opening Uncompleted orders shows the UI-created unpaid G1001 row with route and the parent capability's required headers. Its "Pay"(role=button) provides payment access; matching "Order details"(role=region) and "Payment information"(role=region) identify the same unpaid order under the shared contract.
@@ -2519,7 +2516,6 @@ children:
         name: Filter and inspect upcoming trips capability
         type: FOLDER
         dependencies:
-          - REQ-8.5
           - REQ-5.1.2
         description: Organize the page-entry and independent user behaviors for Filter and inspect upcoming trips.
           REQ-5.4.1 establishes the concrete reference pages first; the remaining siblings apply their explicitly
@@ -2529,7 +2525,6 @@ children:
             name: Open upcoming-trip filters
             type: ATOMIC
             dependencies:
-              - REQ-8.5
               - REQ-5.1.2
             pages:
               - name: personal_center
@@ -2574,7 +2569,6 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-5.4.1
-              - REQ-8.5
               - REQ-5.1.2
             description: |-
               Opening Upcoming trips displays the declared order-table headers and account-owned details. An eligible paid upcoming G1001 offers "Refund"(role=button).
@@ -2699,7 +2693,6 @@ children:
         name: Refund eligible upcoming order
         type: ATOMIC
         dependencies:
-          - REQ-8.5
           - REQ-5.1.2
         pages:
           - name: ticket_orders

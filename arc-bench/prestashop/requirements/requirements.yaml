@@ -1582,7 +1582,6 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-4.3
-          - REQ-6.1
         pages:
           - name: cart
             reference: ./reference/cart.png
@@ -1635,7 +1634,6 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-5.1
-          - REQ-7.3
         pages:
           - name: checkout
             reference: ./reference/checkout_address.png
@@ -1868,7 +1866,6 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-5.2
-          - REQ-7.4
         pages:
           - name: checkout
             reference: ./reference/checkout_address.png
@@ -2096,7 +2093,6 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-6.1
-          - REQ-7.1
         pages:
           - name: account
             reference: ./reference/my_account.png

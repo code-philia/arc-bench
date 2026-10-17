@@ -143,9 +143,7 @@ children:
       - id: REQ-2.1
         name: List pinned and regular notes separately
         type: ATOMIC
-        dependencies:
-          - REQ-2.2
-          - REQ-2.9
+        dependencies: []
         pages:
           - name: notes
             reference: ./reference/home_page.png
@@ -466,7 +464,6 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-2.2
-          - REQ-3.1
         pages:
           - name: notes
             reference: ./reference/assign_label_to_note.png
