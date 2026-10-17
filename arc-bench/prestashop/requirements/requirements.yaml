@@ -405,6 +405,8 @@ children:
         pages:
           - name: home
             reference: ./reference/navigation.png
+          - name: category
+            reference: ./reference/category.png
         description: |-
           Hovering or keyboard-focusing and activating "CLOTHES"(role=link) reveals "Men"(role=link) and "Women"(role=link). Men opens its product listing with Hummingbird detail t-shirt and Sort by; activating CLOTHES itself opens the parent category. From any catalog page, "Logo"(role=link) returns home to Popular Products.
 
@@ -442,6 +444,8 @@ children:
         pages:
           - name: home
             reference: ./reference/search.png
+          - name: category
+            reference: ./reference/category.png
         description: |-
           Focusing "Search"(role=searchbox) and entering shirt displays "Search suggestions"(role=region) with Hummingbird detail t-shirt. Pressing Enter submits the search and displays a "Product list"(role=region) containing that product.
 
@@ -515,6 +519,8 @@ children:
         pages:
           - name: home
             reference: ./reference/homepage.png
+          - name: product
+            reference: ./reference/product_detail.png
         description: |-
           Within "Popular Products"(role=region), "Hummingbird detail t-shirt"(role=link) is keyboard-accessible. Activating it opens that same product's detail with its heading and Add to cart action.
 
@@ -542,6 +548,8 @@ children:
         type: ATOMIC
         dependencies: []
         pages:
+          - name: home
+            reference: ./reference/homepage.png
           - name: cart
             reference: ./reference/cart.png
         description: |-
@@ -663,6 +671,8 @@ children:
         pages:
           - name: category
             reference: ./reference/category.png
+          - name: product
+            reference: ./reference/product_detail.png
         description: |-
           "Product Hummingbird detail t-shirt"(role=region) contains the product image, name, sale and regular prices, and Sale label. Hover reveals "Quick view"(role=button), "Wishlist"(role=link), and "White"(role=button) as the color preview. The keyboard-accessible "Hummingbird detail t-shirt"(role=link) opens that same product's detail with Add to cart.
 
@@ -1002,6 +1012,8 @@ children:
         dependencies:
           - REQ-2.2
         pages:
+          - name: category
+            reference: ./reference/category.png
           - name: product
             reference: ./reference/product_detail.png
         description: |-
@@ -1089,6 +1101,8 @@ children:
         pages:
           - name: product
             reference: ./reference/add_to_cart.png
+          - name: cart
+            reference: ./reference/cart.png
         description: |-
           Clicking "Add to cart"(role=button) for one default available Hummingbird cart t-shirt opens "Product successfully added to your shopping cart"(role=dialog) with that product and increases cart count. "Continue shopping"(role=link) closes the dialog and returns to the same detail; "Proceed to checkout"(role=link) opens Shopping cart with that product and its correct subtotal.
 
@@ -1442,6 +1456,10 @@ children:
         dependencies:
           - REQ-4.1
         pages:
+          - name: cart
+            reference: ./reference/cart.png
+          - name: category
+            reference: ./reference/category.png
           - name: checkout
             reference: ./reference/checkout.png
         description: |-
@@ -1520,6 +1538,8 @@ children:
           - REQ-3.9
           - REQ-4.1
         pages:
+          - name: product
+            reference: ./reference/product_detail.png
           - name: cart
             reference: ./reference/cart.png
         description: |-
@@ -1564,6 +1584,8 @@ children:
           - REQ-4.3
           - REQ-6.1
         pages:
+          - name: cart
+            reference: ./reference/cart.png
           - name: checkout
             reference: ./reference/checkout.png
         description: |-
@@ -1789,6 +1811,8 @@ children:
         dependencies:
           - REQ-5.5
         pages:
+          - name: checkout
+            reference: ./reference/checkout.png
           - name: order_confirmation
             reference: ./reference/checkout_summary.png
         description: |-
@@ -1964,8 +1988,12 @@ children:
         type: ATOMIC
         dependencies: []
         pages:
+          - name: home
+            reference: ./reference/homepage.png
           - name: login
             reference: ./reference/login.png
+          - name: account
+            reference: ./reference/my_account.png
         description: |-
           Clicking "Sign in"(role=button) opens "Email"(role=textbox), masked "Password"(role=textbox), a Sign in submit action, and "No account? Create one here"(role=link). "SHOW"(role=button) reveals the password and "Remember me"(role=checkbox) is selectable. Valid verified Store User credentials sign in, showing Store User, "My account"(role=link), and "Sign out"(role=button). Registration does not replace the source's verified-account fixture.
 
@@ -2004,8 +2032,12 @@ children:
         type: ATOMIC
         dependencies: []
         pages:
+          - name: login
+            reference: ./reference/login.png
           - name: register
             reference: ./reference/register.png
+          - name: home
+            reference: ./reference/homepage.png
         description: |-
           From Sign in, "No account? Create one here"(role=link) opens registration with "Mr."(role=radio), "First name"(role=textbox), "Last name"(role=textbox), "Email"(role=textbox), "Password"(role=textbox), "Birthdate"(role=textbox), and "Receive offers"(role=checkbox), "Newsletter"(role=checkbox), and "Terms"(role=checkbox). Entering New Customer, unused new_customer_7_3@example.com, ShopPass123!, 1995-08-21, and all stated choices, then clicking "Save"(role=button), creates a signed-in account showing New Customer.
 
@@ -2032,6 +2064,8 @@ children:
         type: ATOMIC
         dependencies: []
         pages:
+          - name: login
+            reference: ./reference/login.png
           - name: password_recovery
             reference: ./reference/forgot_password.png
         description: |-
@@ -2064,6 +2098,8 @@ children:
           - REQ-6.1
           - REQ-7.1
         pages:
+          - name: account
+            reference: ./reference/my_account.png
           - name: home
             reference: ./reference/logout.png
         description: |-
@@ -2104,6 +2140,8 @@ children:
         dependencies:
           - REQ-6.1
         pages:
+          - name: home
+            reference: ./reference/homepage.png
           - name: account
             reference: ./reference/my_account.png
         description: |-
@@ -2136,8 +2174,12 @@ children:
         dependencies:
           - REQ-7.1
         pages:
+          - name: account
+            reference: ./reference/my_account.png
           - name: account_information
             reference: ./reference/my_account_info.png
+          - name: login
+            reference: ./reference/login.png
         description: |-
           The profile_user opens "Information"(role=link) with "Email"(role=textbox), "Current password"(role=textbox), and "New password"(role=textbox). Entering ShopPass123! as the current password, changing Email to prestashop_profile_user_next@example.com, and clicking "Save"(role=button) displays "Profile update"(role=status) confirmation and the new email while retaining the old password. A subsequent save with current password ShopPass123! and new password ShopPass456! confirms the password change. The resulting credentials permit sign-in.
 
@@ -2168,6 +2210,8 @@ children:
         dependencies:
           - REQ-7.1
         pages:
+          - name: account
+            reference: ./reference/my_account.png
           - name: account_addresses
             reference: ./reference/my_account_address.png
         description: |-
@@ -2256,6 +2300,8 @@ children:
         dependencies:
           - REQ-7.1
         pages:
+          - name: account
+            reference: ./reference/my_account.png
           - name: account_orders
             reference: ./reference/my_account_order.png
         description: |-
@@ -2308,6 +2354,8 @@ children:
         pages:
           - name: account_orders
             reference: ./reference/my_account_order.png
+          - name: cart
+            reference: ./reference/cart.png
         description: |-
           Within historical "PS-HISTORY-001"(role=row), "Reorder"(role=link) adds the available order-history t-shirt to Shopping cart with subtotal 29. "PDF"(role=link) downloads a valid invoice PDF for that reference, identified by its suggested filename. No internal order query is required.
 
@@ -2352,6 +2400,8 @@ children:
         dependencies:
           - REQ-7.1
         pages:
+          - name: account
+            reference: ./reference/my_account.png
           - name: account_wishlists
             reference: ./reference/my_account_wishlist.png
         description: |-
@@ -2440,6 +2490,8 @@ children:
         pages:
           - name: account_wishlists
             reference: ./reference/my_account_wishlist.png
+          - name: cart
+            reference: ./reference/cart.png
         description: |-
           Seeded Favorites for wishlist_remove_user or wishlist_cart_user contains "Hummingbird wishlist t-shirt"(role=listitem). "Remove"(role=button) deletes that product's wishlist membership; "Add to cart"(role=button) instead adds that exact default available product to the cart. If the wishlist remains visible after addition, "Cart"(role=link) opens the cart to inspect the selected product.
 

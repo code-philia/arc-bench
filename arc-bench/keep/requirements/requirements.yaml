@@ -310,6 +310,8 @@ children:
         dependencies:
           - REQ-2.4
         pages:
+          - name: notes
+            reference: ./reference/home_page.png
           - name: trash
             reference: ./reference/trash_list.png
         description: |-

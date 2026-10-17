@@ -475,7 +475,6 @@ children:
         name: Register and validate a traveler account capability
         type: FOLDER
         dependencies: []
-        pages: []
         description: Organize the page-entry and independent user behaviors for Register and validate a traveler
           account. REQ-2.1.1 establishes the concrete reference pages first; the remaining siblings apply their
           explicitly preserved source contracts. This abstract capability has no page or executable UI of its own.
@@ -486,6 +485,8 @@ children:
             dependencies:
               - REQ-1.1
             pages:
+              - name: home
+                reference: ./reference/homepage.png
               - name: register
                 reference: ./reference/register.png
             description: |-
@@ -588,6 +589,11 @@ children:
                       and Sign Out remains visible after the second reload.
             pages:
               - name: register
+                reference: ./reference/register.png
+              - name: login
+                reference: ./reference/login.png
+              - name: home
+                reference: ./reference/homepage.png
           - id: REQ-2.1.3
             name: Reject invalid traveler registration
             type: ATOMIC
@@ -722,11 +728,11 @@ children:
                       success is absent.
             pages:
               - name: register
+                reference: ./reference/register.png
       - id: REQ-2.2
         name: Log in with username email or mobile capability
         type: FOLDER
         dependencies: []
-        pages: []
         description: Organize the page-entry and independent user behaviors for Log in with username email or mobile.
           REQ-2.2.1 establishes the concrete reference pages first; the remaining siblings apply their explicitly
           preserved source contracts. This abstract capability has no page or executable UI of its own.
@@ -737,6 +743,8 @@ children:
             dependencies:
               - REQ-1.1
             pages:
+              - name: home
+                reference: ./reference/homepage.png
               - name: login
                 reference: ./reference/login.png
             description: |-
@@ -871,6 +879,9 @@ children:
                       unavailable.
             pages:
               - name: login
+                reference: ./reference/login.png
+              - name: home
+                reference: ./reference/homepage.png
           - id: REQ-2.2.3
             name: Open registration from login
             type: ATOMIC
@@ -911,11 +922,19 @@ children:
                     content: Registration opens with Nationality, Passport number and Register visible.
             pages:
               - name: login
+                reference: ./reference/login.png
+              - name: register
+                reference: ./reference/register.png
       - id: REQ-2.3
         name: Sign out and clear session
         type: ATOMIC
         dependencies:
           - REQ-2.2.2
+        pages:
+          - name: home
+            reference: ./reference/homepage.png
+          - name: login
+            reference: ./reference/login.png
         description: Successful login replaces the top Register entry with "Sign Out"(role=link). Clicking it clears
           persisted authentication, displays successful logout feedback, and restores "Register"(role=link) and
           "Login"(role=link) in place of Sign Out and the username.
@@ -940,6 +959,8 @@ children:
         type: ATOMIC
         dependencies: []
         pages:
+          - name: login
+            reference: ./reference/login.png
           - name: password_recovery
             reference: ./reference/forgot-password.png
         description: |-
@@ -1012,7 +1033,6 @@ children:
         name: Read registration agreements capability
         type: FOLDER
         dependencies: []
-        pages: []
         description: Organize the page-entry and independent user behaviors for Read registration agreements. REQ-2.5.1
           establishes the concrete reference pages first; the remaining siblings apply their explicitly preserved
           source contracts. This abstract capability has no page or executable UI of its own.
@@ -1023,6 +1043,8 @@ children:
             dependencies:
               - REQ-2.1.1
             pages:
+              - name: register
+                reference: ./reference/register.png
               - name: service_agreement
                 reference: ./reference/rule.png
               - name: privacy_policy
@@ -1078,8 +1100,12 @@ children:
                   - keyword: THEN
                     content: The Terms of Service heading is visible.
             pages:
+              - name: register
+                reference: ./reference/register.png
               - name: service_agreement
+                reference: ./reference/rule.png
               - name: privacy_policy
+                reference: ./reference/policy.png
           - id: REQ-2.5.3
             name: Read Privacy Policy
             type: ATOMIC
@@ -1107,8 +1133,12 @@ children:
                   - keyword: THEN
                     content: The Privacy Policy heading is visible.
             pages:
-              - name: service_agreement
+              - name: register
+                reference: ./reference/register.png
               - name: privacy_policy
+                reference: ./reference/policy.png
+              - name: service_agreement
+                reference: ./reference/rule.png
   - id: REQ-3
     name: Train search
     type: FOLDER
@@ -1122,7 +1152,6 @@ children:
         name: Choose locations and departure date capability
         type: FOLDER
         dependencies: []
-        pages: []
         description: Organize the page-entry and independent user behaviors for Choose locations and departure date.
           REQ-3.1.1 establishes the concrete reference pages first; the remaining siblings apply their explicitly
           preserved source contracts. This abstract capability has no page or executable UI of its own.
@@ -1227,6 +1256,7 @@ children:
                       Beijing.
             pages:
               - name: home
+                reference: ./reference/homepage.png
           - id: REQ-3.1.3
             name: Choose and validate departure date
             type: ATOMIC
@@ -1284,6 +1314,7 @@ children:
                       search remains visible.
             pages:
               - name: home
+                reference: ./reference/homepage.png
       - id: REQ-3.2
         name: Search direct trains and reject incomplete route
         type: ATOMIC
@@ -1291,6 +1322,8 @@ children:
           - REQ-3.1.2
           - REQ-3.1.3
         pages:
+          - name: home
+            reference: ./reference/homepage.png
           - name: train_results
             reference: ./reference/search-result.png
         description: |-
@@ -1361,6 +1394,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-3.2
+            pages:
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               After a direct search, users inspect G1001's second-class fare CNY 576 despite its unavailable second-class inventory. "Book"(role=button) remains enabled because another class has seats.
 
@@ -1389,6 +1425,11 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-3.2
+            pages:
+              - name: home
+                reference: ./reference/homepage.png
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               Searching valid Shanghai–Lhasa on July 21 retains the selected criteria and displays No trains, 0 results, and the declared empty-result message without direct-train rows.
 
@@ -1433,6 +1474,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-3.2
+            pages:
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               From populated results, users open "Date"(role=textbox), choose "2026-07-22"(role=button), and click "Search"(role=button). The list is replaced with the matching July 22 services while preserving the route.
 
@@ -1460,6 +1504,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-3.2
+            pages:
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               Clicking "2026-07-22"(role=button) within "Travel dates"(role=region) updates Date and shows that day's services without a second Search action.
 
@@ -1503,6 +1550,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-3.2
+            pages:
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               Clicking "Departure Time"(role=button) on existing direct-train results orders them by published departure time ascending; clicking again reverses the order. Both operations preserve the complete current result set.
 
@@ -1531,6 +1581,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-3.2
+            pages:
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               Clicking "Travel time"(role=button) orders existing direct results by published duration ascending, and a second click orders them descending, preserving the complete current result set.
 
@@ -1559,6 +1612,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-3.2
+            pages:
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               Clicking "Arrival Time"(role=button) orders existing direct results by published arrival time ascending; clicking again orders them descending without changing result membership.
 
@@ -1605,6 +1661,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-3.2
+            pages:
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               Within "Filter"(role=region) and "Train type"(role=group), selecting "G/C/D"(role=checkbox) retains matching train prefixes and excludes Other. Selecting "Other"(role=checkbox) restricts the list to published non-G/C/D types. "All"(role=checkbox) removes the type restriction and restores both groups for the current route and date. Published matches and nonmatches make each effect observable.
 
@@ -1656,6 +1715,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-3.2
+            pages:
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               Selecting Shanghai Hongqiao in "From Station"(role=combobox) within "Filter"(role=region) retains only services departing from that station, with at least one match remaining.
 
@@ -1683,6 +1745,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-3.2
+            pages:
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               Selecting Beijing South in "To Station"(role=combobox) within "Filter"(role=region) retains only services arriving there, preserving at least one matching journey.
 
@@ -1710,6 +1775,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-3.2
+            pages:
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               Selecting 06:00-12:00 in "Departure time"(role=combobox) within "Filter"(role=region) retains departures from 06:00 through 11:59, including at least one match.
 
@@ -1737,6 +1805,11 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-3.2
+        pages:
+          - name: home
+            reference: ./reference/homepage.png
+          - name: train_results
+            reference: ./reference/search-result.png
         description: |-
           Hovering "Booking"(role=link) in homepage navigation reveals "Tickets"(role=link). Activating Tickets opens populated default Beijing–Shanghai results for 2026-07-21, with From, To, and Date reflecting that route and day.
 
@@ -1772,6 +1845,11 @@ children:
         dependencies:
           - REQ-3.1.2
           - REQ-3.1.3
+        pages:
+          - name: home
+            reference: ./reference/homepage.png
+          - name: train_results
+            reference: ./reference/search-result.png
         description: |-
           When Yancheng–Lhasa on 2026-07-21 has no direct service, "Transfer plans"(role=region) displays exactly the two eligible DATA-TRANSFERS plans, up to a general maximum of ten, initially ordered by total travel time ascending. Each business-identified article shows both segment numbers, stations, departure and arrival times, durations, fares, Transfer waiting, Total travel time: with numeric minutes, and enabled "Book"(role=button). Only transfers waiting at least 30 minutes qualify, excluding D2003/Z23. The Beijing plan uses D2001 Yancheng–Beijing 08:00–12:00 for CNY 200, then a 60-minute wait and Z21 Beijing–Lhasa 13:00–19:00 the following day for CNY 400, totaling 2100 minutes. Plans have differing first departures, second arrivals, and total durations, enabling sorting. No downstream transfer-order submission is specified.
 
@@ -1817,6 +1895,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-4.1
+            pages:
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               In "Transfer plans"(role=region), "Departure Time"(role=button) sorts articles ascending by their first segment's published departure, and a second activation sorts descending. The complete current plan set is retained; arrival comparisons use the second segment's arrival clock and duration comparisons use total minutes.
 
@@ -1846,6 +1927,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-4.1
+            pages:
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               "Travel time"(role=button) sorts articles in "Transfer plans"(role=region) by total minutes ascending, then descending on a second click, without changing membership. First-segment departure and second-segment arrival clocks remain the corresponding values for the other sorts.
 
@@ -1875,6 +1959,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-4.1
+            pages:
+              - name: train_results
+                reference: ./reference/search-result.png
             description: |-
               "Arrival Time"(role=button) sorts "Transfer plans"(role=region) by the second segment's published arrival clock ascending, then descending, preserving all current plans. Departure refers to the first segment and duration to total minutes.
 
@@ -1910,7 +1997,6 @@ children:
         type: FOLDER
         dependencies:
           - REQ-2.2.2
-        pages: []
         description: Organize the page-entry and independent user behaviors for Enter personal center with access
           control. REQ-5.1.1 establishes the concrete reference pages first; the remaining siblings apply their
           explicitly preserved source contracts. This abstract capability has no page or executable UI of its own.
@@ -1921,6 +2007,8 @@ children:
             dependencies:
               - REQ-2.2.2
             pages:
+              - name: home
+                reference: ./reference/homepage.png
               - name: personal_center
                 reference: ./reference/user-center.png
             description: |-
@@ -2000,7 +2088,12 @@ children:
                     content: Personal center menu contains Personal Center, Order center, Personal and Information
                       management; Notice displays personal_center_user and its Notice image.
             pages:
+              - name: home
+                reference: ./reference/homepage.png
+              - name: login
+                reference: ./reference/login.png
               - name: personal_center
+                reference: ./reference/user-center.png
           - id: REQ-5.1.3
             name: Open ticket search from the personal notice
             type: ATOMIC
@@ -2040,12 +2133,14 @@ children:
                     content: Default results contain G3001 and preserve From Beijing, To Shanghai and Date 2026-07-21.
             pages:
               - name: personal_center
+                reference: ./reference/user-center.png
+              - name: train_results
+                reference: ./reference/search-result.png
       - id: REQ-5.2
         name: Browse order categories and empty-state booking routes capability
         type: FOLDER
         dependencies:
           - REQ-5.1.2
-        pages: []
         description: Organize the page-entry and independent user behaviors for Browse order categories and empty-state
           booking routes. REQ-5.2.1 establishes the concrete reference pages first; the remaining siblings apply
           their explicitly preserved source contracts. This abstract capability has no page or executable UI of
@@ -2057,6 +2152,8 @@ children:
             dependencies:
               - REQ-5.1.2
             pages:
+              - name: personal_center
+                reference: ./reference/user-center.png
               - name: ticket_orders
                 reference: ./reference/ticket-orders.png
             description: |-
@@ -2153,7 +2250,12 @@ children:
                   - keyword: THEN
                     content: Default Beijing–Shanghai results open with July 21 criteria and G3001.
             pages:
+              - name: personal_center
+                reference: ./reference/user-center.png
               - name: ticket_orders
+                reference: ./reference/ticket-orders.png
+              - name: train_results
+                reference: ./reference/search-result.png
           - id: REQ-5.2.3
             name: Explore empty Upcoming trips
             type: ATOMIC
@@ -2210,7 +2312,12 @@ children:
                   - keyword: THEN
                     content: Default Beijing–Shanghai results open with July 21 criteria and G3001.
             pages:
+              - name: personal_center
+                reference: ./reference/user-center.png
               - name: ticket_orders
+                reference: ./reference/ticket-orders.png
+              - name: train_results
+                reference: ./reference/search-result.png
           - id: REQ-5.2.4
             name: Explore empty History orders
             type: ATOMIC
@@ -2267,14 +2374,18 @@ children:
                   - keyword: THEN
                     content: Default Beijing–Shanghai results open with July 21 criteria and G3001.
             pages:
+              - name: personal_center
+                reference: ./reference/user-center.png
               - name: ticket_orders
+                reference: ./reference/ticket-orders.png
+              - name: train_results
+                reference: ./reference/search-result.png
       - id: REQ-5.3
         name: Inspect and resume unpaid orders capability
         type: FOLDER
         dependencies:
           - REQ-8.3.3.1
           - REQ-5.1.2
-        pages: []
         description: Organize the page-entry and independent user behaviors for Inspect and resume unpaid orders.
           REQ-5.3.1 establishes the concrete reference pages first; the remaining siblings apply their explicitly
           preserved source contracts. This abstract capability has no page or executable UI of its own.
@@ -2286,6 +2397,8 @@ children:
               - REQ-8.3.3.1
               - REQ-5.1.2
             pages:
+              - name: personal_center
+                reference: ./reference/user-center.png
               - name: ticket_orders
                 reference: ./reference/uncompleted-orders.png
             description: |-
@@ -2359,6 +2472,7 @@ children:
                       appear; G1001 displays Shanghai and Beijing with a Pay button.
             pages:
               - name: ticket_orders
+                reference: ./reference/ticket-orders.png
           - id: REQ-5.3.3
             name: Resume an unpaid order payment
             type: ATOMIC
@@ -2398,13 +2512,15 @@ children:
                       order.
             pages:
               - name: ticket_orders
+                reference: ./reference/ticket-orders.png
+              - name: payment
+                reference: ./reference/payment.png
       - id: REQ-5.4
         name: Filter and inspect upcoming trips capability
         type: FOLDER
         dependencies:
           - REQ-8.5
           - REQ-5.1.2
-        pages: []
         description: Organize the page-entry and independent user behaviors for Filter and inspect upcoming trips.
           REQ-5.4.1 establishes the concrete reference pages first; the remaining siblings apply their explicitly
           preserved source contracts. This abstract capability has no page or executable UI of its own.
@@ -2416,6 +2532,8 @@ children:
               - REQ-8.5
               - REQ-5.1.2
             pages:
+              - name: personal_center
+                reference: ./reference/user-center.png
               - name: ticket_orders
                 reference: ./reference/uncompleted-orders.png
             description: |-
@@ -2493,6 +2611,7 @@ children:
                       are visible and G1001 offers Refund.
             pages:
               - name: ticket_orders
+                reference: ./reference/ticket-orders.png
           - id: REQ-5.4.3
             name: Search upcoming trips by date and keyword
             type: ATOMIC
@@ -2575,12 +2694,16 @@ children:
                     content: Please enter a valid search condition. appears.
             pages:
               - name: ticket_orders
+                reference: ./reference/ticket-orders.png
       - id: REQ-5.5
         name: Refund eligible upcoming order
         type: ATOMIC
         dependencies:
           - REQ-8.5
           - REQ-5.1.2
+        pages:
+          - name: ticket_orders
+            reference: ./reference/ticket-orders.png
         description: The verified orders_refund_user with Password123! creates and pays for G2002 departing 2026-07-22
           through UI; its service and refund deadline 2026-07-22T00:00:00+08:00 are published seed facts. "Refund"(role=button)
           on the upcoming order opens "Refund information"(role=region) identifying G2002 and Refund amount. "Confirm
@@ -2613,6 +2736,11 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-5.1.2
+        pages:
+          - name: home
+            reference: ./reference/homepage.png
+          - name: ticket_orders
+            reference: ./reference/ticket-orders.png
         description: Hovering "Booking"(role=link) on the homepage reveals "Refund"(role=link). For an authenticated
           user, following it opens the personal-center order view with Upcoming trips selected.
         data:
@@ -2634,7 +2762,6 @@ children:
         type: FOLDER
         dependencies:
           - REQ-5.1.2
-        pages: []
         description: Organize the page-entry and independent user behaviors for Filter and inspect historical orders.
           REQ-5.7.1 establishes the concrete reference pages first; the remaining siblings apply their explicitly
           preserved source contracts. This abstract capability has no page or executable UI of its own.
@@ -2645,6 +2772,8 @@ children:
             dependencies:
               - REQ-5.1.2
             pages:
+              - name: personal_center
+                reference: ./reference/user-center.png
               - name: ticket_orders
                 reference: ./reference/uncompleted-orders.png
             description: |-
@@ -2714,6 +2843,7 @@ children:
                       Price headers appear, and G1001 has completed status.
             pages:
               - name: ticket_orders
+                reference: ./reference/ticket-orders.png
           - id: REQ-5.7.3
             name: Search historical orders by date and keyword
             type: ATOMIC
@@ -2786,6 +2916,7 @@ children:
                     content: Please enter a valid search condition. appears.
             pages:
               - name: ticket_orders
+                reference: ./reference/ticket-orders.png
       - id: REQ-5.8
         name: Use personal center quick entries
         type: FOLDER
@@ -2805,6 +2936,11 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-2.2.2
+            pages:
+              - name: home
+                reference: ./reference/homepage.png
+              - name: ticket_orders
+                reference: ./reference/ticket-orders.png
             description: |-
               An authenticated traveler hovers "My 12306"(role=link) and chooses "Order center"(role=link) within "My 12306 quick entries"(role=region). All four destinations remain identifiable and this choice opens order-center content.
 
@@ -2831,6 +2967,11 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-2.2.2
+            pages:
+              - name: home
+                reference: ./reference/homepage.png
+              - name: user_information
+                reference: ./reference/user-information.png
             description: An authenticated traveler hovers "My 12306"(role=link), then follows "User information"(role=link)
               in "My 12306 quick entries"(role=region). All four quick destinations remain identifiable and the
               selected personal-information content opens.
@@ -2854,6 +2995,11 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-2.2.2
+            pages:
+              - name: home
+                reference: ./reference/homepage.png
+              - name: account_security
+                reference: ./reference/account-security.png
             description: An authenticated traveler hovers "My 12306"(role=link) and follows "Account security"(role=link)
               within "My 12306 quick entries"(role=region). The four destinations remain identifiable and account-security
               content opens.
@@ -2877,6 +3023,11 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-2.2.2
+            pages:
+              - name: home
+                reference: ./reference/homepage.png
+              - name: passengers
+                reference: ./reference/my-passengers.png
             description: An authenticated traveler hovers "My 12306"(role=link) and chooses "My passengers"(role=link)
               in "My 12306 quick entries"(role=region), opening passenger content while all four destinations remain
               identifiable.
@@ -2907,6 +3058,8 @@ children:
         dependencies:
           - REQ-5.1.2
         pages:
+          - name: personal_center
+            reference: ./reference/user-center.png
           - name: user_information
             reference: ./reference/user-information.png
         description: |-
@@ -2936,6 +3089,13 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-6.1
+        pages:
+          - name: user_information
+            reference: ./reference/user-information.png
+          - name: home
+            reference: ./reference/homepage.png
+          - name: login
+            reference: ./reference/login.png
         description: '"Edit"(role=button) within "Essential information"(role=region) exposes "Gender"(role=group)
           with Male and Female, "Password"(role=textbox), and "Save"(role=button), leaving other essential fields
           read-only. The profile_essential_user account starts Male with Password123! and may save Female with Password123!X.
@@ -2979,6 +3139,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-6.1
+            pages:
+              - name: user_information
+                reference: ./reference/user-information.png
             description: |-
               In User information's "Contact information"(role=region), clicking "Edit"(role=button) exposes "Email"(role=textbox). "Save"(role=button) commits the submitted email and restores display mode with Edit available; the value persists after reload.
 
@@ -3007,6 +3170,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-6.1
+            pages:
+              - name: user_information
+                reference: ./reference/user-information.png
             description: |-
               In "Additional information"(role=region), "Edit"(role=button) exposes "Passenger type"(role=combobox). Choosing Child and clicking "Save"(role=button) restores display mode showing Child and Edit, with the selection retained after reload.
 
@@ -3039,6 +3205,10 @@ children:
             reference: ./reference/account-security.png
           - name: change_password
             reference: ./reference/edit-password.png
+          - name: login
+            reference: ./reference/login.png
+          - name: home
+            reference: ./reference/homepage.png
         description: |-
           Personal exposes Account security with "Login password"(role=link), "Security mailbox"(role=region), and "Mobile number"(role=region). Opening Login password shows "Current password:"(role=textbox), "New password:"(role=textbox), "Confirm your password:"(role=textbox), "Cancel"(role=button), and "Determine"(role=button). Missing fields show Please fill in all password fields.; an incorrect current value shows Incorrect current password.; unequal new values show New passwords do not match. Valid submission persists the replacement and shows Password changed successfully.; failures retain the old password. Independent security_password_change_user and security_password_user start with Password123!, and changing the former to Password123!X does not affect the latter.
 
@@ -3106,6 +3276,8 @@ children:
         dependencies:
           - REQ-5.1.2
         pages:
+          - name: account_security
+            reference: ./reference/account-security.png
           - name: change_email
             reference: ./reference/edit-email.png
         description: |-
@@ -3172,6 +3344,8 @@ children:
         dependencies:
           - REQ-5.1.2
         pages:
+          - name: account_security
+            reference: ./reference/account-security.png
           - name: verify_mobile
             reference: ./reference/verify-mobile.png
         description: |-
@@ -3233,6 +3407,8 @@ children:
         dependencies:
           - REQ-5.1.2
         pages:
+          - name: personal_center
+            reference: ./reference/user-center.png
           - name: passengers
             reference: ./reference/my-passengers.png
         description: |-
@@ -3350,6 +3526,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-7.2
+            pages:
+              - name: passengers
+                reference: ./reference/my-passengers.png
             description: |-
               Clicking "Delete"(role=button) on the identified non-holder passenger opens "Are you sure you want to delete this passenger?"(role=dialog) with "Cancel"(role=button) and "Confirm"(role=button). Confirm removes that passenger with success feedback, and its absence persists after reload under the parent capability's rules.
 
@@ -3378,6 +3557,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-7.2
+            pages:
+              - name: passengers
+                reference: ./reference/my-passengers.png
             description: |-
               "Delete"(role=button) on an identified non-holder passenger opens "Are you sure you want to delete this passenger?"(role=dialog), offering "Confirm"(role=button) and "Cancel"(role=button). Cancel closes the dialog and retains that passenger, including after reload, under the shared maintenance rules.
 
@@ -3405,6 +3587,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-7.2
+        pages:
+          - name: passengers
+            reference: ./reference/my-passengers.png
         description: |-
           Users select deletable passenger rows by "Select {passport number}"(role=checkbox), or select all deletable rows through "All"(role=checkbox). "Batch deletion"(role=button) opens "Are you sure you want to delete the selected passengers?"(role=dialog). "Confirm"(role=button) deletes only selected passengers with success feedback and persists their absence, preserving the holder and unselected records. "Cancel"(role=button) dismisses without deleting. Business identity determines selection.
 
@@ -3445,6 +3630,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-7.2
+            pages:
+              - name: passengers
+                reference: ./reference/my-passengers.png
             description: |-
               On My Passengers, users enter a name or passport in "Please enter passenger name"(role=textbox) and click "Search"(role=button). The list shows matching passenger identities and excludes nonmatching rows.
 
@@ -3482,6 +3670,9 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-7.5.1
+            pages:
+              - name: passengers
+                reference: ./reference/my-passengers.png
             description: |-
               After filtering, clicking "×"(role=button) clears "Please enter passenger name"(role=textbox) and restores the complete passenger list, including previously hidden records.
 
@@ -3514,7 +3705,6 @@ children:
         type: FOLDER
         dependencies:
           - REQ-3.2
-        pages: []
         description: Organize the page-entry and independent user behaviors for Intercept booking and expose quick-login
           routes. REQ-8.1.1 establishes the concrete reference pages first; the remaining siblings apply their explicitly
           preserved source contracts. This abstract capability has no page or executable UI of its own.
@@ -3596,6 +3786,7 @@ children:
                       and LOGIN; Train Information: booking heading is not shown.'
             pages:
               - name: train_results
+                reference: ./reference/search-result.png
           - id: REQ-8.1.3
             name: Open recovery from booking quick login
             type: ATOMIC
@@ -3632,6 +3823,9 @@ children:
                     content: 'Public recovery exposes Email:, ID number: and submit.'
             pages:
               - name: train_results
+                reference: ./reference/search-result.png
+              - name: password_recovery
+                reference: ./reference/forgot-password.png
           - id: REQ-8.1.4
             name: Open registration from booking quick login
             type: ATOMIC
@@ -3668,6 +3862,9 @@ children:
                     content: Public registration exposes Username, Password, Confirm Password and Register.
             pages:
               - name: train_results
+                reference: ./reference/search-result.png
+              - name: register
+                reference: ./reference/register.png
       - id: REQ-8.2
         name: Select train and passengers on booking form capability
         type: FOLDER
@@ -3675,7 +3872,6 @@ children:
           - REQ-2.2.2
           - REQ-3.2
           - REQ-7.2
-        pages: []
         description: Organize the page-entry and independent user behaviors for Select train and passengers on booking
           form. REQ-8.2.1 establishes the concrete reference pages first; the remaining siblings apply their explicitly
           preserved source contracts. This abstract capability has no page or executable UI of its own.
@@ -3688,6 +3884,8 @@ children:
               - REQ-3.2
               - REQ-7.2
             pages:
+              - name: train_results
+                reference: ./reference/search-result.png
               - name: booking
                 reference: ./reference/booking-1.png
             description: |-
@@ -3781,6 +3979,7 @@ children:
                       order is available.'
             pages:
               - name: booking
+                reference: ./reference/booking-1.png
           - id: REQ-8.2.3
             name: Choose and remove booking passengers
             type: FOLDER
@@ -3847,6 +4046,7 @@ children:
                           with both selections, scoped Delete and Place order available.
                 pages:
                   - name: booking
+                    reference: ./reference/booking-1.png
               - id: REQ-8.2.3.2
                 name: Remove a passenger from booking selection
                 type: ATOMIC
@@ -3898,6 +4098,7 @@ children:
                           confirmation opens; the frequent passenger remains available for selection.
                 pages:
                   - name: booking
+                    reference: ./reference/booking-1.png
           - id: REQ-8.2.4
             name: Read the booking agreement
             type: ATOMIC
@@ -3947,12 +4148,14 @@ children:
                     content: The Terms of Service heading is displayed.
             pages:
               - name: booking
+                reference: ./reference/booking-1.png
+              - name: service_agreement
+                reference: ./reference/rule.png
       - id: REQ-8.3
         name: Validate submission and confirm or edit order capability
         type: FOLDER
         dependencies:
           - REQ-8.2.3.1
-        pages: []
         description: Organize the page-entry and independent user behaviors for Validate submission and confirm
           or edit order. REQ-8.3.1 establishes the concrete reference pages first; the remaining siblings apply
           their explicitly preserved source contracts. This abstract capability has no page or executable UI of
@@ -4073,6 +4276,7 @@ children:
                       does not open.
             pages:
               - name: booking
+                reference: ./reference/booking-1.png
           - id: REQ-8.3.3
             name: Confirm an order or return to edit
             type: FOLDER
@@ -4129,6 +4333,9 @@ children:
                           and Passenger Example.
                 pages:
                   - name: booking
+                    reference: ./reference/booking-1.png
+                  - name: payment
+                    reference: ./reference/payment.png
               - id: REQ-8.3.3.2
                 name: Return from confirmation to edit
                 type: ATOMIC
@@ -4176,6 +4383,9 @@ children:
                           contains no G1001 order.'
                 pages:
                   - name: booking
+                    reference: ./reference/booking-1.png
+                  - name: ticket_orders
+                    reference: ./reference/ticket-orders.png
       - id: REQ-8.4
         name: Review payment details and live seat-lock countdown
         type: ATOMIC
@@ -4215,6 +4425,11 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-8.3.3.1
+        pages:
+          - name: payment
+            reference: ./reference/payment.png
+          - name: ticket_orders
+            reference: ./reference/ticket-orders.png
         description: Clicking "Pay"(role=button) simulates payment and shows Payment successful. The paid G1001
           is classified as upcoming before departure and appears under "Upcoming trips"(role=tab) with "Refund"(role=button).
           The booking_paid_user and booking_upcoming_user accounts, both with Password123!, establish their passengers
@@ -4243,6 +4458,11 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-8.3.3.1
+        pages:
+          - name: payment
+            reference: ./reference/payment.png
+          - name: ticket_orders
+            reference: ./reference/ticket-orders.png
         description: When booking_unpaid_user with Password123! confirms its UI-created Shanghai–Beijing order but
           does not pay, the unpaid order appears in "Uncompleted orders"(role=tab) with "Pay"(role=button). Status
           and classification persist after reload; unpaid orders do not appear in Upcoming trips, and canceled orders
@@ -4270,6 +4490,17 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-8.3.3.1
+        pages:
+          - name: payment
+            reference: ./reference/payment.png
+          - name: ticket_orders
+            reference: ./reference/ticket-orders.png
+          - name: home
+            reference: ./reference/homepage.png
+          - name: train_results
+            reference: ./reference/search-result.png
+          - name: booking
+            reference: ./reference/booking-1.png
         description: Clicking "Cancel"(role=button) on payment cancels the UI-created G1001 order, releases its
           locked seats, and shows Order cancelled successfully. The order remains visible in "Uncompleted orders"(role=tab)
           as canceled without Pay, including after reload, and released availability can be reached through "Book"(role=button).
@@ -4314,6 +4545,15 @@ children:
             dependencies:
               - REQ-8.3.3.1
               - REQ-5.1.2
+            pages:
+              - name: ticket_orders
+                reference: ./reference/ticket-orders.png
+              - name: home
+                reference: ./reference/homepage.png
+              - name: train_results
+                reference: ./reference/search-result.png
+              - name: booking
+                reference: ./reference/booking-1.png
             description: |-
               "Cancel"(role=button) on the identified unpaid order opens "Are you sure you want to cancel this order?"(role=dialog). "Confirm"(role=button) changes it to canceled without Pay and releases the seat for rebooking, under the parent capability's full cancellation rules.
 
@@ -4343,6 +4583,11 @@ children:
             dependencies:
               - REQ-8.3.3.1
               - REQ-5.1.2
+            pages:
+              - name: ticket_orders
+                reference: ./reference/ticket-orders.png
+              - name: payment
+                reference: ./reference/payment.png
             description: |-
               The order row's "Cancel"(role=button) opens "Are you sure you want to cancel this order?"(role=dialog) with "Confirm"(role=button). Choosing the dialog's Cancel instead closes it without changing the order, which remains Unpaid with Pay available under the shared contract.
 
@@ -4377,6 +4622,8 @@ children:
         type: ATOMIC
         dependencies: []
         pages:
+          - name: home
+            reference: ./reference/homepage.png
           - name: travel_guide
             reference: ./reference/travel-guide.png
         description: |-
@@ -4408,7 +4655,6 @@ children:
         type: FOLDER
         dependencies:
           - REQ-9.1
-        pages: []
         description: Organize the page-entry and independent user behaviors for Navigate dropdown category and question
           anchors. REQ-9.2.1 establishes the concrete reference pages first; the remaining siblings apply their
           explicitly preserved source contracts. This abstract capability has no page or executable UI of its own.
@@ -4490,6 +4736,9 @@ children:
                       opens the matching selected guide tab and nonempty named tabpanel.
             pages:
               - name: home
+                reference: ./reference/homepage.png
+              - name: travel_guide
+                reference: ./reference/travel-guide.png
           - id: REQ-9.2.3
             name: Open a dropdown guide question anchor
             type: ATOMIC
@@ -4528,6 +4777,9 @@ children:
                       is in the viewport.
             pages:
               - name: home
+                reference: ./reference/homepage.png
+              - name: travel_guide
+                reference: ./reference/travel-guide.png
       - id: REQ-9.3
         name: Use homepage quick-guide destinations
         type: FOLDER
@@ -4549,6 +4801,11 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-9.1
+            pages:
+              - name: home
+                reference: ./reference/homepage.png
+              - name: travel_guide
+                reference: ./reference/travel-guide.png
             description: |-
               In "Quick Guide"(role=region), "How to book tickets online?"(role=link), "How to change or refund tickets?"(role=link), "How to check train status?"(role=link), and "How to use 12306 mobile app?"(role=link) open their related guide category and scroll the matching heading into the selected panel's viewport. Online booking maps to Ticketing; the remaining mappings are implementation-defined.
 
@@ -4609,6 +4866,11 @@ children:
             type: ATOMIC
             dependencies:
               - REQ-9.1
+            pages:
+              - name: home
+                reference: ./reference/homepage.png
+              - name: travel_guide
+                reference: ./reference/travel-guide.png
             description: |-
               "More"(role=link) within the homepage's "Quick Guide"(role=region) opens the guide at Ticketing with How to book tickets online? visible.
 

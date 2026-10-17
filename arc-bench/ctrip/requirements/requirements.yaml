@@ -417,7 +417,6 @@ children:
     name: Account access
     type: FOLDER
     dependencies: []
-    pages: []
     description: |-
       Visitors can enter password or verification-code login and register through agreement, phone verification and password setup. Legal acceptance is required. Logout removes the session.
 
@@ -458,6 +457,8 @@ children:
         dependencies:
           - REQ-1.1
         pages:
+          - name: home
+            reference: ./reference/index.png
           - name: login
             reference: ./reference/login1.png
           - name: login
@@ -496,6 +497,8 @@ children:
         pages:
           - name: login
             reference: ./reference/login1.png
+          - name: home
+            reference: ./reference/index.png
         description: |-
           Users enter a verified mobile, username, or email in "Account"(role=textbox), enter "Password"(role=textbox), select the initially unchecked "Agree to terms"(role=checkbox), and click "Log in"(role=button). Agreement is required. Missing credentials or incorrect credentials show the specified alert without signing in; success returns home and replaces the login entry with "My account"(role=button).
 
@@ -597,6 +600,8 @@ children:
         pages:
           - name: login
             reference: ./reference/login2.png
+          - name: home
+            reference: ./reference/index.png
         description: |-
           SMS login defaults to +86 and provides "Mobile number"(role=textbox), "Verification code"(role=textbox), and "Send code"(role=button), which becomes "Resend code"(role=button). With a sent code 123456 and "Agree to terms"(role=checkbox) selected, "Log in"(role=button) authenticates and displays "My account"(role=button). Missing mobile or code, an incorrect code, or absent agreement shows the declared alert and retains the signed-out form; required fields cannot substitute for each other.
 
@@ -682,6 +687,10 @@ children:
           - REQ-1.1
           - REQ-1.2
         pages:
+          - name: home
+            reference: ./reference/index.png
+          - name: login
+            reference: ./reference/login1.png
           - name: register
             reference: ./reference/register1.png
         description: |-
@@ -725,6 +734,8 @@ children:
         dependencies:
           - REQ-1.5
         pages:
+          - name: home
+            reference: ./reference/index.png
           - name: register
             reference: ./reference/register2.png
         description: |-
@@ -761,6 +772,10 @@ children:
         pages:
           - name: register
             reference: ./reference/register2.png
+          - name: login
+            reference: ./reference/login1.png
+          - name: home
+            reference: ./reference/index.png
         description: |-
           Users enter matching "Password"(role=textbox) and "Confirm password"(role=textbox) values containing both letters and numbers and at least eight characters, then click "Complete registration"(role=button). Success shows Registration successful and opens password login; invalid submissions display the exact scenario validation message and stay on Set password. The created mobile account must authenticate through "Account"(role=textbox), Password, "Agree to terms"(role=checkbox), and "Log in"(role=button), resulting in "My account"(role=button).
 
@@ -944,6 +959,10 @@ children:
         pages:
           - name: register
             reference: ./reference/register2.png
+          - name: login
+            reference: ./reference/login1.png
+          - name: home
+            reference: ./reference/index.png
         description: |-
           Entering Abcd1234 identically in "Password"(role=textbox) and "Confirm password"(role=textbox) satisfies the inclusive eight-character mixed-password boundary. "Complete registration"(role=button) creates the account, whose mobile and password subsequently authenticate through "Account"(role=textbox), Password, "Agree to terms"(role=checkbox), and "Log in"(role=button), showing "My account"(role=button).
 
@@ -1072,13 +1091,6 @@ children:
     name: Find flights and select a fare
     type: FOLDER
     dependencies: []
-    pages:
-      - name: home
-        reference: ./reference/search.png
-      - name: flight_results
-        reference: ./reference/search_panel.png
-      - name: flight_results
-        reference: ./reference/search_results.png
     description: |-
       Domestic/international route search uses fixed current date 2026-07-19. Quick-search supports trip type, cities, dates, children and cabin preferences. Results allow criterion updates, nearby fares, filtering and sorting. Multi-city, time and airport filter details are not specified beyond capability context.
 
@@ -1223,6 +1235,8 @@ children:
           - REQ-2.2
           - REQ-2.3
         pages:
+          - name: home
+            reference: ./reference/index.png
           - name: flight_results
             reference: ./reference/search_results.png
         description: |-
@@ -1277,6 +1291,11 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-2.4
+        pages:
+          - name: home
+            reference: ./reference/index.png
+          - name: flight_results
+            reference: ./reference/search_results.png
         description: Selecting "Traveling with children"(role=checkbox) carries that preference into Flight results
           as Children included. "Cabin class"(role=combobox) includes Economy and retains the chosen option during
           search.
@@ -1313,6 +1332,11 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-2.4
+        pages:
+          - name: home
+            reference: ./reference/index.png
+          - name: flight_results
+            reference: ./reference/search_results.png
         description: Anonymous "Search history"(role=region) offers Chengdu - Guangzhou. Activating it restores
           the source route in "Origin"(role=textbox) and "Destination"(role=textbox), its date in "Departure date"(role=textbox),
           and directly displays the corresponding results.
@@ -1424,6 +1448,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-2.4
+        pages:
+          - name: flight_results
+            reference: ./reference/search_results.png
         description: |-
           Selecting "Nonstop only"(role=checkbox) removes JD5162 from "Flight list"(role=region). Selecting China Southern in "Airline"(role=combobox) additionally leaves only CZ3401; the filters compose without resetting each other.
 
@@ -1450,6 +1477,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-2.4
+        pages:
+          - name: flight_results
+            reference: ./reference/search_results.png
         description: '"Price: low to high"(role=button), "On-time: high to low"(role=button), and "Departure: earliest
           first"(role=button) order "Flight list"(role=region) by numeric fare, numeric on-time rate, or chronological
           departure respectively. Sorting preserves flight identities, whose accessible sequence makes order observable
@@ -1499,6 +1529,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-2.4
+        pages:
+          - name: flight_results
+            reference: ./reference/search_results.png
         description: Within "Flight JD5162"(role=listitem), Show fares reveals Fare options with its Economy fare
           group and Refund and change rules. Hide fares closes those options and restores Show fares.
         data:
@@ -1525,6 +1558,8 @@ children:
         dependencies:
           - REQ-2.11
         pages:
+          - name: flight_results
+            reference: ./reference/search_results.png
           - name: booking
             reference: ./reference/book2.png
         description: |-
@@ -1618,6 +1653,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-2.9
+        pages:
+          - name: flight_results
+            reference: ./reference/search_results.png
         description: With "Origin"(role=textbox), "Destination"(role=textbox), and "Departure date"(role=textbox)
           retained, clearing "Nonstop only"(role=checkbox) restores matching stopover flights to "Flight list"(role=region),
           preserving unchanged filters.
@@ -1644,6 +1682,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-2.9
+        pages:
+          - name: flight_results
+            reference: ./reference/search_results.png
         description: '"Airline"(role=combobox) offers All airlines. With China Southern and "Nonstop only"(role=checkbox)
           selected, choosing All airlines removes only the airline restriction and restores MU5234 to "Flight list"(role=region),
           while stopover JD5162 remains excluded.'
@@ -1670,15 +1711,6 @@ children:
     name: Book, price and pay for flights
     type: FOLDER
     dependencies: []
-    pages:
-      - name: booking
-        reference: ./reference/book1_mention.png
-      - name: booking
-        reference: ./reference/book2.png
-      - name: booking
-        reference: ./reference/book3.png
-      - name: payment
-        reference: ./reference/book4.png
     description: |-
       Booking supports reminders, passengers, contact mobile, optional protection, baggage, transfer and lounge services. Fee summary includes fare/taxes and chosen services. Guest submission and simulated payment are allowed. Insurance variants, fast-track security and fulfillment beyond stated examples remain broad context.
 
@@ -1834,6 +1866,9 @@ children:
         dependencies:
           - REQ-2.12
           - REQ-1.3
+        pages:
+          - name: booking
+            reference: ./reference/book2.png
         description: '"Contact mobile"(role=textbox) defaults to the signed-in mobile 13800000010. Replacing it
           with valid 13800000014 and leaving focus retains the value without a contact validation alert in "Contact
           information"(role=region). Contact feedback remains separate from "Passenger details"(role=region).'
@@ -2006,6 +2041,8 @@ children:
         dependencies:
           - REQ-3.3
         pages:
+          - name: booking
+            reference: ./reference/book2.png
           - name: payment
             reference: ./reference/book4.png
         description: |-
@@ -2264,13 +2301,6 @@ children:
     name: Inspect and cancel orders
     type: FOLDER
     dependencies: []
-    pages:
-      - name: home
-        reference: ./reference/enter_order.png
-      - name: orders
-        reference: ./reference/order1.png
-      - name: order_details
-        reference: ./reference/order2.png
     description: |-
       My account Orders shows list entries with number, booking date, itinerary, flight, total and display status. Not traveled/Pending review are distinct from payment state. Type/date-range filtering and detail fields such as terminals, operating carrier, non-flight services, masked passengers and fee summary remain source context without concrete fixtures/oracles.
 
@@ -2288,8 +2318,10 @@ children:
         dependencies:
           - REQ-1.3
         pages:
-        - name: home
-          reference: ./reference/enter_order.png
+          - name: home
+            reference: ./reference/enter_order.png
+          - name: orders
+            reference: ./reference/order1.png
         description: |-
           "My account"(role=button) opens an account menu with Orders. Selecting Orders displays the heading and "Order list"(role=region), containing only orders owned by the signed-in account.
 
@@ -2390,6 +2422,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-4.1
+        pages:
+          - name: orders
+            reference: ./reference/order1.png
         description: Entering CTRIP20260721001 in "Order number"(role=textbox) and clicking "Search orders"(role=button)
           filters "Order list"(role=region) to that account-owned JD5162 order only.
         data:
@@ -2414,6 +2449,8 @@ children:
         dependencies:
           - REQ-4.1
         pages:
+          - name: orders
+            reference: ./reference/order1.png
           - name: order_details
             reference: ./reference/order2.png
         description: |-
@@ -2465,6 +2502,8 @@ children:
         pages:
           - name: order_details
             reference: ./reference/order2.png
+          - name: orders
+            reference: ./reference/order1.png
         description: |-
           The independent order_cancel account owns CTRIP20260721004. Clicking "Cancel order"(role=button) in "Payment status"(role=region) opens "Cancel order"(role=dialog); Confirm cancellation changes that same order to Closed, persisting after reload.
 
@@ -2495,6 +2534,8 @@ children:
         pages:
           - name: order_details
             reference: ./reference/order2.png
+          - name: orders
+            reference: ./reference/order1.png
         description: |-
           In "Cancel order"(role=dialog), "Keep order"(role=button) closes confirmation without mutation. "Payment status"(role=region) retains Pending payment and Pay now for the identified order_read order. Only confirmed cancellation closes the order.
 
@@ -2552,19 +2593,6 @@ children:
     name: Manage reusable booking information
     type: FOLDER
     dependencies: []
-    pages:
-      - name: home
-        reference: ./reference/enter_self.png
-      - name: travelers
-        reference: ./reference/passenger.png
-      - name: addresses
-        reference: ./reference/address.png
-      - name: address_details
-        reference: ./reference/addressShow.png
-      - name: contacts
-        reference: ./reference/contact.png
-      - name: invoice_titles
-        reference: ./reference/reimbursement.png
     description: |-
       Personal center Common information sidebar expands/collapses Travelers, Contacts, Invoice titles and Addresses. Saved records are owned by the signed-in account. Creation and deletion tests create records through UI rather than preloading deletion targets. Source broader fields (traveler nationality/gender/birth/mobile, linked address province, international contact dialing, institutional/personal invoice types ) remain context; concrete acceptance uses the source-defined fields.
        Saved-traveler editing and address detail viewing have explicit contracts in REQ-5.14 and REQ-5.15.
@@ -2587,6 +2615,8 @@ children:
         pages:
           - name: home
             reference: ./reference/enter_self.png
+          - name: profile
+            reference: ./reference/myinfo.png
         description: |-
           "My account"(role=button) exposes Personal center. Opening it displays Personal center heading and "Common information"(role=button), which toggles exactly four reusable-information links from an initially collapsed state.
 
@@ -2670,6 +2700,8 @@ children:
         dependencies:
           - REQ-5.1
         pages:
+          - name: travelers
+            reference: ./reference/passenger.png
           - name: traveler_form
             reference: ./reference/addpassenger.png
         description: |-
@@ -2749,6 +2781,8 @@ children:
         dependencies:
           - REQ-5.1
         pages:
+          - name: addresses
+            reference: ./reference/address.png
           - name: address_form
             reference: ./reference/addaddress.png
         description: |-
@@ -2816,6 +2850,8 @@ children:
         dependencies:
           - REQ-5.1
         pages:
+          - name: contacts
+            reference: ./reference/contact.png
           - name: contact_form
             reference: ./reference/add_contact.png
         description: |-
@@ -2883,6 +2919,8 @@ children:
         dependencies:
           - REQ-5.1
         pages:
+          - name: invoice_titles
+            reference: ./reference/reimbursement.png
           - name: invoice_title_form
             reference: ./reference/add_reimbursement.png
         description: |-
@@ -3160,6 +3198,8 @@ children:
         dependencies:
           - REQ-5.5
         pages:
+          - name: addresses
+            reference: ./reference/address.png
           - name: address_details
             reference: ./reference/addressShow.png
         description: |-
@@ -3317,13 +3357,6 @@ children:
     name: Manage profile and account security
     type: FOLDER
     dependencies: []
-    pages:
-      - name: profile
-        reference: ./reference/myinfo.png
-      - name: profile
-        reference: ./reference/modifyinfo.png
-      - name: account_security
-        reference: ./reference/safecenter.png
     description: |-
       Personal center exposes My information and Account security. Profile fields are masked where stated. Password change verifies existing credentials; phone and email binding include staged identity verification. Avatar settings and final phone/email completion are mentioned without executable outcomes and are retained as untested context.
 
@@ -3401,6 +3434,8 @@ children:
         dependencies:
           - REQ-5.1
         pages:
+          - name: profile
+            reference: ./reference/myinfo.png
           - name: account_security
             reference: ./reference/safecenter.png
         description: |-
@@ -3429,6 +3464,15 @@ children:
         dependencies:
           - REQ-6.3
           - REQ-1.3
+        pages:
+          - name: account_security
+            reference: ./reference/safecenter.png
+          - name: change_password
+            reference: ./reference/modifypassword.png
+          - name: login
+            reference: ./reference/login1.png
+          - name: home
+            reference: ./reference/index.png
         description: Change within "Login password"(role=region) opens "Current password"(role=textbox), "New password"(role=textbox),
           "Confirm new password"(role=textbox), and "Complete"(role=button). Entering Travel1234 and matching NewTravel1234!
           shows Strong in "Password strength"(role=region); completion changes the password and requires Sign in
@@ -3459,6 +3503,8 @@ children:
         dependencies:
           - REQ-6.3
         pages:
+          - name: account_security
+            reference: ./reference/safecenter.png
           - name: change_phone
             reference: ./reference/modifyphone.png
         description: |-
@@ -3490,6 +3536,8 @@ children:
         dependencies:
           - REQ-6.3
         pages:
+          - name: account_security
+            reference: ./reference/safecenter.png
           - name: change_email
             reference: ./reference/modifyemail.png
         description: |-
@@ -3525,6 +3573,8 @@ children:
           - REQ-6.3
           - REQ-1.8
         pages:
+          - name: account_security
+            reference: ./reference/safecenter.png
           - name: change_password
             reference: ./reference/modifypassword.png
         description: |-
@@ -3556,6 +3606,8 @@ children:
         dependencies:
           - REQ-6.3
         pages:
+          - name: account_security
+            reference: ./reference/safecenter.png
           - name: change_phone
             reference: ./reference/modifyphone.png
         description: |-
@@ -3587,6 +3639,8 @@ children:
         dependencies:
           - REQ-6.3
         pages:
+          - name: account_security
+            reference: ./reference/safecenter.png
           - name: change_email
             reference: ./reference/modifyemail.png
         description: |-
@@ -3617,15 +3671,6 @@ children:
     name: Query flight status and reuse history
     type: FOLDER
     dependencies: []
-    pages:
-      - name: flight_status
-        reference: ./reference/status1.png
-      - name: flight_status
-        reference: ./reference/status2.png
-      - name: flight_status
-        reference: ./reference/status3.png
-      - name: flight_status
-        reference: ./reference/status4.png
     description: |-
       Flights Flight status supports Flight number and Route search options (radios), flight detail or route list, automatic account-owned history, reuse and clearing. Flight status is a deterministic supplied observation, not live external data.
 
@@ -3644,6 +3689,8 @@ children:
         dependencies:
           - REQ-1.1
         pages:
+          - name: home
+            reference: ./reference/index.png
           - name: flight_status
             reference: ./reference/status1.png
         description: |-
@@ -3750,6 +3797,9 @@ children:
         dependencies:
           - REQ-7.2
           - REQ-1.3
+        pages:
+          - name: flight_status
+            reference: ./reference/status4.png
         description: A completed query showing "Flight details"(role=region) records its account-owned criteria
           in "Search history"(role=region). Each flight-number-named history action reopens that flight and date.
           Returning through Flights and Flight status reveals saved history, which tests establish through query
@@ -3779,6 +3829,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-7.4
+        pages:
+          - name: flight_status
+            reference: ./reference/status4.png
         description: Clear history removes only the current account's records from "Search history"(role=region),
           showing No search history. Removed entries stay absent after reopening or reload.
         data:
@@ -3873,6 +3926,9 @@ children:
         dependencies:
           - REQ-7.4
           - REQ-1.8
+        pages:
+          - name: flight_status
+            reference: ./reference/status4.png
         description: After querying under a dedicated history-isolation account, switching accounts through "My
           account"(role=button) must not expose its query in profile_read's "Search history"(role=region). Profile_read
           starts with no history and no other scenario queries under it; history remains private to the account.
@@ -3899,7 +3955,6 @@ children:
     name: Inspect reimbursement vouchers capability
     type: FOLDER
     dependencies: []
-    pages: []
     description: Organize the page-entry and independent user behaviors for Inspect reimbursement vouchers. REQ-8.1
       establishes the concrete reference pages first; the remaining siblings apply their explicitly preserved source
       contracts. This abstract capability has no page or executable UI of its own.
@@ -3948,9 +4003,10 @@ children:
           - REQ-8.1
           - REQ-1.3
         pages:
+          - name: home
+            reference: ./reference/index.png
           - name: reimbursement_vouchers
             reference: ./reference/reimbursement2.png
-          - name: home
         description: |-
           More services and Reimbursement vouchers expose Pending, In progress, and "Completed"(role=tab). The voucher_read account's "Completed vouchers"(role=region) contains exactly paid completed CTRIP20260718004 with its issued voucher. "Issuance rules"(role=region) communicates availability within 365 days of payment.
 
@@ -4035,7 +4091,9 @@ children:
                 content: Pending vouchers contains no records and displays No vouchers available.
         pages:
           - name: home
+            reference: ./reference/index.png
           - name: reimbursement_vouchers
+            reference: ./reference/reimbursement2.png
       - id: REQ-8.4
         name: Keep eligible reimbursement orders scoped to account
         type: ATOMIC
@@ -4069,22 +4127,13 @@ children:
                   other account's order.
         pages:
           - name: home
+            reference: ./reference/index.png
           - name: reimbursement_vouchers
+            reference: ./reference/reimbursement2.png
   - id: REQ-9
     name: Browse airport travel information
     type: FOLDER
     dependencies: []
-    pages:
-      - name: airport_guide
-        reference: ./reference/airport1.png
-      - name: airport_details
-        reference: ./reference/airport2.png
-      - name: airport_details
-        reference: ./reference/airport3.png
-      - name: airport_details
-        reference: ./reference/airport4.png
-      - name: airport_details
-        reference: ./reference/airport5.png
     description: |-
       Flights More services Airport guide provides Popular airports, domestic and international/Hong Kong/Macau/Taiwan indexes, deterministic weather snapshot and Boarding process link. Airport detail defaults to Overview and has four core subsections in source, of which Overview/Transportation/Phone numbers are named; no fourth section name is invented. Transport context includes buses, rail, shuttles and taxis; concrete fixture is Fangzhuang line.
 
@@ -4104,6 +4153,8 @@ children:
         dependencies:
           - REQ-1.1
         pages:
+          - name: home
+            reference: ./reference/index.png
           - name: airport_guide
             reference: ./reference/airport1.png
         description: |-
@@ -4178,6 +4229,8 @@ children:
         dependencies:
           - REQ-9.2
         pages:
+          - name: airport_guide
+            reference: ./reference/airport1.png
           - name: airport_details
             reference: ./reference/airport2.png
           - name: airport_details

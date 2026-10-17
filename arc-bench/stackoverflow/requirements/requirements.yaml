@@ -457,9 +457,6 @@ children:
     name: Discover the community
     type: FOLDER
     dependencies: []
-    pages:
-      - name: home
-        reference: ./reference/homepage.jpeg
     description: |-
       Anonymous and authenticated visitors discover populated public questions. Header, left navigation, main feed and right widgets follow the homepage reference. Right widgets expose The Overflow Blog, meta items, Hot Network Questions and custom filter/tag watchlists.
 
@@ -507,6 +504,15 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-1.1
+        pages:
+          - name: home
+            reference: ./reference/homepage.jpeg
+          - name: questions
+            reference: ./reference/questions-page.jpeg
+          - name: tags
+            reference: ./reference/tags-page.jpeg
+          - name: users
+            reference: ./reference/users-page.jpeg
         description: In main navigation, "Questions"(role=button), "Tags"(role=button), and "Users"(role=button)
           open their respective modules and mark the selected section current=page. Questions displays Question
           feed, while the other modules display "Tags"(role=region) and "Users"(role=region); "Home"(role=button)
@@ -536,6 +542,10 @@ children:
         dependencies:
           - REQ-1.1
         pages:
+          - name: home
+            reference: ./reference/homepage.jpeg
+          - name: questions
+            reference: ./reference/questions-page.jpeg
           - name: question
             reference: ./reference/question-page.jpeg
         description: |-
@@ -565,9 +575,6 @@ children:
     name: Account and public identity
     type: FOLDER
     dependencies: []
-    pages:
-      - name: login
-        reference: ./reference/login.jpeg
     description: |-
       Email/password account creation and login; social/SSO excluded. Verified source accounts are initialized by evaluator. Owners can edit their profile and access protected activity. No moderator threshold is invented.
 
@@ -582,6 +589,8 @@ children:
         dependencies:
           - REQ-1.1
         pages:
+          - name: home
+            reference: ./reference/homepage.jpeg
           - name: login
             reference: ./reference/login.jpeg
         description: |-
@@ -667,7 +676,9 @@ children:
         dependencies:
           - REQ-1.1
         pages:
-          - name: questions
+          - name: home
+            reference: ./reference/homepage.jpeg
+          - name: signup
             reference: ./reference/sign-up.jpeg
         description: |-
           Clicking "Sign up"(role=button) opens "Sign up"(role=region) with Join Stack Overflow heading, "Email"(role=textbox), "Password"(role=textbox), password help, consent text, and a Log in entry. Submitting a unique valid email and password creates the account and signs it in automatically, exposing "<registered email>"(role=button) as the profile action when no display name was entered. An existing email shows Email is already in use; a short password shows visible requirements including a minimum of eight characters. Rejections retain the form without an authenticated session. Registration emails use deterministic run, worker, and case suffixes; verification is not added.
@@ -721,6 +732,8 @@ children:
         dependencies:
           - REQ-2.1
         pages:
+          - name: home
+            reference: ./reference/homepage.jpeg
           - name: profile
             reference: ./reference/profile-page.jpeg
         description: |-
@@ -791,7 +804,7 @@ children:
         pages:
           - name: login
             reference: ./reference/login.jpeg
-          - name: questions
+          - name: signup
             reference: ./reference/sign-up.jpeg
         description: |-
           The anonymous user can move from "Log in"(role=region) to "Sign up"(role=region) through its Sign up entry and return through Log in. Each visible form provides correctly labeled "Email"(role=textbox) and "Password"(role=textbox), with "Sign up"(role=button) or "Log in"(role=button) as its matching submit action. Switching forms preserves anonymous status and adds no social login behavior.
@@ -819,8 +832,12 @@ children:
           - REQ-2.2
           - REQ-2.1
         pages:
-          - name: questions
+          - name: signup
             reference: ./reference/sign-up.jpeg
+          - name: login
+            reference: ./reference/login.jpeg
+          - name: home
+            reference: ./reference/homepage.jpeg
         description: |-
           An account created by entering "Email"(role=textbox) and "Password"(role=textbox) and submitting "Sign up"(role=button) can authenticate with those credentials in a fresh browser context through "Log in"(role=button). Successful login displays the homepage feed and "<registered email>"(role=button) as the profile action, demonstrating that registration and credential login compose without a verification workflow.
 
@@ -848,7 +865,6 @@ children:
     name: Publish and maintain questions capability
     type: FOLDER
     dependencies: []
-    pages: []
     description: Organize the page-entry and independent user behaviors for Publish and maintain questions. REQ-3.1
       establishes the concrete reference pages first; the remaining siblings apply their explicitly preserved source
       contracts. This abstract capability has no page or executable UI of its own.
@@ -859,6 +875,8 @@ children:
         dependencies:
           - REQ-1.1
         pages:
+          - name: home
+            reference: ./reference/homepage.jpeg
           - name: questions
             reference: ./reference/questions-page.jpeg
         description: |-
@@ -893,9 +911,10 @@ children:
           - REQ-1.1
           - REQ-2.1
         pages:
+          - name: questions
+            reference: ./reference/questions-page.jpeg
           - name: question
             reference: ./reference/question-page.jpeg
-          - name: questions
         description: |-
           Selecting "How can I safely retry an idempotent HTTP request in Node.js?"(role=button) from the feed opens that question's heading and "Question post"(role=region), with its rendered source body, node.js/http/retry tags, Ask Question entry, numeric "Score"(role=status), and "Up vote"(role=button), "Down vote"(role=button), "Save"(role=button), "Timeline"(role=button), "Share"(role=button), "Edit"(role=button), and "Follow"(role=button) controls. "Asked"(role=status) and "Modified"(role=status) display registry timestamps or an unambiguous UTC equivalent; "View count"(role=status) is at least the initial 42 because opening may increase views. "Author"(role=region) shows Helpful User's identity, avatar, initial reputation, current badges, and time. Authenticated users also see Comments with "Add a comment"(role=button). Feed tags, score, and answer count agree with the detail. Unrequested Share, Follow, and Timeline behavior is not invented.
 
@@ -936,9 +955,12 @@ children:
           - REQ-3.1
           - REQ-2.1
         pages:
+          - name: questions
+            reference: ./reference/questions-page.jpeg
           - name: question_editor
             reference: ./reference/ask-question-page.jpeg
-          - name: questions
+          - name: question
+            reference: ./reference/question-page.jpeg
         description: |-
           A signed-in user clicks "Ask Question"(role=button), enters "Title"(role=textbox) with at least 15 characters and "Body"(role=textbox) with at least 220 characters, and selects at least one tag through "Tags"(role=textbox). Markdown renders live in "Preview"(role=region), while "Title character count"(role=status) shows the title length. Entering node.js displays "Suggestions"(role=region) including node.js, http, and retry; the tag input accepts comma-separated selected names. "Post Your Question"(role=button) publishes the entered title, body, and tags, opens their detail, and adds the title to the owner's Questions activity. Missing or insufficient inputs show Title is required (minimum 15 characters), Question body is required (minimum 220 characters), or Please add at least one tag as applicable, retaining the editor without publishing. No upper tag-count limit is invented.
 
@@ -1008,9 +1030,12 @@ children:
           - REQ-3.3
           - REQ-3.2
         pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
           - name: question_editor
             reference: ./reference/edit-question.jpeg
           - name: questions
+            reference: ./reference/questions-page.jpeg
         description: |-
           The owner clicks "Edit"(role=button) within Question post to open "Title"(role=textbox), "Body"(role=textbox), and "Tags"(role=textbox) prefilled from that question. The editor provides "Bold"(role=button), "Italic"(role=button), and "Code"(role=button), live "Preview"(role=region), "How to Edit"(role=region) guidance, and "Rev"(role=combobox) for selecting prior revisions. Users record their reason in "Edit Summary"(role=textbox); "Save edits"(role=button) updates the question, shows edited metadata, and adds a revision with the reason available through "Timeline"(role=button) in "Revision history"(role=region). "Cancel"(role=button) returns to the original view without applying a draft. The preview and save scenarios independently UI-create their case-suffixed SO Question Edit Preview and SO Question Edit Save examples.
 
@@ -1073,7 +1098,10 @@ children:
                   title is absent from both public feed and exact-title Search results; no internal database-retention
                   claim is made.
         pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
           - name: questions
+            reference: ./reference/questions-page.jpeg
       - id: REQ-3.6
         name: Toggle question upvote
         type: ATOMIC
@@ -1108,7 +1136,10 @@ children:
                 content: First activation and reload retain Score 8, pressed=true and author reputation baseline+10.
                   Second activation restores Score 7, pressed=false and the recorded reputation baseline.
         pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
           - name: questions
+            reference: ./reference/questions-page.jpeg
       - id: REQ-3.7
         name: Downvote a question
         type: ATOMIC
@@ -1141,7 +1172,10 @@ children:
               - keyword: THEN
                 content: Score becomes 2, Down vote exposes pressed=true, and the Author reputation becomes baseline−2.
         pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
           - name: questions
+            reference: ./reference/questions-page.jpeg
       - id: REQ-3.8
         name: Open an owned question from activity
         type: ATOMIC
@@ -1152,7 +1186,10 @@ children:
         pages:
           - name: profile
             reference: ./reference/user-feed.jpeg
+          - name: question
+            reference: ./reference/question-page.jpeg
           - name: questions
+            reference: ./reference/questions-page.jpeg
         description: |-
           After publishing a question, the author opens "Questions"(role=button) in activity. "Activity content"(role=region) contains "<created question title>"(role=button); selecting it opens that exact question with its saved body and tags rather than another feed item.
 
@@ -1188,9 +1225,12 @@ children:
           - REQ-3.1
           - REQ-3.4
         pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
           - name: question_editor
             reference: ./reference/edit-question.jpeg
           - name: questions
+            reference: ./reference/questions-page.jpeg
         description: |-
           The owner saves a revision through "Title"(role=textbox), "Body"(role=textbox), "Tags"(role=textbox), and "Edit Summary"(role=textbox), then "Save edits"(role=button). The public question reflects the saved title, body, and tags, and "Timeline"(role=button) exposes the retained summary in "Revision history"(role=region). Reopening through public discovery under another account shows saved values rather than an editor-only draft.
 
@@ -1252,14 +1292,14 @@ children:
                 content: Delete is absent or disabled, no Confirm deletion dialog opens, and the exact heading and
                   original registry body remain readable.
         pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
           - name: questions
+            reference: ./reference/questions-page.jpeg
   - id: REQ-4
     name: Answer and evaluate solutions
     type: FOLDER
     dependencies: []
-    pages:
-      - name: question
-        reference: ./reference/post-answer.jpeg
     description: |-
       Authenticated answers, votes, acceptance, ordering and owner maintenance. An answer belongs to exactly its question. Only question owner accepts a single answer; accepted answer is marked green and Accepted answer.
 
@@ -1309,6 +1349,9 @@ children:
         dependencies:
           - REQ-4.1
           - REQ-2.1
+        pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
         description: |-
           The answer_voter clicks "Up vote"(role=button) within "Answer by Helpful User"(role=region) on the UI-created SO Answer Voting Question. The new answer's "Score"(role=status) changes from 0 to 1, the vote becomes active, and author "Reputation"(role=status) increases by 10. Clicking the same vote again restores score 0, inactive state, and the prior reputation.
 
@@ -1338,6 +1381,9 @@ children:
         dependencies:
           - REQ-4.1
           - REQ-2.1
+        pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
         description: |-
           The question owner answer_accept_owner clicks "Accept answer"(role=button) in Helpful User's answer to mark it with a green check and "Accepted answer"(role=button), persisting after reload. With two answers, accepting the other transfers the marker and leaves exactly one accepted answer. Non-owners have no usable Accept answer action; exclusivity is observed through public markers rather than storage.
 
@@ -1378,6 +1424,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-3.2
+        pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
         description: |-
           SO Answer Sorting Question shows numeric "Answer count"(role=status) and "Sorted by"(role=combobox) with exactly Highest score, Trending, and Date modified. Initially Date modified shows the newer two-point answer before the older nine-point answer in "Answers"(role=region). Selecting Highest score immediately reverses their visible sequence. Sequential answer text makes ordering observable; no unspecified Trending ranking is inferred.
 
@@ -1404,6 +1453,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-4.1
+        pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
         description: |-
           An answer owner clicks "Edit"(role=button) to open prefilled "Body"(role=textbox) and "Edit Summary"(role=textbox). "Save edits"(role=button) updates visible content, adds a revision available through "Timeline"(role=button) in "Revision history"(role=region), and shows edited metadata even if the submitted body is unchanged. An empty body shows Body cannot be empty and retains the editor and original answer. "Cancel"(role=button) discards pending changes. Successful-edit and validation scenarios independently UI-create their respective questions.
 
@@ -1458,6 +1510,9 @@ children:
         dependencies:
           - REQ-4.1
           - REQ-4.2
+        pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
         description: |-
           The answer_delete_user clicks "Delete"(role=button) on its UI-created unaccepted answer This answer is reserved for the answer deletion scenario. "Confirm deletion"(role=dialog) explains the consequences, and "Confirm deletion"(role=button) hides the answer publicly, updates "Answer count"(role=status), and reverses reputation gained from its vote. Setup creates one answer and applies one upvote from answer_voter before owner deletion, using the established +10 rule.
 
@@ -1517,6 +1572,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-4.5
+        pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
         description: |-
           The answer author clicks "Edit"(role=button), replaces the nonempty "Body"(role=textbox), records "Edit Summary"(role=textbox), and clicks "Save edits"(role=button). The public answer displays the replacement and edited metadata; "Timeline"(role=button) reveals its saved summary in "Revision history"(role=region). A separate visitor sees the replacement after reload. The unchanged-body revision case remains in REQ-4.5.
 
@@ -1546,6 +1604,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-4.6
+        pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
         description: |-
           An ordinary authenticated user other than the answer author cannot activate "Delete"(role=button) on the target unaccepted answer. "Answer by Helpful User"(role=region) remains visible and "Answer count"(role=status) stays unchanged; moderator actions are unspecified.
 
@@ -1573,6 +1634,9 @@ children:
         dependencies:
           - REQ-4.3
           - REQ-4.6
+        pages:
+          - name: question
+            reference: ./reference/question-page.jpeg
         description: |-
           Once the question owner clicks "Accept answer"(role=button), the answer displays "Accepted answer"(role=button) and its author has no usable "Delete"(role=button). The accepted solution remains public because ordinary own-answer deletion applies only to unaccepted answers. This single-answer scenario makes no assertions about internal deleted or accepted records.
 
@@ -1599,7 +1663,6 @@ children:
     name: Discuss posts capability
     type: FOLDER
     dependencies: []
-    pages: []
     description: Organize the page-entry and independent user behaviors for Discuss posts. REQ-5.1 establishes the
       concrete reference pages first; the remaining siblings apply their explicitly preserved source contracts.
       This abstract capability has no page or executable UI of its own.
@@ -1671,6 +1734,7 @@ children:
                   and the same comment remains visible after reload.
         pages:
           - name: question
+            reference: ./reference/question-page.jpeg
       - id: REQ-5.3
         name: Expand hidden comments
         type: ATOMIC
@@ -1703,6 +1767,7 @@ children:
                 content: All seven comments become visible, and their text sequence remains 1 through 7 chronologically.
         pages:
           - name: question
+            reference: ./reference/question-page.jpeg
       - id: REQ-5.4
         name: Edit a comment within its window
         type: ATOMIC
@@ -1739,6 +1804,7 @@ children:
                   post with an edited indicator.
         pages:
           - name: question
+            reference: ./reference/question-page.jpeg
       - id: REQ-5.5
         name: Delete an own comment immediately
         type: ATOMIC
@@ -1771,6 +1837,7 @@ children:
                   and body remain readable.
         pages:
           - name: question
+            reference: ./reference/question-page.jpeg
       - id: REQ-5.6
         name: Toggle comment upvote
         type: ATOMIC
@@ -1805,6 +1872,7 @@ children:
                   introducing a downvote control.
         pages:
           - name: question
+            reference: ./reference/question-page.jpeg
       - id: REQ-5.7
         name: Comment on an answer
         type: ATOMIC
@@ -1839,6 +1907,7 @@ children:
                   after reload; Question post's Comments does not contain that answer comment.
         pages:
           - name: question
+            reference: ./reference/question-page.jpeg
       - id: REQ-5.8
         name: Reply to an existing comment
         type: ATOMIC
@@ -1872,6 +1941,7 @@ children:
                   remains attached to that same parent after reload.
         pages:
           - name: question
+            reference: ./reference/question-page.jpeg
       - id: REQ-5.9
         name: Protect comment maintenance by ownership
         type: ATOMIC
@@ -1906,6 +1976,7 @@ children:
                   remain unchanged. No moderator privileges are inferred.
         pages:
           - name: question
+            reference: ./reference/question-page.jpeg
       - id: REQ-5.10
         name: Keep separate post comment threads
         type: ATOMIC
@@ -1941,13 +2012,11 @@ children:
                   comment after reload.
         pages:
           - name: question
+            reference: ./reference/question-page.jpeg
   - id: REQ-6
     name: Discover by tags and search
     type: FOLDER
     dependencies: []
-    pages:
-      - name: questions
-        reference: ./reference/search-and-filter.jpeg
     description: |-
       Public tags and search; watching and saved custom filters are personal authenticated preferences. General keyword/tag/user/date criteria remain capability context; executable examples cover react state and python unanswered newest.
 
@@ -1964,6 +2033,8 @@ children:
         pages:
           - name: tags
             reference: ./reference/tags-page.jpeg
+          - name: questions
+            reference: ./reference/questions-page.jpeg
         description: |-
           Tag navigation displays "Tags"(role=region) with "Tag <name>"(role=region) entries ordered by current popularity, each showing description and numeric "Question count"(role=status). Clicking "python"(role=button) opens "Python tag"(role=region), its description, "Related tags"(role=region), and a Question feed containing only python-tagged questions with tag identity visible in each summary. "Next page"(role=button) provides pagination and may be disabled because the fixture fits one page. Counts include UI-created posts and never fall below the immutable catalog baseline; ranking uses current counts rather than totals hard-coded after earlier cases.
 
@@ -1995,6 +2066,11 @@ children:
         dependencies:
           - REQ-6.1
           - REQ-2.1
+        pages:
+          - name: tags
+            reference: ./reference/tags-page.jpeg
+          - name: questions
+            reference: ./reference/questions-page.jpeg
         description: The tag_watcher initially does not watch python. Clicking "Watch tag"(role=button) changes
           it to "Unwatch tag"(role=button) and adds python to "Watched tags"(role=region) in question lists. Unwatch
           tag removes that entry and restores Watch tag. The personal preference persists across navigation and
@@ -2024,6 +2100,8 @@ children:
         dependencies:
           - REQ-1.1
         pages:
+          - name: home
+            reference: ./reference/homepage.jpeg
           - name: questions
             reference: ./reference/search-and-filter.jpeg
         description: |-
@@ -2055,6 +2133,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-1.1
+        pages:
+          - name: questions
+            reference: ./reference/questions-page.jpeg
         description: Clicking "Newest"(role=button) in Question feed orders questions by asked time, while "Active"(role=button)
           orders them by modified time. Each control exposes pressed state when selected. The historical recent
           python question is newer, while the answered active question has the later modification; compare these
@@ -2083,6 +2164,9 @@ children:
         dependencies:
           - REQ-6.4
           - REQ-2.1
+        pages:
+          - name: questions
+            reference: ./reference/questions-page.jpeg
         description: The filter_user clicks "Filter"(role=button) to open "Filter panel"(role=region), activates
           "Unanswered"(role=checkbox), chooses Newest in "Sort"(role=combobox), and enters python in "Tags"(role=textbox),
           keeping those criteria visible. "Save custom filter"(role=button) opens "Save custom filter"(role=dialog)
@@ -2120,6 +2204,10 @@ children:
         pages:
           - name: tags
             reference: ./reference/tags-page.jpeg
+          - name: questions
+            reference: ./reference/questions-page.jpeg
+          - name: question
+            reference: ./reference/question-page.jpeg
         description: |-
           Clicking "python"(role=button) opens "Python tag"(role=region) with navigable public question titles. Selecting "SO Python Unanswered Recent"(role=button) opens that same public question with its python tag, preserving the business identity selected during discovery.
 
@@ -2149,6 +2237,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-6.5
+        pages:
+          - name: questions
+            reference: ./reference/questions-page.jpeg
         description: An authenticated creator clicks "Filter"(role=button), configures criteria in "Filter panel"(role=region),
           chooses "Save custom filter"(role=button), enters "Filter title"(role=textbox), and clicks "Save filter"(role=button).
           Only that creator's "Saved filters"(role=region) exposes the resulting configuration and allows reopening
@@ -2179,6 +2270,11 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-6.2
+        pages:
+          - name: tags
+            reference: ./reference/tags-page.jpeg
+          - name: questions
+            reference: ./reference/questions-page.jpeg
         description: Clicking "Watch tag"(role=button) for python changes only the signed-in watcher's preference
           in "Watched tags"(role=region) and exposes "Unwatch tag"(role=button). Another account without a python
           watch still sees Watch tag and no python entry in its own list. The creator can unwatch to restore the
@@ -2206,9 +2302,6 @@ children:
     name: Inspect contributions and achievements
     type: FOLDER
     dependencies: []
-    pages:
-      - name: profile
-        reference: ./reference/user-feed.jpeg
     description: |-
       Owner activity views, reputation and private votes, badge categories and seeded earned notification. Privilege thresholds and new badge qualification triggers are unspecified and not invented.
 
@@ -2222,6 +2315,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-2.3
+        pages:
+          - name: profile
+            reference: ./reference/profile-page.jpeg
         description: |-
           The activity_user selects "Reputation"(role=button) in Profile navigation to display "Reputation history"(role=region). Entries appear newest first, show answer upvoted and question upvoted reasons with signed +10 and +5 changes, and link to their public parent posts.
 
@@ -2249,6 +2345,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-2.3
+        pages:
+          - name: profile
+            reference: ./reference/profile-page.jpeg
         description: The badge_user already has an earned Teacher badge and an unacknowledged event. Opening the
           profile displays Teacher in "Badges"(role=region) and its earned message in "badge notification"(role=status).
           Observing this seeded notification does not establish a new qualification rule or backend event uniqueness.
@@ -2274,6 +2373,9 @@ children:
         type: ATOMIC
         dependencies:
           - REQ-1.1
+        pages:
+          - name: profile
+            reference: ./reference/profile-page.jpeg
         description: |-
           Clicking "Badges"(role=button) displays "Badge catalog"(role=region), grouped into "Gold"(role=region), "Silver"(role=region), and "Bronze"(role=region). Entries include Great Answer and Teacher with registry descriptions and numeric "Earn count <badge>"(role=status).
 
@@ -2369,6 +2471,8 @@ children:
         pages:
           - name: profile
             reference: ./reference/user-feed.jpeg
+          - name: question
+            reference: ./reference/question-page.jpeg
         description: |-
           The owner selects "Answers"(role=button) in activity and opens "How does React state update?"(role=button), the actual parent of the historical answer. That public question displays "Answer by Stack User"(role=region), containing Batch state updates safely. with "Accepted answer"(role=button). Activity entries therefore navigate to real posts rather than disconnected summaries.
 

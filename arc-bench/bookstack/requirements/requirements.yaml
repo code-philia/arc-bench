@@ -80,10 +80,10 @@ children:
         dependencies:
           - REQ-1.1
         pages:
-          - name: home
-            reference: ./reference/index.png
           - name: shelves
             reference: ./reference/shelves.png
+          - name: home
+            reference: ./reference/index.png
         description: |-
           Opening / from the shelves list returns to the homepage, which exposes "Login"(role=link), "Shelves"(role=link), and "Books"(role=link).
 
@@ -117,6 +117,8 @@ children:
         dependencies:
           - REQ-1.1
         pages:
+          - name: home
+            reference: ./reference/index.png
           - name: login
             reference: ./reference/login.png
         description: |-
@@ -144,10 +146,10 @@ children:
         dependencies:
           - REQ-2.1
         pages:
-          - name: login
-            reference: ./reference/login.png
           - name: home
             reference: ./reference/index_after_login.png
+          - name: login
+            reference: ./reference/login.png
         description: |-
           Users enter a verified account's credentials in "Email"(role=textbox) and "Password"(role=textbox), select "Remember Me"(role=checkbox), and submit the form reached through "Login"(role=link). Successful authentication returns to the homepage, shows BookStack User in the top-right user area, and enables the personal dashboard lists. Invalid-credential wording is unspecified.
 
@@ -185,6 +187,8 @@ children:
         dependencies:
           - REQ-2.2
         pages:
+          - name: login
+            reference: ./reference/login.png
           - name: home
             reference: ./reference/index_after_login.png
         description: |-
@@ -225,6 +229,8 @@ children:
           - REQ-1.1
           - REQ-4.3
         pages:
+          - name: home
+            reference: ./reference/index.png
           - name: shelves
             reference: ./reference/shelves.png
         description: |-
@@ -254,6 +260,8 @@ children:
         dependencies:
           - REQ-4.1
         pages:
+          - name: shelves
+            reference: ./reference/shelves.png
           - name: shelf
             reference: ./reference/shelf.png
         description: |-
@@ -283,6 +291,10 @@ children:
         dependencies:
           - REQ-1.1
         pages:
+          - name: shelves
+            reference: ./reference/shelves.png
+          - name: shelf
+            reference: ./reference/shelf.png
           - name: shelf_form
             reference: ./reference/create_shelf.png
         description: |-
@@ -330,6 +342,8 @@ children:
           - REQ-4.2
           - REQ-4.3
         pages:
+          - name: shelf
+            reference: ./reference/shelf.png
           - name: shelf_form
             reference: ./reference/edit_shelve.png
         description: |-
@@ -377,6 +391,8 @@ children:
         pages:
           - name: shelf
             reference: ./reference/delete_shelves.png
+          - name: shelves
+            reference: ./reference/shelves.png
         description: |-
           Clicking "Delete"(role=button) on a selected shelf opens confirmation. "Confirm Delete"(role=button) removes that shelf and returns to Shelfs, where its entry is absent from "Shelf list"(role=region); the deletion remains effective across navigation. "Cancel"(role=button) keeps the shelf and preserves its original heading and description.
 
@@ -426,6 +442,8 @@ children:
           - REQ-1.1
           - REQ-5.3
         pages:
+          - name: home
+            reference: ./reference/index.png
           - name: books
             reference: ./reference/books.png
         description: |-
@@ -454,6 +472,10 @@ children:
           - REQ-5.1
           - REQ-5.6
         pages:
+          - name: books
+            reference: ./reference/books.png
+          - name: shelf
+            reference: ./reference/shelf.png
           - name: book
             reference: ./reference/book.png
         description: |-
@@ -493,8 +515,12 @@ children:
         dependencies:
           - REQ-1.1
         pages:
+          - name: books
+            reference: ./reference/books.png
           - name: book_form
             reference: ./reference/create_book.png
+          - name: book
+            reference: ./reference/book.png
         description: |-
           While logged out, users open Books and click "Create New Book"(role=button), then enter "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox). "Save Book"(role=button) creates one book with that metadata and opens its details with the saved name and description. Description supports rich text, a cover is optional, and a default page template can be chosen. "Cancel"(role=button) returns to Books without creating the entered book. Saved metadata survives navigation and reload; runtime names may append evaluator run, worker, and case identity to source examples.
 
@@ -533,6 +559,8 @@ children:
           - REQ-5.2
           - REQ-5.3
         pages:
+          - name: book
+            reference: ./reference/book.png
           - name: book_form
             reference: ./reference/edit_book.png
         description: |-
@@ -576,6 +604,8 @@ children:
         pages:
           - name: book
             reference: ./reference/delete_book.png
+          - name: books
+            reference: ./reference/books.png
         description: |-
           Clicking "Delete"(role=button) on the selected book opens confirmation. "Confirm Delete"(role=button) removes that book and returns to Books, with its entry absent from "Book list"(role=region) across subsequent navigation. "Cancel"(role=button) keeps the book's original heading and description unchanged.
 
@@ -655,6 +685,8 @@ children:
           - REQ-5.3
           - REQ-2.2
         pages:
+          - name: book
+            reference: ./reference/book.png
           - name: page_editor
             reference: ./reference/page_draft.png
           - name: home
@@ -702,6 +734,10 @@ children:
         dependencies:
           - REQ-6.1
         pages:
+          - name: books
+            reference: ./reference/books.png
+          - name: book
+            reference: ./reference/book.png
           - name: page_editor
             reference: ./reference/delete_draft.png
         description: |-
@@ -733,6 +769,8 @@ children:
         dependencies:
           - REQ-5.3
         pages:
+          - name: book
+            reference: ./reference/book.png
           - name: create_chapter
             reference: ./reference/create_chapter.png
           - name: chapter
@@ -764,6 +802,10 @@ children:
         dependencies:
           - REQ-6.1
         pages:
+          - name: book
+            reference: ./reference/book.png
+          - name: chapter
+            reference: ./reference/chapter.png
           - name: page
             reference: ./reference/page.png
           - name: page_editor
@@ -812,6 +854,18 @@ children:
           - REQ-2.2
           - REQ-4.2
         pages:
+          - name: shelves
+            reference: ./reference/shelves.png
+          - name: shelf
+            reference: ./reference/shelf.png
+          - name: books
+            reference: ./reference/books.png
+          - name: book
+            reference: ./reference/book.png
+          - name: chapter
+            reference: ./reference/chapter.png
+          - name: page
+            reference: ./reference/page.png
           - name: home
             reference: ./reference/index_after_login.png
         description: |-
@@ -872,6 +926,8 @@ children:
             reference: ./reference/book.png
           - name: favourites
             reference: ./reference/favourites.png
+          - name: home
+            reference: ./reference/index.png
         description: |-
           On an authenticated shelf, book, chapter, or page details view, "Favorite"(role=button) initially exposes aria-pressed=false. Clicking it stores a personal favorite and changes the action to "Unfavorite"(role=button) with aria-pressed=true. Clicking Unfavorite removes the preference and restores Favorite with aria-pressed=false. The selected state persists after reload and follows the same behavior for all four content types.
 
@@ -917,6 +973,8 @@ children:
             reference: ./reference/index_after_login.png
           - name: favourites
             reference: ./reference/favourites.png
+          - name: book
+            reference: ./reference/book.png
         description: |-
           After an item is favorited, the authenticated homepage's "My Most Viewed Favorites"(role=region) exposes that item as "{favorite item name}"(role=button), with an equivalent link also permitted. The region contains at most four items; selecting an entry opens the corresponding item. A dedicated favorites page exposes the complete collection.
 
