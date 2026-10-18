@@ -1,12 +1,18 @@
 // requirement: REQ-2.2.2
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, link, text, login } from './helpers';
+import { entry, link, text, login, home, region } from './helpers';
 test("REQ-2.2.2: Authenticate by username email and mobile", async ({ page }) => {
     await entry(page);
     for (const identity of ['registered_user', 'registered_user@example.com', '13800000010']) {
         await login(page, identity);
-        await expect(page.getByRole('status')).toContainText('Login successful');
+        await expect.poll(async () => (await page.getByRole('status').filter({ visible: true }).allTextContents())
+            .some(message => message.includes('Login successful'))).toBe(true);
+        await expect(link(page.getByRole('navigation'), 'Booking')).toBeVisible();
+        await home(page);
+        await expect(region(page, 'Ticket search')).toBeVisible();
+        await expect(link(page, 'My 12306')).toBeVisible();
+        await expect(link(page, 'Sign Out')).toBeVisible();
         await page.reload();
         await expect(link(page, 'Sign Out')).toBeVisible();
         await link(page, 'Sign Out').click();

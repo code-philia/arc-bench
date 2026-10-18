@@ -10,7 +10,8 @@ test("REQ-5.5: Refund and inspect history", async ({ page }) => {
     await expect(region(page, 'Refund information')).toContainText('G2002');
     await expect(region(page, 'Refund information')).toContainText('Refund amount');
     await button(page, 'Confirm refund').click();
-    await expect(page.getByRole('status')).toContainText('Refund successful');
+    await expect.poll(async () => (await page.getByRole('status').filter({ visible: true }).allTextContents())
+        .some(message => message.includes('Refund successful'))).toBe(true);
     await link(page, 'View History orders').click();
     await expect(row(page, 'G2002')).toContainText('refunded');
     await page.reload();

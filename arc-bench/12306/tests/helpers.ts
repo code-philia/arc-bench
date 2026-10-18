@@ -5,7 +5,32 @@ type Surface = Page | Locator;
 export const AGREEMENT = 'I have read and agree to abide by Terms of Service and Privacy Policy of 12306.cn.';
 export const link = (s: Surface, name: string) => s.getByRole('link', { name, exact: true });
 export const button = (s: Surface, name: string) => s.getByRole('button', { name, exact: true });
-export const field = (s: Surface, name: string) => s.getByLabel(name, { exact: true });
+export const field = (s: Surface, name: string) => {
+    // Required markers are presentation; match the field's label and exclude
+    // labelled containers that are not editable controls (for example groups).
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const label = new RegExp(`^\\s*(?:\\*\\s*)?${escaped}\\s*(?:\\*)?\\s*$`);
+    const controls = s.getByRole('textbox').or(s.getByRole('combobox'))
+        .or(s.getByRole('spinbutton')).or(s.getByRole('checkbox')).or(s.getByRole('radio'))
+        // Native password/date inputs have no implicit ARIA role.
+        .or(s.locator('input[type="password"], input[type="date"]'));
+    return s.getByLabel(label).and(controls);
+};
+// Equivalent links to the same public agreement may occur in the form and footer.
+export async function openAgreement(page: Page, name: string) {
+    await expect.poll(async () => {
+        for (const candidate of await link(page, name).all())
+            if (await candidate.isVisible()) return true;
+        return false;
+    }).toBe(true);
+    for (const candidate of await link(page, name).all()) {
+        if (await candidate.isVisible()) {
+            await candidate.click();
+            return;
+        }
+    }
+    throw new Error(`No visible agreement link: ${name}`);
+}
 export const region = (s: Surface, name: string) => s.getByRole('region', { name, exact: true });
 // Public row identity, independent of CSS, column order, and nesting.
 export const row = (s: Surface, identity: string) => s.getByRole('row').filter({ has: ('page' in s ? s.page() : s).getByText(identity, { exact: true }) });
@@ -22,7 +47,8 @@ export async function login(page: Page, user = 'registered_user', password: stri
 }
 export async function register(page: Page, options: Record<string, string | boolean> = {}) {
     await link(page, 'Register').click();
-    await expect(field(page, 'Nationality').getByRole('option', { name: 'Please select', exact: true, selected: true })).toHaveCount(1);
+    await expect.poll(() => field(page, 'Nationality')
+        .getByRole('option', { selected: true }).allTextContents()).toContain('Please select');
     await field(page, 'Nationality').selectOption({ label: 'China' });
     const defaults: Record<string, string> = { 'Name': 'Test Traveler', 'Passport number': 'P20260001', 'Passport expiration date': '2026-12-31', 'Date of birth': '1996-06-18', 'Username': 'traveler_new', 'Password': PASS, 'Confirm Password': PASS, 'Email address': 'traveler_new@example.com' };
     if (typeof options.username === 'string' && options.email === undefined)
@@ -81,9 +107,9 @@ export async function trainIds(page: Page) {
     const result: string[] = [];
     for (const r of rows) {
         const cells = await r.getByRole('cell').allTextContents();
-        const ids = cells.flatMap(s => s.match(/\b[GCDKZT]\d+\b/g) ?? []);
+        const ids = [...new Set(cells.flatMap(s => s.match(/\b[GCDKZT]\d+\b/g) ?? []))];
         if (ids.length !== 1)
-            throw new Error('Train result needs one identifiable train number in its cells');
+            throw new Error('Train result needs one distinct train identity in its cells');
         result.push(ids[0]);
     }
     return result;
@@ -100,9 +126,13 @@ export async function planIds(page: Page) {
     const articles = await region(page, 'Transfer plans').getByRole('article').all();
     const result: string[] = [];
     for (const article of articles) {
-        const number = article.getByText(/^D\d+$/, { exact: true });
-        await expect(number).toHaveCount(1);
-        result.push((await number.innerText()).trim());
+        // A plan may repeat its first train number in a heading and details.
+        // Compare business identities, not the number of text elements.
+        const numbers = new Set((await article.getByText(/^D\d+$/, { exact: true })
+            .allTextContents()).map(value => value.trim()));
+        if (numbers.size !== 1)
+            throw new Error('Transfer plan needs one distinct first train identity');
+        result.push(...numbers);
     }
     return result;
 }
