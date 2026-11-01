@@ -1,0 +1,3302 @@
+id: ROOT
+name: GitHub Collaboration Platform Core Requirements
+type: FOLDER
+dependencies: []
+description: This product is a simplified GitHub collaboration platform. Unless an
+  atomic requirement explicitly allows more than one role, every quoted user-interface
+  name is the exact English accessible name of the control; the role, scope, and observable-state
+  rules stated by each atomic requirement are authoritative. Values described as existing
+  accounts, organizations, teams, repositories, branches, files, commits, issues,
+  milestones, pull requests, reviews, and permission relationships are predefined
+  seed data. The application must provision those records before the corresponding
+  scenario and supply each account through an isolated browser session; they are not
+  extra features that a participant must expose through a private API. Generated
+  names may contain a unique suffix, but their role, ownership, visibility, and relationships
+  are exactly those stated in the atomic requirement. Every atomic requirement remains
+  enabled even when seed configuration is incomplete. Organization Owner, repository Admin, Read,
+  Triage, Write, Maintain, and Admin permissions follow the operation-specific rules
+  in the requirements below; these roles are not an automatic cumulative ladder. Real-time
+  collaboration, Actions, Packages, Wiki, project boards, notification delivery, and
+  external Git remote protocols are outside the scope of this product.
+environment: {}
+data:
+- id: DATA-ACCOUNTS
+  lifecycle: SEED
+  entity: existing login accounts and referenced users
+  description: Existing login credentials are supplied by the account helper. Referenced users without
+    supplied credentials have only their stated username.
+  properties:
+    accounts:
+    - username: alice-dev
+      email: alice.dev@example.test
+      password: Valid-password-123!
+    - username: recovery-visibility
+      email: recovery-visibility@example.test
+      password: Valid-password-123!
+    - username: recovery-invalid-code
+      email: recovery-invalid-code@example.test
+      password: Valid-password-123!
+    - username: recovery-success
+      email: recovery-success@example.test
+      password: Valid-password-123!
+    - username: password-change-success
+      email: password-change-success@example.test
+      password: Valid-password-123!
+    - username: password-change-invalid
+      email: password-change-invalid@example.test
+      password: Valid-password-123!
+    - username: password-change-required
+      email: password-change-required@example.test
+      password: Valid-password-123!
+    - username: org-owner
+      email: org-owner@example.test
+      password: Valid-password-123!
+    - username: team-maintainer
+      email: team-maintainer@example.test
+      password: Valid-password-123!
+    - username: bob-reviewer
+    - username: new-member
+      email: new-member@example.test
+      password: Valid-password-123!
+    - username: existing-member
+      email: existing-member@example.test
+      password: Valid-password-123!
+    - username: org-member
+      email: org-member@example.test
+      password: Valid-password-123!
+    - username: protected-member
+    - username: repo-admin
+      email: repo-admin@example.test
+      password: Valid-password-123!
+    - username: repo-owner
+      email: repo-owner@example.test
+      password: Valid-password-123!
+    - username: fork-user
+      email: fork-user@example.test
+      password: Valid-password-123!
+    - username: visibility-admin
+      email: visibility-admin@example.test
+      password: Valid-password-123!
+    - username: collaborator
+      email: collaborator@example.test
+      password: Valid-password-123!
+    - username: branch-contributor
+      email: branch-contributor@example.test
+      password: Valid-password-123!
+    - username: default-branch-admin
+      email: default-branch-admin@example.test
+      password: Valid-password-123!
+    - username: default-branch-viewer
+      email: default-branch-viewer@example.test
+      password: Valid-password-123!
+    - username: file-contributor
+      email: file-contributor@example.test
+      password: Valid-password-123!
+    - username: issue-author
+      email: issue-author@example.test
+      password: Valid-password-123!
+    - username: issue-editor
+      email: issue-editor@example.test
+      password: Valid-password-123!
+    - username: issue-commenter
+      email: issue-commenter@example.test
+      password: Valid-password-123!
+    - username: issue-viewer
+      email: issue-viewer@example.test
+      password: Valid-password-123!
+    - username: protection-admin
+      email: protection-admin@example.test
+      password: Valid-password-123!
+    - username: protection-viewer
+      email: protection-viewer@example.test
+      password: Valid-password-123!
+    - username: pr-contributor
+      email: pr-contributor@example.test
+      password: Valid-password-123!
+    - username: draft-author
+      email: draft-author@example.test
+      password: Valid-password-123!
+    - username: pr-reviewer
+      email: pr-reviewer@example.test
+      password: Valid-password-123!
+    - username: pr-author
+      email: pr-author@example.test
+      password: Valid-password-123!
+    - username: pr-maintainer
+      email: pr-maintainer@example.test
+      password: Valid-password-123!
+    - username: pr-viewer
+      email: pr-viewer@example.test
+      password: Valid-password-123!
+- id: DATA-ORGANIZATIONS
+  lifecycle: SEED
+  entity: existing organizations and teams
+  description: Existing organization identities, teams and organization membership used by public navigation
+    and management actions.
+  properties:
+    organizations:
+    - name: Acme Demo
+      identifier: acme-demo
+    teams:
+    - name: frontend-child
+      organization: Acme Demo
+    - name: platform-team
+      organization: Acme Demo
+    - name: access-role-team
+    - name: frontend-team
+      organization: Acme Demo
+      parent: platform-team
+    team_descendants:
+    - ancestor: frontend-team
+      descendant: frontend-child
+      organization: Acme Demo
+    memberships:
+    - username: existing-member
+      organization: Acme Demo
+    - username: protected-member
+      organization: Acme Demo
+- id: DATA-REPOSITORIES
+  lifecycle: SEED
+  entity: existing repositories
+  description: Repositories opened or searched without first being created. Ownership and organization
+    relationships are included only where the tests establish them. Same-name variants retain distinct
+    namespace or visibility contexts; they do not require extra simultaneous global records or combine
+    their attributes.
+  properties:
+    repositories:
+    - name: acme-docs
+      variants:
+      - organization: Acme Demo
+      - visibility: public
+      - owner: repo-owner
+    - name: acme-docs-fork
+      owner: fork-user
+    - name: visibility-demo
+    - name: branch-switch-demo
+    - name: default-branch-demo
+    - name: file-management-demo
+    - name: branch-protection-demo
+    private_repositories:
+    - name: secret-research
+      variants:
+      - organization: Acme Demo
+- id: DATA-PERMISSIONS
+  lifecycle: SEED
+  entity: existing access relationships
+  description: Existing access grants and account capabilities required for the named public operations.
+    Capabilities describe permitted operations without assigning an unspecified cumulative permission
+    level.
+  properties:
+    team_access:
+    - team: access-role-team
+      repository: acme-docs
+      role: Write
+    capabilities:
+    - account: org-owner
+      resource: Acme Demo
+      description: 'org-owner: may create teams on Acme Demo.'
+    - account: team-maintainer
+      resource: Acme Demo
+      description: 'team-maintainer: may manage team members on Acme Demo.'
+    - account: team-maintainer
+      resource: Acme Demo
+      description: 'team-maintainer: may edit team hierarchy on Acme Demo.'
+    - account: org-owner
+      resource: Acme Demo
+      description: 'org-owner: may add organization members on Acme Demo.'
+    - account: org-owner
+      resource: Acme Demo
+      description: 'org-owner: may remove organization members on Acme Demo.'
+    - account: org-member
+      resource: Acme Demo
+      description: 'org-member: may not remove organization members on Acme Demo.'
+    - account: repo-admin
+      resource: acme-docs
+      description: 'repo-admin: may manage repository access on acme-docs.'
+    - account: visibility-admin
+      resource: visibility-demo
+      description: 'visibility-admin: may change repository visibility on visibility-demo.'
+    - account: collaborator
+      resource: visibility-demo
+      description: 'collaborator: may not change repository visibility on visibility-demo.'
+    - account: branch-contributor
+      resource: branch-switch-demo
+      description: 'branch-contributor: may create branches on branch-switch-demo.'
+    - account: default-branch-admin
+      resource: default-branch-demo
+      description: 'default-branch-admin: may change default branch on default-branch-demo.'
+    - account: default-branch-viewer
+      resource: default-branch-demo
+      description: 'default-branch-viewer: may not change default branch on default-branch-demo.'
+    - account: file-contributor
+      resource: file-management-demo
+      description: 'file-contributor: may add files on file-management-demo.'
+    - account: protection-admin
+      resource: branch-protection-demo
+      description: 'protection-admin: may create branch protection rules on branch-protection-demo.'
+    - account: protection-viewer
+      resource: branch-protection-demo
+      description: 'protection-viewer: may not create branch protection rules on branch-protection-demo.'
+    - account: protection-admin
+      resource: Protection status onboarding PR
+      description: 'protection-admin: may update check status on Protection status onboarding PR.'
+    - account: issue-editor
+      resource: Editable onboarding issue
+      description: 'issue-editor: may edit issue on Editable onboarding issue.'
+    - account: issue-editor
+      resource: Assignable onboarding issue
+      description: 'issue-editor: may manage assignees on Assignable onboarding issue.'
+    - account: issue-editor
+      resource: Labelable onboarding issue
+      description: 'issue-editor: may manage labels on Labelable onboarding issue.'
+    - account: issue-editor
+      resource: Milestone onboarding issue
+      description: 'issue-editor: may manage milestone on Milestone onboarding issue.'
+    - account: issue-editor
+      resource: Closable onboarding issue
+      description: 'issue-editor: may close and reopen issue on Closable onboarding issue.'
+    - account: issue-viewer
+      resource: Protected onboarding issue
+      description: 'issue-viewer: may not close and reopen issue on Protected onboarding issue.'
+    - account: pr-reviewer
+      resource: Reviewable onboarding PR
+      description: 'pr-reviewer: may comment on code on Reviewable onboarding PR.'
+    - account: pr-author
+      resource: Reviewer request onboarding PR
+      description: 'pr-author: may manage reviewers on Reviewer request onboarding PR.'
+    - account: pr-author
+      resource: Closable onboarding PR
+      description: 'pr-author: may close and reopen pull request on Closable onboarding PR.'
+    - account: pr-viewer
+      resource: Protected onboarding PR
+      description: 'pr-viewer: may not close and reopen pull request on Protected onboarding PR.'
+- id: DATA-CODE
+  lifecycle: SEED
+  entity: existing branches, files, commits and comparison data
+  description: Existing code resources used before any create or update action. Unspecified file contents,
+    revisions and parent repositories are not invented.
+  properties:
+    directories:
+    - name: src
+      repository: acme-docs
+    files:
+    - name: README.md
+      repository: acme-docs
+      directory: src
+      content: Document search flow
+      matching_text: search flow
+    - name: main-only.md
+      repository: branch-switch-demo
+      branch: feature-search
+    commits:
+    - message: Document search flow
+      author: alice-dev
+      repository: acme-docs
+      changed_file: src/search.ts
+    branches:
+    - name: feature-search
+      repository: branch-switch-demo
+    - name: main
+      repository: branch-switch-demo
+    - name: main
+      repository: default-branch-demo
+    - name: release
+      repository: default-branch-demo
+    comparisons:
+    - base: main
+      compare: feature-search
+      changed_file: src/search.ts
+- id: DATA-ISSUES
+  lifecycle: SEED
+  entity: existing issues, labels and milestones
+  description: Existing issue identities and metadata catalogs; comments and newly submitted issues are
+    created through UI.
+  properties:
+    issues:
+    - title: Improve onboarding
+      description: Describe the onboarding improvement.
+      status: Open
+    - title: Legacy welcome text
+      status: closed
+    - title: Editable onboarding issue
+    - title: Original issue title
+    - title: Commentable onboarding issue
+    - title: Comment validation issue
+    - title: Assignable onboarding issue
+    - title: Labelable onboarding issue
+    - title: Milestone onboarding issue
+    - title: Closable onboarding issue
+    - title: Protected onboarding issue
+    labels:
+    - name: bug
+    milestones:
+    - name: v1.0
+- id: DATA-PULL-REQUESTS
+  lifecycle: SEED
+  entity: existing pull requests and check state
+  description: Existing pull requests opened directly, with only test-supported initial attributes. Reviews
+    and changes produced by UI are not preloaded.
+  properties:
+    pull_requests:
+    - title: Protection status onboarding PR
+    - title: Improve onboarding
+      status: open
+    - title: Draft onboarding update
+      source_branch: draft-feature
+      target_branch: main
+      status: Draft
+    - title: Overview onboarding PR
+    - title: Public onboarding PR
+      changed_file: src/search.ts
+    - title: Reviewable onboarding PR
+    - title: Pending review onboarding PR
+    - title: Change request onboarding PR
+    - title: Reviewer request onboarding PR
+    - title: Mergeable onboarding PR
+      merge_eligibility: Eligible for the signed-in maintainer to merge through the public merge action.
+    - title: Blocked onboarding PR
+      merge_eligibility: Merge is blocked by an unmet review or protection requirement; the exact blocker
+        is not specified.
+    - title: Closable onboarding PR
+    - title: Protected onboarding PR
+    checks:
+    - pull_request: Protection status onboarding PR
+      name: test
+      status: pending
+- id: DATA-RECOVERY
+  lifecycle: SEED
+  entity: simulated recovery-code delivery configuration
+  description: The simulated reset flow supplies this code after Send reset link. Issuance and validation
+    are produced through the public recovery UI; no reset token or authenticated session is preloaded.
+  properties:
+    delivery:
+    - code: '123456'
+- id: DATA-REGISTERED-ACCOUNTS
+  lifecycle: CREATED
+  entity: accounts created by registration
+  description: Created through the registration UI. The duplicate-username case first registers its existing
+    account through that same UI; rejected submissions create no account.
+- id: DATA-CREATED-ORGANIZATIONS
+  lifecycle: CREATED
+  entity: organizations, teams and memberships created through UI
+  description: Created through organization, team and member management UI. Existing organizations used
+    as parents remain seed records.
+- id: DATA-CREATED-REPOSITORIES
+  lifecycle: CREATED
+  entity: new repositories and forks
+  description: Created through repository creation and fork UI using the signed-in namespace. New names
+    use runtime uniqueness; rejected submissions create no repository.
+- id: DATA-CREATED-CODE
+  lifecycle: CREATED
+  entity: new branches
+  description: Created through the branch creation UI from an existing repository revision; invalid branch
+    names are not materialized.
+- id: DATA-CREATED-ISSUES
+  lifecycle: CREATED
+  entity: new issues and issue comments
+  description: Created by submitting the issue or discussion-comment UI. Runtime-generated titles, bodies
+    and comments remain supplied by each caller.
+- id: DATA-CREATED-PULL-REQUESTS
+  lifecycle: CREATED
+  entity: new pull requests, review comments and reviews
+  description: Created through comparison and review UI, including draft pull requests and pending reviews.
+    These objects are not present before their create or submit actions.
+- id: DATA-CREATED-BRANCH-PROTECTION
+  lifecycle: CREATED
+  entity: branch protection rules created through UI
+  description: Created through branch protection settings for an existing repository. The requested approval
+    and check requirements come from the UI selections.
+- id: DATA-SESSION
+  lifecycle: DERIVED
+  entity: authentication and account-access state
+  description: Established through registration, sign-in, sign-out and password/recovery UI; never injected
+    into cookies or storage.
+- id: DATA-VIEW-STATE
+  lifecycle: DERIVED
+  entity: current search, selection, comparison, editor draft and clipboard state
+  description: Produced through public search, branch selection, comparison, file-editor draft and clone-copy
+    interactions. No search result, file draft or clipboard snapshot is preloaded.
+- id: DATA-COLLABORATION-STATE
+  lifecycle: DERIVED
+  entity: changes to existing collaboration objects
+  description: Produced through member, team, access, branch, issue, check and pull-request management
+    UI. Changed values and post-action review or merge results are not initial data.
+children:
+- id: REQ-1
+  name: Identity and Access
+  type: FOLDER
+  dependencies: []
+  description: This module defines the “account” and “session” required to access
+    the system. An account is a persistent individual identity storing a username,
+    verified email, and credential status; a session is a record created after successful
+    account sign-in that represents only the current browser login state. Visitors
+    enter the account-access page from “Sign up”, “Sign in”, or “Forgot password”
+    on the home page; signed-in users enter security settings or sign out from the
+    account menu. The account menu is the control in the upper-right corner of the
+    page that displays the current signed-in account, organization list, and sign-out
+    entry. No page, error message, or recovery flow may display a full password. After
+    successful sign-in, the account menu displays the current user, and subsequent
+    organization, repository, issue, and pull-request pages use this session to determine
+    visibility and operation permissions; sign-out, password changes, and recovery
+    must immediately change the session state visible to subsequent requests.
+  children:
+  - id: REQ-1.1
+    name: Account Registration and Recovery
+    type: FOLDER
+    dependencies: []
+    description: The account-access page is the shared page used by unauthenticated
+      users to register, sign in, and recover a password, with the frontend showing
+      the appropriate form and submit button for each operation. The local product
+      does not implement an email-verification page, email delivery, or an external
+      verification-code service — successful registration directly stores a sign-in-capable
+      account and marks its email as verified; successful sign-in only stores a new
+      session and does not create a duplicate account; after submitting an email for
+      password recovery, the page directly displays the fixed verification code `123456`
+      and the password-reset form, and only the correct code together with a compliant
+      new password updates the password of the same account. Registration, sign-in,
+      and recovery pages must use visible labels to identify fields and submit actions;
+      after failure, non-sensitive input is retained, while password and password-confirmation
+      fields must not redisplay submitted values.
+    children:
+    - id: REQ-1.1.1
+      name: Register a New GitHub Account
+      type: ATOMIC
+      dependencies: []
+      pages:
+      - name: sign_up
+        reference: ./reference/github-sign-up.png
+      description: |-
+        The registration page is the form opened by the unique link named “Create an account” from the sign-in page. The form contains exactly one textbox labeled “Username”, one textbox labeled “Email”, one password input labeled “Password”, one password input labeled “Confirm password”, one initially unchecked checkbox named “Agree to the terms”, and one enabled button named “Create account”. The username and email identify the account, while passwords must not be echoed on the page. This product directly marks the email of a successfully registered account as verified and does not provide a subsequent email-verification page. The visitor enters a unique username, email, password, and matching confirmation, checks “Agree to the terms”, and activates “Create account”. The username must consist of 1 to 39 lowercase ASCII letters, digits, or single hyphens (`-`) and must not begin or end with a hyphen; after trimming leading and trailing whitespace, the email must contain exactly one `@`, be no longer than 254 characters, and have at least one dot and non-empty domain labels after the `@`; the password must contain 12 to 128 characters, include at least one uppercase letter, one lowercase letter, one digit, and one non-alphanumeric special character, and contain no whitespace characters. The system stores a sign-in-capable account together with its verified-email status and enters the sign-in page; if the username or email conflicts, any field is missing, the email format is invalid, the terms are not accepted, the password is noncompliant, or the confirmation does not match, the system retains the username and email input, displays an itemized message beside the corresponding field, and does not create an account. The corresponding visible field message contains “Username already exists”, “Username format is invalid”, “Email format is invalid”, “Password requirements are not satisfied”, or “Agree to terms is required”, as applicable. Visitors can use this capability on the account-access page. The system validates input rules, displays field errors, and prevents duplicate accounts; on success, it directly creates an available account. Submitting several invalid fields together must show the username, email, password, and missing-terms messages together, rather than revealing only one error per submission; the submit button remains actionable so these messages can be read. For example, a username beginning with a hyphen, email “not-an-email”, password “short”, confirmation “different”, and unchecked terms produce these field errors and preserve the attempted username. A duplicate username paired with a different unused email displays “Username already exists” and retains both attempted values. A successful registration accepts a unique username, its email, and password; the sign-in form is immediately available, accepts that email, and the resulting signed-in username remains visible after reload.
+
+        Screenshot reference:
+        ![image](reference/github-sign-up.png)
+      data:
+        requires:
+        - DATA-REGISTERED-ACCOUNTS
+        - DATA-SESSION
+      scenarios:
+      - name: 'REQ-1.1.1: Register a New GitHub Account - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session and opens the account-access page. The visitor clicks the visible
+            link “Sign in” and then the visible link “Create an account”. The registration page
+            displays visibly labeled Username, Email, Password, and Confirm password fields,
+            a checkbox named “Agree to the terms”, and a button named “Create account”. The
+            username `nora-demo` and email `nora.demo@example.test` are not registered.'
+        - keyword: WHEN
+          content: 'The visitor enters `nora-demo` in Username, `nora.demo@example.test` in
+            Email, `Valid-password-123!` in Password and Confirm password, checks “Agree to
+            the terms”, and clicks “Create account”.'
+        - keyword: THEN
+          content: 'The system opens the sign-in page and visibly displays the labeled “Username
+            or email” and “Password” fields and the “Sign in” button. The visitor enters
+            `nora.demo@example.test` in “Username or email”, enters `Valid-password-123!` in
+            “Password”, and clicks “Sign in”. The workspace visibly displays the username
+            `nora-demo`.'
+        - keyword: THEN
+          content: 'After the visitor reloads the page, the workspace still visibly displays
+            the username `nora-demo`.'
+      - name: 'REQ-1.1.1: Register a New GitHub Account - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session and opens the account-access page. The visitor opens the
+            registration page through the visible “Sign in” and “Create an account” links.
+            The registration page displays visibly labeled Username, Email, Password, and
+            Confirm password fields, a checkbox named “Agree to the terms”, and a button
+            named “Create account”.'
+        - keyword: WHEN
+          content: 'The visitor enters the invalid username `-invalid-demo` in Username,
+            `invalid.username@example.test` in Email, `Valid-password-123!` in Password
+            and Confirm password, checks “Agree to the terms”, and clicks “Create account”.'
+        - keyword: THEN
+          content: 'The registration page remains open and displays “Username format is
+            invalid”. The Username field retains the value `-invalid-demo`; no account is
+            created.'
+        - keyword: THEN
+          content: 'The Email, Password, Confirm password, and terms controls remain available
+            for correction, and the rejected submission does not redirect to the sign-in page.'
+      - name: 'REQ-1.1.1: Register a New GitHub Account - Scenario 3'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session and opens the account-access page. The visitor opens the
+            registration page through the visible “Sign in” and “Create an account” links.
+            The registration page displays visibly labeled Username, Email, Password, and
+            Confirm password fields, a checkbox named “Agree to the terms”, and a button
+            named “Create account”. The username `invalid-email-demo` is unused.'
+        - keyword: WHEN
+          content: 'The visitor enters `invalid-email-demo` in Username, the invalid email
+            `not-an-email` in Email, `Valid-password-123!` in Password and Confirm password,
+            checks “Agree to the terms”, and clicks “Create account”.'
+        - keyword: THEN
+          content: 'The registration page remains open and displays “Email format is invalid”.
+            The Email field retains the value `not-an-email`; no account is created.'
+        - keyword: THEN
+          content: 'The valid Username, Password, Confirm password, and terms controls remain
+            available for correction, and the rejected submission does not redirect to the
+            sign-in page.'
+    - id: REQ-1.1.2
+      name: Sign In with an Existing Account
+      type: ATOMIC
+      dependencies:
+      - REQ-1.1.1
+      pages:
+      - name: sign_in
+        reference: ./reference/github-sign-in.png
+      description: |-
+        This feature builds on the persisted objects. The sign-in page is the form on the account-access page containing “Username or email”, “Password”, and “Sign in”. A “session” is the current-browser login record saved after successful account authentication, represented in the frontend by the upper-right account menu and access to protected pages. The visitor enters a username or email and a password and submits the form. The system looks up the account and validates its credentials and availability status; if authentication fails due to an unknown username/email, incorrect password, or unavailable account, the system displays exactly the same generic failure message “Invalid credentials”, does not disclose whether the account exists or which credential was wrong, and does not create a session. After successful authentication, the system stores a session with a unique session identifier, account identifier, and active status, then redirects to the workspace accessible to that user; the session remains valid after refreshing or reopening the workspace, and subsequent protected organization, repository, and work-item requests must use this session to determine the current user.
+
+        Screenshot reference:
+        ![image](reference/github-sign-in.png)
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-SESSION
+      scenarios:
+      - name: 'REQ-1.1.2: Sign In with an Existing Account - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts in a fresh unauthenticated browser session. The
+            system has pre-provisioned a verified and available account with username
+            `alice-dev`, email `alice.dev@example.test`, and password
+            `Valid-password-123!`.'
+        - keyword: WHEN
+          content: 'The visitor opens the application home page, verifies that exactly one
+            visible link named “Sign in” is available, and clicks it. On the sign-in page,
+            the visitor enters `alice-dev` in the visibly labeled “Username or email” field,
+            enters `Valid-password-123!` in the visibly labeled “Password” field, and clicks
+            the button named “Sign in”.'
+        - keyword: THEN
+          content: 'The system enters the workspace and visibly displays the exact username
+            `alice-dev`.'
+        - keyword: THEN
+          content: 'After the visitor reloads the page, the exact username `alice-dev`
+            remains visible.'
+      - name: 'REQ-1.1.2: Sign In with an Existing Account - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts in a fresh unauthenticated browser session. The
+            system has pre-provisioned a verified and available account with username
+            `alice-dev`, email `alice.dev@example.test`, and password
+            `Valid-password-123!`.'
+        - keyword: WHEN
+          content: 'The visitor opens the application home page, clicks the visible link
+            named “Sign in”, enters `alice.dev@example.test` in the visibly labeled
+            “Username or email” field, enters the incorrect password
+            `Valid-password-123!-incorrect` in the visibly labeled “Password” field, and
+            clicks the button named “Sign in”.'
+        - keyword: THEN
+          content: 'The sign-in page visibly displays the generic message “Invalid
+            credentials”.'
+      - name: 'REQ-1.1.2: Sign In with an Existing Account - Scenario 3'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts in a fresh unauthenticated browser session. The
+            system has pre-provisioned a verified and available account with username
+            `alice-dev`, email `alice.dev@example.test`, and password
+            `Valid-password-123!`.'
+        - keyword: WHEN
+          content: 'The visitor opens the application home page, clicks the visible link
+            named “Sign in”, enters `alice.dev@example.test` in the visibly labeled
+            “Username or email” field, enters `Valid-password-123!` in the visibly labeled
+            “Password” field, and clicks the button named “Sign in”.'
+        - keyword: THEN
+          content: 'The system enters the workspace and visibly displays the username
+            `alice-dev`.'
+      - name: 'REQ-1.1.2: Sign In with an Existing Account - Scenario 4'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts in a fresh unauthenticated browser session. The
+            system has pre-provisioned a verified and available account with username
+            `alice-dev`, email `alice.dev@example.test`, and password
+            `Valid-password-123!`.'
+        - keyword: WHEN
+          content: 'The visitor opens the application home page, clicks the visible link
+            named “Sign in”, enters the unknown address `unknown@example.test` in the
+            visibly labeled “Username or email” field, enters `Valid-password-123!` in
+            “Password”, and clicks “Sign in”. The visitor then reopens the application home
+            page, clicks “Sign in” again, enters `alice-dev` in “Username or email”, enters
+            the incorrect password `Valid-password-123!-wrong` in “Password”, and clicks
+            “Sign in” again.'
+        - keyword: THEN
+          content: 'The first sign-in attempt displays the generic message “Invalid
+            credentials”, and the second sign-in attempt displays the same generic message.'
+    - id: REQ-1.1.3
+      name: Recover Account Access Through a Verified Email
+      type: ATOMIC
+      dependencies:
+      - REQ-1.1.1
+      pages: []
+      description: The sign-in page exposes a visible “Forgot password” link. The recovery
+        step displays visibly labeled Email, Verification code, New password, and Confirm
+        password fields and a “Send reset link” or “Reset password” button. A registered
+        verified email and an unknown email both reach the same recovery step and display
+        the fixed verification code `123456` without requiring email delivery. A wrong code
+        leaves the original password usable and displays “Verification code is invalid”. A
+        correct code with matching compliant passwords updates the account and displays
+        “Password updated”.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-RECOVERY
+        - DATA-SESSION
+      scenarios:
+      - name: 'REQ-1.1.3: Recover Account Access Through a Verified Email - Scenario
+          1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts in a fresh unauthenticated browser session. Test setup
+            pre-provisions the verified account `recovery-visibility` with email
+            `recovery-visibility@example.test` and password `Valid-password-123!`; the
+            address `unknown@example.test` does not belong to an account.'
+        - keyword: WHEN
+          content: 'The visitor opens “Sign in”, clicks “Forgot password”, submits
+            `recovery-visibility@example.test`, and then repeats the reset-step flow for
+            `unknown@example.test`.'
+        - keyword: THEN
+          content: 'Both reset-step pages display the fixed text `123456`, the visibly labeled
+            “Verification code” field, and the visibly labeled “New password” field.'
+      - name: 'REQ-1.1.3: Recover Account Access Through a Verified Email - Scenario
+          2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts in a fresh unauthenticated browser session. Test setup
+            pre-provisions the verified account `recovery-invalid-code` with email
+            `recovery-invalid-code@example.test` and password `Valid-password-123!`.'
+        - keyword: WHEN
+          content: 'The visitor opens the reset step for `recovery-invalid-code@example.test`,
+            enters `000000` in “Verification code”, enters `Replacement-password-456!` in
+            both “New password” and “Confirm password”, and clicks “Reset password”. The
+            visitor then signs in with the same email and original password
+            `Valid-password-123!`.'
+        - keyword: THEN
+          content: 'The reset displays “Verification code is invalid”, and the original
+            password login succeeds with workspace username `recovery-invalid-code`.'
+      - name: 'REQ-1.1.3: Recover Account Access Through a Verified Email - Scenario
+          3'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts in a fresh unauthenticated browser session. Test setup
+            pre-provisions the verified account `recovery-success` with email
+            `recovery-success@example.test` and password `Valid-password-123!`.'
+        - keyword: WHEN
+          content: 'The visitor opens the reset step for `recovery-success@example.test`,
+            enters `123456` in “Verification code”, enters `Replacement-password-456!` in
+            both “New password” and “Confirm password”, and clicks “Reset password”. The
+            visitor then signs in with the same email and the new password
+            `Replacement-password-456!`.'
+        - keyword: THEN
+          content: 'The system displays “Password updated”, and the new password login
+            succeeds with workspace username `recovery-success`.'
+  - id: REQ-1.2
+    name: Sign Out and End the Current Web Session
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1.2
+    pages:
+    - name: account_menu
+      reference: ./reference/github-account-menu-sign-out.png
+    description: |-
+      This feature builds on the persisted objects, opened pages, or authenticated-session context provided by REQ-1.1.2 (Sign In with an Existing Account); it must reuse that context and keep pages and data consistent after the context changes. The page contains exactly one button named “Account menu”; its menu contains exactly one link named “Sign out”. Activating it displays a dialog named “Sign out” with buttons named “Confirm sign out” and “Cancel”. The dialog explains that sign-out affects only the current browser session. Only “Confirm sign out” invalidates the session, while “Cancel” or closing the dialog retains the current session and page. After confirming, refresh, browser back navigation, or directly reopening a previously accessible protected account, repository, or organization page restores an unauthenticated state and displays the “Sign in” link.
+
+      Screenshot reference:
+      ![image](reference/github-account-menu-sign-out.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-SESSION
+    scenarios:
+    - name: 'REQ-1.2: Sign Out and End the Current Web Session - Scenario 1'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts at the application home page in a fresh unauthenticated
+          browser session. The seeded data is account `alice-dev`, email `alice.dev@example.test`,
+          password `Valid-password-123!`. A signed-in user has entered an organization,
+          repository, or account-settings page they are authorized to access from
+          the account menu and has recorded that protected page heading. Seed values:
+          account `alice-dev`, email `alice.dev@example.test`, password `Valid-password-123!`.'
+      - keyword: WHEN
+        content: 'The user opens the account menu and clicks “Sign out”; if a confirmation
+          dialog appears, the user confirms instead of canceling or closing it. Seed
+          values: account `alice-dev`, email `alice.dev@example.test`, password `Valid-password-123!`.'
+      - keyword: THEN
+        content: 'The system returns to an unauthenticated access state, displays
+          the “Sign in” entry, and no longer displays that user''s account menu; if
+          the user cancels the confirmation dialog, the session remains valid and
+          the original page remains accessible. Seed values: account `alice-dev`,
+          email `alice.dev@example.test`, password `Valid-password-123!`.'
+      - keyword: THEN
+        content: 'When the user refreshes, navigates back in the browser, or directly
+          returns to the recorded protected page, the system requires re-authentication
+          and cannot restore the signed-out session. Seed values: account `alice-dev`,
+          email `alice.dev@example.test`, password `Valid-password-123!`.'
+    - name: 'REQ-1.2: Sign Out and End the Current Web Session - Scenario 2'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts at the application home page in a fresh unauthenticated
+          browser session. The seeded data is account `alice-dev`, email `alice.dev@example.test`,
+          password `Valid-password-123!`. The visitor starts at the application home
+          page in a fresh unauthenticated browser session. Seed values: account `alice-dev`,
+          email `alice.dev@example.test`, password `Valid-password-123!`.'
+      - keyword: WHEN
+        content: 'The user signs in as `alice-dev` with `Valid-password-123!` and
+          follows the visible controls for the sign out and end the current web session
+          workflow. Seed values: account `alice-dev`, email `alice.dev@example.test`,
+          password `Valid-password-123!`.'
+      - keyword: THEN
+        content: 'The page displays the required headings, controls, values, and status for the sign out
+          and end the current web session workflow. Seed values: account `alice-dev`,
+          email `alice.dev@example.test`, password `Valid-password-123!`.'
+      - keyword: THEN
+        content: 'After refreshing or reopening the visible destination, the successful
+          result remains persisted; a rejected action leaves the original state unchanged.
+          Seed values: account `alice-dev`, email `alice.dev@example.test`, password
+          `Valid-password-123!`.'
+  - id: REQ-1.3
+    name: Change Account Password
+    type: ATOMIC
+    dependencies:
+    - REQ-1.1.2
+    pages:
+    - name: password_settings
+      reference: ./reference/github-password-settings.png
+    description: |-
+      This feature builds on the persisted objects, opened pages, or authenticated-session context provided by REQ-1.1.2 (Sign In with an Existing Account); it must reuse that context and keep pages and data consistent after the context changes. The security form has uniquely labeled password inputs “Current password”, “New password”, and “Confirm password”, and a button “Update password”; submitting an empty current-password field must display the visible application message “Current password is required”. A failure with an incorrect current password and confirmation “does-not-match” must display the corresponding current-password or confirmation error and leave the old credentials usable. Each password-change scenario starts with its own verified account in the stated credential state and a different compliant candidate password. “Password and authentication” is the security page in account Settings used to change the current account credentials; the change affects only the current account's password record and does not alter any other accounts or resources outside the session. The user must provide the current password, a new password compliant with the REQ-1 password rules, and a character-for-character identical confirmation password; all three fields are required. The system validates the change, prevents unauthorized updates, and applies the new password to subsequent sign-in attempts. If the current password is incorrect, the new password is noncompliant, the confirmation does not match, or any field is missing, the system displays the reason in the corresponding field and does not modify the credentials; the applicable visible message is “Current password is incorrect”, “Password confirmation does not match”, or “Current password is required”. The old password remains valid and the new password must not work for sign-in. After a successful update, the page displays “Password updated”, the new password is immediately used for subsequent password-based sign-ins, and the old password must no longer work for new sign-ins.
+
+      Seed password-change values are `New-password-456!` for the successful update and
+      `Required-password-789!` for the missing-current-password scenario.
+
+      Screenshot reference:
+      ![image](reference/github-password-settings.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-SESSION
+    scenarios:
+    - name: 'REQ-1.3: Change Account Password - Scenario 1'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts in a fresh unauthenticated browser session. The system
+          pre-provisions the verified account `password-change-success` with email
+          `password-change-success@example.test` and current password
+          `Valid-password-123!`.'
+      - keyword: WHEN
+        content: 'The visitor signs in as `password-change-success`, opens Settings and then
+          Password and authentication, enters `Valid-password-123!` in “Current password”,
+          enters `New-password-456!` in both “New password” and “Confirm password”, and clicks
+          “Update password”. The visitor then opens the account-access page, clicks “Sign in”,
+          enters `password-change-success@example.test` and `New-password-456!`, and clicks
+          “Sign in”.'
+      - keyword: THEN
+        content: 'The password-settings page displays the exact message “Password updated”.'
+      - keyword: THEN
+        content: 'Signing in with the new password succeeds and the workspace visibly displays
+          the exact username `password-change-success`.'
+    - name: 'REQ-1.3: Change Account Password - Scenario 2'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts in a fresh unauthenticated browser session. The system
+          pre-provisions the verified account `password-change-invalid` with email
+          `password-change-invalid@example.test` and current password
+          `Valid-password-123!`.'
+      - keyword: WHEN
+        content: 'The visitor signs in as `password-change-invalid`, opens Settings and then
+          Password and authentication, enters `Valid-password-123!-wrong` in “Current
+          password”, enters `Another-valid-password-123!` in “New password”, enters
+          `does-not-match` in “Confirm password”, and clicks “Update password”. The visitor
+          then opens the account-access page, clicks “Sign in”, enters
+          `password-change-invalid@example.test` and the original password
+          `Valid-password-123!`, and clicks “Sign in”.'
+      - keyword: THEN
+        content: 'The password-settings page displays the exact message “Current password is
+          incorrect” and does not update the password.'
+      - keyword: THEN
+        content: 'Signing in with the original password succeeds and the workspace visibly
+          displays the exact username `password-change-invalid`.'
+    - name: 'REQ-1.3: Change Account Password - Scenario 3'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts in a fresh unauthenticated browser session. The system
+          pre-provisions the verified account `password-change-required` with email
+          `password-change-required@example.test` and current password
+          `Valid-password-123!`. The candidate new password is
+          `Required-password-789!`.'
+      - keyword: WHEN
+        content: 'The visitor signs in as `password-change-required`, opens Settings and then
+          Password and authentication, leaves “Current password” empty, enters
+          `Required-password-789!` in both “New password” and “Confirm password”, and clicks
+          “Update password”. The visitor then opens the account-access page, clicks “Sign in”,
+          enters `password-change-required@example.test` and the original password
+          `Valid-password-123!`, and clicks “Sign in”.'
+      - keyword: THEN
+        content: 'The password-settings page displays the exact message “Current password is
+          required” and does not update the password.'
+      - keyword: THEN
+        content: 'Signing in with the original password succeeds and the workspace visibly
+          displays the exact username `password-change-required`.'
+- id: REQ-2
+  name: Organization and Governance
+  type: FOLDER
+  dependencies:
+  - REQ-1.1.2
+  description: Signed-in users enter the organization list through “Your organizations”
+    in the account menu and can create or open an organization; visitors can only
+    view public repositories through public organization pages. The organization overview
+    provides Repositories, People, and Teams entries. An organization Owner directly
+    adds or removes members on People, creates teams and maintains hierarchy on Teams,
+    and grants roles to members or teams in Manage access under repository Settings.
+    Organization membership only determines whether a user can see the organization
+    and can be a candidate for team/repository authorization; it does not automatically
+    grant access to any private repository. Access to a private repository comes only
+    from organization Owner status, a direct role grant on that repository, or direct
+    membership in a team authorized for that repository. All changes must be reflected
+    simultaneously in organization details, people/team lists, and the actual access
+    results of affected repositories.
+  children:
+  - id: REQ-2.1
+    name: Organization Identity and Discovery
+    type: FOLDER
+    dependencies:
+    - REQ-1.1.2
+    description: The organization overview page uses the organization name as a heading;
+      its “Repositories”, “People”, and “Teams” navigation entries have link roles
+      even when visually styled as tabs. The Repositories tab lists repositories owned
+      by the organization, the People tab lists members and their Member/Owner roles,
+      and the Teams tab lists teams. This module supports visitors discovering an
+      organization's public repositories and signed-in accounts creating organizations
+      from the “Your organizations” page. The unique organization name uses the same
+      globally unique 1–39-character lowercase ASCII format as the REQ-1 username;
+      the display name must contain 1–100 non-empty characters after trimming leading
+      and trailing whitespace. After successful creation, the system stores the organization
+      object and the creating account's Owner membership relationship, and the user
+      enters the new organization overview page; subsequent team, member, and organization-repository
+      authorization is scoped by this organization identifier. This feature builds
+      on the persisted objects, opened pages, or authenticated-session context provided
+      by REQ-1.1.2 (Sign In with an Existing Account); it must reuse that context
+      and keep pages and data consistent after the context changes.
+    children:
+    - id: REQ-2.1.1
+      name: Browse Organization Repositories
+      type: ATOMIC
+      dependencies: []
+      pages:
+      - name: organization_repositories
+        reference: ./reference/github-organization-repositories.png
+      description: |-
+        The organization page presents “Repositories” as a navigation link, visually usable as a tab, and a textbox labeled “Find a repository”. Filtering updates the visible results as the user types, without a separate submit action. Each result has a link named exactly with the repository name, and opens a heading displaying “organization name/repository name”. Returning with browser Back keeps the public result available; filtering by the exact private repository name never exposes its link to a visitor. The seed organization has a public repository and a distinct private repository inaccessible to visitors. From the organization page, the user clicks the “Repositories” link, can enter a repository name in the filter box, select a public/private filter, and click a repository name in the list to open its overview. The system displays only the names, descriptions, visibility, and update times of repositories visible to the current user; clicking a result opens that repository's overview. Visitors can view public repositories on a public organization overview page; signed-in accounts can see only repositories for which they have read permission on the Repositories tab of the organization overview. The list reads repository name, description, visibility, and update time and provides no write operations; private repositories must first be validated under the already defined repository-access rules.
+
+        Screenshot reference:
+        ![image](reference/github-organization-repositories.png)
+      data:
+        requires:
+        - DATA-ORGANIZATIONS
+        - DATA-REPOSITORIES
+        - DATA-VIEW-STATE
+      scenarios:
+      - name: 'REQ-2.1.1: Browse Organization Repositories - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions the organization `Acme Demo` with
+            public repository `acme-docs` and private repository `secret-research`. The
+            organization overview exposes a visible link named “Repositories”.'
+        - keyword: WHEN
+          content: 'The visitor opens the visible organization `Acme Demo`, clicks the
+            “Repositories” link, enters `acme-docs` in the visibly labeled textbox “Find a
+            repository”, and clicks the exact link named `acme-docs`.'
+        - keyword: THEN
+          content: 'The repository overview page displays a visible heading containing
+            `acme-docs`.'
+        - keyword: THEN
+          content: 'After the visitor clicks the exact organization link `Acme Demo` and
+            clicks “Repositories” again, the exact link `acme-docs` remains visible.'
+      - name: 'REQ-2.1.1: Browse Organization Repositories - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions the organization `Acme Demo` with
+            public repository `acme-docs` and private repository `secret-research`. The
+            organization overview exposes a visible link named “Repositories”.'
+        - keyword: WHEN
+          content: 'The visitor opens the visible organization `Acme Demo`, clicks the
+            “Repositories” link, and enters `secret-research` in the visibly labeled textbox
+            “Find a repository”.'
+        - keyword: THEN
+          content: 'The exact link named `secret-research` is not visible in the organization
+            repository results.'
+    - id: REQ-2.1.2
+      name: Create an Organization After Authentication
+      type: ATOMIC
+      dependencies:
+      - REQ-1.1.2
+      pages: []
+      description: The authenticated account menu exposes a visible “Your organizations”
+        link, whose page exposes a visible “New organization” link. The organization
+        creation page displays visibly labeled “Organization name” and “Display name”
+        fields and a button named “Create organization”. A signed-in verified account
+        can submit a unique organization identifier and display name; successful creation
+        opens the new organization overview and persists it across reload. Organization
+        identifiers must be 1–39 lowercase ASCII characters and globally unique. The
+        display name must contain 1–100 non-whitespace characters after trimming. A
+        duplicate identifier displays “Organization name already exists” without opening
+        the existing organization. An invalid identifier displays “Organization name format
+        is invalid”, and a whitespace-only display name displays “Display name is required”;
+        rejected submissions do not create an organization.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-ORGANIZATIONS
+        - DATA-CREATED-ORGANIZATIONS
+        - DATA-SESSION
+      scenarios:
+      - name: 'REQ-2.1.2: Create an Organization After Authentication - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions the verified account `org-owner` with
+            email `org-owner@example.test` and password `Valid-password-123!`; the account
+            can create organizations.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `org-owner`, opens the “Account menu”, clicks
+            “Your organizations”, clicks “New organization”, enters `mobile-guild` in the
+            visibly labeled “Organization name” field, enters `Mobile Guild` in “Display
+            name”, and clicks “Create organization”.'
+        - keyword: THEN
+          content: 'The system opens an organization overview whose heading visibly contains
+            `mobile-guild`.'
+        - keyword: THEN
+          content: 'After the visitor reloads the page, the heading containing `mobile-guild`
+            remains visible.'
+      - name: 'REQ-2.1.2: Create an Organization After Authentication - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions the verified account `org-owner` with
+            email `org-owner@example.test` and password `Valid-password-123!`; the account
+            can create organizations. Organization identifier `acme-demo` already exists
+            with display name `Acme Demo`.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `org-owner`, opens the “Account menu”, clicks
+            “Your organizations”, clicks “New organization”, enters the existing identifier
+            `acme-demo` in the visibly labeled “Organization name” field, leaves the display
+            name empty, and clicks “Create organization”.'
+        - keyword: THEN
+          content: 'The page displays the exact message “Organization name already exists”
+            and does not display an organization heading for the attempted existing
+            organization creation.'
+      - name: 'REQ-2.1.2: Create an Organization After Authentication - Scenario 3'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions the verified account `org-owner` with
+            email `org-owner@example.test` and password `Valid-password-123!`; the account
+            can create organizations.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `org-owner`, opens the “Account menu”, clicks
+            “Your organizations”, clicks “New organization”, enters `-invalid-organization`
+            in the visibly labeled “Organization name” field, enters three spaces in
+            “Display name”, and clicks “Create organization”.'
+        - keyword: THEN
+          content: 'The page displays both exact messages “Organization name format is invalid”
+            and “Display name is required”, and no organization is created.'
+  - id: REQ-2.2
+    name: Team and Member Management
+    type: FOLDER
+    dependencies:
+    - REQ-2.1.2
+    description: On the current organization's member- and team-management pages,
+      users create teams, maintain team hierarchy and membership relationships, and
+      directly add or remove organization members. A team name contains 1–50 lowercase
+      ASCII letters, digits, or hyphens, may not begin or end with a hyphen, and must
+      be unique within the same organization; a team must belong to an organization,
+      and a parent team must belong to the same organization and may not create a
+      direct or indirect cycle. Organization membership and team membership are independent
+      persisted relationships; team hierarchy is used only for display and management
+      and does not implicitly add members of a parent or child team to the other team.
+      On the People page, an Owner enters the username or verified email of an existing
+      account and confirms, after which the system immediately saves that account's
+      Member or Owner membership relationship; there is no invitation, Pending, or
+      acceptance step. When removing a member, the system atomically deletes that
+      organization-membership relationship, all of that account's team memberships
+      in the organization, and all direct grants to that account on repositories of
+      the organization; team grants themselves are not deleted. If removal would leave
+      the organization with no Owner, the system rejects the operation and keeps all
+      relationships unchanged; the person's account, personal repositories, and relationships
+      with other organizations must not be deleted. This feature builds on the persisted
+      objects, opened pages, or authenticated-session context provided by REQ-2.1.2
+      (Create an Organization After Authentication); it must reuse that context and
+      keep pages and data consistent after the context changes.
+    children:
+    - id: REQ-2.2.1
+      name: Create an Organization Team
+      type: ATOMIC
+      dependencies:
+      - REQ-2.1.2
+      pages: []
+      description: The organization overview exposes a visible “Teams” link. The Teams
+        page exposes a visible “New team” link, which opens a form with a visibly labeled
+        “Team name” field and a “Create team” button. An organization Owner can submit a
+        unique team name containing 1–50 lowercase ASCII letters, digits, or hyphens, with
+        no leading or trailing hyphen. A successful submission opens the new team overview
+        and the team heading remains visible after reload. A malformed team name displays
+        “Team name is invalid” and does not create a team.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-ORGANIZATIONS
+        - DATA-PERMISSIONS
+        - DATA-CREATED-ORGANIZATIONS
+        - DATA-SESSION
+      scenarios:
+      - name: 'REQ-2.2.1: Create an Organization Team - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions the verified account `org-owner` with
+            email `org-owner@example.test` and password `Valid-password-123!`; the account
+            is Owner of the existing organization `Acme Demo`. The team name `mobile-team`
+            is not yet used in that organization.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `org-owner`, opens “Account menu”, clicks “Your
+            organizations”, opens the organization `Acme Demo`, clicks “Teams”, clicks “New
+            team”, enters `mobile-team` in the visibly labeled “Team name” field, and clicks
+            “Create team”.'
+        - keyword: THEN
+          content: 'The system opens a team overview whose heading visibly contains
+            `mobile-team`.'
+        - keyword: THEN
+          content: 'After the visitor reloads the page, the heading containing `mobile-team`
+            remains visible.'
+      - name: 'REQ-2.2.1: Create an Organization Team - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions the verified account `org-owner` with
+            email `org-owner@example.test` and password `Valid-password-123!`; the account
+            is Owner of the existing organization `Acme Demo`.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `org-owner`, opens “Account menu”, clicks “Your
+            organizations”, opens the organization `Acme Demo`, clicks “Teams”, clicks “New
+            team”, enters `-invalid-team` in the visibly labeled “Team name” field, and clicks
+            “Create team”.'
+        - keyword: THEN
+          content: 'The page displays the exact message “Team name is invalid”.'
+    - id: REQ-2.2.2
+      name: Manage Organization Team Members and Hierarchy
+      type: ATOMIC
+      dependencies:
+      - REQ-2.2.1
+      pages: []
+      description: An organization Owner can open a team in the organization’s “Teams”
+        page. The team page exposes “Members” and “Settings”. On Members, “Add member”
+        opens a visibly labeled “Username” textbox and an “Add member” button; after a
+        valid organization member is added, the member appears in the list with a
+        “Remove <username>” button. Removing the member updates the list immediately and
+        remains effective after reload. On Settings, “Parent team” is a combobox and
+        “Save” persists a parent-team change. A change that would make a team its own
+        ancestor is rejected with “Cyclic team hierarchy is not allowed”, and the
+        previously saved parent remains selected after reload.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-ORGANIZATIONS
+        - DATA-PERMISSIONS
+        - DATA-SESSION
+        - DATA-COLLABORATION-STATE
+      scenarios:
+      - name: 'REQ-2.2.2: Manage Organization Team Members and Hierarchy - Scenario
+          1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions `team-maintainer` with email
+            `team-maintainer@example.test` and password `Valid-password-123!`; this account
+            is an organization Owner authorized to manage `frontend-team` in `Acme Demo`.
+            The registered organization member `bob-reviewer` (email
+            `bob-reviewer@example.test`) is not currently a member of `frontend-team`.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `team-maintainer`, opens “Account menu”, clicks
+            “Your organizations”, opens `Acme Demo`, clicks “Teams”, opens the team
+            `frontend-team`,
+            and clicks “Members”. The visitor clicks “Add member”, enters `bob-reviewer` in
+            the visibly labeled “Username” textbox, and clicks the “Add member” button. The
+            visitor then clicks “Remove bob-reviewer”.'
+        - keyword: THEN
+          content: 'After adding, `bob-reviewer` is visible in the member list; after removal,
+            `bob-reviewer` is not visible.'
+        - keyword: THEN
+          content: 'After reloading the Members page, `bob-reviewer` remains absent.'
+      - name: 'REQ-2.2.2: Manage Organization Team Members and Hierarchy - Scenario
+          2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions `team-maintainer` with email
+            `team-maintainer@example.test` and password `Valid-password-123!`; this account
+            is an organization Owner authorized to manage `frontend-team` in `Acme Demo`.
+            `frontend-team` has saved parent value `platform-team`, and its descendant team
+            `frontend-child` is available as a selectable team option.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `team-maintainer`, opens “Account menu”, clicks
+            “Your organizations”, opens `Acme Demo`, clicks “Teams”, opens the team
+            `frontend-team`,
+            and clicks “Settings”. The visitor selects `frontend-child` in the combobox named
+            “Parent team” and clicks “Save”.'
+        - keyword: THEN
+          content: 'The page displays the exact message “Cyclic team hierarchy is not allowed”.'
+        - keyword: THEN
+          content: 'After reloading, the “Parent team” combobox still has value
+            `platform-team`.'
+    - id: REQ-2.2.3
+      name: Directly Add a User as an Organization Member
+      type: ATOMIC
+      dependencies:
+      - REQ-2.1.2
+      pages: []
+      description: An organization Owner can open the organization’s “People” page and
+        click “Add member”. The form displays a visibly labeled “Username or email” field,
+        a “Role” combobox with a “Member” option, and an “Add member” button. Adding a
+        registered non-member directly creates the organization membership with Member
+        role, displays the account in People without a pending-invitation state, and
+        persists after reload. After the member signs in, the organization appears in
+        “Your organizations”, but membership alone does not grant access to an otherwise
+        unauthorized private repository. Adding an existing member displays “Account is
+        already a member” without duplicating the relationship; an unknown username
+        displays “Account not found”.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-ORGANIZATIONS
+        - DATA-PERMISSIONS
+        - DATA-CREATED-ORGANIZATIONS
+        - DATA-SESSION
+        - DATA-COLLABORATION-STATE
+      scenarios:
+      - name: 'REQ-2.2.3: Directly Add a User as an Organization Member - Scenario
+          1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions the Owner account `org-owner` with
+            email `org-owner@example.test` and password `Valid-password-123!` for
+            organization `Acme Demo`. The registered account `new-member` with email
+            `new-member@example.test` is not currently an organization member. The
+            organization has an ungranted private repository `secret-research`.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `org-owner`, opens “Account menu”, clicks “Your
+            organizations”, opens `Acme Demo`, and clicks “People”. The visitor clicks “Add
+            member”, enters `new-member` in “Username or email”, selects “Member” in the
+            “Role” combobox, and clicks the “Add member” button.'
+        - keyword: THEN
+          content: 'The People page displays `new-member` with the “Member” role and no
+            “Pending invitation” text. After reloading, `new-member` remains visible.'
+        - keyword: THEN
+          content: 'In a separate browser session, `new-member` can sign in with email
+            `new-member@example.test` and password `Valid-password-123!`, sees `Acme Demo`
+            in “Your organizations”, and receives “Access denied” when opening the
+            organization’s ungranted private repository.'
+      - name: 'REQ-2.2.3: Directly Add a User as an Organization Member - Scenario
+          2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions the Owner account `org-owner` with
+            email `org-owner@example.test` and password `Valid-password-123!` for
+            organization `Acme Demo`. The account `existing-member` with email
+            `existing-member@example.test` is already a member, while the username
+            `unknown-reviewer` does not belong to any account.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `org-owner`, opens “Account menu”, clicks “Your
+            organizations”, opens `Acme Demo`, and clicks “People”. The visitor clicks “Add
+            member”, enters `existing-member`, and clicks the “Add member” button. The
+            visitor then enters `unknown-reviewer` in the same field and clicks “Add member”
+            again.'
+        - keyword: THEN
+          content: 'The first submission displays the exact message “Account is already a
+            member”, and the second submission displays “Account not found”.'
+        - keyword: THEN
+          content: 'The People page contains exactly one visible occurrence of
+            `existing-member`; neither rejected submission creates a duplicate membership.'
+    - id: REQ-2.2.4
+      name: Remove a Member from an Organization
+      type: ATOMIC
+      dependencies:
+      - REQ-2.1.2
+      pages: []
+      description: The organization overview exposes a “People” link listing member
+        usernames. For an Owner, a member row exposes a button named “Member menu
+        <username>”; the menu contains “Remove from organization”, followed by a
+        confirmation button named “Remove”. Confirmed removal removes the member from
+        People immediately and after reload. A non-Owner can view the member but has no
+        “Member menu <username>” button and no “Remove from organization” menu item.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-ORGANIZATIONS
+        - DATA-PERMISSIONS
+        - DATA-SESSION
+        - DATA-COLLABORATION-STATE
+      scenarios:
+      - name: 'REQ-2.2.4: Remove a Member from an Organization - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions the Owner account `org-owner` with
+            email `org-owner@example.test` and password `Valid-password-123!` for
+            organization `Acme Demo`. The member `existing-member` with email
+            `existing-member@example.test` is present in the organization People list.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `org-owner`, opens “Account menu”, clicks “Your
+            organizations”, opens `Acme Demo`, and clicks “People”. The visitor verifies
+            `existing-member` is visible, clicks “Member menu existing-member”, clicks
+            “Remove from organization”, and clicks “Remove” in the confirmation dialog.'
+        - keyword: THEN
+          content: 'The People page no longer displays `existing-member`.'
+        - keyword: THEN
+          content: 'After reloading the People page, `existing-member` remains absent.'
+      - name: 'REQ-2.2.4: Remove a Member from an Organization - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions `org-member` with email
+            `org-member@example.test` and password `Valid-password-123!` as an ordinary
+            non-Owner member of `Acme Demo`. The separate member `protected-member` with
+            email `protected-member@example.test` is present in the organization People
+            list for this scenario.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `org-member`, opens “Account menu”, clicks “Your
+            organizations”, opens `Acme Demo`, and clicks “People”. The visitor verifies
+            `protected-member` is visible and checks for the button “Member menu
+            protected-member” and the menu item “Remove from organization”.'
+        - keyword: THEN
+          content: 'The non-Owner page exposes neither the “Member menu protected-member”
+            button nor the “Remove from organization” menu item.'
+  - id: REQ-2.3
+    name: Grant Repository Access to People and Teams
+    type: ATOMIC
+    dependencies:
+    - REQ-2.1.2
+    - REQ-2.2.1
+    pages: []
+    description: A repository Admin can open “Settings” and “Manage access”. “Add people
+      or teams” opens a picker with a visibly labeled “Search” textbox, selectable team
+      options, a “Role” combobox, and an “Add” button. Adding a team with Write access
+      displays the exact team name and Write role, and the grant remains visible after
+      reload. An existing access row exposes a “Role” combobox and “Save” button; changing
+      its role from Write to Read updates the existing record rather than creating a
+      duplicate, and exactly one Read row remains after reload.
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-ORGANIZATIONS
+      - DATA-REPOSITORIES
+      - DATA-PERMISSIONS
+      - DATA-SESSION
+      - DATA-COLLABORATION-STATE
+    scenarios:
+    - name: 'REQ-2.3: Grant Repository Access to People and Teams - Scenario 1'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts at the application home page in a fresh unauthenticated
+          browser session. The system pre-provisions `repo-admin` with email
+          `repo-admin@example.test` and password `Valid-password-123!` and Admin permission
+          on repository `acme-docs`. Organization team `frontend-team` exists and initially
+          has no direct access grant on `acme-docs`.'
+      - keyword: WHEN
+        content: 'The visitor signs in as `repo-admin`, opens repository `acme-docs`, clicks
+          “Settings”, clicks “Manage access”, and clicks “Add people or teams”. The visitor
+          enters `frontend-team` in “Search”, selects the matching team option, selects
+          “Write” in the “Role” combobox, and clicks “Add”.'
+      - keyword: THEN
+        content: 'The access list visibly displays the exact team name `frontend-team` and
+          the exact role “Write”.'
+      - keyword: THEN
+        content: 'After reloading the Manage access page, `frontend-team` remains visible.'
+    - name: 'REQ-2.3: Grant Repository Access to People and Teams - Scenario 2'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts at the application home page in a fresh unauthenticated
+          browser session. The system pre-provisions `repo-admin` with email
+          `repo-admin@example.test` and password `Valid-password-123!` and Admin permission
+          on repository `acme-docs`. The separate organization team `access-role-team`
+          already has exactly one direct Write access grant on `acme-docs`.'
+      - keyword: WHEN
+        content: 'The visitor signs in as `repo-admin`, opens repository `acme-docs`, clicks
+          “Settings”, and clicks “Manage access”. In the row whose accessible name contains
+          `access-role-team`, the visitor verifies the current role is Write, selects “Read”
+          in the “Role” combobox, and clicks “Save”.'
+      - keyword: THEN
+        content: 'After reloading, exactly one row for `access-role-team` is present and that
+          row displays the role “Read”.'
+- id: REQ-3
+  name: Repository Asset Management
+  type: FOLDER
+  dependencies: []
+  description: A repository is a container for code, branches, commits, files, and
+    collaborative work items. The repository overview page is titled “owner/repository
+    name”, displays the owner, name, Public/Private marker, description, and default
+    branch, and provides Code, Issues, Pull requests, and Settings entries; the “owner”
+    is an individual account or organization, and a repository belonging to an organization
+    is an organization repository. Users open a repository overview from global search
+    results, a personal/organization Repositories list, or a direct link; signed-in
+    users with creation permission create a personal or organization repository from
+    “New repository”. Public repositories allow visitor Read access; private personal
+    repositories allow access only to their owner and explicitly authorized subjects;
+    private organization repositories allow access only to organization Owners, members
+    with direct repository roles, or direct members of teams with repository roles,
+    and ordinary organization Members do not automatically gain access merely through
+    membership. After visibility or access grants change, search, lists, direct links,
+    and repository pages must all use the same access rule.
+  children:
+  - id: REQ-3.1
+    name: Search for and Locate Repositories
+    type: ATOMIC
+    dependencies: []
+    pages:
+    - name: repository_search
+      reference: ./reference/github-repository-search-results.png
+    description: |-
+      The top global search control has searchbox role and accessible name “Search”; entering a repository name and pressing Enter displays repository results directly, without requiring an additional type-filter click. Each repository result has a link whose accessible name is exactly its repository name, while the result also displays its owner/name metadata. Clicking it opens a heading containing the repository name; reloading preserves that overview. A query with no matching repository displays “No results”, including when the visitor returns home and repeats the same query. Seed data provides a named public repository and a private repository inaccessible to visitors; searching the private name exposes no result link for it. Visitors or signed-in users can search repositories they are authorized to view. The system accepts a search query, applies repository-oriented filters or scope constraints, and displays matching repositories with sufficient metadata for the user to open the target repository.
+
+      Screenshot reference:
+      ![image](reference/github-repository-search-results.png)
+    data:
+      requires:
+      - DATA-REPOSITORIES
+      - DATA-VIEW-STATE
+    scenarios:
+    - name: 'REQ-3.1: Search for and Locate Repositories - Scenario 1'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts at the application home page in a fresh unauthenticated
+          browser session. The system pre-provisions public repository `acme-docs` in
+          organization `Acme Demo` and private repository `secret-research` in the same
+          organization. The visitor is not authenticated.'
+      - keyword: WHEN
+        content: 'The visitor fills the top searchbox named “Search” with
+          `acme-docs` and presses Enter, then clicks the exact result link named `acme-docs`.'
+      - keyword: THEN
+        content: 'The repository overview displays a visible heading containing
+          `acme-docs`.'
+    - name: 'REQ-3.1: Search for and Locate Repositories - Scenario 2'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts at the application home page in a fresh unauthenticated
+          browser session. The system pre-provisions public repository `acme-docs` in
+          organization `Acme Demo` and private repository `secret-research` in the same
+          organization. The visitor is not authenticated.'
+      - keyword: WHEN
+        content: 'The visitor fills the top searchbox named “Search” with
+          `secret-research` and presses Enter.'
+      - keyword: THEN
+        content: 'The search results contain no exact link named `secret-research`.'
+    - name: 'REQ-3.1: Search for and Locate Repositories - Scenario 3'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts at the application home page in a fresh unauthenticated
+          browser session. The system pre-provisions public repository `acme-docs` in
+          organization `Acme Demo` and private repository `secret-research` in the same
+          organization. The visitor is not authenticated.'
+      - keyword: WHEN
+        content: 'The visitor fills the top searchbox named “Search” with
+          `no-such-repository` and presses Enter.'
+      - keyword: THEN
+        content: 'The page displays a no-results message such as “No results” or
+          “No repositories”.'
+    - name: 'REQ-3.1: Search for and Locate Repositories - Scenario 4'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts at the application home page in a fresh unauthenticated
+          browser session. The system pre-provisions public repository `acme-docs` in
+          organization `Acme Demo` and private repository `secret-research` in the same
+          organization. The visitor is not authenticated.'
+      - keyword: WHEN
+        content: 'The visitor fills the top searchbox named “Search” with
+          `acme-docs` and presses Enter, then opens the exact `acme-docs` result.'
+      - keyword: THEN
+        content: 'The repository overview displays a visible heading containing
+          `acme-docs`.'
+      - keyword: THEN
+        content: 'After reloading the repository overview, the heading containing
+          `acme-docs` remains visible.'
+  - id: REQ-3.2
+    name: Repository Creation and Distribution
+    type: FOLDER
+    dependencies:
+    - REQ-1.1.2
+    description: The repository-creation page is the form opened by “New repository”,
+      where the user selects an owner, name, visibility, and initialization options.
+      A “fork” is an independent repository copied from a readable source repository
+      — the frontend displays the source link on the fork overview page, and the system
+      stores the source-repository identifier; branches and commits in the fork may
+      evolve independently and never write back to the source repository. A “clone
+      page entry” is a read-only address displayed in the repository Code popover and can
+      be copied to the clipboard; it does not mean this product implements an external
+      Git protocol. Both new repositories and forks must enter a browsable repository
+      overview page. This feature builds on the persisted objects, opened pages, or
+      authenticated-session context provided by REQ-1.1.2 (Sign In with an Existing
+      Account); it must reuse that context and keep pages and data consistent after
+      the context changes.
+    children:
+    - id: REQ-3.2.1
+      name: Create a Repository with Owner, Visibility, and Initialization Options
+      type: ATOMIC
+      dependencies:
+      - REQ-1.1.2
+      pages:
+      - name: repository_creation
+        reference: ./reference/github-create-repository.png
+      description: |-
+        This feature builds on the persisted objects, opened pages, or authenticated-session context provided by REQ-1.1.2 (Sign In with an Existing Account); it must reuse that context and keep pages and data consistent after the context changes. The signed-in workspace provides a “New repository” link. The form labels are “Owner”, “Repository name”, and “Description”; the signed-in user's personal namespace is selected by default, so it is possible to submit without changing the owner. Visibility choices are radio controls “Public” and “Private”; initialization is a checkbox “Add a README file”; submission uses the button “Create repository”. Other defaults must allow duplicate-name and empty-name validation without further input. A successful initialized private repository shows a heading containing the new name, a visible Private marker, and a README file link; the overview persists after reload. The optional description “Repository created by Playwright” is saved when entered. An existing repository in this same default personal namespace is supplied for duplicate validation, which stays on the form and does not open the existing repository heading. On the repository-creation page, a signed-in user selects a personal or organization owner, enters a repository name and description, selects public or private visibility, and chooses whether to create an initial commit with a README. The system verifies that the user may create a repository in that owner's namespace, that the name is unique, and that the options are valid; on success, it stores the repository identifier, owner, visibility, default branch, and creator. If initialization is selected, it must also atomically create the initial branch, README file, and initial commit; failure at any step must leave no partially created repository. On success, the new repository overview page is opened.
+
+        Screenshot reference:
+        ![image](reference/github-create-repository.png)
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-REPOSITORIES
+        - DATA-CREATED-REPOSITORIES
+        - DATA-SESSION
+      scenarios:
+      - name: 'REQ-3.2.1: Create a Repository with Owner, Visibility, and Initialization
+          Options - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The pre-provisioned `repo-owner` (`repo-owner@example.test`,
+            password `Valid-password-123!`) owns the personal namespace and may create
+            repositories there. The existing repository `acme-docs` is available for
+            duplicate-name validation, while the candidate repository name is unused.
+            the creation page from “New repository”; the personal namespace is selectable.
+            If an organization namespace is selected, the user has permission to create
+            repositories for that organization, and the candidate repository name
+            is unused in the target namespace.'
+        - keyword: WHEN
+          content: 'The user selects the target owner, enters a valid and unique repository
+            name and optional description, selects “Private”, checks “Add a README
+            file”, and clicks “Create repository”. Seed values: public repository
+            `acme-docs`, private repository `secret-research`.'
+        - keyword: THEN
+          content: 'The system enters the “owner/repository name” overview page, marked
+            Private; the default branch contains a README file, and the commit history
+            contains one initialization commit; the repository also appears in the
+            target owner''s repository list. Seed values: public repository `acme-docs`,
+            private repository `secret-research`.'
+        - keyword: THEN
+          content: 'After refreshing the overview page, the owner, visibility, README,
+            and initialization commit remain; if the name is empty or duplicated,
+            the user lacks organization-creation permission, or any step fails during
+            creation, the system displays the reason and leaves no partially created
+            repository. Seed values: public repository `acme-docs`, private repository
+            `secret-research`.'
+      - name: 'REQ-3.2.1: Create a Repository with Owner, Visibility, and Initialization
+          Options - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The pre-provisioned `repo-owner` (`repo-owner@example.test`,
+            password `Valid-password-123!`) owns the personal namespace. The repository
+            `acme-docs` already exists in that namespace.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `repo-owner`, opens “New repository”, enters
+            the existing repository name `acme-docs`, and clicks “Create repository”.'
+        - keyword: THEN
+          content: 'The page displays the repository-name conflict message and does not
+            display the existing repository overview heading.'
+      - name: 'REQ-3.2.1: Create a Repository with Owner, Visibility, and Initialization
+          Options - Scenario 3'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The pre-provisioned `repo-owner` (`repo-owner@example.test`,
+            password `Valid-password-123!`) owns the personal namespace.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `repo-owner`, opens “New repository”, leaves
+            “Repository name” empty, and clicks “Create repository”.'
+        - keyword: THEN
+          content: 'The page displays a repository-name-required validation message.'
+    - id: REQ-3.2.2
+      name: Fork a Repository into Another Namespace
+      type: ATOMIC
+      dependencies:
+      - REQ-3.3
+      - REQ-1.1.2
+      pages:
+      - name: repository_fork
+        reference: ./reference/github-fork-repository.png
+      description: |-
+        The source overview has a button “Fork”. The fork form contains a field labeled “Repository name” and button “Create fork”; it defaults to the signed-in user's personal namespace and an allowed visibility, permitting submission after editing only the name. Seed data supplies a readable source, a user allowed to create personal repositories, and an existing fork name in that namespace for the conflict case. Success opens a heading containing the new fork name and visible text “Forked from <source repository name>” with a source link; the heading and source relationship survive reload. On the source repository page, the user clicks “Fork”, selects a target personal or organization namespace, enters an optional new name and visibility, and clicks “Create fork”. The system creates an independent fork, copies the accessible default-branch history, records the source-repository link, and then opens the new fork overview page. This feature builds on the persisted objects, opened pages, or authenticated-session context provided by REQ-3.3 (View a Public Repository Overview) and REQ-1.1.2 (Sign In with an Existing Account); it must reuse that context and keep pages and data consistent after the context changes. A signed-in user can fork only when they have Read or higher permission on the source repository and permission to create repositories in the target personal or organization namespace; when the source repository is private, the fork must remain Private, while a public source repository may be forked as Public or Private. The system validates permissions on both ends and stores the new fork's owner, visibility, source-repository identifier, default branch, and copied accessible history; if any check fails, no fork is created.
+
+        The fork conflict seed uses the existing name `acme-docs-fork` in the target
+        personal namespace.
+
+        Screenshot reference:
+        ![image](reference/github-fork-repository.png)
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-REPOSITORIES
+        - DATA-CREATED-REPOSITORIES
+        - DATA-SESSION
+      scenarios:
+      - name: 'REQ-3.2.2: Fork a Repository into Another Namespace - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions the verified account `fork-user`
+            (`fork-user@example.test`, password `Valid-password-123!`) with permission to
+            read public repository `acme-docs` and create repositories in its personal
+            namespace. No fork with the generated test name exists in that namespace.'
+        - keyword: WHEN
+          content: 'The user clicks “Fork”, selects the target namespace, keeps or
+            enters a valid new repository name and optional visibility, then clicks
+            “Create fork”. Seed values: public repository `acme-docs`, private repository
+            `secret-research`.'
+        - keyword: THEN
+          content: 'The system opens the target “owner/fork name” overview page, which
+            displays the source repository of the fork; the default branch contains
+            the accessible history and files from the source repository, and subsequent
+            commits to the fork do not modify the source repository. Seed values:
+            public repository `acme-docs`, private repository `secret-research`.'
+        - keyword: THEN
+          content: 'After refreshing the fork page and target owner''s repository
+            list, the fork and source link still exist; if the target name conflicts,
+            the user lacks permission in the target namespace, or the source repository
+            is inaccessible, no fork is created.'
+      - name: 'REQ-3.2.2: Fork a Repository into Another Namespace - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions the verified account `fork-user`
+            (`fork-user@example.test`, password `Valid-password-123!`) with permission to
+            read public repository `acme-docs` and create repositories in its personal
+            namespace. The personal namespace already contains fork `acme-docs-fork`.'
+        - keyword: WHEN
+          content: 'The visitor signs in as `fork-user`, opens public repository
+            `acme-docs`, clicks “Fork”, enters the existing fork name `acme-docs-fork`,
+            and clicks “Create fork”.'
+        - keyword: THEN
+          content: 'The page displays a repository-name conflict message.'
+    - id: REQ-3.2.3
+      name: Copy a Repository Clone Value
+      type: ATOMIC
+      dependencies:
+      - REQ-3.3
+      pages:
+      - name: repository_code
+        reference: ./reference/github-code-clone-menu.png
+      description: |-
+        On a public repository overview, the “Code” button opens a clone popover with “HTTPS” and “SSH” tabs. Each tab provides a button for copying the selected clone value. With browser clipboard permission, the visitor can copy the selected value, receives brief “Copied” feedback, and continues to see the repository heading. This read-only operation does not modify the repository. The capability builds on the public repository overview provided by REQ-3.3 (View a Public Repository Overview) and is available to a visitor who can view that repository.
+
+        Screenshot reference:
+        ![image](reference/github-code-clone-menu.png)
+      data:
+        requires:
+        - DATA-REPOSITORIES
+        - DATA-VIEW-STATE
+      scenarios:
+      - name: 'REQ-3.2.3: Copy a Repository Clone Value - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions public repository `acme-docs`
+            in organization `Acme Demo`; the visitor can open its overview without
+            signing in. The browser grants clipboard read and write permission.'
+        - keyword: WHEN
+          content: 'The visitor clicks “Code”, selects the “HTTPS” tab, and clicks the
+            button for copying the selected clone value.'
+        - keyword: THEN
+          content: 'The page displays brief “Copied” feedback for the selected protocol
+            and keeps the `acme-docs` repository heading visible.'
+      - name: 'REQ-3.2.3: Copy a Repository Clone Value - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions public repository `acme-docs`
+            in organization `Acme Demo`; the visitor can open its overview without
+            signing in. The browser grants clipboard read and write permission.'
+        - keyword: WHEN
+          content: 'The visitor clicks “Code”, selects the “SSH” tab, and clicks the
+            button for copying the selected clone value.'
+        - keyword: THEN
+          content: 'The page displays brief “Copied” feedback for the selected protocol
+            and keeps the `acme-docs` repository heading visible.'
+  - id: REQ-3.3
+    name: View a Public Repository Overview
+    type: ATOMIC
+    dependencies: []
+    pages:
+    - name: repository_overview
+      reference: ./reference/github-repository-overview.png
+    description: |-
+      The repository overview identifies a seeded public repository in a visible heading, displays a “Public” marker, and provides a navigation link “Code” distinct from the clone-menu Code button. The public repository is readable without sign-in and retains its heading after reload.
+
+      Screenshot reference:
+      ![image](reference/github-repository-overview.png)
+    data:
+      requires:
+      - DATA-REPOSITORIES
+    scenarios:
+    - name: 'REQ-3.3: View a Public Repository Overview - Scenario 1'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts at the application home page in a fresh unauthenticated
+          browser session. The system pre-provisions public repository `acme-docs` in
+          organization `Acme Demo`; the visitor can open its overview without signing in.'
+      - keyword: WHEN
+        content: 'The visitor opens the visible `acme-docs` repository entry.'
+      - keyword: THEN
+        content: 'The overview displays a heading containing `acme-docs`, a visible
+          “Public” marker, and a “Code” navigation link.'
+      - keyword: THEN
+        content: 'After the visitor reloads the page, the `acme-docs` repository heading
+          remains visible.'
+  - id: REQ-3.4
+    name: Change Repository Visibility with Permission Checks
+    type: ATOMIC
+    dependencies:
+    - REQ-3.3
+    - REQ-1.1.2
+    pages:
+    - name: repository_general_settings
+      reference: ./reference/github-repository-visibility-settings.png
+    description: |-
+      A repository administrator can open Settings and General, choose Public in the visibility confirmation flow, and activate the confirmation button. The repository then displays a Public marker and remains readable to an unauthenticated visitor. A distinct non-admin collaborator can open the same repository, but must not see an actionable Change visibility button. The visibility change is persisted for the later collaborator check.
+
+      Screenshot reference:
+      ![image](reference/github-repository-visibility-settings.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-REPOSITORIES
+      - DATA-PERMISSIONS
+      - DATA-SESSION
+    scenarios:
+    - name: 'REQ-3.4: Change Repository Visibility with Permission Checks - Scenario 1'
+      steps:
+      - keyword: GIVEN
+        content: 'The system pre-provisions private repository `visibility-demo` and
+          account `visibility-admin` with email `visibility-admin@example.test`, password
+          `Valid-password-123!`, and administrator permission on that repository. The
+          administrator starts from the application home page.'
+      - keyword: WHEN
+        content: 'The administrator signs in, opens `visibility-demo`, clicks “Settings”
+          and “General”, clicks “Change visibility”, selects the “Public” radio, and
+          clicks “Confirm visibility”.'
+      - keyword: THEN
+        content: 'The repository overview displays a visible “Public” marker. After
+          the session cookies are cleared, a visitor can reopen `visibility-demo` and
+          see its repository heading.'
+    - name: 'REQ-3.4: Change Repository Visibility with Permission Checks - Scenario 2'
+      steps:
+      - keyword: GIVEN
+        content: 'The system pre-provisions repository `visibility-demo` and non-admin
+          collaborator account `collaborator` with email `collaborator@example.test`,
+          password `Valid-password-123!`, and no repository-administrator permission on
+          that repository. The collaborator starts from the application home page.'
+      - keyword: WHEN
+        content: 'The collaborator signs in, opens `visibility-demo`, and, if a “Settings”
+          link is visible, opens it.'
+      - keyword: THEN
+        content: 'The collaborator does not see an actionable “Change visibility” button.'
+- id: REQ-4
+  name: Code and Version Control
+  type: FOLDER
+  dependencies:
+  - REQ-3.3
+  description: The Code page is the main page for browsing code in a repository —
+    the top of the page displays the current branch selector, the main area displays
+    files and directories at the current path on the current branch, clicking a file
+    opens a read-only file page, and clicking Commits opens commit history. A file
+    is content at a path on a branch; a directory is only a path hierarchy used for
+    organization and is not an independent collaboration object. A branch is a named
+    reference pointing to a commit, and switching branches only changes the file snapshot
+    read by the current page. A commit is an immutable change record that stores the
+    parent commit, author, message, time, and changed files; users with Write, Maintain,
+    Admin, or organization Owner permission can create new commits from a file page
+    through Edit or Add file. Every file, commit, comparison, and branch page displays
+    the repository and current branch or revision. Editing a file must create a new
+    commit and must not rewrite historical content. Seed data for read-only scenarios
+    consists of public repositories and directly openable repository, file, and commit
+    pages; visitors need not sign in to browse files, history, diffs, code search,
+    or existing branches. Write scenarios provide separate existing contributor accounts
+    with Write or higher permission on their target repositories and an unprotected
+    writable branch; default-branch scenarios provide an Admin and a separate readable
+    non-Admin account. These accounts sign in through the home-page “Sign in” link,
+    the “Username or email” and “Password” fields, and the “Sign in” button; the signed-in
+    username is visible before opening the target repository entry. Unless a narrower scope is
+    explicitly given below, each named control is unique on the active page, and field
+    and option names refer to accessible names.
+  children:
+  - id: REQ-4.1
+    name: Browse Repository Files and Directories
+    type: ATOMIC
+    dependencies:
+    - REQ-3.3
+    pages:
+    - name: repository_code
+      reference: ./reference/github-code-file-browser.png
+    description: |-
+      This feature builds on the public repository overview provided by REQ-3.3 (View a Public Repository Overview). A visitor with repository-view permission can use the Code page to browse the selected branch's directory hierarchy and open files without changing repository data. Directory and file entries are links with their exact accessible names; a directory identifies the current path and a file page displays the stored file name, path, branch context, and readable content. Seed data provides public repository `acme-docs`, directory `src`, text file `README.md`, and expected content `Document search flow`. Opening the directory and then the file displays that content, and reloading the file page preserves the same read-only content.
+
+      Screenshot reference:
+      ![image](reference/github-code-file-browser.png)
+    data:
+      requires:
+      - DATA-REPOSITORIES
+      - DATA-CODE
+    scenarios:
+    - name: 'REQ-4.1: Browse Repository Files and Directories - Scenario 1'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts at the application home page in a fresh unauthenticated
+          browser session. The system pre-provisions public repository `acme-docs` with
+          directory `src` containing text file `README.md`; the visitor can open its Code
+          page without signing in.'
+      - keyword: WHEN
+        content: 'The visitor clicks the `src` directory link and then clicks the
+          `README.md` file link.'
+      - keyword: THEN
+        content: 'The file page displays the seeded `README.md` content `Document search flow`.'
+      - keyword: THEN
+        content: 'After the visitor reloads the file page, the content `Document search flow`
+          remains visible.'
+  - id: REQ-4.2
+    name: Commit History and Code Search
+    type: FOLDER
+    dependencies:
+    - REQ-4.1
+    description: The “commit history” page displays commit records for a branch or
+      file path in reverse chronological order; the “diff” page compares the file
+      contents of two commits or revisions line by line, where base is the earlier
+      or target revision and compare is the newer or to-be-compared revision; the
+      “code search” page searches for keywords only within readable file content in
+      the current repository. All three are read-only views that do not create commits
+      or modify files or branches and follow repository visibility and access permissions.
+      This feature builds on the persisted objects, opened pages, or authenticated-session
+      context provided by REQ-4.1 (Browse Repository Files and Directories); it must
+      reuse that context and keep pages and data consistent after the context changes.
+    children:
+    - id: REQ-4.2.1
+      name: View Repository Commit History
+      type: ATOMIC
+      dependencies:
+      - REQ-4.1
+      pages:
+      - name: commit_history
+        reference: ./reference/github-commit-history.png
+      description: |-
+          This feature builds on the repository and file browsing context provided by REQ-4.1 (Browse Repository Files and Directories). A user with repository-view permission can open the repository's commit history from its repository page and inspect the records for the readable branch. Each record represents an immutable change and may expose its commit identifier, author, time, parent, and changed files. The repository page exposes a history link named “Commits”; a commit count may accompany the label without creating another matching link. Seed history includes the message `Document search flow`, author `alice-dev`, and a relative timestamp containing “ago”. Opening branch history directly displays these values without requiring file editing or other write actions.
+
+          Screenshot reference:
+          ![image](reference/github-commit-history.png)
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-REPOSITORIES
+        - DATA-CODE
+      scenarios:
+      - name: 'REQ-4.2.1: View Repository Commit History - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions public repository `acme-docs` with
+            commit message `Document search flow` authored by `alice-dev`; the visitor can
+            open the repository without signing in.'
+        - keyword: WHEN
+          content: 'The visitor opens `acme-docs` and clicks the “Commits” link.'
+        - keyword: THEN
+          content: 'The commit history displays `Document search flow`, `alice-dev`, and
+            a relative timestamp containing “ago”.'
+    - id: REQ-4.2.2
+      name: Inspect Commit and Revision Differences
+      type: ATOMIC
+      dependencies:
+      - REQ-4.2.1
+      pages:
+      - name: commit_diff
+        reference: ./reference/github-commit-diff.png
+      description: |-
+          This feature builds on the read-only history context provided by REQ-4.2.1 (View Repository Commit History). A user with repository-view permission can inspect the difference represented by a readable commit and its parent revision. The comparison is read-only: it displays changed files and numeric additions and deletions without creating a review, comment, commit, or branch change. Seed data provides an accessible commit entry in public repository `acme-docs` and changed file `src/search.ts`; opening that entry displays the changed-file path, a “Changed files” summary, and numeric additions and deletions.
+
+          Screenshot reference:
+          ![image](reference/github-commit-diff.png)
+      data:
+        requires:
+        - DATA-CODE
+      scenarios:
+      - name: 'REQ-4.2.2: Inspect Commit and Revision Differences - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions public repository `acme-docs` with an
+            accessible commit entry and changed file `src/search.ts`; the visitor can open
+            the commit entry without signing in.'
+        - keyword: WHEN
+          content: 'The visitor opens the seeded commit entry.'
+        - keyword: THEN
+          content: 'The commit detail displays `src/search.ts`, a “Changed files” summary,
+            and numeric additions and deletions.'
+    - id: REQ-4.2.3
+      name: Search Code Within a Repository
+      type: ATOMIC
+      dependencies:
+      - REQ-4.1
+      pages:
+      - name: repository_code_search
+        reference: ./reference/github-repository-code-search.png
+      description: |-
+          This feature builds on the repository browsing context provided by REQ-4.1 (Browse Repository Files and Directories). A visitor can search readable file content within public repository `acme-docs` using the repository Search box, press Enter, and select the “Code” results view. Search is read-only and remains scoped to the current repository; it does not create commits or modify files. The results view provides matching file entries and opens a selected file in its repository context. Seed data provides query `search flow`, matching file `README.md` with that text visible, and absent query `no-such-token`. A matching file displays the query text and retains its file link after reload. An absent query displays a no-code-results state and retains the exact query in Search; repeating that search from the repository produces the same empty state.
+
+          Screenshot reference:
+          ![image](reference/github-repository-code-search.png)
+      data:
+        requires:
+        - DATA-REPOSITORIES
+        - DATA-CODE
+        - DATA-VIEW-STATE
+      scenarios:
+      - name: 'REQ-4.2.3: Search Code Within a Repository - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions public repository `acme-docs` with
+            file `README.md` containing the text `search flow`; the visitor can open it
+            without signing in.'
+        - keyword: WHEN
+          content: 'The visitor enters `search flow` in the repository Search box, presses
+            Enter, opens the “Code” results, and opens the `README.md` result.'
+        - keyword: THEN
+          content: 'The opened file displays the exact text `search flow`.'
+      - name: 'REQ-4.2.3: Search Code Within a Repository - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions public repository `acme-docs`, and
+            the query `no-such-token` does not occur in its searchable code.'
+        - keyword: WHEN
+          content: 'The visitor enters `no-such-token` in the repository Search box, presses
+            Enter, and opens the “Code” results.'
+        - keyword: THEN
+          content: 'The page displays a no-code-results message and the Search box retains
+            the value `no-such-token`.'
+      - name: 'REQ-4.2.3: Search Code Within a Repository - Scenario 3'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions public repository `acme-docs` with
+            file `README.md` containing the text `search flow`.'
+        - keyword: WHEN
+          content: 'The visitor searches for `search flow`, opens the “Code” results, and
+            opens the `README.md` result.'
+        - keyword: THEN
+          content: 'The file displays `search flow`; after reload, the same text and an exact
+            `README.md` link remain visible.'
+      - name: 'REQ-4.2.3: Search Code Within a Repository - Scenario 4'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions public repository `acme-docs`, and
+            the query `no-such-token` does not occur in its searchable code.'
+        - keyword: WHEN
+          content: 'The visitor searches for `no-such-token` from `acme-docs`, opens the
+            “Code” results, returns to the repository, and repeats the same search.'
+        - keyword: THEN
+          content: 'Both searches display a no-code-results message.'
+  - id: REQ-4.3
+    name: Branch Management
+    type: FOLDER
+    dependencies:
+    - REQ-4.1
+    description: The branch selector is the control at the top of the Code page that
+      lists and switches branches; the system stores a unique name and current pointed-to
+      commit for each branch. Creating a branch creates a new named reference at a
+      specified base commit; it does not copy files or rewrite base history. The default
+      branch is the branch read by default when opening the repository overview or
+      a repository entry without a specified branch; it is not the only existing or writable branch.
+      A branch name is 1 to 255 characters and may contain only ASCII letters, digits,
+      `-`, `_`, `.`, and `/`; it must not end with `/` or `.`, and must not contain
+      consecutive `..` or `//`; duplicate names, invalid names, or lack of permission
+      must prevent branch creation. Changing the default branch must not alter existing
+      branches, commits, or source/target references of already-open PRs. This feature
+      builds on the persisted objects, opened pages, or authenticated-session context
+      provided by REQ-4.1 (Browse Repository Files and Directories); it must reuse
+      that context and keep pages and data consistent after the context changes.
+    children:
+    - id: REQ-4.3.1
+      name: List and Switch Repository Branches
+      type: ATOMIC
+      dependencies:
+      - REQ-4.1
+      pages:
+      - name: repository_code
+        reference: ./reference/github-branch-selector.png
+      description: |-
+        This feature builds on the repository Code page provided by REQ-4.1 (Browse Repository Files and Directories). Any user with repository-view permission can use the branch selector to list and switch the branches available to the current repository. The current branch is reflected consistently by the selector, page entry, and file list; selecting a branch changes the browsing snapshot without creating a commit or rewriting branch history. The selector is a unique button named “Branch <current branch name>”; it opens a textbox named “Find branch” and selectable options whose exact accessible names are branch names. As the user types, matching options or a “No matching branch” state update without requiring Enter or a separate search action. Seed data provides public repository `branch-switch-demo`, active branch `main`, target branch `feature-search`, target-only file `main-only.md`, and unknown query `missing-branch`. Selecting `feature-search` immediately updates the selector and exposes the target-only file. Escape closes the selector; an unmatched query leaves the active branch unchanged, including after reload.
+
+        Screenshot reference:
+        ![image](reference/github-branch-selector.png)
+      data:
+        requires:
+        - DATA-REPOSITORIES
+        - DATA-CODE
+        - DATA-VIEW-STATE
+      scenarios:
+      - name: 'REQ-4.3.1: List and Switch Repository Branches - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions public repository `branch-switch-demo` with
+            active branch `main`, target branch `feature-search`, and file `main-only.md`
+            available only on the target branch; the visitor can open the repository
+            without signing in.'
+        - keyword: WHEN
+          content: 'The visitor opens the branch selector, enters `feature-search` in the
+            `Find branch` textbox, and clicks the exact `feature-search` option.'
+        - keyword: THEN
+          content: 'The branch selector displays `feature-search` and the page exposes the
+            exact `main-only.md` file link.'
+      - name: 'REQ-4.3.1: List and Switch Repository Branches - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The system pre-provisions public repository `branch-switch-demo` with active
+            branch `main` and an available `feature-search` branch. The visitor starts at
+            the application home page in a fresh unauthenticated browser session and can
+            open the repository without signing in.'
+        - keyword: WHEN
+          content: 'The visitor opens the branch selector, enters `missing-branch` in the
+            `Find branch` textbox, observes the no-matching-branch state, and presses Escape.'
+        - keyword: THEN
+          content: 'The selector remains on `main`; after reload, the active branch button
+            still displays `main`.'
+    - id: REQ-4.3.2
+      name: Create a Branch from an Existing Revision
+      type: ATOMIC
+      dependencies:
+      - REQ-4.3.1
+      - REQ-1.1.2
+      pages:
+      - name: repository_code
+        reference: ./reference/github-create-branch.png
+      description: |-
+        A signed-in user with Write, Maintain, Admin, or organization Owner permission can create a named branch from the current branch head through the branch selector. As the user types, a valid unused name exposes an option named “Create branch: <name>”; selecting it creates the reference and switches the browsing context to the new branch without a second mandatory confirmation. The new branch points to the selected base commit and does not copy files or rewrite the base branch history. Read and Triage users may browse but cannot create branches. Branch names are 1–255 characters and may contain ASCII letters, digits, `-`, `_`, `.`, and `/`; names ending in `/` or `.`, containing `..` or `//`, duplicating an existing name, or submitted by an unauthorized user must be rejected. The selector and `Find branch` textbox use the controls defined by REQ-4.3.1. Reloading a successfully created branch preserves it as the selected branch.
+
+        Screenshot reference:
+        ![image](reference/github-create-branch.png)
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-REPOSITORIES
+        - DATA-PERMISSIONS
+        - DATA-CREATED-CODE
+        - DATA-SESSION
+      scenarios:
+      - name: 'REQ-4.3.2: Create a Branch from an Existing Revision - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The system pre-provisions public repository `branch-switch-demo` with branch
+            `main` and account `branch-contributor` with email
+            `branch-contributor@example.test`, password `Valid-password-123!`, and Write
+            permission. The generated branch name `pw-branch-<unique suffix>` is unused.'
+        - keyword: WHEN
+          content: 'The contributor signs in, opens `branch-switch-demo`, opens the branch selector,
+            enters the generated `pw-branch-<unique suffix>` name, and selects the matching
+            “Create branch: <name>” option.'
+        - keyword: THEN
+          content: 'The selector switches to the generated branch name; after reload, the
+            same branch remains selected.'
+      - name: 'REQ-4.3.2: Create a Branch from an Existing Revision - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The system pre-provisions public repository `branch-switch-demo` with branch
+            `main` and account `branch-contributor` with email
+            `branch-contributor@example.test`, password `Valid-password-123!`, and Write
+            permission. The invalid name `invalid..branch` does not identify an existing
+            branch.'
+        - keyword: WHEN
+          content: 'The contributor signs in, opens `branch-switch-demo`, opens the branch selector,
+            and enters `invalid..branch` in the `Find branch` textbox.'
+        - keyword: THEN
+          content: 'The selector displays an “Invalid branch” validation message.'
+    - id: REQ-4.3.3
+      name: Change the Repository Default Branch
+      type: ATOMIC
+      dependencies:
+      - REQ-4.3.1
+      - REQ-1.1.2
+      pages:
+      - name: repository_branch_settings
+        reference: ./reference/github-default-branch-settings.png
+      description: |-
+        A repository Admin or organization Owner can change the default branch from Settings → Branches. The “Default branch” native select exposes existing branch names as options; selecting a different branch and activating “Update” opens a confirmation flow, and “Confirm” saves the choice. The default branch is the branch shown when the repository is opened without an explicit branch; changing it does not delete or rewrite the previous branch, its commits, or its files. Read, Triage, and other non-administrator users may view repository content but must not receive an actionable default-branch combobox or update button. The saved setting is associated with the repository and remains effective after reopening.
+
+        Screenshot reference:
+        ![image](reference/github-default-branch-settings.png)
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-REPOSITORIES
+        - DATA-PERMISSIONS
+        - DATA-CODE
+        - DATA-SESSION
+        - DATA-COLLABORATION-STATE
+      scenarios:
+      - name: 'REQ-4.3.3: Change the Repository Default Branch - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The system pre-provisions public repository `default-branch-demo` with branches
+            `main` and `release`, current default branch `main`, and account
+            `default-branch-admin` with email `default-branch-admin@example.test`, password
+            `Valid-password-123!`, and repository-administrator permission.'
+        - keyword: WHEN
+          content: 'The administrator signs in, opens `default-branch-demo`, opens “Settings” and
+            “Branches”, selects `release` in the “Default branch” combobox, clicks “Update”,
+            and clicks “Confirm”.'
+        - keyword: THEN
+          content: 'After reopening `default-branch-demo`, the branch button displays `release`, and
+            the branch selector still offers the existing `main` option.'
+      - name: 'REQ-4.3.3: Change the Repository Default Branch - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The system pre-provisions public repository `default-branch-demo` with branches
+            `main` and `release`, and account `default-branch-viewer` with email
+            `default-branch-viewer@example.test`, password `Valid-password-123!`, and no
+            repository-administration permission. The viewer starts from the application
+            home page.'
+        - keyword: WHEN
+          content: 'The viewer signs in, opens `default-branch-demo`, and, when available, opens
+            “Settings” and “Branches”.'
+        - keyword: THEN
+          content: 'The page has no “Default branch” combobox and no actionable “Update
+            default branch” button.'
+  - id: REQ-4.4
+    name: Manage Repository Files Through the Web Interface
+    type: ATOMIC
+    dependencies:
+    - REQ-4.1
+    - REQ-1.1.2
+    pages:
+    - name: repository_file_editor
+      reference: ./reference/github-web-file-editor.png
+    description: |-
+      This feature builds on repository browsing and sign-in provided by REQ-4.1 (Browse Repository Files and Directories) and REQ-1.1.2 (Sign In with an Existing Account). From a writable Code page, a contributor can use “Add file” → “Create new file” to add a file on the current branch. Only Write, Maintain, Admin, or organization Owner may submit file changes; Read and Triage may browse but may not write. A successful submission creates one commit containing the path, content, commit message, author, parent commit, and target branch, then advances that branch head. The editor exposes a “File name” field, a “File contents” textbox, a “Commit message” field, and a “Commit changes” button. New file paths cannot be empty, start with `/`, contain a `..` path segment, or conflict with an existing file or directory. Commit messages must contain 1–72 non-empty characters after trimming whitespace. Invalid submissions must leave file data, branch head, and commit history unchanged; an invalid path is reported as “Invalid file path”, while a missing message is reported as “Commit message is required”. Seed data provides public repository `file-management-demo` and Write contributor `file-contributor`. A valid unique file such as `pw-file-<unique suffix>.md`, nonempty content, and message `Add <file name>` produce a file view containing the saved content; the file's “Commits” link exposes the submitted message.
+
+      Screenshot reference:
+      ![image](reference/github-web-file-editor.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-REPOSITORIES
+      - DATA-PERMISSIONS
+      - DATA-SESSION
+      - DATA-VIEW-STATE
+    scenarios:
+    - name: 'REQ-4.4: Manage Repository Files Through the Web Interface - Scenario 1'
+      steps:
+      - keyword: GIVEN
+        content: 'The system pre-provisions public repository `file-management-demo` and account
+          `file-contributor` with email `file-contributor@example.test`, password
+          `Valid-password-123!`, and Write permission on that repository. The contributor
+          starts from the application home page; the generated `pw-file-<unique suffix>.md`
+          path is unused.'
+      - keyword: WHEN
+        content: 'The contributor signs in, opens `file-management-demo`, clicks “Add file” and
+          “Create new file”, enters the generated filename, nonempty content, and commit
+          message `Add <file name>`, then clicks “Commit changes”.'
+      - keyword: THEN
+        content: 'The created file view displays the exact submitted content. Its “Commits”
+          link opens history containing the exact commit message `Add <file name>`.'
+    - name: 'REQ-4.4: Manage Repository Files Through the Web Interface - Scenario 2'
+      steps:
+      - keyword: GIVEN
+        content: 'The system pre-provisions public repository `file-management-demo` and account
+          `file-contributor` with email `file-contributor@example.test`, password
+          `Valid-password-123!`, and Write permission on that repository. The contributor
+          starts from the application home page.'
+      - keyword: WHEN
+        content: 'The contributor signs in, opens `file-management-demo`, clicks “Add file” and
+          “Create new file”, enters path `../invalid.md`, enters content `must not be saved`,
+          leaves the commit message empty, and clicks “Commit changes”.'
+      - keyword: THEN
+        content: 'The page displays an invalid-path message or a required-commit-message
+          message; the invalid submission is not accepted.'
+- id: REQ-5
+  name: Work Planning and Issue Management
+  type: FOLDER
+  dependencies:
+  - REQ-3.3
+  description: An issue is a persistent work item within a repository used to record
+    pending work, a defect, or a discussion topic; it is not a code file or PR. The
+    Issues page is the list page in repository navigation; each row displays the issue
+    number, title, Open/Closed status, author, and labels, and clicking the number
+    or title opens the issue detail page. At the top of the detail page are the title
+    and status; the right side displays Assignees, Labels, and Milestone metadata
+    in order; the main area displays the description, comments, and activity timeline.
+    The “activity timeline” is an append-only history that records creation, edits,
+    comments, assignment, labels, milestone, and status changes in chronological order.
+    A label is a pre-existing colored classification name in the current repository;
+    a milestone is a pre-existing goal-classification item in the current repository
+    that may be associated with multiple issues or PRs but does not change their content
+    or status. Write, Maintain, and Admin may create issues, edit titles/descriptions,
+    and comment; Triage, Maintain, and Admin may assign participants, apply labels,
+    set milestones, and close or reopen issues; Read may only view. Every operation
+    is performed around a unique issue number within the repository, and the detail
+    page and list display the same persisted data; after refresh, re-login, or opening
+    from another account with view permission, the same record is still read. For
+    issue operations, the explicit role lists in this module define eligibility per
+    operation rather than an implicit cumulative grant from a role's name; Write can
+    create, edit, and comment but cannot assign, label, set milestones, or change
+    status. Organization Owners act with Admin permission. Read-only seed scenarios
+    provide a public repository's visible Issues entry, distinct Open and
+    Closed issues with known titles, and an issue entry with known title, description,
+    metadata, and discussion. Mutation scenarios provide isolated issues for successful
+    editing, invalid-title editing with a known original title, commenting, comment
+    validation, assignment, labels, milestone, and closing; their initial states must
+    not be changed by another scenario. The author and commenter accounts have Write
+    or higher permission; the editor used for both content and metadata operations
+    has Maintain or Admin permission. A separate viewer has Read permission on a protected
+    issue. All authenticated scenarios use the home-page “Sign in” link, fields labeled
+    “Username or email” and “Password”, and the “Sign in” button, after which the
+    signed-in username is visible. Named controls below are unique on the active page
+    unless a narrower scope is stated; detail pages and reloads must work independently
+    of earlier list navigation.
+  children:
+  - id: REQ-5.1
+    name: Issue Discovery and Details
+    type: FOLDER
+    dependencies:
+    - REQ-3.3
+    description: |-
+      The Issues list page displays the persisted work items for the current repository. Status and keyword filters change only the rows displayed in the browser and do not create, update, or delete issues. Each issue row identifies a repository-scoped issue and may display its number, title, Open/Closed status, author, labels, and update time. The issue detail page is the complete read view of one issue: it displays the issue number, title, status, saved description, metadata such as assignees, labels, and milestone, and discussion or activity records. Users with repository-view permission may read this information; editing and other mutation controls are governed by the corresponding role requirements. This feature builds on the public repository overview provided by REQ-3.3 (View a Public Repository Overview) and keeps list and detail views consistent after navigation or reload.
+    children:
+    - id: REQ-5.1.1
+      name: List and Filter Repository Issues
+      type: ATOMIC
+      dependencies:
+      - REQ-3.3
+      pages:
+      - name: issues
+        reference: ./reference/github-issues-list.png
+      description: |-
+        This feature builds on the public repository overview provided by REQ-3.3 (View a Public Repository Overview). Users with repository-view permission can read issue rows for the current repository on the Issues list page. “Open” and “Closed” are links that select status views, and the unique searchbox named “Search issues” filters matching rows as the user types without requiring Enter or a separate search button. Each result title is a link whose exact accessible name is the title. Filtering is read-only and does not modify issue data. Seed data provides public repository `acme-docs`, an Open issue titled `Improve onboarding`, and a Closed issue titled `Legacy welcome text`. The Open filter plus the known open title continues to show the matching issue after reload; the Closed filter plus the known closed title shows the closed issue and excludes the open issue.
+
+        Screenshot reference:
+        ![image](reference/github-issues-list.png)
+      data:
+        requires:
+        - DATA-ISSUES
+        - DATA-VIEW-STATE
+      scenarios:
+      - name: 'REQ-5.1.1: List and Filter Repository Issues - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions public repository `acme-docs` with
+            an Open issue titled `Improve onboarding`; the visitor can open its Issues page
+            without signing in.'
+        - keyword: WHEN
+          content: 'The visitor opens the Issues page, clicks the “Open” link, and enters
+            `Improve onboarding` in the `Search issues` searchbox.'
+        - keyword: THEN
+          content: 'The exact `Improve onboarding` issue link is visible; after reload, the
+            same exact issue link remains visible.'
+      - name: 'REQ-5.1.1: List and Filter Repository Issues - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions public repository `acme-docs` with a
+            Closed issue titled `Legacy welcome text` and an Open issue titled `Improve
+            onboarding`; the visitor can open its Issues page without signing in.'
+        - keyword: WHEN
+          content: 'The visitor opens the Issues page, clicks the “Closed” link, and enters
+            `Legacy welcome text` in the `Search issues` searchbox.'
+        - keyword: THEN
+          content: 'The exact `Legacy welcome text` issue link is visible and the exact
+            `Improve onboarding` issue link is not visible.'
+    - id: REQ-5.1.2
+      name: View an Issue and Its Discussion
+      type: ATOMIC
+      dependencies:
+      - REQ-5.1.1
+      pages:
+      - name: issues
+        reference: ./reference/github-issues-list.png
+      description: |-
+        The issue detail page is the read view for one uniquely numbered work item within a repository. Its heading exposes the complete issue title without the issue number, and the page displays the current Open or Closed status, the complete saved description, and discussion or activity content. Repository-view permission is sufficient to read this saved data; editable controls are available only to roles authorized for the corresponding operation. The seeded public repository `acme-docs` contains the Open issue `Improve onboarding` with description `Describe the onboarding improvement.` and discussion or activity text. Opening the issue from a visible issue entry, reloading its detail page, or reopening it from the application home page preserves the same title, description, and status.
+
+        Screenshot reference:
+        ![image](reference/github-issues-list.png)
+      data:
+        requires:
+        - DATA-ISSUES
+      scenarios:
+      - name: 'REQ-5.1.2: View an Issue and Its Discussion - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh unauthenticated
+            browser session. The system pre-provisions public repository `acme-docs` with
+            Open issue `Improve onboarding` and description `Describe the onboarding
+            improvement.`; the visitor can open the issue without signing in.'
+        - keyword: WHEN
+          content: 'The visitor opens the visible `Improve onboarding` issue entry.'
+        - keyword: THEN
+          content: 'The issue detail displays the exact `Improve onboarding` heading, the
+            exact description `Describe the onboarding improvement.`, an exact `Open` status,
+            and visible Comment or Activity content.'
+      - name: 'REQ-5.1.2: View an Issue and Its Discussion - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The system pre-provisions public repository `acme-docs` with Open issue
+            `Improve onboarding` and description `Describe the onboarding improvement.`. The
+            visitor starts from the application home page in a fresh unauthenticated browser
+            session and can open the issue without signing in.'
+        - keyword: WHEN
+          content: 'The visitor opens the `Improve onboarding` issue entry and reloads the
+            issue detail page.'
+        - keyword: THEN
+          content: 'After reload, the exact `Improve onboarding` heading and exact description
+            `Describe the onboarding improvement.` remain visible.'
+      - name: 'REQ-5.1.2: View an Issue and Its Discussion - Scenario 3'
+        steps:
+        - keyword: GIVEN
+          content: 'The system pre-provisions public repository `acme-docs` with Open issue
+            `Improve onboarding`. The visitor starts from the application home page in a
+            fresh unauthenticated browser session and can open the issue without signing in.'
+        - keyword: WHEN
+          content: 'The visitor opens the `Improve onboarding` issue entry, returns to the
+            application home page, and opens the same issue entry again.'
+        - keyword: THEN
+          content: 'The reopened issue detail displays the exact `Improve onboarding` heading
+            and an exact `Open` status.'
+  - id: REQ-5.2
+    name: Issue Creation and Discussion
+    type: FOLDER
+    dependencies:
+    - REQ-5.1.2
+    description: Supports creating issues in the current repository, editing titles
+      and descriptions, and appending discussion comments. An issue title contains
+      1-256 non-empty characters after trimming leading and trailing whitespace; the
+      description may be empty and is at most 65536 characters; a comment contains
+      1-65536 non-empty characters after trimming leading and trailing whitespace.
+      A successful creation receives a unique repository-scoped number and Open status;
+      editing changes only the selected field of the target issue; comments are
+      appended as independent discussion records with their author and timestamp.
+      Required-field validation and persistence failures must leave the affected
+      issue or discussion unchanged. Each scenario supplies its own authenticated
+      account and issue context, so it does not require a previous scenario to run.
+    children:
+    - id: REQ-5.2.1
+      name: Create a Repository Issue
+      type: ATOMIC
+      dependencies:
+      - REQ-3.3
+      - REQ-1.1.2
+      pages:
+      - name: issue_creation
+        reference: ./reference/github-new-issue.png
+      description: |-
+        A signed-in user with issue-write permission opens the current repository's
+        Issues page and follows the `New issue` link. The form has fields labeled
+        `Title` and `Description` and a `Submit new issue` button. A valid submission
+        stores the repository, title, optional description, author, creation time, and
+        Open status, assigns a unique repository-scoped number, and opens the new issue
+        detail page. The exact entered title is used as the detail heading and issue-list
+        link, and the exact description is visible. A title containing only whitespace
+        is rejected with a title-required message and creates no issue.
+
+        Screenshot reference:
+        ![image](reference/github-new-issue.png)
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-CREATED-ISSUES
+        - DATA-SESSION
+      scenarios:
+      - name: 'REQ-5.2.1: Create a Repository Issue - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh browser
+            session. The system pre-provisions public repository `acme-docs` and a
+            signed-in issue-author account with username `issue-author`, email
+            `issue-author@example.test`, password `Valid-password-123!`, and permission
+            to create issues. The visitor signs in as this account and can open the
+            repository `Issues` page.'
+        - keyword: WHEN
+          content: 'The user clicks the `New issue` link, fills `Title` with a unique
+            non-empty title and `Description` with a non-empty body, then clicks the
+            `Submit new issue` button.'
+        - keyword: THEN
+          content: 'The new issue detail page displays a heading with the exact title
+            and exact description. After returning to the repository Issues page, an
+            issue link with the same exact title is visible.'
+      - name: 'REQ-5.2.1: Create a Repository Issue - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh browser
+            session. The system pre-provisions public repository `acme-docs` and the
+            issue-author account (`issue-author`, `issue-author@example.test`,
+            `Valid-password-123!`) with permission to create issues. The visitor signs
+            in, opens the repository `Issues` page, and can see the `New issue` link.'
+        - keyword: WHEN
+          content: 'The user clicks `New issue`, fills the `Title` field with three
+            spaces, and clicks `Submit new issue`.'
+        - keyword: THEN
+          content: 'The page displays a title-required validation message and no new
+            issue is created.'
+    - id: REQ-5.2.2
+      name: Edit an Issue Title and Description
+      type: ATOMIC
+      dependencies:
+      - REQ-5.1.2
+      pages: []
+      description: Only a signed-in user with Write, Maintain, or Admin may use the
+        unique `Edit issue title` and `Edit issue description` buttons. The title form
+        has `Issue title` and `Save issue title`; the description form has `Issue
+        description` and `Save issue description`. Each save updates only its selected
+        field and persists the new value. Empty titles are rejected, the original value
+        is retained, and reload shows the unchanged original title. The separate invalid
+        edit seed is an issue titled `Original issue title`.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-PERMISSIONS
+        - DATA-ISSUES
+        - DATA-SESSION
+        - DATA-COLLABORATION-STATE
+      scenarios:
+      - name: 'REQ-5.2.2: Edit an Issue Title and Description - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh browser
+            session. The system pre-provisions public repository `acme-docs`, the Open
+            issue `Editable onboarding issue`, and a signed-in issue-editor account with
+            username `issue-editor`, email `issue-editor@example.test`, password
+            `Valid-password-123!`, and permission to edit issues. The visitor signs in
+            and opens that issue detail page.'
+        - keyword: WHEN
+          content: 'The user clicks `Edit issue title`, fills `Issue title` with a
+            unique valid title, and clicks `Save issue title`; then clicks `Edit issue
+            description`, fills `Issue description` with a unique valid body, and clicks
+            `Save issue description`.'
+        - keyword: THEN
+          content: 'After reload, the issue detail displays the exact new title as its
+            heading and the exact new description.'
+      - name: 'REQ-5.2.2: Edit an Issue Title and Description - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh browser
+            session. The system pre-provisions public repository `acme-docs`, a separate
+            issue titled `Original issue title`, and the issue-editor account
+            (`issue-editor`, `issue-editor@example.test`, `Valid-password-123!`) with
+            permission to edit issues. The visitor signs in and opens that issue detail
+            page.'
+        - keyword: WHEN
+          content: 'The user clicks `Edit issue title`, fills the `Issue title` field
+            with three spaces, and clicks `Save issue title`.'
+        - keyword: THEN
+          content: 'The page displays a title-required or title-empty validation message;
+            after reload, the exact original heading `Original issue title` remains
+            visible.'
+    - id: REQ-5.2.3
+      name: Comment on an Issue Discussion
+      type: ATOMIC
+      dependencies:
+      - REQ-5.1.2
+      - REQ-1.1.2
+      pages: []
+      description: Only a signed-in user with Write, Maintain, or Admin may enter a
+        non-empty comment on the issue detail page. The editor is labeled `Comment` and
+        the submit button is named exactly `Comment`. On success, the system stores the
+        issue, author, body, and creation time, displays the complete text and author
+        username in a discussion article, and preserves it after reload. Whitespace-only
+        text is rejected or prevented from submission and must not add a comment or
+        timeline entry.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-ISSUES
+        - DATA-CREATED-ISSUES
+        - DATA-SESSION
+      scenarios:
+      - name: 'REQ-5.2.3: Comment on an Issue Discussion - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh browser
+            session. The system pre-provisions public repository `acme-docs`, the issue
+            `Commentable onboarding issue`, and a signed-in issue-commenter account with username
+            `issue-commenter`, email `issue-commenter@example.test`, password
+            `Valid-password-123!`, and permission to comment. The visitor signs in and
+            opens that issue detail page.'
+        - keyword: WHEN
+          content: 'The user fills the `Comment` field with a unique non-empty comment
+            and clicks the `Comment` button.'
+        - keyword: THEN
+          content: 'The discussion displays the exact comment text and exact username
+            `issue-commenter`; after reload, the same comment remains visible.'
+      - name: 'REQ-5.2.3: Comment on an Issue Discussion - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh browser
+            session. The system pre-provisions public repository `acme-docs`, the issue
+            `Comment validation issue`, and the issue-commenter account
+            (`issue-commenter`, `issue-commenter@example.test`, `Valid-password-123!`)
+            with permission to comment. The visitor signs in and opens the issue detail
+            page with its comment box and submit button visible.'
+        - keyword: WHEN
+          content: 'The user fills the comment field with only whitespace characters
+            and attempts to use the `Comment` button if it is enabled.'
+        - keyword: THEN
+          content: 'The button is disabled or a comment-required/empty validation
+            message is displayed. No new discussion article is created, and the same
+            article count remains after reload.'
+  - id: REQ-5.3
+    name: Issue Metadata and Classification
+    type: FOLDER
+    dependencies:
+    - REQ-5.1.2
+    description: An assignee is a repository member associated with an issue; a label
+      is a repository-scoped classification; and a milestone is a repository-scoped
+      planning target. These metadata relationships do not change repository permission.
+      Users with Triage, Maintain, or Admin permission may modify them, while other
+      users may view the saved metadata only. Selecting an available option saves the
+      relationship immediately; reload displays the saved state. Each scenario provisions
+      its own account, target issue, and selectable repository-scoped metadata.
+    children:
+    - id: REQ-5.3.1
+      name: Assign or Unassign Issue Participants
+      type: ATOMIC
+      dependencies:
+      - REQ-5.1.2
+      pages: []
+      description: A user with issue-management permission can open the `Assignees`
+        button on an issue detail page. The selector has a textbox named `Search assignees`
+        and options whose exact accessible names are eligible member usernames. Filling
+        the search textbox filters options as the user types. Selecting an option saves
+        the assignment without a separate Save action; the exact username appears in
+        issue metadata and persists after reload. Selecting the same assigned option
+        again removes only that issue-assignee relationship, leaving the member account
+        and repository permission unchanged.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-PERMISSIONS
+        - DATA-ISSUES
+        - DATA-SESSION
+      scenarios:
+      - name: 'REQ-5.3.1: Assign or Unassign Issue Participants - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh browser
+            session. The system pre-provisions public repository `acme-docs`, its Open
+            issue `Assignable onboarding issue` with no `bob-reviewer` assignee, eligible member
+            `bob-reviewer`, and an issue-editor account with username `issue-editor`,
+            email `issue-editor@example.test`, password `Valid-password-123!`, and
+            permission to manage issue metadata. The visitor signs in as issue-editor
+            and opens the issue detail page.'
+        - keyword: WHEN
+          content: 'The user clicks the `Assignees` button, fills `Search assignees`
+            with `bob-reviewer`, and selects the exact `bob-reviewer` option. After
+            reload, the user opens `Assignees` again and selects `bob-reviewer` again.'
+        - keyword: THEN
+          content: 'The exact `bob-reviewer` text is visible after assignment and reload.
+            After the second selection, `bob-reviewer` is no longer visible as an assignee.'
+    - id: REQ-5.3.2
+      name: Apply Labels to an Issue
+      type: ATOMIC
+      dependencies:
+      - REQ-5.1.2
+      pages: []
+      description: A user with issue-management permission can use the `Labels` button
+        on an issue detail page. Its options are existing labels in the current repository
+        and use their exact label names as accessible names. Selecting an option immediately
+        saves the issue-label relationship without a separate Save action. The selected
+        label is visible in the issue metadata and remains visible after reload.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-PERMISSIONS
+        - DATA-ISSUES
+        - DATA-SESSION
+        - DATA-COLLABORATION-STATE
+      scenarios:
+      - name: 'REQ-5.3.2: Apply Labels to an Issue - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh browser
+            session. The system pre-provisions public repository `acme-docs`, its Open
+            issue `Labelable onboarding issue` without the `bug` label, repository label `bug`,
+            and an issue-editor account with username `issue-editor`, email
+            `issue-editor@example.test`, password `Valid-password-123!`, and permission
+            to manage issue metadata. The visitor signs in as issue-editor and opens
+            the issue detail page.'
+        - keyword: WHEN
+          content: 'The user clicks the `Labels` button and selects the exact `bug` option.'
+        - keyword: THEN
+          content: 'The exact `bug` label is visible on the issue detail page and remains
+            visible after reload.'
+    - id: REQ-5.3.3
+      name: Assign Issues and Pull Requests to a Milestone
+      type: ATOMIC
+      dependencies:
+      - REQ-5.1.2
+      pages:
+      - name: milestones
+        reference: ./reference/github-milestones.png
+      description: |-
+        A user with issue-management permission can use the `Milestone`
+        button on an issue or pull-request detail page to select an existing milestone
+        from the current repository. Options use the exact milestone name as their
+        accessible name. Selecting an option immediately stores the relationship without
+        a separate confirmation or Save action, displays the milestone in metadata, and
+        preserves it after reload. The selector does not create a milestone or associate
+        one from a different repository.
+
+        Screenshot reference:
+        ![image](reference/github-milestones.png)
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-PERMISSIONS
+        - DATA-ISSUES
+        - DATA-SESSION
+        - DATA-COLLABORATION-STATE
+      scenarios:
+      - name: 'REQ-5.3.3: Assign Issues and Pull Requests to a Milestone - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor starts at the application home page in a fresh browser
+            session. The system pre-provisions public repository `acme-docs`, its Open
+            issue `Milestone onboarding issue` without a milestone, repository milestone `v1.0`,
+            and an issue-editor account with username `issue-editor`, email
+            `issue-editor@example.test`, password `Valid-password-123!`, and permission
+            to manage issue metadata. The visitor signs in as issue-editor and opens
+            the issue detail page.'
+        - keyword: WHEN
+          content: 'The user clicks the `Milestone` button and selects the exact `v1.0` option.'
+        - keyword: THEN
+          content: 'The exact `v1.0` milestone is visible on the issue detail page and
+            remains visible after reload.'
+  - id: REQ-5.4
+    name: Close or Reopen an Issue
+    type: ATOMIC
+    dependencies:
+    - REQ-5.1.2
+    pages: []
+    description: Only users with Triage, Maintain, or Admin permission may close or
+      reopen an issue from its detail view; Write and Read users may view status but
+      cannot use either transition control. Closing stores Closed status and a closure
+      activity without changing the title, description, comments, labels, assignees,
+      or milestone. An Open issue provides a `Close issue` button; a Closed issue provides
+      a `Reopen issue` button. Each action saves immediately. After reopening and reload,
+      the issue is Open and `Close issue` is available again. Every scenario provides
+      independent seed state and authentication.
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-PERMISSIONS
+      - DATA-ISSUES
+      - DATA-SESSION
+      - DATA-COLLABORATION-STATE
+    scenarios:
+    - name: 'REQ-5.4: Close or Reopen an Issue - Scenario 1'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts at the application home page in a fresh browser
+          session. The system pre-provisions public repository `acme-docs`, its Open
+          issue `Closable onboarding issue`, and an issue-editor account with username
+          `issue-editor`, email `issue-editor@example.test`, password
+          `Valid-password-123!`, and permission to close and reopen issues. The visitor
+          signs in as issue-editor and opens that issue detail page.'
+      - keyword: WHEN
+        content: 'The user clicks `Close issue`, then clicks `Reopen issue` after the
+          issue shows Closed.'
+      - keyword: THEN
+        content: 'Closed status and closure activity text are visible after closing.
+          After reopening, Open status is visible; after reload, the `Close issue` button
+          is visible again.'
+    - name: 'REQ-5.4: Close or Reopen an Issue - Scenario 2'
+      steps:
+      - keyword: GIVEN
+        content: 'The visitor starts at the application home page in a fresh browser
+          session. The system pre-provisions public repository `acme-docs`, its Open
+          issue `Protected onboarding issue`, and an issue-viewer account with username
+          `issue-viewer`, email `issue-viewer@example.test`, password
+          `Valid-password-123!`, and Read-only issue permission. The visitor signs in
+          as issue-viewer and opens that issue detail page.'
+      - keyword: WHEN
+        content: 'The user views the issue detail page.'
+      - keyword: THEN
+        content: 'No `Close issue` button and no `Reopen issue` button are present.'
+- id: REQ-6
+  name: Change Review and Merge Control
+  type: FOLDER
+  dependencies:
+  - REQ-3.3
+  - REQ-4.3
+  description: A pull request (PR) is a persistent proposal to “merge code changes
+    from the compare branch into the base branch”; it is not a branch, commit, or
+    issue. The Pull requests page lists the current repository's PR number, title,
+    author, source/target branches, and status; “New pull request” first opens the
+    comparison page, where the user selects base (the target branch that receives
+    the changes) and compare (the source branch that provides the changes) and inspects
+    the diff. On the PR detail page, Conversation displays the title, description,
+    ordinary comments, activities, and review summary; Commits displays commits on
+    the compare branch relative to base; Files changed displays per-file, per-line
+    differences; Checks displays check status for the PR's current compare commit.
+    A PR's persisted status may only be Draft, Open, Closed, or Merged — normal creation
+    produces Open, draft creation produces Draft, and the author or Maintain/Admin
+    may mark a Draft as Ready for review to transition it to Open; the author or Maintain/Admin
+    may transition an unmerged Open or Draft PR to Closed and may transition Closed
+    back to Open; Merged is terminal and cannot be closed or reopened. Write, Maintain,
+    and Admin may add inline comments and submit reviews, the author or Maintain/Admin
+    may request reviewers, and only Maintain, Admin, or organization Owner may merge.
+    Each PR stores a repository-scoped number, source/target branches, creation-time
+    and current compare commits, creation-time base commit, title, description, author,
+    status, and activity records. When the compare branch receives a new commit, the
+    system updates the current compare commit, marks all existing review decisions
+    as stale while preserving them in the timeline, recalculates merge eligibility,
+    and retains inline comments at their original commit and line position marked
+    Outdated. Failure does not change branches or PR state. The following REQ-6 interaction
+    contracts use English accessible names and apply to direct navigation as well
+    as navigation from a repository. Each named action, field, and navigation link
+    is unique on its active page unless explicitly repeated per changed line or reviewer.
+    PR titles are headings whose accessible name is exactly the persisted title; list
+    titles are links with that same exact name. Conversation, Commits, Files changed,
+    and Checks are navigation links, even when visually styled as tabs. The current
+    PR status is visible text. Signed-in scenarios begin with the unique Sign in link
+    on the home page, labeled Username or email and Password fields, a Sign in button,
+    and the account username visible after authentication; each role account has a
+    username, verified email, and password. Visitor scenarios use public repositories
+    and require no session. Seed records identify the corresponding pages, not to
+    private implementation interfaces; role accounts, branches, PRs, and mutable state must
+    be provisioned as distinct records for each stateful scenario; no scenario may
+    rely on a mutation performed by an earlier scenario, and the complete seed set
+    is present before the serial suite starts. Existing titles, usernames, paths, and branch names described
+    below are supplied as seed values and must be displayed verbatim; generated
+    PR titles and comments may carry a unique suffix.
+  children:
+  - id: REQ-6.1
+    name: Protect Branches with Review and Status-Check Requirements
+    type: ATOMIC
+    dependencies:
+    - REQ-4.3.1
+    - REQ-1.1.2
+    pages:
+    - name: branch_protection
+      reference: ./reference/github-branch-protection.png
+    description: |-
+      A branch protection rule is persistent data bound to an exact branch.
+      A repository Admin can open Settings and Branches, create a rule with `Branch
+      name pattern`, `Require 1 approval`, and `Require status check test`, and see it
+      after reload. Non-Admins cannot create the rule. On an Open PR, an Admin can set
+      the `test` check from pending to success; the saved status and setter remain after
+      reload. Each scenario has independent accounts and seed state.
+
+      Screenshot reference:
+      ![image](reference/github-branch-protection.png)
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-REPOSITORIES
+      - DATA-PERMISSIONS
+      - DATA-PULL-REQUESTS
+      - DATA-CREATED-BRANCH-PROTECTION
+      - DATA-SESSION
+      - DATA-COLLABORATION-STATE
+    scenarios:
+    - name: 'REQ-6.1: Protect Branches with Review and Status-Check Requirements - Scenario 1'
+      steps:
+      - keyword: GIVEN
+        content: 'The system pre-provisions public repository `branch-protection-demo`, branch `main`,
+          and Admin account `protection-admin` with email `protection-admin@example.test`,
+          password `Valid-password-123!`. The visitor starts unauthenticated and the
+          Admin can open Settings and Branches.'
+      - keyword: WHEN
+        content: 'The Admin signs in, clicks `Add branch protection rule`, enters `main`
+          in `Branch name pattern`, checks `Require 1 approval` and `Require status check
+          test`, and clicks `Create` or `Save changes`.'
+      - keyword: THEN
+        content: 'After reload, the Branches page displays `main`, `1 approval`, and the
+          status-check test requirement.'
+    - name: 'REQ-6.1: Protect Branches with Review and Status-Check Requirements - Scenario 2'
+      steps:
+      - keyword: GIVEN
+        content: 'The system pre-provisions public repository `branch-protection-demo` and non-Admin
+          account `protection-viewer` with email `protection-viewer@example.test`,
+          password `Valid-password-123!`, and no repository-administration permission.'
+      - keyword: WHEN
+        content: 'The user signs in, opens the repository, and follows Settings and
+          Branches when those links are available.'
+      - keyword: THEN
+        content: 'The `Add branch protection rule` button is absent.'
+    - name: 'REQ-6.1: Protect Branches with Review and Status-Check Requirements - Scenario 3'
+      steps:
+      - keyword: GIVEN
+        content: 'The system pre-provisions public repository `branch-protection-demo`, an Open PR
+          titled `Protection status onboarding PR` targeting `main`, and Admin account
+          `protection-admin` (`protection-admin@example.test`, `Valid-password-123!`).
+          Its Checks area contains `test` with pending status.'
+      - keyword: WHEN
+        content: 'The Admin signs in, opens the PR, selects `success` in the `test` status
+          combobox, and clicks Save or Update.'
+      - keyword: THEN
+        content: 'The Checks area shows `test` success and the Admin username; after
+          reload, success remains visible.'
+  - id: REQ-6.2
+    name: Pull Request Discovery and Creation
+    type: FOLDER
+    dependencies:
+    - REQ-4.3
+    description: Supports listing pull requests, comparing source and target branches,
+      and creating normal or draft PRs from a valid comparison. Public visitors may
+      read PR lists; authenticated users with Write, Maintain, or Admin may create PRs.
+      Normal PRs start Open, draft PRs start Draft, and an authorized draft author may
+      mark a draft Ready for review. Each scenario provisions independent accounts,
+      branches, PRs, and mutable state.
+    children:
+    - id: REQ-6.2.1
+      name: List and Filter Repository Pull Requests
+      type: ATOMIC
+      dependencies:
+      - REQ-3.3
+      pages: []
+      description: The public Pull requests page lists current-repository PRs. The
+        `Open` link filters the list without changing data. The seeded Open PR title is
+        an exact link that opens a detail heading, remains after reload, and can be found
+        again after returning from the home page.
+      data:
+        requires:
+        - DATA-PULL-REQUESTS
+        - DATA-VIEW-STATE
+      scenarios:
+      - name: 'REQ-6.2.1: List and Filter Repository Pull Requests - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor is unauthenticated. Public repository `acme-docs` is
+            pre-provisioned with an Open PR titled `Improve onboarding`.'
+        - keyword: WHEN
+          content: 'The visitor opens Pull requests, clicks `Open`, and opens the exact
+            `Improve onboarding` PR link.'
+        - keyword: THEN
+          content: 'The PR detail page displays the exact `Improve onboarding` heading.'
+      - name: 'REQ-6.2.1: List and Filter Repository Pull Requests - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor is unauthenticated. Public repository `acme-docs` is
+            pre-provisioned with an Open PR titled `Improve onboarding`.'
+        - keyword: WHEN
+          content: 'The visitor opens Pull requests, clicks `Open`, and locates the exact
+            `Improve onboarding` PR link.'
+        - keyword: THEN
+          content: 'After reload, the exact PR link remains visible.'
+      - name: 'REQ-6.2.1: List and Filter Repository Pull Requests - Scenario 3'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor is unauthenticated. Public repository `acme-docs` is
+            pre-provisioned with an Open PR titled `Improve onboarding`.'
+        - keyword: WHEN
+          content: 'The visitor filters by `Open`, returns home, reopens Pull requests,
+            and clicks `Open` again.'
+        - keyword: THEN
+          content: 'The exact `Improve onboarding` PR link is visible again.'
+    - id: REQ-6.2.2
+      name: Compare Branches Before Opening a Pull Request
+      type: ATOMIC
+      dependencies:
+      - REQ-4.3.1
+      pages:
+      - name: branch_comparison
+        reference: ./reference/github-compare-branches.png
+      description: |-
+        A signed-in contributor can use the New pull request comparison page.
+        Base and Compare comboboxes select branches and `Compare changes` displays the
+        seeded changed file and commit information. `main` versus `feature-search` is
+        comparable; selecting `main` for both sides reports identical/no differences
+        and prevents creation.
+
+        Screenshot reference:
+        ![image](reference/github-compare-branches.png)
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-CODE
+        - DATA-SESSION
+        - DATA-VIEW-STATE
+      scenarios:
+      - name: 'REQ-6.2.2: Compare Branches Before Opening a Pull Request - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'Public repository `acme-docs` has branches `main` and `feature-search`,
+            where the comparison includes `src/search.ts`. Account `pr-contributor`
+            (`pr-contributor@example.test`, `Valid-password-123!`) has PR-create permission.'
+        - keyword: WHEN
+          content: 'The contributor signs in, opens the `Pull requests` page, clicks `New pull request`,
+            selects `main` as
+            Base and `feature-search` as Compare, and clicks `Compare changes`.'
+        - keyword: THEN
+          content: 'The comparison displays `src/search.ts` and commit information.'
+      - name: 'REQ-6.2.2: Compare Branches Before Opening a Pull Request - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'Public repository `acme-docs` has branch `main`. Account
+            `pr-contributor` (`pr-contributor@example.test`, `Valid-password-123!`)
+            has PR-create permission.'
+        - keyword: WHEN
+          content: 'The contributor signs in, opens the `Pull requests` page, clicks `New pull request`,
+            selects `main` for
+            both Base and Compare, and views the comparison.'
+        - keyword: THEN
+          content: 'An identical/no-differences message is visible; any Create pull
+            request button is disabled.'
+    - id: REQ-6.2.3
+      name: Create a Pull Request from Comparison Results
+      type: ATOMIC
+      dependencies:
+      - REQ-6.2.2
+      pages: []
+      description: From a valid `Compare` result, a signed-in contributor can open the
+        form, enter a non-empty Title and optional Description, and submit `Create pull
+        request`. Success creates an Open PR whose exact title heading survives reload.
+        A whitespace-only title shows a title-required message and creates no PR.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-CODE
+        - DATA-CREATED-PULL-REQUESTS
+        - DATA-SESSION
+        - DATA-VIEW-STATE
+      scenarios:
+      - name: 'REQ-6.2.3: Create a Pull Request from Comparison Results - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'Public repository `acme-docs` has a valid `Compare` entry for
+            `feature-search` into `main` with no conflicting PR. Account `pr-contributor`
+            (`pr-contributor@example.test`, `Valid-password-123!`) may create PRs.'
+        - keyword: WHEN
+          content: 'The contributor signs in, opens `Compare`, clicks `Create pull request`,
+            enters a unique non-empty title, and submits.'
+        - keyword: THEN
+          content: 'The new PR displays the exact title and Open status; after reload,
+            the exact title heading remains visible.'
+      - name: 'REQ-6.2.3: Create a Pull Request from Comparison Results - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'Public repository `acme-docs` has a valid `Compare` entry. Account
+            `pr-contributor` (`pr-contributor@example.test`, `Valid-password-123!`) may create PRs.'
+        - keyword: WHEN
+          content: 'The contributor signs in, opens the comparison, enters three spaces
+            in Title, and submits.'
+        - keyword: THEN
+          content: 'A title-required message is displayed and no PR is created.'
+    - id: REQ-6.2.4
+      name: Create a Draft Pull Request
+      type: ATOMIC
+      dependencies:
+      - REQ-6.2.2
+      pages: []
+      description: From a valid comparison, a contributor can create a Draft PR with
+        `Create draft pull request`; its Draft status is visible and `Merge pull request`
+        is disabled. A separately seeded Draft PR exposes `Ready for review` to its author;
+        confirmation changes it to Open while retaining title and branches, and Open
+        persists after reload.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-CODE
+        - DATA-PULL-REQUESTS
+        - DATA-CREATED-PULL-REQUESTS
+        - DATA-SESSION
+        - DATA-VIEW-STATE
+        - DATA-COLLABORATION-STATE
+      scenarios:
+      - name: 'REQ-6.2.4: Create a Draft Pull Request - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'Public repository `acme-docs` has a valid `Compare` entry with distinct
+            branches and differences. Account `pr-contributor` (`pr-contributor@example.test`,
+            `Valid-password-123!`) may create PRs.'
+        - keyword: WHEN
+          content: 'The contributor signs in, opens the comparison, clicks `Create draft
+            pull request`, enters a unique title, and submits.'
+        - keyword: THEN
+          content: 'The new PR displays Draft and the `Merge pull request` button is disabled.'
+      - name: 'REQ-6.2.4: Create a Draft Pull Request - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'Public repository `acme-docs` has a Draft PR titled `Draft onboarding
+            update`, source `draft-feature`, target `main`, authored by `draft-author`
+            (`draft-author@example.test`, `Valid-password-123!`).'
+        - keyword: WHEN
+          content: 'The author signs in, opens the Draft PR, clicks `Ready for review`,
+            and clicks `Confirm` if shown.'
+        - keyword: THEN
+          content: 'The PR changes to Open, Draft is absent, title and branches remain
+            exact, ready-for-review activity is visible, and Open remains after reload.'
+  - id: REQ-6.3
+    name: Pull Request Review Workspace
+    type: FOLDER
+    dependencies:
+    - REQ-6.2.3
+    description: A pull request detail page provides read-only overview, Commits, and
+      Files changed views for repository viewers. A non-author reviewer with Write,
+      Maintain, or Admin permission can add line comments and submit review decisions
+      on an Open PR. A line comment is anchored to the current changed code and is either
+      published immediately or stored as a pending review comment. A review stores its
+      reviewer, decision, optional summary, and current compare commit. Each scenario
+      provisions independent PRs, account roles, changed files, and review state.
+    children:
+    - id: REQ-6.3.1
+      name: View Pull Request Overview and Commits
+      type: ATOMIC
+      dependencies:
+      - REQ-6.2.3
+      pages: []
+      description: The public PR detail view displays the exact persisted title as a
+        heading. `Commits` and `Files changed` are links that show commit information
+        and a changed-files summary for the same PR. The overview remains available
+        after reload or reopening it from the home page; viewing does not mutate PR data.
+      data:
+        requires:
+        - DATA-PULL-REQUESTS
+      scenarios:
+      - name: 'REQ-6.3.1: View Pull Request Overview and Commits - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor is unauthenticated. Public repository `acme-docs` has
+            an Open PR titled `Overview onboarding PR` with at least one commit and changed file.'
+        - keyword: WHEN
+          content: 'The visitor opens the visible `Overview onboarding PR` PR, then opens
+            the `Commits` and `Files changed` links in sequence.'
+        - keyword: THEN
+          content: 'The detail heading is exactly `Overview onboarding PR`; Commits displays
+            commit information and Files changed displays a changed-files summary.'
+      - name: 'REQ-6.3.1: View Pull Request Overview and Commits - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor is unauthenticated. Public repository `acme-docs` has
+            an Open PR titled `Overview onboarding PR` with at least one commit.'
+        - keyword: WHEN
+          content: 'The visitor opens the PR, reloads its detail page, and clicks `Commits`.'
+        - keyword: THEN
+          content: 'The exact `Overview onboarding PR` heading remains visible after reload,
+            and Commit information is visible.'
+      - name: 'REQ-6.3.1: View Pull Request Overview and Commits - Scenario 3'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor is unauthenticated. Public repository `acme-docs` has
+            an Open PR titled `Overview onboarding PR` with changed files.'
+        - keyword: WHEN
+          content: 'The visitor opens the PR, returns to the application home page,
+            reopens the same PR, and clicks `Files changed`.'
+        - keyword: THEN
+          content: 'The exact `Overview onboarding PR` heading and the changed-files summary
+            are visible after reopening.'
+    - id: REQ-6.3.2
+      name: Inspect Changed Files and Aggregate Diff
+      type: ATOMIC
+      dependencies:
+      - REQ-6.3.1
+      pages: []
+      description: |-
+        `Files changed` is the read-only aggregate diff view for a PR. A public PR can
+        expose the exact changed path `src/search.ts` and a visible aggregate
+        additions/deletions summary. Viewing the diff changes neither file, branch, PR,
+        comment, nor review state.
+      data:
+        requires:
+        - DATA-PULL-REQUESTS
+      scenarios:
+      - name: 'REQ-6.3.2: Inspect Changed Files and Aggregate Diff - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The visitor is unauthenticated. Public repository `acme-docs` has
+            an Open PR titled `Public onboarding PR` whose diff includes `src/search.ts`
+            and at least one addition or deletion.'
+        - keyword: WHEN
+          content: 'The visitor opens the PR and clicks `Files changed`.'
+        - keyword: THEN
+          content: 'The exact `src/search.ts` path and an additions/deletions aggregate
+            summary are visible.'
+    - id: REQ-6.3.3
+      name: Add Review Comments to Changed Code Lines
+      type: ATOMIC
+      dependencies:
+      - REQ-6.3.2
+      - REQ-1.1.2
+      pages: []
+      description: |-
+        A non-author reviewer with permission to review can use an `Add comment`
+        button on a changed line in Files changed. The resulting editor is labeled
+        `Comment`; `Add single comment` publishes it immediately, while `Start a review`
+        saves it as a pending review comment. The exact entered body remains visible
+        after reload in both applicable states.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-PERMISSIONS
+        - DATA-PULL-REQUESTS
+        - DATA-CREATED-PULL-REQUESTS
+        - DATA-SESSION
+        - DATA-COLLABORATION-STATE
+      scenarios:
+      - name: 'REQ-6.3.3: Add Review Comments to Changed Code Lines - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The system pre-provisions public repository `acme-docs`, an Open
+            reviewable PR titled `Reviewable onboarding PR` with at least one changed line,
+            and a non-author reviewer account `pr-reviewer` with email
+            `pr-reviewer@example.test`, password `Valid-password-123!`, and review permission.'
+        - keyword: WHEN
+          content: 'The reviewer signs in, opens Files changed, clicks the first `Add
+            comment` button, enters a unique non-empty comment, and clicks `Add single comment`.'
+        - keyword: THEN
+          content: 'The exact comment is visible and remains visible after reload.'
+      - name: 'REQ-6.3.3: Add Review Comments to Changed Code Lines - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The system pre-provisions public repository `acme-docs`, a separate
+            Open PR titled `Pending review onboarding PR` with a changed line and no pending review
+            from `pr-reviewer`, and non-author reviewer account `pr-reviewer`
+            (`pr-reviewer@example.test`, `Valid-password-123!`) with review permission.'
+        - keyword: WHEN
+          content: 'The reviewer signs in, opens Files changed, starts a comment on the
+            first changed line, enters a unique comment, and clicks `Start a review`.'
+        - keyword: THEN
+          content: 'The exact comment and Pending review text are visible; Pending review
+            remains visible after reload.'
+    - id: REQ-6.3.4
+      name: Submit a Pull Request Review
+      type: ATOMIC
+      dependencies:
+      - REQ-6.3.1
+      - REQ-1.1.2
+      pages: []
+      description: |-
+        From Files changed, a non-author reviewer can use `Review changes`
+        to open a form with Approve and Request changes radio controls, an optional
+        summary/comment field, and `Submit review`. Approve creates visible Approved
+        status. Request changes stores and displays the exact summary with Changes
+        requested status, which persists after reload.
+      data:
+        requires:
+        - DATA-ACCOUNTS
+        - DATA-PULL-REQUESTS
+        - DATA-CREATED-PULL-REQUESTS
+        - DATA-SESSION
+        - DATA-COLLABORATION-STATE
+      scenarios:
+      - name: 'REQ-6.3.4: Submit a Pull Request Review - Scenario 1'
+        steps:
+        - keyword: GIVEN
+          content: 'The system pre-provisions public repository `acme-docs`, an Open
+            reviewable PR titled `Reviewable onboarding PR` with changed files, and non-author
+            reviewer account `pr-reviewer` (`pr-reviewer@example.test`,
+            `Valid-password-123!`) with review permission and no prior effective decision.'
+        - keyword: WHEN
+          content: 'The reviewer signs in, opens Files changed, clicks `Review changes`,
+            selects `Approve`, and clicks `Submit review`.'
+        - keyword: THEN
+          content: 'Approved status is visible.'
+      - name: 'REQ-6.3.4: Submit a Pull Request Review - Scenario 2'
+        steps:
+        - keyword: GIVEN
+          content: 'The system pre-provisions public repository `acme-docs`, a separate
+            Open reviewable PR titled `Change request onboarding PR` with changed files, and
+            non-author reviewer account `pr-reviewer` (`pr-reviewer@example.test`,
+            `Valid-password-123!`) with review permission and no prior effective decision.'
+        - keyword: WHEN
+          content: 'The reviewer signs in, opens Files changed, clicks `Review changes`,
+            enters a unique summary, selects `Request changes`, and clicks `Submit review`.'
+        - keyword: THEN
+          content: 'Changes requested and the exact summary are visible; Changes requested
+            remains visible after reload.'
+  - id: REQ-6.4
+    name: Request or Remove Pull Request Reviewers
+    type: ATOMIC
+    dependencies:
+    - REQ-6.2.3
+    - REQ-1.1.2
+    pages: []
+    description: |-
+      The PR author or an authorized maintainer can use `Reviewers` to manage
+      pending reviewer requests. The picker has a `Search` textbox; typing filters eligible
+      reviewer options and selecting an exact option saves the request immediately. The
+      requested username remains visible after reload. A button named `Remove <username>`
+      removes that request without affecting any submitted review.
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-PERMISSIONS
+      - DATA-PULL-REQUESTS
+      - DATA-SESSION
+      - DATA-COLLABORATION-STATE
+    scenarios:
+    - name: 'REQ-6.4: Request or Remove Pull Request Reviewers - Scenario 1'
+      steps:
+      - keyword: GIVEN
+        content: 'The system pre-provisions public repository `acme-docs`, an Open PR
+          titled `Reviewer request onboarding PR` authored by `pr-author` with no requested reviewer,
+          eligible collaborator `bob-reviewer`, and author account `pr-author` with email
+          `pr-author@example.test`, password `Valid-password-123!`, and permission to
+          manage reviewers for that PR.'
+      - keyword: WHEN
+        content: 'The author signs in, opens the PR, clicks `Reviewers`, fills `Search`
+          with `bob-reviewer`, selects the exact option, reloads, then clicks
+          `Remove bob-reviewer`.'
+      - keyword: THEN
+        content: 'The exact `bob-reviewer` text is visible after selection and reload,
+          then is absent after removal.'
+  - id: REQ-6.5
+    name: Merge an Eligible Pull Request
+    type: ATOMIC
+    dependencies:
+    - REQ-6.3.4
+    - REQ-6.1
+    pages: []
+    description: 'On an eligible PR, Merge pull request and then Confirm merge are
+      buttons; confirming displays Merged, and that state remains after reload. A
+      blocked PR keeps a visible disabled Merge pull request button and explains its
+      unmet review or protection condition before any click. Seed data supplies a
+      Maintain account and separate Open PRs for success and refusal. The eligible
+      PR targets protected main, has a current non-author approval and test: success,
+      and has no conflicts. The blocked PR targets a protected branch and lacks the
+      required valid approval; its disabled button is accompanied by Review required
+      by branch protection. The success and refusal states are separate PR records, so
+      neither test relies on restoring a mutation from the other. “Merge”
+      is the only write operation that writes the current compare commit''s changes
+      from an Open PR into the base branch; it is not simply marking the PR as complete.
+      Only Maintain, Admin, or organization Owner may merge from the PR detail page
+      using the sole supported “Create a merge commit” method; the merge confirmation
+      area should display satisfied and unsatisfied conditions. Before confirmation,
+      the system rereads the target branch head, current compare commit, merge-conflict
+      state, and protection rules — there must be no valid Request changes; if the
+      target is protected, each enabled rule requirement is enforced independently,
+      requiring 1 valid non-author Approve for the current compare commit when Require
+      1 approval is enabled and requiring `test` success when Require status check
+      test is enabled. An unprotected target has no additional approval-count or check-success
+      requirement, but merging still requires no merge conflicts and no valid Request
+      changes review. After validation succeeds, the system atomically creates a merge
+      commit whose parents are the target-branch head at merge time and the current
+      compare commit, updates the target-branch head, sets the PR to Merged, and stores
+      the merger, time, and resulting commit identifier. If any condition is unsatisfied
+      or persistence fails, the page explains the applicable reason and neither the
+      target branch nor PR changes; a missing required approval displays “Review required
+      by branch protection”. Merged is terminal. This feature builds on the persisted
+      objects, opened pages, or authenticated-session context provided by REQ-6.3.4
+      (Submit a Pull Request Review) and REQ-6.1 (Protect Branches with Review and
+      Status-Check Requirements); it must reuse that context and keep pages and data
+      consistent after the context changes.'
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-PULL-REQUESTS
+      - DATA-SESSION
+      - DATA-COLLABORATION-STATE
+    scenarios:
+    - name: 'REQ-6.5: Merge an Eligible Pull Request - Scenario 1'
+      steps:
+      - keyword: GIVEN
+        content: 'The system pre-provisions the separate Open PR `Mergeable onboarding PR`
+          targeting protected `main`, with one valid non-author approval for the current
+          compare commit, successful `test` status, and no merge conflict. It also
+          pre-provisions Maintain account `pr-maintainer` with email
+          `pr-maintainer@example.test`, password `Valid-password-123!`, and permission
+          to merge this PR. The visitor starts at the application home page.'
+      - keyword: WHEN
+        content: 'The maintainer confirms that the only selectable method on the page
+          is “Create a merge commit”, clicks “Merge pull request”, and clicks “Confirm
+          merge” in the confirmation box. Seed values: pull requests `Mergeable onboarding PR`
+          and `Fix search`, branches `main` and `feature-search`, reviewer `bob-reviewer`,
+          check `test`.'
+      - keyword: THEN
+        content: 'The PR displays Merged, the merger, time, and resulting commit identifier;
+          the `main` branch head is updated to the merge result, and the PR''s source-
+          and target-branch content is integrated according to the selected merge
+          method. Seed values: pull requests `Mergeable onboarding PR` and `Fix search`,
+          branches `main` and `feature-search`, reviewer `bob-reviewer`, check `test`.'
+      - keyword: THEN
+        content: 'After refreshing the PR and `main` branch, the merged status and
+          resulting commit remain; if the PR is a draft, lacks approval, has a failed
+          check, is unmergeable, or the user lacks permission, the merge entry is
+          disabled or rejected and the target branch and PR state remain unchanged.
+          Seed values: pull requests `Mergeable onboarding PR` and `Fix search`, branches
+          `main` and `feature-search`, reviewer `bob-reviewer`, check `test`.'
+    - name: 'REQ-6.5: Merge an Eligible Pull Request - Scenario 2'
+      steps:
+      - keyword: GIVEN
+        content: 'The system pre-provisions the separate Open PR `Blocked onboarding PR`
+          targeting protected `main`, with no valid current approval, and the Maintain
+          account `pr-maintainer` with email `pr-maintainer@example.test`, password
+          `Valid-password-123!`, and merge permission. The PR has no merge conflict and
+          remains blocked by its unmet review or protection requirement.'
+      - keyword: WHEN
+        content: 'The maintainer signs in with `pr-maintainer` and opens `Blocked onboarding
+          PR`; the `Merge pull request` button is visible but disabled.'
+      - keyword: THEN
+        content: 'The page displays a review, required, or protection explanation, and the
+          disabled merge control remains unchanged.'
+      - keyword: THEN
+        content: 'The maintainer does not activate the disabled control; the blocked PR and
+          its target branch remain unchanged.'
+  - id: REQ-6.6
+    name: Close or Reopen a Pull Request Without Merging
+    type: ATOMIC
+    dependencies:
+    - REQ-6.2.3
+    - REQ-1.1.2
+    pages: []
+    description: The PR page provides Close pull request and Reopen pull request as
+      buttons for authorized users. Close pull request immediately sets Closed without
+      an extra confirmation dialog, then Reopen pull request immediately restores
+      Open. After reload, Close pull request is available again. For a viewer who
+      is neither author nor Maintain/Admin/Owner, both controls are absent, rather
+      than merely disabled or rejected after activation. Seed data supplies the author
+      and a separate Read viewer, an authored Open PR for the close/reopen cycle,
+      and a separate Open PR readable by that viewer for permission validation. When
+      the proposed change should not proceed, the PR author, Maintain, Admin, or organization
+      Owner may close an unmerged Open or Draft PR without merging; the same roles
+      may reopen a Closed PR as Open. The system stores the status, operator, and
+      time and records the transition, while keeping the PR discussion, reviews, diff,
+      and branch references viewable; closing or reopening must not update any branch.
+      Merged is terminal, the page does not display close or reopen operations, and
+      the server rejects status changes. This feature builds on the persisted objects,
+      opened pages, or authenticated-session context provided by REQ-6.2.3 (Create
+      a Pull Request from Comparison Results) and REQ-1.1.2 (Sign In with an Existing
+      Account); it must reuse that context and keep pages and data consistent after
+      the context changes.
+    data:
+      requires:
+      - DATA-ACCOUNTS
+      - DATA-PERMISSIONS
+      - DATA-PULL-REQUESTS
+      - DATA-SESSION
+      - DATA-COLLABORATION-STATE
+    scenarios:
+    - name: 'REQ-6.6: Close or Reopen a Pull Request Without Merging - Scenario 1'
+      steps:
+      - keyword: GIVEN
+        content: 'The system pre-provisions the separate unmerged Open PR `Closable onboarding
+          PR` and the author account `pr-author` with email `pr-author@example.test`,
+          password `Valid-password-123!`, and permission to close and reopen it. The
+          visitor starts at the application home page.'
+      - keyword: WHEN
+        content: 'The author clicks `Close pull request`, waits for `Closed`, and then
+          clicks `Reopen pull request`.'
+      - keyword: THEN
+        content: 'The PR displays `Closed` and then `Open`.'
+      - keyword: THEN
+        content: 'After reloading, the `Close pull request` button is visible again.'
+    - name: 'REQ-6.6: Close or Reopen a Pull Request Without Merging - Scenario 2'
+      steps:
+      - keyword: GIVEN
+        content: 'The system pre-provisions a separate Open PR `Protected onboarding PR`
+          readable by the viewer account `pr-viewer` with email `pr-viewer@example.test`,
+          password `Valid-password-123!`, and no author, Maintain, Admin, or Owner
+          permission. The visitor starts at the application home page.'
+      - keyword: WHEN
+        content: 'The viewer opens `Protected onboarding PR` and looks for close or reopen
+          operations.'
+      - keyword: THEN
+        content: 'No `Close pull request` or `Reopen pull request` button is present.'
