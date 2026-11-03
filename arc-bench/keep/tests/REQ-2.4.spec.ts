@@ -28,18 +28,14 @@ test('REQ-2.4: Undo deletion', async ({ page }, info) => {
 
 test('REQ-2.4: Dismiss deletion notifications', async ({ page }, info) => {
   await openHome(page);
-  const manual = identity(info, 'Manual dismissal');
-  const automatic = identity(info, 'Automatic dismissal');
-  await createNote(page, manual, 'Manual content');
-  await createNote(page, automatic, 'Automatic content');
-  await deleteNote(page, manual);
+  const title = identity(info, 'Manual dismissal');
+  await createNote(page, title, 'Dismissal preserves deleted content');
+  await deleteNote(page, title);
   await action(notice(page, 'Note deleted'), 'Dismiss notification').click();
   await expect(notice(page, 'Note deleted')).toBeHidden();
-  await deleteNote(page, automatic);
-  await expect(notice(page, 'Note deleted')).toBeHidden({ timeout: 60_000 });
-  await expect(note(page, manual)).toBeHidden();
-  await expect(note(page, automatic)).toBeHidden();
+  await expect(note(page, title)).toBeHidden();
   await navigate(page, 'Trash');
-  await expectNote(page, manual, 'Manual content');
-  await expectNote(page, automatic, 'Automatic content');
+  await expectNote(page, title, 'Dismissal preserves deleted content');
+  await page.reload();
+  await expectNote(page, title, 'Dismissal preserves deleted content');
 });

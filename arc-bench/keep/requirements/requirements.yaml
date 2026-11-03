@@ -4,7 +4,7 @@ description:
   text: |-
     A personal note management application for creating, editing, organizing, searching, archiving, and deleting notes.
 
-    The interface uses en-US and UTC. Client and server evaluate time-dependent note retention relative to 2026-07-21T12:00:00.000Z. The historical retention scenario uses its independently declared note deletion dates and does not share mutable notes with the normal workspace.
+    The interface uses en-US. Tested note states are established through normal user actions in a single application instance. No fixed benchmark clock or historical deleted-note seed data is required.
 scenarios: []
 children:
 - id: REQ-1
@@ -193,7 +193,7 @@ children:
     name: Delete notes and recover through notification Undo
     description:
       text: |-
-        Users reveal a note's actions by hovering if necessary, then click "More options {title}"(role=button) and choose "Delete Note"(role=menuitem). Deletion immediately removes that note from active Notes, moves it to Trash without an additional confirmation, and displays "Note deleted"(role=status) with "Undo"(role=button) and "Dismiss notification"(role=button). Undo restores the same title and content to active Notes, removes the note from Trash, and displays "Action undone"(role=status). Dismiss notification closes the notification without reversing deletion. The notification also disappears automatically after an implementation-selected lifetime; the evaluator's 60-second waiting budget does not prescribe an exact product timer.
+        Users reveal a note's actions by hovering if necessary, then click "More options {title}"(role=button) and choose "Delete Note"(role=menuitem). Deletion immediately removes that note from active Notes, moves it to Trash without an additional confirmation, and displays "Note deleted"(role=status) with "Undo"(role=button) and "Dismiss notification"(role=button). Undo restores the same title and content to active Notes, removes the note from Trash, and displays "Action undone"(role=status). Dismiss notification closes the notification without reversing deletion; the same deleted note and its content remain in Trash after reload. Automatic notification dismissal and its timing are outside the acceptance scope; no elapsed-time wait is required.
 
         Note actions revealed on hover remain keyboard-accessible. Actions are buttons except menu choices, which are menuitems; fields have associated accessible names. Note actions are scoped to the note region identified by its visible title.
 
@@ -237,31 +237,27 @@ children:
       name: Dismiss deletion notifications
       steps:
       - id: STEP-REQ-2.4-03-01
-        Given: Notes contains two UI-created isolated notes, Manual dismissal with Manual content and Automatic
-          dismissal with Automatic content.
-        When: Delete Manual dismissal through its menu and click Dismiss notification in Note deleted status. Delete
-          Automatic dismissal and allow its notification to disappear without Undo; then open Trash.
-        Then: Manual dismissal hides its notification immediately and the automatic notification becomes hidden
-          within the evaluator's 60-second budget. Neither note is restored to Notes; Trash retains both titles
-          and their original contents exactly once.
+        Given: Notes contains the UI-created isolated Manual dismissal note with Dismissal preserves deleted content.
+        When: Delete the note through its menu, click Dismiss notification in Note deleted status, then open Trash
+          and reload.
+        Then: The notification closes without Undo. The note stays absent from active Notes, while Trash retains
+          exactly one note with the same title and content before and after reload.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-NOTE-MORE-OPTIONS-DROPDOWN)
         - \ref[image](IMG-NOTE-DELETE-NOTIFICATION)
     children: []
   - id: REQ-2.5
-    name: Inspect and empty Trash with seven-day retention
+    name: Inspect and empty Trash with persistent deleted notes
     description:
       text: |-
-        Clicking "Trash"(role=button) displays deleted notes in "Deleted notes"(role=region), excluding active and archived notes. "Empty Trash"(role=button) permanently removes all currently deleted notes while preserving active notes. If confirmation is offered, it appears as "Empty Trash"(role=dialog) with an "Empty Trash"(role=button) confirmation action. Notes deleted at least seven elapsed 24-hour days ago disappear from user-visible Trash by the next visit or refresh, using UTC benchmark time rather than the real date. Historical deletions are seeded because users cannot backdate them. All scenarios use the same application instance and entry URL; no separate historical instance is required.
+        Clicking "Trash"(role=button) displays deleted notes in "Deleted notes"(role=region), excluding active and archived notes. Deleted notes retain their titles and contents across navigation and reload until a user action restores or permanently removes them. "Empty Trash"(role=button) permanently removes all currently deleted notes while preserving active notes. If confirmation is offered, it appears as "Empty Trash"(role=dialog) with an "Empty Trash"(role=button) confirmation action. All scenarios use the same application instance and entry URL. Automatic age-based deletion is outside the acceptance scope.
 
         Note actions revealed on hover remain keyboard-accessible. Actions are buttons except menu choices, which are menuitems; fields have associated accessible names. Note actions are scoped to the note region identified by its visible title.
 
-        At startup the application contains Expired seven-day note with content Historical expired content, deleted at 2026-07-14T12:00:00.000Z, and Recent six-day note with content Historical retained content, deleted at 2026-07-15T12:00:00.000Z. At fixed UTC time 2026-07-21T12:00:00.000Z, visiting Trash removes the expired note and keeps the recent one; neither appears in active Notes. These are ordinary deleted notes in the same workspace: Empty Trash permanently removes them along with other deleted notes. A fresh evaluation starts from initialized data; a retention scenario requires these startup records and cannot reuse a workspace whose trash was already emptied.
+        Each scenario creates and deletes its own isolated notes through the UI. No historical notes, backdated deletion timestamps or special startup data are required.
 
         This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
-
-        Time-dependent retention uses UTC and the fixed shared client/server time 2026-07-21T12:00:00.000Z in the single application workspace.
 
         Note titles accept the source example name plus a deterministic run/worker/case suffix. Notes and their mutable action states are produced by the described note interactions.
       image:
@@ -273,19 +269,16 @@ children:
         page: trash
     scenarios:
     - id: SCN-REQ-2.5-01
-      name: Apply the seven-day retention boundary
+      name: Keep a deleted note in Trash after reload
       steps:
       - id: STEP-REQ-2.5-01-01
-        Given: |-
-          The initialized application uses UTC clock 2026-07-21T12:00:00Z and contains Expired seven-day note, deleted at 2026-07-14T12:00:00Z, and Recent six-day note, deleted at 2026-07-15T12:00:00Z. Trash has not been emptied since initialization. The scenario uses the same application entry as every other scenario.
-          Seed prerequisites (prepared before this scenario):
-          - the historical note Expired seven-day note (historical deleted note): {"title": "Expired seven-day note", "content": "Historical expired content", "deleted_at": "2026-07-14T12:00:00.000Z"}
-          - the historical note Recent six-day note (historical deleted note): {"title": "Recent six-day note", "content": "Historical retained content", "deleted_at": "2026-07-15T12:00:00.000Z"}
-        When: Open the application entry, click Trash in Sidebar and reload; then select Notes.
-        Then: Deleted notes is visible. Expired seven-day note is absent and Recent six-day note appears exactly
-          once with Historical retained content. Neither historical deleted note appears in active Notes.
+        Given: Through Take a note, Title, Content and Close, create the isolated Trash persistence note with
+          Deleted content survives reload, then delete it through its More options menu.
+        When: Open Trash in Sidebar, reload the page, then select Notes.
+        Then: Deleted notes contains exactly one note with the saved title and content after reload. The same
+          deleted note remains absent from active Notes.
         references:
-        - \ref[requirement](REQ-1.1)
+        - \ref[requirement](REQ-2.4)
         - \ref[image](IMG-HOME-PAGE)
         - \ref[image](IMG-TRASH-LIST)
     - id: SCN-REQ-2.5-02

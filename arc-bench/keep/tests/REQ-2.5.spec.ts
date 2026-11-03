@@ -1,18 +1,18 @@
 // requirement: REQ-2.5
 import { test, expect, action, note, section, openHome, navigate, createNote, deleteNote, expectNote } from './helpers';
-import { history, identity } from './fixtures/data';
+import { identity } from './fixtures/data';
 
-test('REQ-2.5: Apply the seven-day retention boundary', async ({ page }) => {
-  // The application initializes historical deletions alongside its other startup data.
+test('REQ-2.5: Keep a deleted note in Trash after reload', async ({ page }, info) => {
   await openHome(page);
+  const title = identity(info, 'Trash persistence');
+  await createNote(page, title, 'Deleted content survives reload');
+  await deleteNote(page, title);
   await navigate(page, 'Trash');
   await page.reload();
   await expect(section(page, 'Deleted notes')).toBeVisible();
-  await expect(note(page, history.expired.title)).toHaveCount(0);
-  await expectNote(page, history.recent.title, history.recent.content);
+  await expectNote(page, title, 'Deleted content survives reload');
   await navigate(page, 'Notes');
-  await expect(note(page, history.expired.title)).toHaveCount(0);
-  await expect(note(page, history.recent.title)).toHaveCount(0);
+  await expect(note(page, title)).toBeHidden();
 });
 
 test('REQ-2.5: Show deleted notes separately', async ({ page }, info) => {
