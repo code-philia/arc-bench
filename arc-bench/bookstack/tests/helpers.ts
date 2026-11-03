@@ -26,7 +26,11 @@ export async function enter(page: Page) {
   await page.goto('/');
 }
 export async function go(page: Page, name: string) {
-  await page.getByRole('link', { name, exact: true }).click();
+  // The main navigation exposes both public content entries; breadcrumbs need not.
+  const navigation = page.getByRole('navigation')
+    .filter({ has: page.getByRole('link', { name: 'Shelves', exact: true }) })
+    .filter({ has: page.getByRole('link', { name: 'Books', exact: true }) });
+  await navigation.getByRole('link', { name, exact: true }).click();
 }
 export const home = enter;
 export async function heading(page: Page, name: string) {
