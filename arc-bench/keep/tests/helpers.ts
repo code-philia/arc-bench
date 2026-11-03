@@ -1,14 +1,5 @@
-import { expect, test as base, type Locator, type Page } from '@playwright/test';
-import { benchmarkNow } from './fixtures/data';
-
-// Fix Date while retaining real timer progression for notification dismissal.
-export const test = base.extend({
-  page: async ({ page }, use) => {
-    await page.clock.setFixedTime(new Date(benchmarkNow));
-    await use(page);
-  },
-});
-export { expect };
+import { expect, test, type Locator, type Page } from '@playwright/test';
+export { test, expect };
 export const action = (scope: Page | Locator, name: string) =>
   scope.getByRole('button', { name, exact: true });
 export const note = (page: Page, title: string) =>
