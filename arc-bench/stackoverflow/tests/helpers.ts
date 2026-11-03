@@ -1,7 +1,8 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { expect, test as base, type Page, type Locator, type Browser, type TestInfo } from '@playwright/test';
 import { accounts, password, body, answerBody, commentBody } from './fixtures/data';
 export { expect };
+const runId = randomBytes(8).toString('hex');
 // Only freeze the business clock. Keep native timers, performance and animation
 // frames running so browser actionability checks and context teardown can finish.
 export async function freezeClock(page: Page, instant: string) {
@@ -23,8 +24,7 @@ export async function freezeClock(page: Page, instant: string) {
 }
 export const test = base.extend({
   page: async ({ page }, use) => {
-    const instant = base.info().project.name === 'expired-comment' ? '2026-07-21T12:06:00Z' : '2026-07-21T12:02:00Z';
-    await freezeClock(page, instant);
+    await freezeClock(page, '2026-07-21T12:02:00Z');
     await use(page);
   },
 });
@@ -73,10 +73,8 @@ export async function activity(page: Page, category: string) {
   return region(page, 'Activity content');
 }
 export function suffix(info: TestInfo) {
-  const run = process.env.SO_RUN_ID;
-  if (!run || !/^[a-zA-Z0-9-]{1,20}$/.test(run)) throw new Error('SO_RUN_ID must be 1–20 letters, digits or hyphens.');
   const slug = createHash('sha256').update(info.title).digest('hex').slice(0, 10);
-  return `${run}-${info.parallelIndex}-${slug}`;
+  return `${runId}-${info.parallelIndex}-${slug}`;
 }
 export function titleFor(info: TestInfo, stem: string) { return `${stem} ${suffix(info)}`; }
 export async function composeQuestion(page: Page, title: string, text = body, tags = 'node.js,http,retry') {
@@ -99,7 +97,7 @@ export async function publishComment(scope: Locator, text = commentBody) {
   await expect(comment(scope, text)).toBeVisible();
 }
 export async function asUser(browser: Browser, account: Account, use: (page: Page) => Promise<void>) {
-  const context = await browser.newContext({ baseURL: process.env.SO_BASE_URL, timezoneId: 'UTC' });
+  const context = await browser.newContext({ baseURL: base.info().project.use.baseURL, timezoneId: 'UTC' });
   try {
     const page = await context.newPage();
     await freezeClock(page, '2026-07-21T12:02:00Z');

@@ -8,7 +8,7 @@ description:
 
     For public historical question index: Historical metrics, comment clock, collapsed thread and sort samples cannot be reproduced by a single new UI post. Missing timestamps use 2026-07-15T12:00:00Z. Answered sample questions contain an answer by Helpful User. Only dedicated voting/editing records are mutable; other samples remain public after deletion of any UI-created question.
 
-    For accounts, questions, answers, comments and filters: All ordinary mutable source examples are created through UI within each case. Question titles append SO_RUN_ID, parallelIndex and case slug; registration email is new_stack_user+<suffix>@example.com. Helpers create a question as the named owner, then answers/comments as the named author in separate authenticated browser contexts. Each case owns its objects.
+    For accounts, questions, answers, comments and filters: All ordinary mutable source examples are created through UI within each case. Question titles append the automatically generated worker-run identifier, parallelIndex and case slug; registration email is new_stack_user+<suffix>@example.com. Helpers create a question as the named owner, then answers/comments as the named author in separate authenticated browser contexts. Each case owns its objects.
 
     For session, edit draft, search, voting and preferences: Produced only by public interactions. No storage injection or hidden API. Vote effects are relative to the author current public reputation, which may include other independent case contributions.
 scenarios: []
