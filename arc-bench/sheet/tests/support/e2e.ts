@@ -1,7 +1,9 @@
-import { Download, expect, Locator, Page } from '@playwright/test';
+import { Download, expect, Locator, Page, test } from '@playwright/test';
 
 export function baseUrl(): string {
-  return process.env.BASE_URL ?? 'http://127.0.0.1:3000';
+  const url = test.info().project.use.baseURL;
+  if (!url) throw new Error('Configure use.baseURL in playwright.config.ts');
+  return url;
 }
 
 export function uniqueName(prefix: string): string {

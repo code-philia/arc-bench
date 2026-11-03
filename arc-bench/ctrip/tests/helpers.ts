@@ -1,7 +1,8 @@
 import { expect, type Page, type Locator, type TestInfo } from '@playwright/test';
-import { createHash } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { ACCOUNTS, BENCHMARK_NOW, IDS } from './fixtures/data';
 export { ACCOUNTS, IDS };
+const runId = randomBytes(8).toString('hex');
 type Scope = Page | Locator;
 export const field = (s: Scope, name: string) => s.getByLabel(name, { exact: true });
 export const button = (s: Scope, name: string) => s.getByRole('button', { name, exact: true });
@@ -54,13 +55,11 @@ export async function signedOut(page: Page) {
   await expect(action(page, 'My account')).toHaveCount(0);
 }
 export function isolatedName(base: string, info: TestInfo) {
-  const run = process.env.CTRIP_RUN_ID;
-  if (!run || !/^[a-zA-Z0-9-]{1,24}$/.test(run)) throw new Error('Supply valid CTRIP_RUN_ID');
   const identity = createHash('sha256').update(`${info.title}:${info.workerIndex}`).digest('hex').slice(0, 8);
-  return `${base} ${run} ${info.workerIndex} ${identity}`;
+  return `${base} ${runId} ${info.workerIndex} ${identity}`;
 }
 export function registrationPhone(info: TestInfo) {
-  const hash = createHash('sha256').update(`${process.env.CTRIP_RUN_ID}:${info.workerIndex}:${info.title}`).digest('hex');
+  const hash = createHash('sha256').update(`${runId}:${info.workerIndex}:${info.title}`).digest('hex');
   return `139${(BigInt(`0x${hash}`) % 100000000n).toString().padStart(8, '0')}`;
 }
 export async function registerToPassword(page: Page, phone: string) {

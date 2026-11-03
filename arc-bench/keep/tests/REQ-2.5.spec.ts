@@ -3,12 +3,8 @@ import { test, expect, action, note, section, openHome, navigate, createNote, de
 import { history, identity } from './fixtures/data';
 
 test('REQ-2.5: Apply the seven-day retention boundary', async ({ page }) => {
-  // Evaluator initializes historical deletions and fixes server time before startup.
-  const historicalURL = process.env.KEEP_HISTORY_BASE_URL;
-  if (!historicalURL) throw new Error('KEEP_HISTORY_BASE_URL must point to a separately initialized historical instance');
-  const normalURL = process.env.KEEP_BASE_URL || process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:34004/';
-  if (new URL(historicalURL).origin === new URL(normalURL).origin) throw new Error('Historical and normal instances must have different origins');
-  await page.goto(historicalURL);
+  // The application initializes historical deletions alongside its other startup data.
+  await openHome(page);
   await navigate(page, 'Trash');
   await page.reload();
   await expect(section(page, 'Deleted notes')).toBeVisible();

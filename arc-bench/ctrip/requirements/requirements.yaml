@@ -232,7 +232,7 @@ children:
           The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log in has been opened from Global navigation; Agree to terms initially is unchecked. Verification code login is selected and the simulated delivered code becomes valid only after Send code. Mobile 13800000011 is an existing SMS account.
           Seed prerequisites (prepared before this scenario):
           - existing verified accounts: {"13800000011": {"mobile": "13800000011", "verification_code": "123456"}}
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Enter Mobile number 13800000011, click Send code, enter Verification code 123456, check Agree to terms
           and click Log in.
         Then: +86 is displayed, Send code changes to Resend code, and successful login opens Ctrip Travel with My
@@ -248,7 +248,7 @@ children:
         Given: |-
           The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log in has been opened from Global navigation; Agree to terms initially is unchecked. Verification code login is selected and the simulated delivered code becomes valid only after Send code.
           Seed prerequisites (prepared before this scenario):
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Leave Mobile number empty and click Send code.
         Then: Enter your mobile number alert appears and My account remains absent.
         references:
@@ -263,7 +263,7 @@ children:
           The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log in has been opened from Global navigation; Agree to terms initially is unchecked. Verification code login is selected and the simulated delivered code becomes valid only after Send code.
           Seed prerequisites (prepared before this scenario):
           - existing verified accounts: {"13800000041": {"mobile": "13800000041", "verification_code": "123456"}}
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Enter Mobile number 13800000041, click Send code, leave Verification code empty, check Agree to terms
           and click Log in.
         Then: Enter your verification code alert appears; Mobile number remains visible and My account is absent.
@@ -279,7 +279,7 @@ children:
           The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log in has been opened from Global navigation; Agree to terms initially is unchecked. Verification code login is selected and the simulated delivered code becomes valid only after Send code.
           Seed prerequisites (prepared before this scenario):
           - existing verified accounts: {"13800000042": {"mobile": "13800000042", "verification_code": "123456"}}
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Enter Mobile number 13800000042, click Send code, enter Verification code 000000, check Agree to terms
           and click Log in.
         Then: Incorrect verification code alert appears; the SMS form remains and My account is absent.
@@ -295,7 +295,7 @@ children:
           The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log in has been opened from Global navigation; Agree to terms initially is unchecked. Verification code login is selected and the simulated delivered code becomes valid only after Send code.
           Seed prerequisites (prepared before this scenario):
           - existing verified accounts: {"13800000043": {"mobile": "13800000043", "verification_code": "123456"}}
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Enter Mobile number 13800000043, click Send code, enter Verification code 123456, leave Agree to terms
           unchecked and click Log in.
         Then: Agree to terms first alert appears; the SMS form remains and My account is absent.
@@ -390,7 +390,7 @@ children:
         Given: |-
           The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. An unused isolated phone is derived by the simulated verification delivery rule.
           Seed prerequisites (prepared before this scenario):
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Activate Register, Agree and continue, enter the isolated Mobile number, click Send code, enter 123456
           in Verification code and click Next, set password.
         Then: Resend code appears after sending, then Set password opens with Password and Confirm password fields.
@@ -426,7 +426,7 @@ children:
         Given: |-
           An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity according to simulated verification delivery. From Register, accept Registration agreement and privacy policy using Agree and continue, enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password is now open.
           Seed prerequisites (prepared before this scenario):
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Enter Travel1234 in both Password and Confirm password and click Complete registration; on the resulting
           login form enter the same isolated phone in Account and Travel1234 in Password, check Agree to terms and
           click Log in.
@@ -445,7 +445,7 @@ children:
         Given: |-
           An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity according to simulated verification delivery. From Register, accept Registration agreement and privacy policy using Agree and continue, enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password is now open.
           Seed prerequisites (prepared before this scenario):
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Enter Password Travel1234 and Confirm password Travel5678 and click Complete registration.
         Then: Passwords do not match alert appears, Set password remains open and My account is absent.
         references:
@@ -461,7 +461,7 @@ children:
         Given: |-
           An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity according to simulated verification delivery. From Register, accept Registration agreement and privacy policy using Agree and continue, enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password is now open.
           Seed prerequisites (prepared before this scenario):
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Enter 1234567 in both Password and Confirm password and click Complete registration.
         Then: Password must contain letters and numbers and be at least 8 characters alert appears; Set password
           remains and My account is absent.
@@ -521,7 +521,7 @@ children:
         Given: |-
           The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. An unused isolated phone is derived from simulated verification delivery.
           Seed prerequisites (prepared before this scenario):
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Activate Register and Agree and continue, enter the isolated phone, click Send code, enter 000000
           in Verification code and click Next, set password.
         Then: Incorrect verification code appears; Verify mobile number remains, the entered phone is retained and
@@ -551,7 +551,7 @@ children:
         Given: |-
           An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity according to simulated verification delivery. From Register, accept Registration agreement and privacy policy using Agree and continue, enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password is now open.
           Seed prerequisites (prepared before this scenario):
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Enter abcdefgh in both Password and Confirm password and click Complete registration.
         Then: Password must contain letters and numbers and be at least 8 characters appears; Set password remains
           and My account is absent.
@@ -580,7 +580,7 @@ children:
         Given: |-
           An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity according to simulated verification delivery. From Register, accept Registration agreement and privacy policy using Agree and continue, enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password is now open.
           Seed prerequisites (prepared before this scenario):
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Enter 12345678 in both Password and Confirm password and click Complete registration.
         Then: Password must contain letters and numbers and be at least 8 characters appears; Set password remains
           and My account is absent.
@@ -615,7 +615,7 @@ children:
         Given: |-
           An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity according to simulated verification delivery. From Register, accept Registration agreement and privacy policy using Agree and continue, enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password is now open.
           Seed prerequisites (prepared before this scenario):
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Enter Abcd1234 in both password fields and click Complete registration; on Log in enter the same isolated
           mobile in Account and Abcd1234 in Password, check Agree to terms and click Log in.
         Then: Registration successful appears and the created eight-character mixed password authenticates, exposing
@@ -651,7 +651,7 @@ children:
           The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. Log in has been opened from Global navigation; Agree to terms initially is unchecked. Verification code login is selected and the simulated delivered code becomes valid only after Send code. No Send code action has been performed in this attempt.
           Seed prerequisites (prepared before this scenario):
           - existing verified accounts: {"13800000011": {"mobile": "13800000011", "verification_code": "123456"}}
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Enter Mobile number 13800000011 and Verification code 123456, check Agree to terms and click Log in
           without sending a code.
         Then: A visible alert rejects the attempt; Mobile number remains visible and My account is absent.
@@ -680,7 +680,7 @@ children:
         Given: |-
           An unused mobile number is derived deterministically from the evaluator run, worker and scenario identity according to simulated verification delivery. From Register, accept Registration agreement and privacy policy using Agree and continue, enter that phone, click Send code, enter Verification code 123456 and click Next, set password; Set password is now open.
           Seed prerequisites (prepared before this scenario):
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Enter Abcd123 in both password fields and click Complete registration.
         Then: Password must contain letters and numbers and be at least 8 characters appears; Set password remains
           and My account is absent.
@@ -711,7 +711,7 @@ children:
         Given: |-
           The visitor is signed out on the homepage; the benchmark clock is 2026-07-19 08:00 Asia/Shanghai. An unused isolated phone is derived according to simulated verification delivery.
           Seed prerequisites (prepared before this scenario):
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Open Register, accept Agree and continue, enter the isolated Mobile number and click Send code; leave
           Verification code empty and click Next, set password.
         Then: Enter your verification code appears; Verify mobile number and the entered phone remain, while Set
@@ -2677,7 +2677,7 @@ children:
           The named owner signs in through Log in with its existing verified accounts email and Travel1234, checks Agree to terms and opens My account → Personal center. invoice_search has opened Invoice titles with seeded Shanghai Example Technology Co., Ltd., taxpayer ID 91310000123456789A.
           Seed prerequisites (prepared before this scenario):
           - existing verified accounts: {"invoice_search": {"email": "ctrip_invoice_search@example.com", "password": "Travel1234"}}
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
           - immutable legacy personal records: {"invoice_search": {"invoice_titles": [{"name": "Shanghai Example Technology Co., Ltd.", "taxpayer_id": "91310000123456789A", "type": "Company"}]}}
         When: Enter Shanghai Example in Search invoice titles and click Search.
         Then: Exactly that company record remains with taxpayer ID 91310000123456789A.
@@ -2716,7 +2716,7 @@ children:
           The named owner signs in through Log in with its existing verified accounts email and Travel1234, checks Agree to terms and opens My account → Personal center. invoice_create starts with an empty Invoice title list; use an isolated Shanghai Create Technology Co., Ltd. title.
           Seed prerequisites (prepared before this scenario):
           - existing verified accounts: {"invoice_create": {"email": "ctrip_invoice_create@example.com", "password": "Travel1234", "mobile": "13800000036"}}
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Open Invoice titles, click Add invoice title, select Type Company, enter the isolated Invoice title
           and Taxpayer ID 91310000123456789B, click Save and reload.
         Then: Exactly one record displays the submitted title and taxpayer ID; both remain after reload.
@@ -2915,7 +2915,7 @@ children:
           The named owner signs in through Log in with its existing verified accounts email and Travel1234, checks Agree to terms and opens My account → Personal center. invoice_delete has created isolated Invoice Delete One/91310000123456780B and Invoice Keep One/91310000123456781B. Use Common information → Invoice titles; create each stated title with Add invoice title, Type Company, Invoice title set to its isolated name, its stated Taxpayer ID and Save.
           Seed prerequisites (prepared before this scenario):
           - existing verified accounts: {"invoice_delete": {"email": "ctrip_invoice_delete@example.com", "password": "Travel1234"}}
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Click Delete within Invoice Delete One, verify it remains while Delete invoice title dialog is open,
           click Confirm deletion and reload.
         Then: Only Invoice Delete One disappears; Invoice Keep One remains before and after reload.
@@ -2930,7 +2930,7 @@ children:
           The named owner signs in through Log in with its existing verified accounts email and Travel1234, checks Agree to terms and opens My account → Personal center. invoice_batch has created isolated Invoice Batch One/91310000123456780B, Invoice Batch Two/91310000123456781B and Invoice Keep Two/91310000123456782B. Use Common information → Invoice titles; create each stated title with Add invoice title, Type Company, Invoice title set to its isolated name, its stated Taxpayer ID and Save.
           Seed prerequisites (prepared before this scenario):
           - existing verified accounts: {"invoice_batch": {"email": "ctrip_invoice_batch@example.com", "password": "Travel1234"}}
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Check Invoice Batch One and Invoice Batch Two in Invoice title list, leave Invoice Keep Two unselected,
           click Delete selected and Confirm deletion in Delete invoice titles; reload.
         Then: Both selected titles disappear, while Invoice Keep Two remains before and after reload.
@@ -3348,7 +3348,7 @@ children:
           The named owner signs in with its existing verified accounts email / Travel1234 and accepted terms, opens My account → Personal center → Account security. The owner is email_binding.
           Seed prerequisites (prepared before this scenario):
           - existing verified accounts: {"email_binding": {"email": "ctrip_email_binding@example.com", "password": "Travel1234"}}
-          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
+          - simulated verification delivery: {"country_code": "+86", "code": "123456", "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."}
         When: Click Change within Bound email, inspect masked c***@example.com, click Send verification code, enter
           123456 and click Next, verify new email.
         Then: Current-email verification succeeds and New email becomes visible; final binding is outside this scenario.

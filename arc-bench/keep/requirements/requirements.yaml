@@ -253,15 +253,15 @@ children:
     name: Inspect and empty Trash with seven-day retention
     description:
       text: |-
-        Clicking "Trash"(role=button) displays deleted notes in "Deleted notes"(role=region), excluding active and archived notes. "Empty Trash"(role=button) permanently removes all currently deleted notes while preserving active notes. If confirmation is offered, it appears as "Empty Trash"(role=dialog) with an "Empty Trash"(role=button) confirmation action. Notes deleted at least seven elapsed 24-hour days ago disappear from user-visible Trash by the next visit or refresh, using UTC benchmark time rather than the real date. Historical deletions are seeded because users cannot backdate them. The retention scenario uses an independently initialized historical world; the destructive emptying scenario uses the normal world without sharing mutable history with the retention scenario.
+        Clicking "Trash"(role=button) displays deleted notes in "Deleted notes"(role=region), excluding active and archived notes. "Empty Trash"(role=button) permanently removes all currently deleted notes while preserving active notes. If confirmation is offered, it appears as "Empty Trash"(role=dialog) with an "Empty Trash"(role=button) confirmation action. Notes deleted at least seven elapsed 24-hour days ago disappear from user-visible Trash by the next visit or refresh, using UTC benchmark time rather than the real date. Historical deletions are seeded because users cannot backdate them. All scenarios use the same application instance and entry URL; no separate historical instance is required.
 
         Note actions revealed on hover remain keyboard-accessible. Actions are buttons except menu choices, which are menuitems; fields have associated accessible names. Note actions are scoped to the note region identified by its visible title.
 
-        The retention case runs against a separately initialized historical instance with its own origin and data, distinct from the normal mutable instance. At fixed UTC time 2026-07-21T12:00:00.000Z, its historical notes are Expired seven-day note with content Historical expired content, deleted at 2026-07-14T12:00:00.000Z, and Recent six-day note with content Historical retained content, deleted at 2026-07-15T12:00:00.000Z. Visiting Trash removes the expired note and keeps the recent one; neither appears in active Notes. The normal instance is used for UI-created deletion and Empty Trash cases and must not share these historical records.
+        At startup the application contains Expired seven-day note with content Historical expired content, deleted at 2026-07-14T12:00:00.000Z, and Recent six-day note with content Historical retained content, deleted at 2026-07-15T12:00:00.000Z. At fixed UTC time 2026-07-21T12:00:00.000Z, visiting Trash removes the expired note and keeps the recent one; neither appears in active Notes. These are ordinary deleted notes in the same workspace: Empty Trash permanently removes them along with other deleted notes. A fresh evaluation starts from initialized data; a retention scenario requires these startup records and cannot reuse a workspace whose trash was already emptied.
 
         This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
 
-        Time-dependent retention uses UTC and the fixed shared client/server time 2026-07-21T12:00:00.000Z; the historical and normal worlds do not share mutable notes.
+        Time-dependent retention uses UTC and the fixed shared client/server time 2026-07-21T12:00:00.000Z in the single application workspace.
 
         Note titles accept the source example name plus a deterministic run/worker/case suffix. Notes and their mutable action states are produced by the described note interactions.
       image:
@@ -277,11 +277,11 @@ children:
       steps:
       - id: STEP-REQ-2.5-01-01
         Given: |-
-          An independent historical world uses UTC clock 2026-07-21T12:00:00Z and seeds the historical note Expired seven-day note, deleted at 2026-07-14T12:00:00Z, and the historical note Recent six-day note, deleted at 2026-07-15T12:00:00Z. It is separate from the normal mutable workspace.
+          The initialized application uses UTC clock 2026-07-21T12:00:00Z and contains Expired seven-day note, deleted at 2026-07-14T12:00:00Z, and Recent six-day note, deleted at 2026-07-15T12:00:00Z. Trash has not been emptied since initialization. The scenario uses the same application entry as every other scenario.
           Seed prerequisites (prepared before this scenario):
-          - the historical note Expired seven-day note (historical deleted note): {"title": "Expired seven-day note", "content": "Historical expired content", "deleted_at": "2026-07-14T12:00:00.000Z", "target": "historical"}
-          - the historical note Recent six-day note (historical deleted note): {"title": "Recent six-day note", "content": "Historical retained content", "deleted_at": "2026-07-15T12:00:00.000Z", "target": "historical"}
-        When: Open the historical application entry, click Trash in Sidebar and reload; then select Notes.
+          - the historical note Expired seven-day note (historical deleted note): {"title": "Expired seven-day note", "content": "Historical expired content", "deleted_at": "2026-07-14T12:00:00.000Z"}
+          - the historical note Recent six-day note (historical deleted note): {"title": "Recent six-day note", "content": "Historical retained content", "deleted_at": "2026-07-15T12:00:00.000Z"}
+        When: Open the application entry, click Trash in Sidebar and reload; then select Notes.
         Then: Deleted notes is visible. Expired seven-day note is absent and Recent six-day note appears exactly
           once with Historical retained content. Neither historical deleted note appears in active Notes.
         references:

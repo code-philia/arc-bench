@@ -1,4 +1,4 @@
-import { expect, Locator, Page, TestInfo } from '@playwright/test';
+import { expect, Locator, Page, TestInfo, test } from '@playwright/test';
 
 export type VerifiedAccount = {
   username: string;
@@ -231,7 +231,9 @@ export async function openVisibleTarget(page: Page, name: string): Promise<void>
 }
 
 export function baseUrl(): string {
-  return process.env.BASE_URL ?? 'http://127.0.0.1:3000';
+  const url = test.info().project.use.baseURL;
+  if (!url) throw new Error('Configure use.baseURL in playwright.config.ts');
+  return url;
 }
 
 export async function openAccountAccess(page: Page): Promise<void> {

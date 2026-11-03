@@ -359,7 +359,7 @@ export const SEED_WORLD = [
     "properties": {
       "country_code": "+86",
       "code": "123456",
-      "registration_phone_rule": "139 + SHA-256(CTRIP_RUN_ID + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."
+      "registration_phone_rule": "139 + SHA-256(the automatically generated worker-run identifier + worker index + test title) interpreted as integer modulo 100000000, padded to 8 digits; evaluator must ensure scenario phone values are unique within the run."
     },
     "description": "Code becomes valid after Send code. Source 13800000044..47 are example new phones, replaced by deterministic isolated phones; never pre-create their accounts."
   },

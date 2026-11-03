@@ -1,4 +1,7 @@
 import { expect, type Locator, type Page, type TestInfo } from '@playwright/test';
+import { randomBytes } from 'node:crypto';
+
+const runId = randomBytes(8).toString('hex');
 
 export const ACCOUNT = {
   nickname: 'BookStack User',
@@ -9,12 +12,8 @@ export const BOOTSTRAP_SHELF = 'Benchmark Bootstrap Shelf';
 
 // Literal scenario titles are unique in this package; normalize them to readable case ids.
 export function identity(info: TestInfo): string {
-  const run = process.env.BOOKSTACK_RUN_ID;
-  if (!run || !/^[A-Za-z0-9_-]{1,40}$/.test(run)) {
-    throw new Error('Supply BOOKSTACK_RUN_ID (1–40 letters, numbers, underscores or hyphens) for a fresh evaluation world.');
-  }
   const caseId = info.title.replace(/[^A-Za-z0-9]+/g, '-');
-  return `${run}-w${info.workerIndex}-${caseId}`;
+  return `${runId}-w${info.workerIndex}-${caseId}`;
 }
 export const named = (id: string, base: string) => `${base} [${id}]`;
 export const region = (page: Page, name: string) => page.getByRole('region', { name, exact: true });
