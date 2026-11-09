@@ -19,6 +19,6 @@ test("REQ-4.3: Cancel new shelf", async ({ page }, testInfo) => {
   const name = named(id, 'Shelf Cancelled 4.3.2');
   await metadata(page, name, 'Unsaved shelf description 4.3.2.', 'cancelled, shelf');
   await button(page, 'Cancel').click();
-  await heading(page, 'Shelfs');
+  await heading(page, 'Shelves');
   await expect(entry(region(page, 'Shelf list'), name)).toHaveCount(0);
 });

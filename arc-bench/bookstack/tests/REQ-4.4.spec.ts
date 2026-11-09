@@ -9,7 +9,7 @@ test("REQ-4.4: Confirm deletion", async ({ page }, testInfo) => {
   await openShelf(page, name);
   await button(page, 'Delete').click();
   await button(page, 'Confirm Delete').click();
-  await heading(page, 'Shelfs');
+  await heading(page, 'Shelves');
   await page.reload();
   await go(page, 'Shelves');
   await expect(entry(region(page, 'Shelf list'), name)).toHaveCount(0);

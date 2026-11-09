@@ -186,7 +186,7 @@ children:
   scenarios: []
   children:
   - id: REQ-4.1
-    name: Browse shelfs
+    name: Browse shelves
     description:
       text: Activating "Shelves"(role=link) on the page displays "Shelf list"(role=region). Each shelf appears exactly
         once as a keyboard-accessible "{item name}"(role=button) identified by its business name; a semantically
@@ -249,7 +249,7 @@ children:
     name: Create or abandon shelf
     description:
       text: |-
-        While logged out, users open the bootstrap shelf through Shelves and Shelf list, then click "New Shelf"(role=button) to enter "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox). "Save Shelf"(role=button) creates exactly one shelf with that metadata and returns to Shelf list; the metadata persists across navigation and reload. "Cancel"(role=button) instead returns to Shelfs without creating the entered object. Runtime names may append the evaluator's run, worker, and case identity to source examples.
+        While logged out, users open the bootstrap shelf through Shelves and Shelf list, then click "New Shelf"(role=button) to enter "Name"(role=textbox), "Description"(role=textbox), and "Tags"(role=textbox). "Save Shelf"(role=button) creates exactly one shelf with that metadata and returns to Shelf list; the metadata persists across navigation and reload. "Cancel"(role=button) instead returns to Shelves without creating the entered object. Runtime names may append the evaluator's run, worker, and case identity to source examples.
 
         The existing Benchmark Bootstrap Shelf has description Entry shelf for the New Shelf creation action., no tags and no books. It remains an immutable entry shelf for New Shelf; shelves created by the user are separate objects.
       image:
@@ -291,7 +291,7 @@ children:
           - bootstrap shelf: {"name": "Benchmark Bootstrap Shelf", "description": "Entry shelf for the New Shelf creation action.", "tags": [], "books": []}
         When: Click New Shelf, fill Name with the isolated title, Description with Unsaved shelf description 4.3.2.
           and Tags with cancelled, shelf, then click Cancel.
-        Then: Shelfs list returns, with no entry for the unsaved name; none of the entered metadata creates a shelf.
+        Then: Shelves list returns, with no entry for the unsaved name; none of the entered metadata creates a shelf.
         references:
         - \ref[requirement](REQ-1.1)
         - \ref[image](IMG-SHELVES)
@@ -351,7 +351,7 @@ children:
     name: Delete or retain shelf
     description:
       text: Clicking "Delete"(role=button) on a selected shelf opens confirmation. "Confirm Delete"(role=button)
-        removes that shelf and returns to Shelfs, where its entry is absent from "Shelf list"(role=region); the
+        removes that shelf and returns to Shelves, where its entry is absent from "Shelf list"(role=region); the
         deletion remains effective across navigation. "Cancel"(role=button) keeps the shelf and preserves its original
         heading and description.
       image:
@@ -372,7 +372,7 @@ children:
           - bootstrap shelf: {"name": "Benchmark Bootstrap Shelf", "description": "Entry shelf for the New Shelf creation action.", "tags": [], "books": []}
         When: Click Delete, inspect confirmation with Confirm Delete and Cancel, then click Confirm Delete; reopen
           Shelves after reload.
-        Then: Shelfs list returns and contains no entry for the deleted shelf before or after reload.
+        Then: Shelves list returns and contains no entry for the deleted shelf before or after reload.
         references:
         - \ref[requirement](REQ-4.2)
         - \ref[image](IMG-DELETE-SHELVES)
