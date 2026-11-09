@@ -1,0 +1,12 @@
+{
+  "name": "arc-bench",
+  "private": true,
+  "scripts": {
+    "setup": "playwright install chromium",
+    "test": "node run-tests.cjs",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.57.0"
+  }
+}
