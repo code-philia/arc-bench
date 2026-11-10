@@ -1,12 +1,13 @@
+import { generateShelfData } from './fixtures/data';
 // requirement: REQ-4.2
 import { test } from '@playwright/test';
-import { text, identity, enter, heading, createShelf, openShelf } from './helpers';
+import { text, enter, heading, createShelf, openShelf } from './helpers';
 
-test("REQ-4.2: Open from global list", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-4.2: Open from global list", async ({ page }) => {
   await enter(page);
-  const name = await createShelf(page, id, 'Shelf 4.2.1');
+  const shelfData = generateShelfData({ prefix: 'Shelf 4.2.1' });
+  const name = await createShelf(page, shelfData);
   await openShelf(page, name);
   await heading(page, name);
-  await text(page, 'Reference shelf description.');
+  await text(page, shelfData.description, name);
 });

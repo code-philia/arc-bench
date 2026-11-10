@@ -1,23 +1,25 @@
+import { generateBookData, generateShelfData } from './fixtures/data';
 // requirement: REQ-5.2
 import { test } from '@playwright/test';
-import { text, identity, enter, region, entry, heading, createShelf, createBook, openBook, createShelfBook } from './helpers';
+import { text, enter, heading, createShelf, createBook, openBook, createShelfBook, objectNavigation, collection } from './helpers';
 
-test("REQ-5.2: Open from global list", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-5.2: Open from global list", async ({ page }) => {
   await enter(page);
-  const name = await createBook(page, id, 'Book 5.2.1');
+  const bookData = generateBookData({ prefix: 'Book 5.2.1' });
+  const name = await createBook(page, bookData);
   await openBook(page, name);
   await heading(page, name);
-  await text(page, 'Reference book description.');
+  await text(page, bookData.description, name);
 });
 
-test("REQ-5.2: Open from containing shelf", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-5.2: Open from containing shelf", async ({ page }) => {
   await enter(page);
-  const shelf = await createShelf(page, id, 'Shelf 5.2.2');
-  const book = await createShelfBook(page, id, shelf, 'Book 5.2.2');
-  await entry(page, shelf).click();
-  await entry(region(page, 'Book list'), book).click();
+  const shelfData = generateShelfData({ prefix: 'Shelf 5.2.2' });
+  const shelf = await createShelf(page, shelfData);
+  const bookData = generateBookData({ prefix: 'Book 5.2.2', shelfName: shelf });
+  const book = await createShelfBook(page, bookData);
+  await objectNavigation(page, shelf).open();
+  await collection(page, 'Book list', { owner: shelf }).item(book).open();
   await heading(page, book);
-  await text(page, 'Book created by corresponding prerequisite behavior.');
+  await text(page, bookData.description, book);
 });

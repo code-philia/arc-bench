@@ -1,11 +1,12 @@
+import { generateShelfData } from './fixtures/data';
 // requirement: REQ-4.1
-import { test, expect } from '@playwright/test';
-import { identity, enter, region, entry, go, createShelf } from './helpers';
+import { test } from '@playwright/test';
+import { enter, go, createShelf, collection } from './helpers';
 
-test("REQ-4.1: Show a uniquely identified item", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-4.1: Show a uniquely identified item", async ({ page }) => {
   await enter(page);
-  const name = await createShelf(page, id, 'Shelf 4.1');
+  const shelfData = generateShelfData({ prefix: 'Shelf 4.1' });
+  const name = await createShelf(page, shelfData);
   await go(page, 'Shelves');
-  await expect(entry(region(page, 'Shelf list'), name)).toHaveCount(1);
+  await collection(page, 'Shelf list').item(name).expectCount(1);
 });

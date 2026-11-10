@@ -1,24 +1,26 @@
+import { generateShelfData } from './fixtures/data';
 // requirement: REQ-4.3
-import { test, expect } from '@playwright/test';
-import { expectMetadata, identity, named, enter, region, entry, button, heading, metadata, beginShelf, createShelf } from './helpers';
+import { test } from '@playwright/test';
+import { expectMetadata, enter, heading, metadata, beginShelf, createShelf, action, collection } from './helpers';
 
-test("REQ-4.3: Save a new shelf", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-4.3: Save a new shelf", async ({ page }) => {
   await enter(page);
-  const name = await createShelf(page, id, 'Shelf Created 4.3.1', 'Shelf created by corresponding prerequisite behavior.', 'created, shelf');
-  await expect(entry(region(page, 'Shelf list'), name)).toHaveCount(1);
-  await entry(region(page, 'Shelf list'), name).click();
+  const shelfData = generateShelfData({ prefix: 'Shelf Created 4.3.1' });
+  const name = await createShelf(page, shelfData);
+  await collection(page, 'Shelf list').item(name).expectCount(1);
+  await collection(page, 'Shelf list').item(name).open();
   await page.reload();
-  await button(page, 'Edit').click();
+  await action(page, 'Edit').activate();
+  await expectMetadata(page, name, shelfData.description, shelfData.tags);
 });
 
-test("REQ-4.3: Cancel new shelf", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-4.3: Cancel new shelf", async ({ page }) => {
   await enter(page);
   await beginShelf(page);
-  const name = named(id, 'Shelf Cancelled 4.3.2');
-  await metadata(page, name, 'Unsaved shelf description 4.3.2.', 'cancelled, shelf');
-  await button(page, 'Cancel').click();
+  const newData = generateShelfData({ prefix: 'Shelf Cancelled 4.3.2' });
+  const name = newData.name;
+  await metadata(page, name, newData.description, newData.tags);
+  await action(page, 'Cancel').activate();
   await heading(page, 'Shelves');
-  await expect(entry(region(page, 'Shelf list'), name)).toHaveCount(0);
+  await collection(page, 'Shelf list').item(name).expectCount(0);
 });

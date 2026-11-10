@@ -4,9 +4,12 @@
   "scripts": {
     "setup": "playwright install chromium",
     "test": "node run-tests.cjs",
-    "report": "playwright show-report"
+    "report": "playwright show-report",
+    "check:bookstack": "node curation_tool/check_bookstack_semantic_api.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "1.57.0"
+    "@playwright/test": "1.57.0",
+    "@types/node": "^24.19.2",
+    "typescript": "^5.9.3"
   }
 }

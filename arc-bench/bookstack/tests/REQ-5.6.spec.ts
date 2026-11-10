@@ -1,14 +1,16 @@
+import { generateBookData, generateShelfData } from './fixtures/data';
 // requirement: REQ-5.6
-import { test, expect } from '@playwright/test';
-import { identity, enter, region, entry, heading, createShelf, createShelfBook } from './helpers';
+import { test } from '@playwright/test';
+import { enter, heading, createShelf, createShelfBook, objectNavigation, collection } from './helpers';
 
-test("REQ-5.6: Save a book with shelf association", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-5.6: Save a book with shelf association", async ({ page }) => {
   await enter(page);
-  const shelf = await createShelf(page, id, 'Shelf 5.6.1');
-  const book = await createShelfBook(page, id, shelf, 'Book Created 5.6.1');
+  const shelfData = generateShelfData({ prefix: 'Shelf 5.6.1' });
+  const shelf = await createShelf(page, shelfData);
+  const bookData = generateBookData({ prefix: 'Book Created 5.6.1', shelfName: shelf });
+  const book = await createShelfBook(page, bookData);
   await heading(page, book);
-  await entry(page, shelf).click();
+  await objectNavigation(page, shelf).open();
   await heading(page, shelf);
-  await expect(entry(region(page, 'Book list'), book)).toBeVisible();
+  await collection(page, 'Book list', { owner: shelf }).item(book).expectVisible();
 });

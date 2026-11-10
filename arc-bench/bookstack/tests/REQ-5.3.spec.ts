@@ -1,24 +1,26 @@
+import { generateBookData } from './fixtures/data';
 // requirement: REQ-5.3
-import { test, expect } from '@playwright/test';
-import { expectMetadata, identity, named, enter, region, entry, button, heading, text, metadata, beginBook, createBook } from './helpers';
+import { test } from '@playwright/test';
+import { expectMetadata, enter, heading, text, metadata, beginBook, createBook, action, collection } from './helpers';
 
-test("REQ-5.3: Save a new book", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-5.3: Save a new book", async ({ page }) => {
   await enter(page);
-  const name = await createBook(page, id, 'Book Created 5.3.1', 'Book created by corresponding prerequisite behavior.', 'created, book');
+  const bookData = generateBookData({ prefix: 'Book Created 5.3.1' });
+  const name = await createBook(page, bookData);
   await heading(page, name);
-  await text(page, 'Book created by corresponding prerequisite behavior.');
+  await text(page, bookData.description, name);
   await page.reload();
-  await button(page, 'Edit').click();
+  await action(page, 'Edit').activate();
+  await expectMetadata(page, name, bookData.description, bookData.tags);
 });
 
-test("REQ-5.3: Cancel new book", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-5.3: Cancel new book", async ({ page }) => {
   await enter(page);
   await beginBook(page);
-  const name = named(id, 'Book Cancelled 5.3.2');
-  await metadata(page, name, 'Unsaved book description 5.3.2.', 'cancelled, book');
-  await button(page, 'Cancel').click();
+  const newData = generateBookData({ prefix: 'Book Cancelled 5.3.2' });
+  const name = newData.name;
+  await metadata(page, name, newData.description, newData.tags);
+  await action(page, 'Cancel').activate();
   await heading(page, 'Books');
-  await expect(entry(region(page, 'Book list'), name)).toHaveCount(0);
+  await collection(page, 'Book list').item(name).expectCount(0);
 });

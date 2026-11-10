@@ -1,16 +1,25 @@
+import { generateBookData } from './fixtures/data';
 // requirement: REQ-8.2
-import { test, expect } from '@playwright/test';
-import { identity, enter, region, entry, button, home, login, heading, createBook } from './helpers';
+import { test } from '@playwright/test';
+import { enter, home, login, heading, createBook, action, collection, favorite, withFavoriteCleanup } from './helpers';
 
-test("REQ-8.2: Open favorited book", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-8.2: Open favorited book", async ({ page }) => {
+  test.setTimeout(90_000);
   await enter(page);
   await login(page);
-  const book = await createBook(page, id, 'Book 8.2');
-  await button(page, 'Favorite').click();
-  await expect(button(page, 'Unfavorite')).toHaveAttribute('aria-pressed', 'true');
-  await home(page);
-  const collection = region(page, 'My Most Viewed Favorites');
-  await entry(region(page, 'My Most Viewed Favorites'), book).click();
-  await heading(page, book);
+  await withFavoriteCleanup(page, async track => {
+    let book = '';
+    for (let i = 0; i < 5; i++) {
+      const bookData = generateBookData({ prefix: 'Book 8.2' });
+      book = await createBook(page, bookData);
+      track(book);
+      await action(page, 'Favorite').activate();
+      await favorite(page).expectState(true);
+    }
+    await home(page);
+    await collection(page, 'My Most Viewed Favorites').item(book).expectCount(1);
+    await collection(page, 'My Most Viewed Favorites').expectMaxItems(4);
+    await collection(page, 'My Most Viewed Favorites').item(book).open();
+    await heading(page, book);
+  });
 });

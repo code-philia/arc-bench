@@ -1,25 +1,28 @@
+import { generateBookData, generatePageData } from './fixtures/data';
 // requirement: REQ-6.4
-import { test, expect } from '@playwright/test';
-import { identity, enter, region, entry, button, heading, text, createBook, createPage } from './helpers';
+import { test } from '@playwright/test';
+import { enter, heading, text, createBook, createPage, action, collection, pageEditor } from './helpers';
 
-test("REQ-6.4: Read selected page", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-6.4: Read selected page", async ({ page }) => {
   await enter(page);
-  const book = await createBook(page, id, 'Book 6.3.1');
-  const name = await createPage(page, id, book, 'Page 6.3.1', 'Reading content for Page 6.3.1.');
-  await entry(region(page, 'Page list'), name).click();
+  const bookData = generateBookData({ prefix: 'Book 6.3.1' });
+  const book = await createBook(page, bookData);
+  const pageData = generatePageData({ prefix: 'Page 6.3.1', bookName: book });
+  const name = await createPage(page, pageData);
+  await collection(page, 'Page list', { owner: book }).item(name).open();
   await heading(page, name);
-  await text(page, 'Reading content for Page 6.3.1.');
+  await text(page, pageData.content, name);
 });
 
-test("REQ-6.4: Reopen page editor", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-6.4: Reopen page editor", async ({ page }) => {
   await enter(page);
-  const book = await createBook(page, id, 'Book 6.3.2');
-  const name = await createPage(page, id, book, 'Page 6.3.2', 'Reading content for Page 6.3.2.');
-  await entry(region(page, 'Page list'), name).click();
-  await button(page, 'Edit').click();
-  await expect(page.getByPlaceholder('Page title', { exact: true })).toHaveValue(name);
-  await expect(page.getByPlaceholder('Write your page content here...', { exact: true })).toHaveValue('Reading content for Page 6.3.2.');
-  await expect(button(page, 'Save Page')).toBeVisible();
+  const bookData = generateBookData({ prefix: 'Book 6.3.2' });
+  const book = await createBook(page, bookData);
+  const pageData = generatePageData({ prefix: 'Page 6.3.2', bookName: book });
+  const name = await createPage(page, pageData);
+  await collection(page, 'Page list', { owner: book }).item(name).open();
+  await action(page, 'Edit').activate();
+  await pageEditor(page).title.expectValue(name);
+  await pageEditor(page).body.expectValue(pageData.content);
+  await action(page, 'Save Page').expectVisible();
 });

@@ -1,27 +1,28 @@
+import { generateBookData } from './fixtures/data';
 // requirement: REQ-5.5
-import { test, expect } from '@playwright/test';
-import { identity, enter, region, entry, button, heading, text, go, createBook, openBook } from './helpers';
+import { test } from '@playwright/test';
+import { enter, heading, text, go, createBook, openBook, action, collection } from './helpers';
 
-test("REQ-5.5: Confirm deletion", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-5.5: Confirm deletion", async ({ page }) => {
   await enter(page);
-  const name = await createBook(page, id, 'Book 5.5.1', 'Reference book description.');
+  const bookData = generateBookData({ prefix: 'Book 5.5.1' });
+  const name = await createBook(page, bookData);
   await openBook(page, name);
-  await button(page, 'Delete').click();
-  await button(page, 'Confirm Delete').click();
+  await action(page, 'Delete').activate();
+  await action(page, 'Confirm Delete').activate();
   await heading(page, 'Books');
   await page.reload();
   await go(page, 'Books');
-  await expect(entry(region(page, 'Book list'), name)).toHaveCount(0);
+  await collection(page, 'Book list').item(name).expectCount(0);
 });
 
-test("REQ-5.5: Cancel deletion", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-5.5: Cancel deletion", async ({ page }) => {
   await enter(page);
-  const name = await createBook(page, id, 'Book 5.5.2', 'Reference book description.');
+  const bookData = generateBookData({ prefix: 'Book 5.5.2' });
+  const name = await createBook(page, bookData);
   await openBook(page, name);
-  await button(page, 'Delete').click();
-  await button(page, 'Cancel').click();
+  await action(page, 'Delete').activate();
+  await action(page, 'Cancel').activate();
   await heading(page, name);
-  await text(page, 'Reference book description.');
+  await text(page, bookData.description, name);
 });

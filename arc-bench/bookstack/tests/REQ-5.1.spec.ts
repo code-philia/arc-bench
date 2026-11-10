@@ -1,11 +1,12 @@
+import { generateBookData } from './fixtures/data';
 // requirement: REQ-5.1
-import { test, expect } from '@playwright/test';
-import { identity, enter, region, entry, go, createBook } from './helpers';
+import { test } from '@playwright/test';
+import { enter, go, createBook, collection } from './helpers';
 
-test("REQ-5.1: Show a uniquely identified item", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-5.1: Show a uniquely identified item", async ({ page }) => {
   await enter(page);
-  const name = await createBook(page, id, 'Book 5.1');
+  const bookData = generateBookData({ prefix: 'Book 5.1' });
+  const name = await createBook(page, bookData);
   await go(page, 'Books');
-  await expect(entry(region(page, 'Book list'), name)).toHaveCount(1);
+  await collection(page, 'Book list').item(name).expectCount(1);
 });

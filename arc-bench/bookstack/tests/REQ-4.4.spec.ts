@@ -1,27 +1,28 @@
+import { generateShelfData } from './fixtures/data';
 // requirement: REQ-4.4
-import { test, expect } from '@playwright/test';
-import { identity, enter, region, entry, button, heading, text, go, createShelf, openShelf } from './helpers';
+import { test } from '@playwright/test';
+import { enter, heading, text, go, createShelf, openShelf, action, collection } from './helpers';
 
-test("REQ-4.4: Confirm deletion", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-4.4: Confirm deletion", async ({ page }) => {
   await enter(page);
-  const name = await createShelf(page, id, 'Shelf 4.4.1', 'Reference shelf description.');
+  const shelfData = generateShelfData({ prefix: 'Shelf 4.4.1' });
+  const name = await createShelf(page, shelfData);
   await openShelf(page, name);
-  await button(page, 'Delete').click();
-  await button(page, 'Confirm Delete').click();
+  await action(page, 'Delete').activate();
+  await action(page, 'Confirm Delete').activate();
   await heading(page, 'Shelves');
   await page.reload();
   await go(page, 'Shelves');
-  await expect(entry(region(page, 'Shelf list'), name)).toHaveCount(0);
+  await collection(page, 'Shelf list').item(name).expectCount(0);
 });
 
-test("REQ-4.4: Cancel deletion", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-4.4: Cancel deletion", async ({ page }) => {
   await enter(page);
-  const name = await createShelf(page, id, 'Shelf 4.4.2', 'Reference shelf description.');
+  const shelfData = generateShelfData({ prefix: 'Shelf 4.4.2' });
+  const name = await createShelf(page, shelfData);
   await openShelf(page, name);
-  await button(page, 'Delete').click();
-  await button(page, 'Cancel').click();
+  await action(page, 'Delete').activate();
+  await action(page, 'Cancel').activate();
   await heading(page, name);
-  await text(page, 'Reference shelf description.');
+  await text(page, shelfData.description, name);
 });

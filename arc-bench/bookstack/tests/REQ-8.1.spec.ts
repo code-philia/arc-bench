@@ -1,30 +1,37 @@
+import { generateBookData } from './fixtures/data';
 // requirement: REQ-8.1
-import { test, expect } from '@playwright/test';
-import { identity, enter, region, entry, button, home, login, createBook } from './helpers';
+import { test } from '@playwright/test';
+import { enter, home, login, createBook, action, collection, favorite, withFavoriteCleanup } from './helpers';
 
-test("REQ-8.1: Favorite a book", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-8.1: Favorite a book", async ({ page }) => {
   await enter(page);
   await login(page);
-  await createBook(page, id, 'Book 8.1');
-  await expect(button(page, 'Favorite')).toHaveAttribute('aria-pressed', 'false');
-  await button(page, 'Favorite').click();
-  await expect(button(page, 'Unfavorite')).toHaveAttribute('aria-pressed', 'true');
+  await withFavoriteCleanup(page, async track => {
+    const bookData = generateBookData({ prefix: 'Book 8.1' });
+    const book = await createBook(page, bookData);
+    track(book);
+    await favorite(page).expectState(false);
+    await action(page, 'Favorite').activate();
+    await favorite(page).expectState(true);
+  });
 });
 
-test("REQ-8.1: Persist removal of a favorite", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-8.1: Persist removal of a favorite", async ({ page }) => {
   await enter(page);
   await login(page);
-  const book = await createBook(page, id, 'Book Unfavorite');
-  await button(page, 'Favorite').click();
-  await expect(button(page, 'Unfavorite')).toHaveAttribute('aria-pressed', 'true');
-  await page.reload();
-  await expect(button(page, 'Unfavorite')).toHaveAttribute('aria-pressed', 'true');
-  await button(page, 'Unfavorite').click();
-  await expect(button(page, 'Favorite')).toHaveAttribute('aria-pressed', 'false');
-  await page.reload();
-  await expect(button(page, 'Favorite')).toHaveAttribute('aria-pressed', 'false');
-  await home(page);
-  await expect(entry(region(page, 'My Most Viewed Favorites'), book)).toHaveCount(0);
+  await withFavoriteCleanup(page, async track => {
+    const bookData = generateBookData({ prefix: 'Book Unfavorite' });
+    const book = await createBook(page, bookData);
+    track(book);
+    await action(page, 'Favorite').activate();
+    await favorite(page).expectState(true);
+    await page.reload();
+    await favorite(page).expectState(true);
+    await action(page, 'Unfavorite').activate();
+    await favorite(page).expectState(false);
+    await page.reload();
+    await favorite(page).expectState(false);
+    await home(page);
+    await collection(page, 'My Most Viewed Favorites').item(book).expectCount(0);
+  });
 });

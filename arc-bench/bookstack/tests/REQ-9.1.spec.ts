@@ -1,15 +1,24 @@
+import { generateBookData, generatePageData } from './fixtures/data';
 // requirement: REQ-9.1
-import { test, expect } from '@playwright/test';
-import { identity, enter, region, entry, home, heading, text, createBook, createPage } from './helpers';
+import { test } from '@playwright/test';
+import { enter, home, heading, text, createBook, createPage, collection } from './helpers';
 
-test("REQ-9.1: Open recently published page", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-9.1: Open recently published page", async ({ page }) => {
+  test.setTimeout(90_000);
   await enter(page);
-  const book = await createBook(page, id, 'Book 9.1');
-  const name = await createPage(page, id, book, 'Page Updated 9.1', 'Page content created by corresponding prerequisite behavior.');
+  const bookData = generateBookData({ prefix: 'Book 9.1' });
+  const book = await createBook(page, bookData);
+  let name = '';
+  let body = '';
+  for (let i = 0; i < 6; i++) {
+    const pageData = generatePageData({ prefix: 'Page Updated 9.1', bookName: book });
+    name = await createPage(page, pageData);
+    body = pageData.content;
+  }
   await home(page);
-  const collection = region(page, 'Recently Updated Pages');
-  await entry(region(page, 'Recently Updated Pages'), name).click();
+  await collection(page, 'Recently Updated Pages').item(name).expectCount(1);
+  await collection(page, 'Recently Updated Pages').expectMaxItems(5);
+  await collection(page, 'Recently Updated Pages').item(name).open();
   await heading(page, name);
-  await text(page, 'Page content created by corresponding prerequisite behavior.');
+  await text(page, body, name);
 });

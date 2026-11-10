@@ -1,10 +1,10 @@
 // requirement: REQ-2.2
-import { test, expect } from '@playwright/test';
-import { ACCOUNT, identity, enter, login } from './helpers';
+import { test } from '@playwright/test';
+import { ACCOUNT, enter, login, accountIdentity, collection } from './helpers';
 
-test("REQ-2.2: Log in with remember me", async ({ page }, testInfo) => {
-  const id = identity(testInfo);
+test("REQ-2.2: Log in with remember me", async ({ page }) => {
   await enter(page);
   await login(page, true);
-  await expect(page.getByText(ACCOUNT.nickname, { exact: true })).toBeVisible();
+  await accountIdentity(page, ACCOUNT.nickname).expectVisible();
+  await collection(page, 'My Recent Drafts').expectVisible();
 });
