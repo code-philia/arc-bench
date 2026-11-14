@@ -1,11 +1,12 @@
 // requirement: REQ-5.7.2
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, row, login, orders, checkHeaders } from './helpers';
+import { checkHeaders, entry, login, orders, row } from './helpers';
+import { history } from './fixtures/data';
 test("REQ-5.7.2: Inspect completed historical order", async ({ page }) => {
     await entry(page);
-    await login(page, 'orders_history_user');
+    await login(page, history.username);
     await orders(page, 'History orders');
     await checkHeaders(page, ['Train Information', 'Passenger Information', 'Seat Information', 'Price', 'Status', 'Total Price']);
-    await expect(row(page, 'G1001')).toContainText('completed');
+    await expect(row(page, history.train)).toContainText('completed');
 });

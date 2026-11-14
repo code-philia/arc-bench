@@ -1,7 +1,7 @@
 // requirement: REQ-2.3
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, link, text, login } from './helpers';
+import { entry, link, login, text } from './helpers';
 test("REQ-2.3: Clear persisted login", async ({ page }) => {
     await entry(page);
     await login(page);

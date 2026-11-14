@@ -1,15 +1,16 @@
 // requirement: REQ-8.1.1
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, link, button, field, region, row, home, login, center, orders, orderSetup, search, booking, confirmation } from './helpers';
+import { button, dialog, entry, loginFields, row, search } from './helpers';
 
+import { trains } from './fixtures/data';
 test("REQ-8.1.1: Open booking quick-login entry", async ({ page }) => {
   await entry(page);
   await search(page);
-  await button(row(page, 'G1001'), 'Book').click();
-  const dialog = page.getByRole('dialog', { name: 'Login', exact: true });
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByPlaceholder('Email/Username/Mobile number', { exact: true })).toBeVisible();
-  await expect(dialog.getByPlaceholder('Password', { exact: true })).toBeVisible();
-  await expect(button(dialog, 'LOGIN')).toBeVisible();
+  await button(row(page, trains[0].number), 'Book').click();
+  const quickLogin = dialog(page, 'Login');
+  await expect(quickLogin).toBeVisible();
+  await expect(loginFields(quickLogin).account).toBeVisible();
+  await expect(loginFields(quickLogin).password).toBeVisible();
+  await expect(loginFields(quickLogin).submit).toBeVisible();
 });

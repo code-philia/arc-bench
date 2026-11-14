@@ -1,35 +1,37 @@
 // requirement: REQ-5.7.3
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, button, field, text, row, login, orders, search, booking, fillDates } from './helpers';
+import { addDays } from './fixtures/clock';
+import { button, entry, fillDates, login, orderKeyword, orders, picture, row, text } from './helpers';
+import { history } from './fixtures/data';
 test("REQ-5.7.3: Search history departure range", async ({ page }) => {
     await entry(page);
-    await login(page, 'orders_history_user');
+    await login(page, history.username);
     await orders(page, 'History orders');
-    await fillDates(page, '2026-07-19', '2026-07-21', "");
-    await expect(row(page, 'G1001')).toBeVisible();
+    await fillDates(page, history.departure, addDays(history.departure, 2), "");
+    await expect(row(page, history.train)).toBeVisible();
 });
 test("REQ-5.7.3: Exclude history outside date range", async ({ page }) => {
     await entry(page);
-    await login(page, 'orders_history_user');
+    await login(page, history.username);
     await orders(page, 'History orders');
-    await fillDates(page, '2026-07-20', '2026-07-21', "G1001");
-    await expect(page.getByRole('img', { name: 'No orders', exact: true })).toBeVisible();
-    await expect(row(page, 'G1001')).not.toBeVisible();
+    await fillDates(page, addDays(history.departure, 1), addDays(history.departure, 2), history.train);
+    await expect(picture(page, 'No orders')).toBeVisible();
+    await expect(row(page, history.train)).not.toBeVisible();
 });
 test("REQ-5.7.3: Exclude history nonmatching keyword", async ({ page }) => {
     await entry(page);
-    await login(page, 'orders_history_user');
+    await login(page, history.username);
     await orders(page, 'History orders');
-    await fillDates(page, '2026-07-19', '2026-07-21', "Z9999");
-    await expect(page.getByRole('img', { name: 'No orders', exact: true })).toBeVisible();
-    await expect(row(page, 'G1001')).not.toBeVisible();
+    await fillDates(page, history.departure, addDays(history.departure, 2), "Z9999");
+    await expect(picture(page, 'No orders')).toBeVisible();
+    await expect(row(page, history.train)).not.toBeVisible();
 });
 test("REQ-5.7.3: Reject invalid history keyword", async ({ page }) => {
     await entry(page);
-    await login(page, 'orders_history_user');
+    await login(page, history.username);
     await orders(page, 'History orders');
-    await page.getByPlaceholder('Order number/train number/name', { exact: true }).fill('***');
+    await orderKeyword(page).fill('***');
     await button(page, 'Search').click();
     await text(page, 'Please enter a valid search condition.');
 });

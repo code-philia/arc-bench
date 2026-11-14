@@ -1,11 +1,11 @@
 // requirement: REQ-7.1
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, button, row, login, passengerPage, checkHeaders } from './helpers';
+import { button, checkHeaders, entry, manager, row } from './helpers';
 test("REQ-7.1: Inspect passenger table and protected holder", async ({ page }) => {
     await entry(page);
-    await login(page, 'passenger_manager_user');
-    await passengerPage(page);
+    const holder = await manager(page);
     await checkHeaders(page, ['All', 'Name', 'ID type', 'ID number', 'Mobile number', 'Operation']);
-    await expect(button(row(page, 'passenger_manager_user'), 'Delete')).toHaveCount(0);
+    await expect(row(page, holder.passport)).toContainText(holder.name);
+    await expect(button(row(page, holder.passport), 'Delete')).toHaveCount(0);
 });

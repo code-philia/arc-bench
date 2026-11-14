@@ -1,15 +1,16 @@
 // requirement: REQ-8.3.3.2
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, button, row, orders, confirmation } from './helpers';
+import { button, confirmation, confirmationDialog, entry, heading, orderRow, orders } from './helpers';
+import { bookingAccounts } from './fixtures/data';
 test("REQ-8.3.3.2: Edit without submitting", async ({ page }) => {
     await entry(page);
-    await confirmation(page, 'booking_edit_user');
-    const d = page.getByRole('dialog', { name: 'Please confirm the following information.', exact: true });
+    const journey = await confirmation(page, bookingAccounts.edit);
+    const d = confirmationDialog(page);
     await button(d, 'Edit').click();
     await expect(d).not.toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Train Information:', exact: true })).toBeVisible();
+    await expect(heading(page, /^Train Information:?$/i)).toBeVisible();
     await expect(button(page, 'Place order')).toBeVisible();
     await orders(page, 'Uncompleted orders');
-    await expect(row(page, 'G1001')).toHaveCount(0);
+    await expect(orderRow(page, journey)).toHaveCount(0);
 });

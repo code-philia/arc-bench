@@ -1,23 +1,22 @@
 // requirement: REQ-6.4
-import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, link, button, field, text, login, home, security, PASS } from './helpers';
+import { button, createAccount, entry, field, home, link, login, security, text } from './helpers';
 test("REQ-6.4: Persist changed login password", async ({ page }) => {
     await entry(page);
-    await login(page, 'security_password_change_user');
+    const account = await createAccount(page);
     await security(page, 'password');
-    await field(page, 'Current password:').fill(PASS);
-    await field(page, 'New password:').fill(PASS + 'X');
-    await field(page, 'Confirm your password:').fill(PASS + 'X');
+    await field(page, 'Current password:').fill(account.password);
+    await field(page, 'New password:').fill(account.password + 'X');
+    await field(page, 'Confirm your password:').fill(account.password + 'X');
     await button(page, 'Determine').click();
     await text(page, 'Password changed successfully.');
     await home(page);
     await link(page, 'Sign Out').click();
-    await login(page, 'security_password_change_user', PASS + 'X');
+    await login(page, account.username, account.password + 'X');
 });
 test("REQ-6.4: Reject empty password change", async ({ page }) => {
     await entry(page);
-    await login(page, 'security_password_user');
+    const account = await createAccount(page);
     await security(page, 'password');
     await field(page, 'Current password:').fill("");
     await field(page, 'New password:').fill("");
@@ -26,31 +25,31 @@ test("REQ-6.4: Reject empty password change", async ({ page }) => {
     await text(page, "Please fill in all password fields.");
     await home(page);
     await link(page, 'Sign Out').click();
-    await login(page, 'security_password_user');
+    await login(page, account.username, account.password);
 });
 test("REQ-6.4: Reject incorrect current password", async ({ page }) => {
     await entry(page);
-    await login(page, 'security_password_user');
+    const account = await createAccount(page);
     await security(page, 'password');
     await field(page, 'Current password:').fill("WrongPassword123!");
-    await field(page, 'New password:').fill("Password123!X");
-    await field(page, 'Confirm your password:').fill("Password123!X");
+    await field(page, 'New password:').fill(account.password + 'X');
+    await field(page, 'Confirm your password:').fill(account.password + 'X');
     await button(page, 'Determine').click();
     await text(page, "Incorrect current password.");
     await home(page);
     await link(page, 'Sign Out').click();
-    await login(page, 'security_password_user');
+    await login(page, account.username, account.password);
 });
 test("REQ-6.4: Reject mismatched new passwords", async ({ page }) => {
     await entry(page);
-    await login(page, 'security_password_user');
+    const account = await createAccount(page);
     await security(page, 'password');
-    await field(page, 'Current password:').fill("Password123!");
-    await field(page, 'New password:').fill("Password123!X");
-    await field(page, 'Confirm your password:').fill("Password123!Mismatch");
+    await field(page, 'Current password:').fill(account.password);
+    await field(page, 'New password:').fill(account.password + 'X');
+    await field(page, 'Confirm your password:').fill(account.password + 'Y');
     await button(page, 'Determine').click();
     await text(page, "New passwords do not match.");
     await home(page);
     await link(page, 'Sign Out').click();
-    await login(page, 'security_password_user');
+    await login(page, account.username, account.password);
 });

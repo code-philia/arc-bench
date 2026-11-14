@@ -1,16 +1,17 @@
 // requirement: REQ-8.1.2
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, button, row, login, search, booking } from './helpers';
+import { button, dialog, entry, heading, loginFields, picture, row, search } from './helpers';
+import { trains } from './fixtures/data';
 test("REQ-8.1.2: Require quick login before booking", async ({ page }) => {
     await entry(page);
     await search(page);
-    await button(row(page, 'G1001'), 'Book').click();
-    const d = page.getByRole('dialog', { name: 'Login', exact: true });
-    await expect(d.getByRole('img', { name: 'Login', exact: true })).toBeVisible();
-    await expect(d.getByRole('heading', { name: 'Login', exact: true })).toBeVisible();
-    await expect(d.getByPlaceholder('Email/Username/Mobile number', { exact: true })).toBeVisible();
-    await expect(d.getByPlaceholder('Password', { exact: true })).toBeVisible();
+    await button(row(page, trains[0].number), 'Book').click();
+    const d = dialog(page, 'Login');
+    await expect(picture(d, 'Login')).toBeVisible();
+    await expect(heading(d, 'Login')).toBeVisible();
+    await expect(loginFields(d).account).toBeVisible();
+    await expect(loginFields(d).password).toBeVisible();
     await expect(button(d, 'LOGIN')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Train Information:', exact: true })).not.toBeVisible();
+    await expect(heading(page, 'Train Information:')).not.toBeVisible();
 });

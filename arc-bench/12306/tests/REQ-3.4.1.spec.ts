@@ -1,13 +1,13 @@
 // requirement: REQ-3.4.1
 import { expect } from '@playwright/test';
-import { test } from './fixtures/test';
-import { entry, button, field, search, expectTrainIds } from './helpers';
+import { test, travelDate } from './fixtures/test';
+import { button, chooseDepartureDate, entry, expectTrainIds, field, search } from './helpers';
+import { additionalTrain, trains } from './fixtures/data';
 test("REQ-3.4.1: Change date using date picker", async ({ page }) => {
     await entry(page);
     await search(page);
-    await field(page, 'Date').click();
-    await button(page, '2026-07-22').click();
+    await chooseDepartureDate(page, travelDate(page, 1));
     await button(page, 'Search').click();
-    await expect(field(page, 'Date')).toHaveValue('2026-07-22');
-    await expectTrainIds(page, ['G1001', 'G1002', 'K1003', 'G2002']);
+    await expect(field(page, 'Date')).toHaveValue(travelDate(page, 1));
+    await expectTrainIds(page, [...trains.map(train => train.number), additionalTrain]);
 });

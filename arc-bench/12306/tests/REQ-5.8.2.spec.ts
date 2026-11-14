@@ -1,13 +1,12 @@
 // requirement: REQ-5.8.2
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, link, region, login, home, center, security } from './helpers';
+import { createAccount, entry, home, link, quickEntries, region } from './helpers';
 test("REQ-5.8.2: Quick entry to User information", async ({ page }) => {
     await entry(page);
-    await login(page, 'profile_user');
+    await createAccount(page);
     await home(page);
-    await link(page, 'My 12306').hover();
-    const q = region(page, 'My 12306 quick entries');
+    const q = await quickEntries(page);
     for (const name of ['Order center', 'User information', 'Account security', 'My passengers'])
         await expect(link(q, name)).toBeVisible();
     await link(q, "User information").click();
