@@ -41,7 +41,8 @@ assert.equal(requirements, 34); assert.equal(leaves, 24); assert.equal(scenarios
 const specs = readdirSync('arc-bench/bookstack/tests').filter(n => /^REQ-.*\.spec\.ts$/.test(n));
 assert.equal(specs.length, 24);
 assert.equal(specs.reduce((n,f) => n + [...readFileSync(`arc-bench/bookstack/tests/${f}`, 'utf8').matchAll(/\btest\(/g)].length, 0), 35);
-for (const skill of ['bench-curation', 'bench-data-curation', 'bench-role-curation', 'bench-meta-curation', 'bench-ui-curation', 'bench-quality-curation']) {
+const skills = ['bench-curation', 'bench-data-curation', 'bench-role-curation', 'bench-meta-curation', 'bench-time-curation', 'bench-ui-curation', 'bench-quality-curation'];
+for (const skill of skills) {
   const path = `curation_tool/${skill}/SKILL.md`, text = readFileSync(path, 'utf8');
   const meta = yaml.parse(text.match(/^---\r?\n([\s\S]*?)\r?\n---/)[1]);
   assert.equal(meta.name, skill); assert(meta.description);
@@ -50,4 +51,4 @@ for (const skill of ['bench-curation', 'bench-data-curation', 'bench-role-curati
 for (const path of ['README_curation.md', 'curation_tool/README.md']) {
   for (const [,target] of readFileSync(path, 'utf8').matchAll(/\]\(([^)]+)\)/g)) if (!/^https?:|^#/.test(target)) assert(existsSync(resolve(dirname(path), target.split('#')[0])), `${path}: ${target}`);
 }
-console.log(JSON.stringify({result:'passed', requirements, leaves, scenarios, specs:specs.length, tests:35, markers:0, skills:6, semantic_diff:before ? 'isolated_content_only' : 'not_requested', references:'resolved'}));
+console.log(JSON.stringify({result:'passed', requirements, leaves, scenarios, specs:specs.length, tests:35, markers:0, skills:skills.length, semantic_diff:before ? 'isolated_content_only' : 'not_requested', references:'resolved'}));

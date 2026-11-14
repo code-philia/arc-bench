@@ -16,6 +16,7 @@ description: 统筹本仓库BookStack需求与测试治理，维护逐项状态�
 | 数据协议、自然示例、素材准备 | [bench-data-curation](../bench-data-curation/SKILL.md) | data |
 | role/ARIA实现协议、语义元件适配 | [bench-role-curation](../bench-role-curation/SKILL.md) | role |
 | 评测元说明、历史编辑说明、父子重复规则 | [bench-meta-curation](../bench-meta-curation/SKILL.md) | meta |
+| 日期与时钟、同步审查需求和测试 | [bench-time-curation](../bench-time-curation/SKILL.md) | 沿用受影响阶段 |
 | 过度精确的UI名称、提示语和结构约束 | [bench-ui-curation](../bench-ui-curation/SKILL.md) | ui |
 | 测试数据与断言质量复查 | [bench-quality-curation](../bench-quality-curation/SKILL.md) | quality |
 

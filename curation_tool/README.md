@@ -8,6 +8,7 @@
 - [bench-data-curation](bench-data-curation/SKILL.md)：自然示例、数据来源与随机素材。
 - [bench-role-curation](bench-role-curation/SKILL.md)：实现协议与语义适配。
 - [bench-meta-curation](bench-meta-curation/SKILL.md)：元说明与父子重复。
+- [bench-time-curation](bench-time-curation/SKILL.md)：当前时间、相对日期、业务时区与倒计时。
 - [bench-ui-curation](bench-ui-curation/SKILL.md)：产品要求与测试便利性约束。
 - [bench-quality-curation](bench-quality-curation/SKILL.md)：前提、操作、断言、容量和重复执行质量。
 
