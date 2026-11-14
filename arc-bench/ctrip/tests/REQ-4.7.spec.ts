@@ -1,13 +1,19 @@
 // requirement: REQ-4.7
-import { test, expect } from "@playwright/test";
-import { region, tab, record, records, openHome, installClock, openOrders } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, action, nav, region, tab, records, openHome, openOrders, ORDERS, registerAccount, bookUnpaidOrder, orderRecord, signedOut } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-4.7: Keep order lists scoped to the current account', async ({ page }, testInfo) => {
+test('REQ-4.7: Keep order lists scoped to the current account', async ({ page }) => {
   await openHome(page);
-  await openOrders(page, 'profile_read');
+  const otherOrder = await bookUnpaidOrder(page);
+  await openHome(page);
+  await action(nav(page), 'My account').hover();
+  await action(page, 'Log out').click();
+  await signedOut(page);
+  await registerAccount(page);
+  await openOrders(page);
   await tab(page, 'All orders').click();
   await expect(records(region(page, 'Order list'))).toHaveCount(0);
-  for (const number of ['CTRIP20260721001', 'CTRIP20260722002', 'CTRIP20260718003', 'CTRIP20260721004']) await expect(record(region(page, 'Order list'), number)).toHaveCount(0);
+  for (const number of [ORDERS.pending.number, ORDERS.upcoming.number, ORDERS.review.number, otherOrder]) {
+    await expect(orderRecord(region(page, 'Order list'), number)).toHaveCount(0);
+  }
 });

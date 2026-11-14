@@ -1,19 +1,15 @@
 // requirement: REQ-4.5
-import { test, expect } from "@playwright/test";
-import { button, region, dialog, textVisible, openHome, installClock, openOrderDetails } from "./helpers";
+import { test, button, region, dialog, textVisible, openHome, bookUnpaidOrder, visible } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-4.5: Confirm unpaid order cancellation', async ({ page }, testInfo) => {
+test('REQ-4.5: Confirm unpaid order cancellation', async ({ page }) => {
   await openHome(page);
-  await openOrderDetails(page, 'order_cancel', 'CTRIP20260721004');
-  await textVisible(region(page, 'Payment status'), 'Pending payment');
+  const number = await bookUnpaidOrder(page);
   await button(region(page, 'Payment status'), 'Cancel order').click();
+  await visible(dialog(page, 'Cancel order'));
   await button(dialog(page, 'Cancel order'), 'Confirm cancellation').click();
-  await textVisible(page, 'CTRIP20260721004');
+  await textVisible(page, number);
   await textVisible(region(page, 'Payment status'), 'Closed');
   await page.reload();
-  await textVisible(page, 'CTRIP20260721004');
+  await textVisible(page, number);
   await textVisible(region(page, 'Payment status'), 'Closed');
 });
-

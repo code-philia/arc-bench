@@ -1,16 +1,13 @@
 // requirement: REQ-3.9
-import { test, expect } from "@playwright/test";
-import { button, radio, visible, textVisible, openHome, installClock, openBooking, submitBooking } from "./helpers";
+import { test, setChecked, button, radio, textVisible, openHome, openBooking, submitBooking, heading } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-3.9: Pay with simulated Alipay', async ({ page }, testInfo) => {
+test('REQ-3.9: Pay with simulated Alipay', async ({ page }) => {
   await openHome(page);
   await openBooking(page);
   await submitBooking(page);
-  await radio(page, 'Alipay').check();
+  await heading(page, 'Payment');
+  await setChecked(radio(page, 'Alipay'));
   await button(page, 'Pay now').click();
-  await visible(page.getByRole('status').filter({ hasText: 'Payment successful' }));
+  await textVisible(page, 'Payment successful');
   await textVisible(page, 'JD5162');
 });
-

@@ -1,21 +1,19 @@
 // requirement: REQ-7.6
-import { test, expect } from "@playwright/test";
-import { field, region, radio, visible, openHome, installClock, openStatus } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, setChecked, field, region, radio, visible, openHome, openStatus } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-7.6: Switch flight-status query dimensions', async ({ page }, testInfo) => {
+test('REQ-7.6: Switch flight-status query dimensions', async ({ page }) => {
   await openHome(page);
   await openStatus(page);
-  await radio(page, 'Route').check();
+  await setChecked(radio(page, 'Route'));
   await expect(radio(page, 'Route')).toBeChecked();
   await visible(field(page, 'Origin'));
   await visible(field(page, 'Destination'));
   await visible(field(page, 'Departure date'));
-  await expect(page.getByRole('textbox', { name: 'Flight number', exact: true })).not.toBeVisible();
-  await radio(page, 'Flight number').check();
+  await expect(field(page, 'Flight number')).not.toBeVisible();
+  await setChecked(radio(page, 'Flight number'));
   await expect(radio(page, 'Flight number')).toBeChecked();
-  await visible(page.getByRole('textbox', { name: 'Flight number', exact: true }));
+  await visible(field(page, 'Flight number'));
   await visible(field(page, 'Departure date'));
   await expect(field(page, 'Origin')).not.toBeVisible();
   await expect(field(page, 'Destination')).not.toBeVisible();

@@ -1,10 +1,8 @@
 // requirement: REQ-6.9
-import { test, expect } from "@playwright/test";
-import { field, button, region, visible, openHome, installClock, openSecurity } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, field, button, region, visible, openHome, openSecurity } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-6.9: Reject an incorrect current-email verification code', async ({ page }, testInfo) => {
+test('REQ-6.9: Reject an incorrect current-email verification code', async ({ page }) => {
   await openHome(page);
   await openSecurity(page, 'email_binding');
   await button(region(page, 'Bound email'), 'Change').click();

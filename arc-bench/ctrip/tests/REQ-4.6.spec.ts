@@ -1,16 +1,14 @@
 // requirement: REQ-4.6
-import { test, expect } from "@playwright/test";
-import { button, region, dialog, visible, textVisible, openHome, installClock, openOrderDetails } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, button, region, dialog, visible, textVisible, openHome, bookUnpaidOrder } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-4.6: Keep an unpaid order when cancellation is declined', async ({ page }, testInfo) => {
+test('REQ-4.6: Keep an unpaid order when cancellation is declined', async ({ page }) => {
   await openHome(page);
-  await openOrderDetails(page, 'order_read', 'CTRIP20260721001');
+  const number = await bookUnpaidOrder(page);
   await button(region(page, 'Payment status'), 'Cancel order').click();
   await button(dialog(page, 'Cancel order'), 'Keep order').click();
   await expect(dialog(page, 'Cancel order')).toHaveCount(0);
-  await textVisible(page, 'CTRIP20260721001');
+  await textVisible(page, number);
   await textVisible(region(page, 'Payment status'), 'Pending payment');
   await visible(button(region(page, 'Payment status'), 'Pay now'));
 });

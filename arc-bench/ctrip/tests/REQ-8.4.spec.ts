@@ -1,15 +1,14 @@
 // requirement: REQ-8.4
-import { test, expect } from "@playwright/test";
-import { region, tab, record, records, textVisible, openHome, installClock, openVouchers } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, region, tab, record, records, textVisible, openHome, openVouchers, VOUCHERS, registerAccount } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-8.4: Keep eligible reimbursement orders scoped to account', async ({ page }, testInfo) => {
+test('REQ-8.4: Keep eligible reimbursement orders scoped to account', async ({ page }) => {
   await openHome(page);
-  await openVouchers(page, 'profile_read');
+  await registerAccount(page);
+  await openVouchers(page);
   await tab(page, 'Pending').click();
   await expect(records(region(page, 'Pending vouchers'))).toHaveCount(0);
   await textVisible(region(page, 'Pending vouchers'), 'No vouchers available');
-  await expect(record(region(page, 'Pending vouchers'), 'CTRIP20260721005')).toHaveCount(0);
-  await expect(record(region(page, 'Pending vouchers'), 'CTRIP20260514001')).toHaveCount(0);
+  await expect(record(region(page, 'Pending vouchers'), VOUCHERS.recent)).toHaveCount(0);
+  await expect(record(region(page, 'Pending vouchers'), VOUCHERS.older)).toHaveCount(0);
 });

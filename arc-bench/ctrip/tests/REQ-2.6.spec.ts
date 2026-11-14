@@ -1,15 +1,13 @@
 // requirement: REQ-2.6
-import { test, expect } from "@playwright/test";
-import { field, action, region, heading, openHome, installClock } from "./helpers";
+import { test, expectDateField, expectFieldValue, tripDate, field, action, region, heading, openHome, searchFlights } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-2.6: Reuse anonymous route history', async ({ page }, testInfo) => {
+test('REQ-2.6: Reuse anonymous route history', async ({ page }) => {
+  await openHome(page);
+  await searchFlights(page);
   await openHome(page);
   await action(region(page, 'Search history'), 'Chengdu - Guangzhou').click();
   await heading(page, 'Flight results');
-  await expect(field(page, 'Origin')).toHaveValue('Chengdu');
-  await expect(field(page, 'Destination')).toHaveValue('Guangzhou');
-  await expect(field(page, 'Departure date')).toHaveValue('2026-07-21');
+  await expectFieldValue(field(page, 'Origin'), 'Chengdu');
+  await expectFieldValue(field(page, 'Destination'), 'Guangzhou');
+  await expectDateField(field(page, 'Departure date'), tripDate(page, 2));
 });
-

@@ -1,17 +1,15 @@
 // requirement: REQ-5.5
-import { test, expect } from "@playwright/test";
-import { region, record, records, visible, textVisible, openHome, installClock, isolatedName, openCommon, createAddress } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, region, record, records, textVisible, openHome, openCommon, createAddress, addressInput, registerAccount } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-5.5: Save recipient delivery address', async ({ page }, testInfo) => {
+test('REQ-5.5: Save recipient delivery address', async ({ page }) => {
   await openHome(page);
-  await openCommon(page, 'address_create', 'Addresses');
-  const name = isolatedName('Wang Wu', testInfo);
+  await registerAccount(page);
+  await openCommon(page, undefined, 'Addresses');
+  const name = addressInput('Wang Wu');
   await createAddress(page, name);
   await expect(records(region(page, 'Address list'))).toHaveCount(1);
-  for (const value of ['Shanghai', 'Pudong New Area', 'No. 100 Century Avenue']) await textVisible(record(region(page, 'Address list'), name), value);
+  for (const value of [name.city, name.district, name.street]) await textVisible(record(region(page, 'Address list'), name.name), value);
   await page.reload();
-  await visible(record(region(page, 'Address list'), name));
+  for (const value of [name.city, name.district, name.street]) await textVisible(record(region(page, 'Address list'), name.name), value);
 });
-

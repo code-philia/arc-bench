@@ -1,16 +1,12 @@
 // requirement: REQ-1.8
-import { test, expect } from "@playwright/test";
-import { action, openHome, installClock, loginOwner, signedOut } from "./helpers";
+import { test, action, openHome, signedOut, registerAccount } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-1.8: Log out and retain signed-out state', async ({ page }, testInfo) => {
+test('REQ-1.8: Log out and retain signed-out state', async ({ page }) => {
   await openHome(page);
-  await loginOwner(page, 'user');
+  await registerAccount(page);
   await action(page, 'My account').hover();
-  await page.getByRole('menuitem', { name: 'Log out', exact: true }).click();
+  await action(page, 'Log out').click();
   await signedOut(page);
   await page.reload();
   await signedOut(page);
 });
-

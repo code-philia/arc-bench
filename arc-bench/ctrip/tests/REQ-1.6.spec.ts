@@ -1,14 +1,10 @@
 // requirement: REQ-1.6
-import { test, expect } from "@playwright/test";
-import { field, visible, heading, openHome, installClock, registrationPhone, registerToPassword } from "./helpers";
+import { test, field, visible, heading, openHome, registerToPassword, newMobile, passwordField } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-1.6: Advance after mobile verification', async ({ page }, testInfo) => {
+test('REQ-1.6: Advance after mobile verification', async ({ page }) => {
   await openHome(page);
-  await registerToPassword(page, registrationPhone(testInfo));
+  await registerToPassword(page, newMobile());
   await heading(page, 'Set password');
-  await visible(field(page, 'Password'));
+  await visible(passwordField(page));
   await visible(field(page, 'Confirm password'));
 });
-

@@ -1,16 +1,13 @@
 // requirement: REQ-8.2
-import { test, expect } from "@playwright/test";
-import { region, tab, record, records, visible, openHome, installClock, openVouchers } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, region, tab, record, records, visible, openHome, openVouchers, VOUCHERS } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-8.2: Read completed voucher and issuance rules', async ({ page }, testInfo) => {
+test('REQ-8.2: Read completed voucher and issuance rules', async ({ page }) => {
   await openHome(page);
   await openVouchers(page, 'voucher_read');
   for (const name of ['Pending', 'In progress', 'Completed']) await visible(tab(page, name));
   await expect(region(page, 'Issuance rules')).toContainText('365');
   await tab(page, 'Completed').click();
   await expect(records(region(page, 'Completed vouchers'))).toHaveCount(1);
-  await visible(record(region(page, 'Completed vouchers'), 'CTRIP20260718004'));
+  await visible(record(region(page, 'Completed vouchers'), VOUCHERS.completed));
 });
-

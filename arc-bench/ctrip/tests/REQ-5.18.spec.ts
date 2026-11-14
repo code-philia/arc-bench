@@ -1,14 +1,16 @@
 // requirement: REQ-5.18
-import { test, expect } from "@playwright/test";
-import { field, button, region, record, records, openHome, installClock, isolatedName, openCommon } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, field, button, region, record, records, openHome, openCommon, uniqueName, registerAccount, createInvoice, invoiceInput } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-5.18: Exclude nonmatching invoice titles', async ({ page }, testInfo) => {
+test('REQ-5.18: Exclude nonmatching invoice titles', async ({ page }) => {
   await openHome(page);
-  await openCommon(page, 'invoice_search', 'Invoice titles');
-  await field(page, 'Search invoice titles').fill(isolatedName('Absent Invoice', testInfo));
+  await registerAccount(page);
+  await openCommon(page, undefined, 'Invoice titles');
+  const keyword = uniqueName('Company');
+  const match = invoiceInput(keyword);
+  await createInvoice(page, match);
+  await field(page, 'Search invoice titles').fill(uniqueName('Absent Invoice'));
   await button(page, 'Search').click();
   await expect(records(region(page, 'Invoice title list'))).toHaveCount(0);
-  await expect(record(region(page, 'Invoice title list'), 'Shanghai Example Technology Co., Ltd.')).toHaveCount(0);
+  await expect(record(region(page, 'Invoice title list'), match.name)).toHaveCount(0);
 });

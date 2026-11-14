@@ -1,21 +1,26 @@
 // requirement: REQ-2.4
-import { test, expect } from "@playwright/test";
-import { field, button, region, flight, visible, heading, textVisible, alertText, openHome, installClock, searchFlights } from "./helpers";
+import { expect } from "@playwright/test";
+import { CHENGDU_GUANGZHOU_FLIGHTS } from "./fixtures/data";
+import { test, expectDateField, expectFieldValue, tripDate, field, button, region, flight, visible, heading, textVisible, alertText, openHome, searchFlights, flightRows } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-2.4: Show matching published flights', async ({ page }, testInfo) => {
+test('REQ-2.4: Show matching published flights', async ({ page }) => {
   await openHome(page);
   await searchFlights(page);
   await heading(page, 'Flight results');
-  await expect(region(page, 'Flight list').getByRole('listitem')).toHaveCount(3);
-  for (const n of ['CZ3401', 'JD5162', 'MU5234']) await visible(flight(page, n));
-  await expect(field(page, 'Origin')).toHaveValue('Chengdu');
-  await expect(field(page, 'Destination')).toHaveValue('Guangzhou');
-  await expect(field(page, 'Departure date')).toHaveValue('2026-07-21');
+  await expect(flightRows(page)).toHaveCount(CHENGDU_GUANGZHOU_FLIGHTS.length);
+  for (const entry of CHENGDU_GUANGZHOU_FLIGHTS) {
+    const row = flight(page, entry.number);
+    await visible(row);
+    for (const value of [entry.fare, entry.departure, entry.punctuality]) {
+      await textVisible(row, value);
+    }
+  }
+  await expectFieldValue(field(page, 'Origin'), 'Chengdu');
+  await expectFieldValue(field(page, 'Destination'), 'Guangzhou');
+  await expectDateField(field(page, 'Departure date'), tripDate(page, 2));
 });
 
-test('REQ-2.4: Reject identical cities', async ({ page }, testInfo) => {
+test('REQ-2.4: Reject identical cities', async ({ page }) => {
   await openHome(page);
   await field(page, 'Origin').fill('Chengdu');
   await field(page, 'Destination').fill('Chengdu');
@@ -26,11 +31,10 @@ test('REQ-2.4: Reject identical cities', async ({ page }, testInfo) => {
   await expect(page.getByRole('heading', { name: 'Flight results', exact: true })).toHaveCount(0);
 });
 
-test('REQ-2.4: Show empty route result', async ({ page }, testInfo) => {
+test('REQ-2.4: Show empty route result', async ({ page }) => {
   await openHome(page);
-  await searchFlights(page, 'Beihai', 'Mars City', '2026-07-23');
-  await expect(region(page, 'Flight list').getByRole('listitem')).toHaveCount(0);
+  await searchFlights(page, 'Beihai', 'Mars City', tripDate(page, 4));
+  await expect(flightRows(page)).toHaveCount(0);
   await textVisible(region(page, 'Flight list'), 'No flights found');
   await visible(button(region(page, 'Flight list'), 'Modify search'));
 });
-
