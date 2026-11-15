@@ -2,7 +2,7 @@ import { expect, type Page } from '@playwright/test';
 import { ACCOUNT, type ShelfData, type BookData, type PageData } from './fixtures/data';
 import { action, actionControl, collection, textField, pageEditor, navigationAction, toggle, title, content, accountIdentity, loginSubmit, detailContent, favorite, editableControl, entry } from './support/ui';
 export { ACCOUNT, identity, named } from './fixtures/data';
-export { action, collection, textField, pageEditor, objectNavigation, navigationAction, toggle, favorite, title, content, accountIdentity, detailContent } from './support/ui';
+export { action, bookActions, deletionConfirmation, loginSubmit, collection, textField, pageEditor, objectNavigation, navigationAction, toggle, favorite, title, content, accountIdentity, detailContent } from './support/ui';
 export async function enter(page: Page) {
   await page.goto('/');
 }
@@ -167,6 +167,17 @@ export async function createPage(page: Page, data: PageData, draft = false) {
   }
   await collection(page, 'Page list', { owner: book }).item(name).expectCount(1);
   await collection(page, 'Page list', { owner: book }).item(name).expectVisible();
+  await collection(page, 'Page list', { owner: book }).item(name).open();
+  if (draft) {
+    await pageEditor(page).title.expectValue(name);
+    await pageEditor(page).body.expectValue(data.content);
+  } else {
+    await heading(page, name);
+    await detailContent(page, name, data.content).expectVisible();
+  }
+  // Keep the existing preparation contract: callers continue from the parent.
+  await openBook(page, book);
+  await collection(page, 'Page list', { owner: book }).item(name).expectCount(1);
   return name;
 }
 

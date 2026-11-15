@@ -44,11 +44,11 @@ each scenario corresponds to one Playwright test.
 | :--- | ---: | ---: | ---: | :--- |
 | `keep` | 22 | 33 | 33 | [Google Keep](https://keep.google.com/) |
 | `bookstack` | 34 | 35 | 35 | [BookStack](https://demo.bookstackapp.com/) |
-| `stackoverflow` | 58 | 66 | 66 | [Stack Overflow](https://stackoverflow.com/) |
+| `stackoverflow` | 60 | 66 | 66 | [Stack Overflow](https://stackoverflow.com/) |
 | `prestashop` | 63 | 86 | 86 | [PrestaShop](https://demo.prestashop.com/) |
 | `ctrip` | 106 | 152 | 152 | [Ctrip](https://www.ctrip.com/) |
 | `12306` | 116 | 142 | 142 | [China Railway 12306](https://www.12306.cn/en) |
-| **Total** | **399** | **514** | **514** | |
+| **Total** | **401** | **514** | **514** | |
 
 ## 🚀 Usage
 

@@ -37,6 +37,269 @@ const browser = await pw.chromium.launch({ headless: true });
 try {
   const page = await browser.newPage();
   const check = async (name, body) => { await body(); checks.push({ name, result: 'passed' }); };
+  await check('business action names distinguish Login navigation from Sign in submission', async () => {
+    await page.setContent('<header><a href="#">Login</a></header><form><label>Email<input></label><label>Password<input></label><button type="button" onclick="window.signedIn=true">Sign in</button></form>');
+    await page.evaluate(() => { window.signedIn = false; });
+    await ui.loginSubmit(page).activate();
+    assert.equal(await page.evaluate(() => window.signedIn), true);
+    await page.setContent('<form><label>Email<input></label><label>Password<input></label><button>Login</button></form>');
+    await assert.rejects(() => ui.loginSubmit(page).expectVisible());
+    await page.setContent('<form><label>Email<input></label><label>Password<input></label><button>Sign in</button><button>Sign in</button></form>');
+    await assert.rejects(() => ui.loginSubmit(page).activate());
+  });
+  await check('typed deletion labels coexist but generic labels cannot substitute for them', async () => {
+    await page.setContent('<div><h1>Own book</h1><button onclick="window.deleted=\'shelf\'">Delete Shelf</button><button onclick="window.deleted=\'book\'">Delete Book</button><button>Delete Draft</button></div>');
+    await ui.action(page, 'Delete Shelf').activate();
+    assert.equal(await page.evaluate(() => window.deleted), 'shelf');
+    await ui.bookActions(page, 'Own book').action('Delete Book').activate();
+    assert.equal(await page.evaluate(() => window.deleted), 'book');
+    await page.setContent('<div><h1>Own book</h1><button>Delete</button></div>');
+    await assert.rejects(() => ui.action(page, 'Delete Shelf').activate());
+    await assert.rejects(() => ui.bookActions(page, 'Own book').action('Delete Book').activate());
+  });
+  await check('Delete Book wording does not override a child object owner', async () => {
+    await page.setContent('<main><h1>Own book</h1><section><h2>Child page</h2><div aria-label="Actions"><button onclick="window.wrongTyped=true">Delete Book</button></div></section></main>');
+    await page.evaluate(() => { window.wrongTyped = false; });
+    await assert.rejects(() => ui.bookActions(page, 'Own book').action('Delete Book').activate());
+    assert.equal(await page.evaluate(() => window.wrongTyped), false);
+  });
+  await check('favorite tie selection uses exact current-test identities and rejects duplicates', async () => {
+    await page.setContent('<section aria-label="My Most Viewed Favorites"><button>Historical</button><button>Own B</button><button>Own A</button></section>');
+    assert.deepEqual(await ui.collection(page, 'My Most Viewed Favorites').visibleNames(['Own A', 'Own B', 'Missing']), ['Own A', 'Own B']);
+    assert.deepEqual(await ui.collection(page, 'My Most Viewed Favorites').visibleNames(['Missing']), []);
+    await page.locator('section').evaluate(node => node.insertAdjacentHTML('beforeend', '<button>Own A</button>'));
+    await assert.rejects(() => ui.collection(page, 'My Most Viewed Favorites').visibleNames(['Own A']));
+  });
+  await check('A1 child Actions never supplies the book Delete, even as the only target', async () => {
+    for (const caption of ['<h2>Child page</h2>', '<span>Child page</span>']) {
+      await page.setContent(`<main><h1>Own book</h1><section>${caption}<div role="group" aria-label="Actions"><button onclick="window.wrong=true">Delete</button></div></section></main>`);
+      await page.evaluate(() => { window.wrong = false; });
+      await assert.rejects(() => ui.bookActions(page, 'Own book').action('Delete').activate());
+      assert.equal(await page.evaluate(() => window.wrong), false);
+      await page.locator('main').evaluate(node => node.insertAdjacentHTML('beforeend', '<button onclick="window.correct=true">Delete</button>'));
+      await ui.bookActions(page, 'Own book').action('Delete').activate();
+      assert.equal(await page.evaluate(() => window.correct), true);
+      assert.equal(await page.evaluate(() => window.wrong), false);
+    }
+  });
+  await check('A2 owner filters named and fallback collection paths', async () => {
+    await page.setContent('<main><h1>Own book</h1><section><h2>Other book</h2><ul aria-label="Pages"><li><a href="#other">Target page</a></li></ul></section></main>');
+    await assert.rejects(() => ui.collection(page, 'Page list', { owner: 'Own book' }).item('Target page').expectCount(1));
+    await page.locator('main').evaluate(node => node.insertAdjacentHTML('beforeend', '<ul aria-label="Pages"><li><a href="#own">Target page</a></li></ul>'));
+    await ui.collection(page, 'Page list', { owner: 'Own book' }).item('Target page').open();
+    assert.equal(await page.evaluate(() => location.hash), '#own');
+    await page.setContent('<section><h1>Own book</h1><ul aria-label="Pages"><li><div><a href="#draft">Target page</a><span>Draft</span></div><a href="#edit">Edit</a></li></ul></section>');
+    await ui.collection(page, 'Page list', { owner: 'Own book' }).item('Target page').expectCount(1);
+    await page.setContent('<section><h1>Own book</h1><ul aria-label="Pages"><li><h3>Target page</h3><button onclick="window.ownedPage=true">Open</button></li></ul></section>');
+    await ui.collection(page, 'Page list', { owner: 'Own book' }).item('Target page').open();
+    assert.equal(await page.evaluate(() => window.ownedPage), true);
+  });
+  await check('owner collections allow sibling detail cards and named lists', async () => {
+    for (const [canonical, alias] of [['Book list', 'Books'], ['Page list', 'Pages'], ['Chapter list', 'Chapters']]) {
+      for (const layout of ['main', 'div']) {
+        for (const collection of [
+          `<section aria-label="${canonical}"><button onclick="window.siblingOpened=true">Own item</button></section>`,
+          `<section><h2>${alias}</h2><button onclick="window.siblingOpened=true">Own item</button></section>`,
+        ]) {
+          await page.setContent(`<${layout}><article><h1>Own parent</h1><p>Saved description</p></article>${collection}</${layout}><aside aria-label="${canonical}"><button>Own item</button></aside>`);
+          await page.evaluate(() => { window.siblingOpened = false; });
+          await ui.collection(page, canonical, { owner: 'Own parent' }).item('Own item').openWithKeyboard();
+          assert.equal(await page.evaluate(() => window.siblingOpened), true);
+        }
+      }
+    }
+  });
+  await check('sibling collection expansion excludes foreign owners and sidebars before opening', async () => {
+    for (const caption of ['<h2>Other parent</h2>', '<span>Other parent</span>']) {
+      await page.setContent(`<main><article><h1>Own parent</h1></article><section>${caption}<section aria-label="Page list"><button onclick="window.wrongSibling=true">Target page</button></section></section><aside aria-label="Page list"><button onclick="window.wrongSibling=true">Target page</button></aside></main>`);
+      await page.evaluate(() => { window.wrongSibling = false; });
+      await assert.rejects(() => ui.collection(page, 'Page list', { owner: 'Own parent' }).item('Target page').open());
+      assert.equal(await page.evaluate(() => window.wrongSibling), false);
+      await page.locator('main').evaluate(node => node.insertAdjacentHTML('beforeend', '<section aria-label="Page list"><button onclick="window.rightSibling=true">Target page</button></section>'));
+      await ui.collection(page, 'Page list', { owner: 'Own parent' }).item('Target page').open();
+      assert.equal(await page.evaluate(() => window.rightSibling), true);
+      assert.equal(await page.evaluate(() => window.wrongSibling), false);
+    }
+  });
+  await check('sibling collections reject duplicate groups and duplicate opening identities', async () => {
+    for (const lists of [
+      '<section aria-label="Page list"><button>Target page</button></section><section aria-label="Page list"><button>Target page</button></section>',
+      '<section aria-label="Page list"><button>Target page</button><button>Target page</button></section>',
+      '<section aria-label="Page list"><button>Target page</button></section><section><h2>Pages</h2><button>Target page</button></section>',
+    ]) {
+      await page.setContent(`<main><article><h1>Own parent</h1></article>${lists}</main>`);
+      await assert.rejects(() => ui.collection(page, 'Page list', { owner: 'Own parent' }).item('Target page').open());
+    }
+  });
+  await check('sibling collection expansion stops at the owning main and requires collection evidence', async () => {
+    for (const markup of [
+      '<div><main><article><h1>Own parent</h1></article></main><main><section aria-label="Page list"><button>Target page</button></section></main></div>',
+      '<main><article><h1>Own parent</h1></article><aside aria-label="Page list"><button>Target page</button></aside></main>',
+      '<main><article><h1>Own parent</h1></article><div><button>Target page</button></div></main>',
+      '<main><article><h1>Own parent</h1></article><section aria-label="Page list"><p>Target page</p></section></main>',
+    ]) {
+      await page.setContent(markup);
+      await assert.rejects(() => ui.collection(page, 'Page list', { owner: 'Own parent' }).item('Target page').open());
+    }
+  });
+  await check('A3 other object body cannot satisfy detail text', async () => {
+    await page.setContent('<section><h1>Own book</h1><div><h2>Other book</h2><p>Required body</p></div></section>');
+    await assert.rejects(() => ui.detailContent(page, 'Own book', 'Required body').expectVisible());
+    await page.locator('section').evaluate(node => node.insertAdjacentHTML('beforeend', '<p>Required body</p>'));
+    await ui.detailContent(page, 'Own book', 'Required body').expectVisible();
+  });
+  await check('A4 capacity counts both records and flat entries without double counting', async () => {
+    const flat = count => Array.from({ length: count }, (_, i) => `<div><a href="#">Flat ${i}</a></div>`).join('');
+    await page.setContent('<section aria-label="Recently Updated Pages"><ul><li><a href="#">Row</a><button>Edit</button></li></ul>' + flat(4) + '</section>');
+    await ui.collection(page, 'Recently Updated Pages').expectMaxItems(5);
+    await page.locator('section').evaluate(node => node.insertAdjacentHTML('beforeend', '<div><a href="#">Overflow</a></div>'));
+    await assert.rejects(() => ui.collection(page, 'Recently Updated Pages').expectMaxItems(5));
+  });
+  await check('A5 focusable inert text is not an opening and native entries work with keyboard', async () => {
+    await page.setContent('<section aria-label="Book list"><div tabindex="0">Own book</div></section>');
+    await assert.rejects(() => ui.collection(page, 'Book list').item('Own book').expectCount(1));
+    await page.setContent('<section aria-label="Book list"><button onclick="document.body.innerHTML=\'<h1>Own book</h1>\'">Own book</button></section>');
+    await ui.collection(page, 'Book list').item('Own book').openWithKeyboard();
+    await ui.title(page, 'Own book').expectVisible();
+  });
+  await check('A6 list captions are not detail titles; plain detail titles remain supported', async () => {
+    await page.setContent('<section aria-label="Book list"><article><span>Own book</span><button>Open</button></article></section>');
+    await assert.rejects(() => ui.title(page, 'Own book').expectVisible());
+    await page.setContent('<div><span>Own book</span><p>Saved description</p></div>');
+    await ui.title(page, 'Own book').expectVisible();
+  });
+  await check('confirmation identifies its target, not the unchanged detail behind it', async () => {
+    const prompt = name => `<section><h2>Delete Book</h2><p>Delete '${name}'?</p><div><button onclick="window.confirmed=true">Confirm Delete</button><button>Cancel</button></div></section>`;
+    await page.setContent('<main><h1>Own book</h1><p>Original description</p>' + prompt('Other book') + '</main>');
+    await page.evaluate(() => { window.confirmed = false; });
+    await assert.rejects(() => ui.deletionConfirmation(page, 'Own book').action('Confirm Delete').activate());
+    assert.equal(await page.evaluate(() => window.confirmed), false);
+    await page.setContent(prompt('Own book'));
+    await ui.deletionConfirmation(page, 'Own book').action('Confirm Delete').activate();
+    assert.equal(await page.evaluate(() => window.confirmed), true);
+  });
+  await check('plain div login needs no form, ARIA container or password type', async () => {
+    await page.setContent('<header><a href="#">Login</a></header><div><div><label>Email<input></label><label>Password<input></label></div><div><button type="button" onclick="window.submitted=true">Sign in</button></div></div>');
+    await page.evaluate(() => { window.submitted = false; });
+    await ui.loginSubmit(page).activate();
+    assert.equal(await page.evaluate(() => window.submitted), true);
+  });
+  await check('native form supports externally associated submit without hiding duplicates', async () => {
+    const markup = '<form id="credentials"><label>Email<input></label><label>Password<input></label></form><button type="button" form="credentials" onclick="window.submitted=true">Sign in</button>';
+    await page.setContent(markup);
+    await page.evaluate(() => { window.submitted = false; });
+    await ui.loginSubmit(page).activate();
+    assert.equal(await page.evaluate(() => window.submitted), true);
+    await page.setContent(markup + '<button form="credentials">Sign in</button>');
+    await assert.rejects(() => ui.loginSubmit(page).activate());
+  });
+  await check('simple book layouts need no main, Actions title or explicit roles', async () => {
+    for (const tag of ['div', 'section', 'article']) {
+      await page.setContent(`<header><button>Delete</button></header><${tag}><span>Own book</span><div><button onclick="window.deleted=true">Delete</button></div><ul><li><button onclick="window.wrong=true">Delete</button></li></ul></${tag}>`);
+      await page.evaluate(() => { window.deleted = false; window.wrong = false; });
+      await ui.bookActions(page, 'Own book').action('Delete').activate();
+      assert.equal(await page.evaluate(() => window.deleted), true);
+      assert.equal(await page.evaluate(() => window.wrong), false);
+    }
+    await page.setContent('<span>Own book</span><button onclick="window.deleted=true">Delete</button>');
+    await page.evaluate(() => { window.deleted = false; });
+    await ui.bookActions(page, 'Own book').action('Delete').activate();
+    assert.equal(await page.evaluate(() => window.deleted), true);
+  });
+  await check('plain text Actions can identify a list of book operations', async () => {
+    await page.setContent('<div><span>Own book</span><ul><li><button>Delete</button></li></ul><div><span>Actions</span><ul><li><button onclick="window.deleted=true">Delete</button></li></ul></div></div>');
+    await page.evaluate(() => { window.deleted = false; });
+    await ui.bookActions(page, 'Own book').action('Delete').activate();
+    assert.equal(await page.evaluate(() => window.deleted), true);
+    await page.setContent('<div><h1>Own book</h1><aside aria-label="Actions"><section><h2>Details</h2><p>Book metadata</p></section><section><h2>Actions</h2><ul><li><button onclick="window.deleted=true">Delete</button></li></ul></section></aside></div>');
+    await page.evaluate(() => { window.deleted = false; });
+    await ui.bookActions(page, 'Own book').action('Delete').activate();
+    assert.equal(await page.evaluate(() => window.deleted), true);
+  });
+  await check('alternative layouts do not hide duplicated or wrongly owned actions', async () => {
+    for (const markup of [
+      '<div><span>Own book</span><button>Delete</button><button>Delete</button></div>',
+      '<div><span>Own book</span><button>Delete</button></div><button>Delete</button>',
+      '<div><h1>Own book</h1></div><div><h1>Other book</h1><button>Delete</button></div>',
+      '<div><span>Own book</span><ul><li><button>Delete</button></li></ul></div>',
+      '<div><span>Own book</span><article><span>Child page</span><button>Delete</button></article></div>',
+      '<div><span>Own book</span><div><span>Child page</span><button>Delete</button></div></div>',
+    ]) {
+      await page.setContent(markup);
+      await assert.rejects(() => ui.bookActions(page, 'Own book').action('Delete').activate());
+    }
+    await page.setContent('<div><label>Email<input></label><label>Password<input></label><button>Sign in</button><button>Sign in</button></div>');
+    await assert.rejects(() => ui.loginSubmit(page).activate());
+    await page.setContent('<div><div><label>Email<input></label><label>Password<input></label><button>Sign in</button></div><button>Sign in</button></div>');
+    await assert.rejects(() => ui.loginSubmit(page).activate());
+    await page.setContent('<div><label>Email<input></label><label>Email<input></label><label>Password<input></label><button>Sign in</button></div>');
+    await assert.rejects(() => ui.loginSubmit(page).activate());
+  });
+  await check('login submit is scoped to credentials, with duplicates rejected', async () => {
+    const form = '<form><label>Email<input></label><label>Password<input type="password"></label><button type="button" onclick="window.submitted=true">Sign in</button></form>';
+    await page.setContent('<header><a href="#">Login</a></header>' + form);
+    await ui.loginSubmit(page).expectVisible();
+    await ui.loginSubmit(page).activate();
+    assert.equal(await page.evaluate(() => window.submitted), true);
+    await page.setContent(form.replace('</form>', '<button>Sign in</button></form>'));
+    await assert.rejects(() => ui.loginSubmit(page).expectVisible());
+    await page.setContent(form + form);
+    await assert.rejects(() => ui.loginSubmit(page).expectVisible());
+    await page.setContent('<a href="#">Login</a>');
+    await assert.rejects(() => ui.loginSubmit(page).expectVisible());
+  });
+  await check('book delete uses the owned action area, including non-ARIA layout', async () => {
+    for (const actions of [
+      '<aside aria-label="Actions">', '<section><h2>Actions</h2>',
+    ]) {
+      const closing = actions.startsWith('<aside') ? '</aside>' : '</section>';
+      await page.setContent('<header><button>Delete</button></header><main><section><h1>Own book</h1><ul><li><button onclick="window.wrong=true">Delete</button></li></ul></section>' + actions + '<button onclick="window.deleted=true">Delete</button>' + closing + '</main>');
+      await page.evaluate(() => { window.deleted = false; window.wrong = false; });
+      await ui.bookActions(page, 'Own book').action('Delete').activate();
+      assert.equal(await page.evaluate(() => window.deleted), true);
+      assert.equal(await page.evaluate(() => window.wrong), false);
+    }
+  });
+  await check('book actions reject wrong owner, duplicate regions and duplicate controls', async () => {
+    const actions = '<aside aria-label="Actions"><button>Delete</button></aside>';
+    await page.setContent('<main><h1>Other book</h1>' + actions + '</main>');
+    await assert.rejects(() => ui.bookActions(page, 'Own book').action('Delete').activate());
+    await page.setContent('<main><h1>Own book</h1>' + actions + actions + '</main>');
+    await assert.rejects(() => ui.bookActions(page, 'Own book').action('Delete').activate());
+    await page.setContent('<main><h1>Own book</h1>' + actions.replace('</aside>', '<button>Delete</button></aside>') + '</main>');
+    await assert.rejects(() => ui.bookActions(page, 'Own book').action('Delete').activate());
+    await page.setContent('<main><h1>Own book</h1><ul><li><button>Delete</button></li></ul></main>');
+    await assert.rejects(() => ui.bookActions(page, 'Own book').action('Delete').activate());
+  });
+  await check('editor purpose labels ignore case but values remain exact', async () => {
+    for (const label of ['Page Title', 'PAGE TITLE', 'title']) {
+      await page.setContent(`<input aria-label="${label}"><textarea placeholder="PAGE CONTENT"></textarea>`);
+      const editor = ui.pageEditor(page);
+      await editor.title.fill('My Page');
+      await editor.body.fill('My Body');
+      await editor.title.expectValue('My Page');
+      await editor.body.expectValue('My Body');
+      await assert.rejects(() => editor.title.expectValue('my page'));
+      await assert.rejects(() => editor.body.expectValue('my body'));
+      await editor.title.fill('');
+      await editor.title.expectValue('');
+    }
+  });
+  await check('case folding preserves full labels and competing-field ambiguity', async () => {
+    await page.setContent('<input aria-label="Page Title suffix"><input aria-label="Subtitle">');
+    assert.equal(await ui.field(page, 'Page title').count(), 0);
+    await page.setContent('<input aria-label="Page Title"><input aria-label="PAGE TITLE">');
+    assert.equal(await ui.field(page, 'Page title').count(), 2);
+    await assert.rejects(() => ui.pageEditor(page).title.fill('My Page'));
+  });
+  await check('prescribed copy and object identity remain case sensitive', async () => {
+    await page.setContent('<input aria-label="name"><button>save page</button><a href="#">my page</a><h1>my page</h1><p>my body</p>');
+    assert.equal(await ui.field(page, 'Name').count(), 0);
+    await assert.rejects(() => ui.action(page, 'Save Page').expectVisible());
+    assert.equal(await ui.itemEntry(page, 'My Page').count(), 0);
+    await assert.rejects(() => ui.title(page, 'My Page').expectVisible());
+    await assert.rejects(() => ui.content(page, 'My Body').expectVisible());
+  });
   for (const markup of [
     '<button onclick="window.clicked=true">Open book</button>',
     '<a href="#opened" onclick="window.clicked=true">Open book</a>',
@@ -295,7 +558,7 @@ try {
     await page.setContent('<header><button>Shelves</button><button>Books</button><button id="login">Login</button></header><main></main>');
     await page.evaluate(() => {
       document.querySelector('#login').onclick = () => {
-        document.querySelector('main').innerHTML = '<form><label>Email<input></label><label>Password<input type="password"></label><button id="submit">Login</button></form>';
+        document.querySelector('main').innerHTML = '<form><label>Email<input></label><label>Password<input type="password"></label><button id="submit">Sign in</button></form>';
         document.querySelector('#submit').onclick = (event) => {
           event.preventDefault();
           document.querySelector('header').innerHTML = '<button>Shelves</button><button>Books</button><span>Admin</span>';
@@ -352,23 +615,33 @@ try {
     await assert.rejects(() => loadHelpers().withFavoriteCleanup(page, async track => { track('Own'); throw primary; }), error => error === primary);
     assert.deepEqual(await page.evaluate(() => window.qualityFavorites), { Own: false, Historical: true });
   });
-  for (const alternate of [false, true]) await check(`real page preparation with ${alternate ? 'purpose labels and wrapped book name' : 'legacy labels'}`, async () => {
+  for (const [alternate, dropBody, draft] of [[false, false, false], [true, false, false], [true, true, false], [true, false, true], [true, true, true]]) await check(`A7 real page preparation alternate=${alternate} dropBody=${dropBody} draft=${draft}`, async () => {
     await page.setContent('<header><button>Shelves</button><button id="books">Books</button></header><main></main>');
-    await page.evaluate((alternate) => {
+    await page.evaluate(({ alternate, dropBody, draft }) => {
+      window.savedTitle = ''; window.savedBody = '';
       const main = document.querySelector('main');
       const book = () => {
         main.innerHTML = '<section><h1>Own book</h1><button id="new">New Page</button><div id="pages"></div></section>';
         if (window.savedTitle) {
           const item = document.createElement('a'); item.href = '#page'; item.textContent = window.savedTitle;
+          item.onclick = event => {
+            event.preventDefault();
+            main.innerHTML = draft
+              ? '<input aria-label="Page title"><textarea aria-label="Page content"></textarea>'
+              : '<article><h1></h1><p></p></article>';
+            if (draft) { main.querySelector('input').value = window.savedTitle; main.querySelector('textarea').value = window.savedBody; }
+            else { main.querySelector('h1').textContent = window.savedTitle; main.querySelector('p').textContent = window.savedBody; }
+          };
           main.querySelector('#pages').append(item);
         }
         main.querySelector('#new').onclick = () => {
           main.innerHTML = alternate
             ? '<label>Title<input id="title"></label><div contenteditable="true" aria-label="Body"></div><button id="save">Save Page</button>'
             : '<label>Page title<input id="title"></label><div contenteditable="true" aria-label="Write your page content here..."></div><button id="save">Save Page</button>';
+          main.querySelector('#save').textContent = draft ? 'Save Draft' : 'Save Page';
           main.querySelector('#save').onclick = () => {
             window.savedTitle = main.querySelector('input').value;
-            window.savedBody = main.querySelector('[contenteditable]').innerText;
+            window.savedBody = dropBody ? '' : main.querySelector('[contenteditable]').innerText;
             book();
           };
         };
@@ -379,8 +652,10 @@ try {
           : '<section aria-label="Book list"><button id="own">Own book</button></section>';
         main.querySelector('#own').onclick = book;
       };
-    }, alternate);
-    const name = await loadHelpers().createPage(page, { bookName: 'Own book', title: 'Own page', content: 'Own body' });
+    }, { alternate, dropBody, draft });
+    const create = () => loadHelpers().createPage(page, { bookName: 'Own book', title: 'Own page', content: 'Own body' }, draft);
+    if (dropBody) { await assert.rejects(create); return; }
+    const name = await create();
     assert.equal(name, 'Own page');
     assert.equal(await page.evaluate(() => window.savedBody), 'Own body');
   });

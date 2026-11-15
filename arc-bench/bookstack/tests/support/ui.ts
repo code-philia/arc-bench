@@ -19,7 +19,7 @@ export function entry(scope: Scope, name: Name): Locator {
     .or(scope.getByRole('menuitem', { name, exact: true }))
     .or(scope.getByRole('tab', { name, exact: true }));
   const custom = scope.getByText(name, { exact: true })
-    .and(scope.locator('[onclick], [tabindex], summary'))
+    .and(scope.locator('[onclick], summary'))
     // Do not count an inner text node separately from its semantic control.
     .and(scope.locator(':not(button *, a *, [role="button"] *, [role="link"] *, [role="menuitem"] *, [role="tab"] *)'));
   return semantic.or(custom).filter({ visible: true });
@@ -65,6 +65,45 @@ const COLLECTION_NAMES = [
   'My Recent Drafts', 'My Recently Viewed', 'My Most Viewed Favorites', 'Recently Updated Pages',
 ];
 
+/** Exclude subtrees identified as a different business object. A generic
+ * Actions label never overrides a child object's own heading/caption. */
+function ownedBy(scope: Scope, candidates: Locator, ownerName: string, itemName?: Name): Locator {
+  const allowed = [ownerName, ...(typeof itemName === 'string' ? [itemName] : []), ...COLLECTION_NAMES, 'Actions', 'Details', 'Description', 'Content', 'Body', 'Tags', 'Draft'];
+  const except = `:not(:text-matches(${JSON.stringify(`^(?:${allowed.map(escaped).join('|')})$`)}))`;
+  const recordContents = ['li *', 'tr *', '[role="listitem"] *', '[role="row"] *', ...COLLECTION_NAMES.map(value => `[aria-label=${JSON.stringify(value)}] *`)].join(',');
+  const heading = `:is(h1,h2,h3,h4,h5,h6,[role="heading"])${except}:not(${recordContents})`;
+  const container = `:is(section,article,div,aside,li,tr,[role="listitem"],[role="row"]):not(:has(:text-is(${JSON.stringify(ownerName)})))`;
+  const foreignHeading = `${container}:has(${heading})`;
+  // Plain captions are object evidence when paired with interactions, not
+  // when they are merely spans within the current object's prose.
+  const foreignCaption = `${container}:has(> span${except}):has(button,a,[role="button"],[role="link"],[onclick])`;
+  return candidates.and(scope.locator(`:not(${foreignHeading}, ${foreignHeading} *, ${foreignCaption}, ${foreignCaption} *)`));
+}
+
+/** Named collections can be siblings of the selected object's detail card.
+ * Keep all equivalent group paths together so mixed markup cannot hide a
+ * second collection. This supplies collection evidence, never item identity. */
+function namedCollectionGroups(scope: Scope, aliases: string[]): Locator {
+  const name = new RegExp(`^(?:${aliases.map(escaped).join('|')})$`);
+  const title = scope.getByText(name, { exact: true })
+    .and(scope.locator(':not(a, button, a *, button *, nav *, header *, [role="navigation"] *, [role="banner"] *)'))
+    .filter({ visible: true });
+  const label = aliases.map(alias => `[aria-label=${JSON.stringify(alias)}]`).join(', ');
+  let groups = scope.getByRole('region', { name })
+    .or(scope.getByRole('list', { name }))
+    .or(scope.getByRole('group', { name }))
+    .or(scope.getByRole('table', { name }))
+    .or(scope.locator('section, article, div, ul, ol, table').and(scope.locator(label)))
+    .or(title.locator('xpath=ancestor::*[self::section or self::article][1]'))
+    .or(title.locator('xpath=ancestor::div[descendant::ul or descendant::ol or descendant::table or descendant::*[@role="list"]][1]'))
+    .or(title.locator('xpath=ancestor::div[count(*) > 1][1]'));
+  for (const other of COLLECTION_NAMES) {
+    if (!aliases.includes(other)) groups = groups.filter({ hasNot: scope.getByText(other, { exact: true }) });
+  }
+  return groups.and(scope.locator(':not(aside, aside *, nav, nav *, header, header *, [role="complementary"], [role="complementary"] *, [role="navigation"] *, [role="banner"] *)'))
+    .filter({ visible: true });
+}
+
 /** Locate a business collection; it need not have the ARIA region role. */
 export async function region(page: Page, name: string, contextTitle?: string): Promise<Locator> {
   const visible = (value: Locator) => value.filter({ visible: true });
@@ -76,6 +115,21 @@ export async function region(page: Page, name: string, contextTitle?: string): P
     boundary = await resolveUnique([
       visible(owner.locator('xpath=ancestor::*[self::section or self::article or self::main or (self::div and (descendant::ul or descendant::ol or descendant::table))][1]')),
     ], `content owned by ${contextTitle}`);
+    const groups = ownedBy(page, namedCollectionGroups(page, aliases), contextTitle);
+    const main = visible(owner.locator('xpath=ancestor::*[self::main or @role="main"][1]'));
+    // A main is a hard upper boundary: another main, header or sidebar must
+    // not supply a missing collection. Without main, require an enclosing
+    // content layout containing both the owner and positive group evidence.
+    const layout = await main.count() > 0 ? main : smallestContainers(
+      visible(page.locator('section, article, div')).filter({ has: owner })
+        .filter({ has: groups }),
+    );
+    if (await layout.count() === 1) {
+      const related = smallestContainers(groups.and(layout.locator('*')));
+      if (await related.count() > 0) {
+        return resolveUnique([related], `collection ${name} owned by ${contextTitle}`);
+      }
+    }
   }
   const scope = boundary ?? page;
   const title = visible(scope.getByText(collectionName, { exact: true })
@@ -92,7 +146,7 @@ export async function region(page: Page, name: string, contextTitle?: string): P
   const cardWithList = title.locator('xpath=ancestor::div[descendant::ul or descendant::ol or descendant::table or descendant::*[@role="list"]][1]');
   const emptyCard = title.locator('xpath=ancestor::div[count(*) > 1][1]');
   const context = boundary && ['Book list', 'Page list', 'Chapter list'].includes(name) ? [boundary] : [];
-  return resolveUnique([
+  const candidates = [
     visible(scope.getByRole('region', { name: collectionName })),
     visible(scope.getByRole('list', { name: collectionName })
       .or(scope.getByRole('group', { name: collectionName }))
@@ -103,15 +157,17 @@ export async function region(page: Page, name: string, contextTitle?: string): P
     excludeOtherCollections(cardWithList),
     excludeOtherCollections(emptyCard),
     ...context,
-  ], `collection ${name}`);
+  ];
+  return resolveUnique(contextTitle ? candidates.map(value => ownedBy(page, value, contextTitle)) : candidates, `collection ${name}`);
 }
 
 async function visibleTitle(page: Page, name: string): Promise<Locator> {
+  const detailOnly = page.locator(`:not(li, li *, tr, tr *, [role="listitem"], [role="listitem"] *, [role="row"], [role="row"] *, ${COLLECTION_NAMES.map(value => `[aria-label=${JSON.stringify(value)}] *`).join(',')})`);
   return resolveUnique([
-    page.getByRole('heading', { name, exact: true }).filter({ visible: true }),
+    page.getByRole('heading', { name, exact: true }).and(detailOnly).filter({ visible: true }),
     page.getByText(name, { exact: true })
       .and(page.locator(':not(a, button, input, nav *, header *, [role="navigation"] *, [role="banner"] *, [role="link"], [role="button"])'))
-      .filter({ visible: true }),
+      .and(detailOnly).filter({ visible: true }),
   ], `title ${name}`);
 }
 
@@ -122,10 +178,13 @@ export async function heading(page: Page, name: string): Promise<void> {
 
 /** Native and custom editable fields can have different implicit roles. */
 export function field(scope: Scope, name: string): Locator {
+  // REQ-6.1/6.4 specify editor purposes, not literal field labels. Other
+  // fields (Email, Password, Name, Description, Tags) have prescribed copy.
+  const purposeLabel = ['Page title', 'Page content', 'Write your page content here...'].includes(name);
   const aliases = name === 'Page title' ? ['Page title', 'Title']
     : name === 'Page content' || name === 'Write your page content here...'
       ? ['Page content', 'Content', 'Body', 'Write your page content here...'] : [name];
-  const label = new RegExp(`^\\s*(?:\\*\\s*)?(?:${aliases.map(escaped).join('|')})\\s*(?:\\*)?\\s*$`);
+  const label = new RegExp(`^\\s*(?:\\*\\s*)?(?:${aliases.map(escaped).join('|')})\\s*(?:\\*)?\\s*$`, purposeLabel ? 'i' : '');
   // Union all supported labels/placeholders: competing fields remain ambiguous.
   return scope.getByLabel(label).or(scope.getByPlaceholder(label))
     .and(scope.locator('input, textarea, [contenteditable="true"]'))
@@ -206,6 +265,7 @@ function actionable(target: Target) {
     ...observable(target),
     async activate() { await (await countedTarget(target, 1)).click(); },
     async open() { await (await countedTarget(target, 1)).click(); },
+    async openWithKeyboard() { const node = await countedTarget(target, 1); await node.focus(); await node.press('Enter'); },
   };
 }
 
@@ -215,6 +275,48 @@ export function action(scope: Scope, name: Name) {
 }
 
 export function actionControl(control: Locator) { return actionable(() => control); }
+
+/** Collapse nested layout wrappers, not competing sibling business areas. */
+function smallestContainers(containers: Locator): Locator {
+  return containers.filter({ hasNot: containers });
+}
+
+/** Book actions belong to the detail view, never to one of its page rows. */
+export function bookActions(page: Page, bookName: string) {
+  const target = async (name: Name) => {
+    const owner = await visibleTitle(page, bookName);
+    const layout = page.locator('body, main, section, article, aside, div, [role="main"], [role="region"], [role="group"], [role="toolbar"]');
+    const named = page.getByRole('complementary', { name: 'Actions', exact: true })
+      .or(page.getByRole('region', { name: 'Actions', exact: true }))
+      .or(page.getByRole('group', { name: 'Actions', exact: true }))
+      .or(page.getByRole('toolbar', { name: 'Actions', exact: true }));
+    const controls = entry(page, name).and(page.locator(':not(nav *, header *, [role="navigation"] *, [role="banner"] *)'));
+    const labelled = smallestContainers(layout.filter({ has: page.getByText('Actions', { exact: true }) })
+      .filter({ has: controls })).or(named).filter({ visible: true });
+    // Explicit action groups may themselves use lists. Outside them, list/row
+    // controls belong to child content, not to the selected book.
+    const grouped = entry(labelled, name).and(controls);
+    const standalone = controls.and(page.locator(':not(li *, tr *, [role="listitem"] *, [role="row"] *, ul *, ol *, table *, [role="list"] *, [aria-label="Page list"] *, [aria-label="Chapter list"] *)'));
+    const eligible = grouped.or(standalone);
+    // Filter child ownership before uniqueness; Actions does not establish owner.
+    return ownedBy(page, eligible, bookName);
+  };
+  return { action(name: Name) { return actionable(() => target(name)); } };
+}
+
+/** A confirmation must identify the object whose operation was requested. */
+export function deletionConfirmation(page: Page, ownerName: string) {
+  const target = async () => {
+    const identity = page.getByText(new RegExp(escaped(ownerName)))
+      .and(page.locator(':not(a,button,input,textarea,h1,h2,h3,h4,h5,h6,[role="heading"],nav *,header *,a *,button *)')).filter({ visible: true });
+    const message = page.getByText(/\S/).and(page.locator(':not(a,button,input,textarea,h1,h2,h3,h4,h5,h6,[role="heading"],nav *,header *,a *,button *)')).filter({ visible: true });
+    const scopes = page.locator('section,article,form,div,[role="dialog"],[role="alertdialog"]')
+      .filter({ has: message }).filter({ has: entry(page, 'Confirm Delete') }).filter({ has: entry(page, 'Cancel') })
+      .filter({ visible: true });
+    return resolveUnique([smallestContainers(scopes).filter({ has: identity })], `deletion confirmation for ${ownerName}`);
+  };
+  return { ...observable(target), action(name: 'Confirm Delete' | 'Cancel') { return actionable(async () => entry(await target(), name)); } };
+}
 
 export function navigationAction(page: Page, name: string) {
   return actionable(() => navigationEntry(page, name));
@@ -267,6 +369,16 @@ export function collection(page: Page, name: string, options: { owner?: string }
   const target = () => region(page, name, options.owner);
   return {
     ...observable(target),
+    async visibleNames(names: string[]): Promise<string[]> {
+      const scope = await target();
+      const visible: string[] = [];
+      for (const name of new Set(names)) {
+        const count = await itemEntry(page, name).and(scope.locator('*')).count();
+        if (count > 1) throw new Error(`Duplicate opening identity ${name}`);
+        if (count === 1) visible.push(name);
+      }
+      return visible;
+    },
     async expectMaxItems(maximum: number) {
       await expect.poll(async () => {
         const scope = await target();
@@ -279,16 +391,22 @@ export function collection(page: Page, name: string, options: { owner?: string }
             const ancestor = node.parentElement?.closest(selector);
             return !ancestor || ancestor === root || !root.contains(ancestor);
           });
-          if (records.length) return records.length;
           const controls = [...root.querySelectorAll('a, button, [role="link"], [role="button"]')]
-            .filter(node => visible(node) && !/^(?:view all|see all)$/i.test(node.textContent?.trim() ?? ''));
-          if (controls.length) return controls.length;
-          if (root.querySelector('ul, ol, tbody, [role="list"]')) return 0;
+            .filter(node => visible(node) && !/^(?:view all|see all|edit|delete|favorite|unfavorite)$/i.test(node.textContent?.trim() ?? ''));
+          const extra = controls.filter(node => !records.some(record => record.contains(node)))
+            .filter(node => !controls.some(other => other !== node && other.contains(node)));
+          if (records.length || extra.length) return records.length + extra.length;
+          const text = root.textContent?.trim() ?? '';
+          if (root.querySelector('ul, ol, tbody, [role="list"]') && !text) return 0;
           throw new Error('Collection has no countable records; do not assume an empty list');
         });
       }, { message: `${name} contains at most ${maximum} records` }).toBeLessThanOrEqual(maximum);
     },
-    item(itemName: Name) { return actionable(async () => itemEntry(await target(), itemName)); },
+    item(itemName: Name) { return actionable(async () => {
+      const scope = await target();
+      const entries = itemEntry(page, itemName).and(scope.locator('*'));
+      return options.owner ? ownedBy(page, entries, options.owner, itemName) : entries;
+    }); },
   };
 }
 
@@ -309,12 +427,22 @@ export function accountIdentity(page: Page, nickname: string) {
 export function loginSubmit(page: Page) {
   return actionable(async () => {
     const hasCredentials = (scope: Locator) => scope.filter({ has: field(page, 'Email') }).filter({ has: field(page, 'Password') });
-    const form = await resolveUnique([
-      hasCredentials(page.locator('form')),
-      hasCredentials(page.locator('section, article, [role="dialog"]')),
-      hasCredentials(field(page, 'Email').locator('xpath=ancestor::div[descendant::input[@type="password"]][1]')),
-    ], 'login form');
-    return entry(form, 'Login');
+    const forms = hasCredentials(page.locator('form')).filter({ visible: true });
+    const controls = entry(page, 'Sign in').and(page.locator(':not(nav *, header *, [role="navigation"] *, [role="banner"] *)'));
+    const layouts = hasCredentials(page.locator('body, main, section, article, div, [role="dialog"], [role="group"]'))
+      .filter({ has: controls }).filter({ visible: true });
+    // A real credentials form is authoritative: duplicate submits/forms must
+    // not be bypassed via a smaller div. Generic layout is an alternative only
+    // when no such form exists, and does not require ARIA or password type.
+    const nativeForm = await forms.count() > 0;
+    const form = await resolveUnique([nativeForm ? forms : smallestContainers(layouts)], 'login form');
+    await expect(field(form, 'Email')).toHaveCount(1);
+    await expect(field(form, 'Password')).toHaveCount(1);
+    const id = await form.getAttribute('id');
+    const associated = id && await form.evaluate(node => node.tagName === 'FORM')
+      ? controls.and(page.locator(`button[form=${JSON.stringify(id)}], input[form=${JSON.stringify(id)}]`))
+      : page.locator(':not(*)');
+    return nativeForm ? entry(form, 'Sign in').or(associated) : controls;
   });
 }
 
@@ -326,9 +454,9 @@ export function detailContent(page: Page, ownerName: string, value: string) {
       owner.locator('xpath=ancestor::*[self::article or self::section][1]').filter({ visible: true }),
       owner.locator('xpath=ancestor::div[count(*) > 1][1]').filter({ visible: true }),
     ], `details card for ${ownerName}`);
-    return scope.getByText(value, { exact: true })
+    return ownedBy(page, scope.getByText(value, { exact: true })
       .and(page.locator(':not(a, button, input, textarea, [contenteditable="true"], [contenteditable="true"] *, [role="textbox"], [role="textbox"] *, a *, button *, aside *, nav *, header *, [role="complementary"] *, [role="navigation"] *)'))
-      .filter({ visible: true });
+      .filter({ visible: true }), ownerName);
   });
 }
 

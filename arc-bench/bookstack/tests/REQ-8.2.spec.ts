@@ -1,6 +1,6 @@
 import { generateBookData } from './fixtures/data';
 // requirement: REQ-8.2
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { enter, home, login, heading, createBook, action, collection, favorite, withFavoriteCleanup } from './helpers';
 
 test("REQ-8.2: Open favorited book", async ({ page }) => {
@@ -9,14 +9,25 @@ test("REQ-8.2: Open favorited book", async ({ page }) => {
   await login(page);
   await withFavoriteCleanup(page, async track => {
     let book = '';
+    const created: string[] = [];
     for (let i = 0; i < 5; i++) {
       const bookData = generateBookData({ prefix: 'Book 8.2' });
       book = await createBook(page, bookData);
+      created.push(book);
       track(book);
       await action(page, 'Favorite').activate();
       await favorite(page).expectState(true);
     }
     await home(page);
+    const favorites = collection(page, 'My Most Viewed Favorites');
+    let visible: string[] = [];
+    await expect.poll(async () => {
+      visible = await favorites.visibleNames(created);
+      return visible.length;
+    }).toBeGreaterThan(0);
+    // Equal view counts have no prescribed order. Choose an exact identity
+    // from this test's displayed objects, never a historical favorite.
+    book = visible.sort()[0];
     await collection(page, 'My Most Viewed Favorites').item(book).expectCount(1);
     await collection(page, 'My Most Viewed Favorites').expectMaxItems(4);
     await collection(page, 'My Most Viewed Favorites').item(book).open();

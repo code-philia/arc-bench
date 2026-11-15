@@ -1,29 +1,23 @@
-# BookStack 治理探索
+# 需求与测试治理
 
-本分支仅调整 BookStack：需求改为用户视角的自然描述，移除实现与评测协议；测试通过公共语义接口兼容合理界面，并使用逐用例随机数据，经 UI 创建对象后验证结果。保留 35 个测试及原有业务要求。
+本分支已治理BookStack和StackOverflow的需求与测试：需求保留用户视角、业务规则和自然示例，移除实现/评测协议；测试用公共语义接口及逐用例数据验证行为。两者的数据位于`arc-bench/bookstack/`和`arc-bench/stackoverflow/`。BookStack的评分身份、路径、账号和工具边界集中在[BookStack适配说明](curation_tool/bench-curation/references/bookstack-profile.md)；StackOverflow需按自身需求、测试和配置核实，不套用BookStack约定。
 
-`curation_tool/` 提供可参考的 skill 框架：[主流程](curation_tool/bench-curation/SKILL.md)负责范围、状态与验证，五个子 skill 分别处理数据、role、元说明与重复、UI 约束、测试质量。当前实现以 BookStack 为例，推广到其他应用需重新审查。
+[主skill](curation_tool/bench-curation/SKILL.md)负责一次清点、按问题路由和统一验证；五个子skill分别负责数据、产品交互、元说明、语义适配及断言质量，不要求按历史顺序逐个执行。工具说明见[curation_tool](curation_tool/README.md)。本地进度、审计、例程和成绩存于被Git忽略的`ref/`，不随分支上传，不是流程前提。
 
-检查入口：`npm run check:bookstack`、`node curation_tool/check_bookstack_delivery.mjs`；更多工具见 [curation_tool/README.md](curation_tool/README.md)。最近一次本地 case 全量为 25 通过、10 失败，尚非全部业务通过。本地进度、交接和审计资料统一保存在 `ref/`，不随分支上传。
+默认没有应用例程：先独立审查需求/图例/测试，再用合成DOM或状态模拟检查真实helper正反例。只有用户主动提供或在会话中明确指定例程、源码或URL后，才进入对应应用的迭代回归；不自动查找workspace应用、猜端口或沿用旧服务。
 
-## 如何用于其他项目
+## 使用方式
 
-在仓库根目录启动编码智能体，将下面的 `<project>` 替换为目标应用目录名后发送。直接读取仓库中的 skill 文件即可，无需全局安装。现有脚本和状态工具针对 BookStack，不能直接用于其他应用。
+在仓库根目录启动智能体，直接读取skill，无需全局安装。可发送：
 
 ```text
-请治理 arc-bench/<project> 的需求和对应测试。
-
-先读取 curation_tool/bench-curation/SKILL.md，再按当前任务读取数据、role、元说明与重复、UI约束、测试质量子skill，由你依次执行。此次明确授权将这些skill的方法适配到<project>，其中“仅BookStack”的范围限制改为仅本目标项目；不要修改BookStack或其他应用。
-
-围绕两大方向开展治理：
-1. 需求用用户视角的自然语言描述，移除实现细节及评测协议；保留明确产品设计和业务规则，同步让测试兼容合理界面实现。
-2. 需求数据保留为自然示例，测试使用内部或随机数据。产品支持创建的数据经UI在当前test内创建，并用同一份数据断言；无法创建的数据需明确系统预置来源，不凭空生成账号或业务记录。
-
-先通读目标需求、参考图和测试，清点问题与依赖，再按共享规则/helper分批改造。保留业务含义、需求及测试身份和断言强度，不自动新增评分场景。固定时钟、元说明、重复内容及过度精确UI约束也应按对应方法审查。
-
-按改动影响执行结构、类型、适配及数据归属检查。有可用case时运行相关回归；没有时完成独立检查，明确未验证项。BookStack脚本中的路径、数量、账号和容量都是案例约定，必须重新核实，不直接套用；所需检查工具应适配目标项目，不把目标结果写入BookStack状态。
-
-所有进度、审计、状态和报告写入ref/<project>/。清理交付范围内的暂存括号及其中评测协议，核对清理前后业务含义；未解决项如实记录，不通过删断言或未经授权修改case来使测试通过。
-
-最后汇报需求、测试及工具的改动、实际验证范围、剩余失败和适配边界。只完成目标项目，不自动推进其他应用或提交、推送代码。
+请治理 arc-bench/<project> 的需求和对应测试，仅修改该目标及必要治理工具。
+先读 curation_tool/bench-curation/SKILL.md，按问题及依赖选择子skill执行。
+检查需求、scenario、测试及helper的对应，保留业务规则、自然示例、精确数据和评分身份。
+清理评测协议，复核数据来源和前置对象，构造错误实现反例并逐项约束修复，同时保证合理替代实现通过。
+补全有依据的产品交互，保持用户视角并同步相关requirements/scenario，不将helper内部细节变成产品要求。
+默认不提供应用例程；先完成独立检查，明确应用级验证缺口。若我后续提供例程，再按授权迭代。
+所有状态与报告写入ref/<project>/，不自动新增评分场景、修改生成应用、提交或推送。
 ```
+
+替换目标前先核实其目录、数据来源、身份数量和工具。现有check_bookstack、扫描词表和state.py均含项目约定；它们不是通用脚本，不能只换路径就用于其他项目，也不能把其他项目结果写入BookStack状态。

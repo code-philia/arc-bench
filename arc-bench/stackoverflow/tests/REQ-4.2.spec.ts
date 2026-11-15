@@ -1,4 +1,4 @@
-import { test, expect, login, openQuestion, action, region, post, answer, createQuestion, createAnswer, numeric, expectNumeric } from './helpers';
+import {test, expect, login, openQuestion, action, region, post, answer, createQuestion, createAnswer, numeric, expectNumeric, expectActive } from './helpers';
 import {  } from './fixtures/data';
 
 // requirement: REQ-4.2
@@ -12,12 +12,12 @@ test('REQ-4.2: Apply and remove answer upvote', async ({ page, browser }, info) 
   await expectNumeric(target,'Score',0);
   await action(target,'Up vote').click();
   await expectNumeric(target,'Score',1);
-  await expect(action(target,'Up vote')).toHaveAttribute('aria-pressed','true');
+  await expectActive(action(target,'Up vote'),true);
   await expectNumeric(author,'Reputation',reputation+10);
   await expectNumeric(post(page),'Score',questionScore);
   await action(target,'Up vote').click();
   await expectNumeric(target,'Score',0);
-  await expect(action(target,'Up vote')).toHaveAttribute('aria-pressed','false');
+  await expectActive(action(target,'Up vote'),false);
   await expectNumeric(author,'Reputation',reputation);
   await expectNumeric(post(page),'Score',questionScore);
 });

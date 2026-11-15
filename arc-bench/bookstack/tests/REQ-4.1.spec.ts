@@ -1,7 +1,7 @@
 import { generateShelfData } from './fixtures/data';
 // requirement: REQ-4.1
 import { test } from '@playwright/test';
-import { enter, go, createShelf, collection } from './helpers';
+import { enter, go, createShelf, collection, heading, text } from './helpers';
 
 test("REQ-4.1: Show a uniquely identified item", async ({ page }) => {
   await enter(page);
@@ -9,4 +9,7 @@ test("REQ-4.1: Show a uniquely identified item", async ({ page }) => {
   const name = await createShelf(page, shelfData);
   await go(page, 'Shelves');
   await collection(page, 'Shelf list').item(name).expectCount(1);
+  await collection(page, 'Shelf list').item(name).openWithKeyboard();
+  await heading(page, name);
+  await text(page, shelfData.description, name);
 });

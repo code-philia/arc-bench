@@ -1,51 +1,42 @@
 # 状态与产物约定
 
-## 单一持久状态
+通用语义由本文件规定，路径和可执行工具按目标项目适配说明核实。当前仓库的state.py只服务BookStack，不能用于其他目标；具体入口见[BookStack适配说明](bookstack-profile.md)。其他项目可维护等价的单一状态记录，先完成工具适配再使用命令。
 
-`ref/bookstack/governance_reference.json`是可选的本地记录，不随Git共享；无记录时显式init建立`workflow_state`：
+## 单一账本与证据
 
-- `schema_version`、`dataset=bookstack`。
-- `baseline_sha256`：当前已核实的需求和tests源指纹；不包含运行产物、进度文档和生成的状态文件自身。
-- `phases`：data、role、meta、ui、quality；阶段状态与逐条状态分开。旧状态可缺后加阶段，用`phase --phase <阶段> --status partial --note ...`按实际进度补入，不重建已有状态。
-- `items`：id、phase、requirements、status、note、checks、verified_source_sha256；按需保存field、scenario、step及tests，record对应同名参数。
+进度、审计及报告保存在`ref/<目标>/`，不作为skill使用前提。无记录时从当前源码开始；有记录时先核对源指纹与未完成项。每项至少记录需求/场景/步骤身份、问题、依据、修改/保留/延期理由、实际调用、验证范围和剩余差距。
 
-首次建立的阶段均为pending，从当前源码复核，不继承其他工作区的完成结论。已有历史分类表是恢复依据，不能假定其哈希/行号仍对应当前源码。
+data、role、meta、ui、quality是职责键，不代表固定执行先后。一个问题指定主职责并关联其他职责，不因跨skill再建重复账本。已有其他摘要表可保留必要来源，逐项状态以一个账本为准。
 
 ## 条目状态
 
-| 状态 | 含义 |
+| 状态 | 语义 |
 | --- | --- |
-| pending | 已清点，尚未完成语义复核 |
-| reviewed | 判定和改动计划明确 |
-| requirements_updated | 本问题涉及的需求改写已落地 |
-| tests_updated | 对应测试准备/适配已完成，或有理由说明无需测试改动 |
-| verified | 当前版本在记录的检查范围内已验证；不是整体bench全通过 |
-| preserved | 已复核属于自然业务，保留并说明原因 |
-| deferred | 明确交给后置阶段或不在本轮范围，注明归属 |
-| blocked | 缺必要条件或验证仍失败，记录失败位置及已核实事实 |
+| pending | 已清点，待判断 |
+| reviewed | 标准、根因及处理计划明确 |
+| requirements_updated | 需求/scenario修改已落地 |
+| tests_updated | 准备/适配/断言已接入，或有理由说明测试无需改动 |
+| verified | 当前源在声明的检查范围内通过，不等于业务全量通过 |
+| preserved | 已复核并保留既有业务决定 |
+| deferred | 明确后置范围或归属 |
+| blocked | 必要条件缺失或该项验证仍失败 |
 
-正常修改流为pending→reviewed→requirements_updated→tests_updated→verified。只改测试的条目可从reviewed进入tests_updated，但说明为何需求无需改动；只改需求也说明测试无需改动。preserved/deferred可从复核进入。blocked可在任何处理中登记；恢复后回到reviewed，不能直接宣称verified。允许批量原子改共享helper后逐项登记，不要求为每个词做独立提交。
+通常为reviewed→requirements_updated→tests_updated→verified；只改测试可跳过需求修改，文字修改也要说明测试不改的理由。blocked恢复先回reviewed。各项目状态工具可有更严格的转换校验，不以文档示例伪造命令或跳过门槛。
 
-`verified`需非空checks，且每项包含`kind`、`result=passed`、`scope`。可选kind为static、types、adapter、data_ownership、browser；检查范围必须真实。browser失败的相关条目保持blocked，其他范围独立登记。工具校验状态及非空证据，不证明检查确实执行。
+verified必须绑定当前源和真实证据：static、types、adapter、data_ownership、browser等类别分开，记录命令、范围及结果。未提供例程时可核实独立适配范围，应用级验证保持未验证；不能因此把一个本不存在的应用失败写成blocked。真实业务失败的范围仍保持blocked/deferred，不能与独立适配通过混作一项全通过。
 
-源变化后state工具显示drift。`invalidate --phase ... --id ... --status reviewed --note ...`使受影响项失效；如已确认不受影响，也先失效再以当前检查/复核登记verified。其他条目仍旧verified时checkpoint拒绝通过，防止直接刷新哈希掩盖陈旧结论。
+源变化后对受影响证据失效再重核，不能仅刷新基线掩盖旧verified。当前BookStack工具的invalidate/checkpoint会拒绝未经处理的旧验证；未知项目先核实对应工具行为。重审范围不受影响也应写明依据，不继承过去运行数字。
 
-## 阶段完成
+## 类别完成与授权
 
-阶段可用pending、active、partial、temporarily_closed、complete。用`phase`命令更新，必须提供note；complete要求该阶段有条目、每个条目均verified或preserved、全部verified源指纹为当前版本，并且无源漂移。deferred/blocked未解决时为partial；用户明确暂结时才用temporarily_closed。工具不能替代主skill对清点完整性、临时标记和业务回归的复核。
+类别状态可表达pending、active、partial、temporarily_closed、complete。complete要求该授权范围已清点、条目均有当前结论和证据、无未解决前提；不是按固定顺序解锁下一类别。用户明确要求暂结才使用temporarily_closed，重新进入须有当前授权。工具只能检查形式和指纹，不能替代语义与覆盖判断。
 
-ui_governance保留分类及验证摘要，workflow_state维护ui逐项进度，避免两处各自推进状态。首次接入已有UI记录时复核后按真实里程碑登记，不把历史checks_zh直接伪造成当前verified；保留失败身份、失败阶段和已验证范围。case剩余失败不自动等于UI适配缺陷，相关条目保持blocked或明确交接，阶段仍为partial。
-
-quality_governance记录断言缺口、修复范围、回归/重复运行及共享状态限制。quality条目按实际验证范围维护；加强断言后出现更多失败可能揭示遗漏检查，不自动削弱断言或归咎于case。需求已知但helper明确拒绝的关联准备应记为接口保护已验证、完整功能未实现，不能混称全部支持。
-
-BookStack交付版已获授权清理历史59处数据协议及10处元说明，当前0处；移除文本及归属保存在delivery。未来若新增暂存内容，必须在交付前复核清理，不能仅去掉括号保留协议。data/meta完成时工具直接检查当前YAML，左/右任一隔离括号残留都会拒绝。若已有meta_governance.new_meta_markers字段还须同步清零；新工作区无需创建历史统计字段。工具不证明移除内容的业务语义正确，仍须前后复核。role分类齐全、27组适配检查通过不等于任意DOM兼容或35个业务场景全通过。已知25通过10失败是历史结论，重测后以新证据更新，不凭空改写。
+只更新skill/文档时，不初始化、重开或推进实际需求治理状态。缺少例程不阻止独立工作；只有用户提供/指定后按主流程进入应用迭代，不用状态文件中的旧URL、进程或成绩作为默认环境。
 
 ## 产物生命周期
 
-共享内容为requirements.yaml、reference/、tests、README_curation.md、skill及复核工具。所有进度、分类、审计、状态、历史原文与报告统一写入ref/，由Git忽略；合作者无需本地文件即可阅读skill并运行检查。
+共享内容只保存需求、图例、测试、方法、当前项目适配及复核工具；历史任务编号、迁移数量、运行成绩和具体例程日志放本地记录。一次性脚本不作为共享流程前提，也不能直接重放到新源。
 
-临时JSON应有schema_version、phase、source_sha256和records/results；审阅/改写记录含ID、字段、旧文、新文、中文理由、关联REQ。扫描不可覆盖唯一人工决定。检查脚本已有格式可沿用，缺少的上下文由条目或清单补充。
+扫描、review、patch日志、运行JSON、截图/trace/HTML等可按需要生成，不强制每个类别各建一套。摘要中保留源版本、结论与最小证据后，按明确路径清理本轮已汇总产物；不能删除未解决问题唯一证据，也不删除其他运行/项目的文件。Windows递归操作前核实解析后的绝对路径和目标归属，不按通配符清空ref。
 
-临时文件包括data_inventory.json、数据/role改写日志、各类audit/checks结果和run/raw JSON，以及本轮生成的playwright-report/test-results。先汇总到长期表，再明确列出本轮路径清理；不按*.json全删，不删除其他数据集或其他运行的产物。Windows递归删除前核实绝对路径位于工作区、等于本轮明确的报告目录。未解决问题只保留最小可复核证据，不长期堆积整段trace或日志。
-
-历史BookStack一次性脚本绑定旧哈希和已清理的输入链，仅参考实现方法，不把它们作为新流程前置。检查工具可以再次生成JSON；使用后同样汇总并清理，不为补报告重放历史需求转换。
+过渡标记只用于已判定的协议且任务允许过渡时。最终交付核对原文、业务字段、身份和引用后清理本轮范围，不用全局删括号代替语义审查。不因无例程保留已可安全清理的协议，也不因收尾删除尚未厘清的业务内容。

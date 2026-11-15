@@ -1,4 +1,4 @@
-import { test, expect, login, openQuestion, activity, action, field, answer, output, publishAnswer, createQuestion } from './helpers';
+import {test, expect, login, openQuestion, activity, action, field, answer, output, publishAnswer, createQuestion, expectNumeric, expectBody , actorName } from './helpers';
 import { answerBody } from './fixtures/data';
 
 // requirement: REQ-4.1
@@ -8,9 +8,11 @@ test('REQ-4.1: Publish and discover own answer', async ({ page, browser }, info)
   await login(page,'answer_submitter'); await openQuestion(page,title);
   await expect(field(page,'Your Answer')).toBeVisible();
   await publishAnswer(page);
-  await expect(answer(page,'Stack User')).toContainText(answerBody);
+  await expectBody(answer(page,actorName('answer_submitter')),answerBody);
+  await expectNumeric(page,'Answer count',1);
   await page.reload();
-  await expect(answer(page,'Stack User')).toContainText(answerBody);
+  await expectNumeric(page,'Answer count',1);
+  await expectBody(answer(page,actorName('answer_submitter')),answerBody);
   const content=await activity(page,'Answers');
   await expect(action(content,title)).toBeVisible();
   await expect(content).toContainText(answerBody);

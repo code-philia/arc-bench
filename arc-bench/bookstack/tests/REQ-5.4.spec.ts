@@ -1,7 +1,7 @@
 import { generateBookData } from './fixtures/data';
 // requirement: REQ-5.4
 import { test } from '@playwright/test';
-import { expectMetadata, enter, heading, text, metadata, createBook, openBook, action, detailContent } from './helpers';
+import { expectMetadata, enter, heading, text, metadata, createBook, openBook, action, detailContent, go, collection } from './helpers';
 
 test("REQ-5.4: Save metadata changes", async ({ page }) => {
   await enter(page);
@@ -21,6 +21,9 @@ test("REQ-5.4: Save metadata changes", async ({ page }) => {
   await text(page, updatedData.description, updated);
   await action(page, 'Edit').activate();
   await expectMetadata(page, updated, updatedData.description, bookData.tags);
+  await go(page, 'Books');
+  await collection(page, 'Book list').item(original).expectCount(0);
+  await collection(page, 'Book list').item(updated).expectCount(1);
 });
 
 test("REQ-5.4: Cancel metadata changes", async ({ page }) => {

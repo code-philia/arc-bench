@@ -1,71 +1,37 @@
-# BookStack语义元件与role适配规范
+# BookStack当前语义适配映射
 
-本文记录当前实现及其边界，供后续数据集治理参考。实现入口为[ui.ts](../arc-bench/bookstack/tests/support/ui.ts)，验证脚本为[check_bookstack_role_compatibility.mjs](check_bookstack_role_compatibility.mjs)。这是一份业务定位适配表，不是HTML/ARIA标准的完整映射表。
+本文件仅说明当前BookStack实现，不是通用role标准或全部合法界面定义。项目路径和工具见[适配说明](bench-curation/references/bookstack-profile.md)；实现入口为[ui.ts](../arc-bench/bookstack/tests/support/ui.ts)，业务helper为[helpers.ts](../arc-bench/bookstack/tests/helpers.ts)。接口名和能力以当前源码核实，不用历史通过数证明兼容完整。
 
-## 分类原则
+## 接口与观测
 
-先从需求确定元件的业务用途，再选择定位及结果检查方式。role是可选的识别证据；不同role并不天然等价，只有在同一业务操作中能产生所需结果时才能作为替代实现。
-
-自然语言中的“按钮”“列表”“标题”等表达可以保留；删除的是要求实现必须具有某个role或ARIA属性的协议。键盘操作要求、数据归属和持久化要求继续保留。
-
-## 当前映射
-
-REQ只使用语义接口，不直接接触Locator。底层role/元素查找仍封装在ui.ts中，标签行等复合控件可在helper内部使用定位器构建适配器。
-
-| 业务语义 | 对外接口与能力 | 底层适配 |
+| 业务类别 | 当前接口 | 支持与约束 |
 | --- | --- | --- |
-| 操作入口 | `action`：activate、open、expectVisible、expectCount、expectAbsent | button/link/menuitem/tab及具备onclick/tabindex的自定义元素、summary |
-| 公共导航 | `navigationAction`：同操作入口 | navigation/banner/header优先，其次唯一页面入口 |
-| 集合及条目 | `collection`：expectVisible；item(name)：open、activate、expectVisible、expectCount、expectAbsent | 命名region/list/group/table/complementary、标签/标题容器、明确owner上下文 |
-| 文本字段 | `textField`：fill、read、expectValue、expectVisible | label或placeholder关联的input/textarea/contenteditable；读取按实现区分 |
-| 标签复合编辑器 | `metadata`、`fillTags`、`expectMetadata` | CSV或Tag Name行；行通过editableControl统一读写，支持contenteditable |
-| 标题 | `title`：expectVisible；heading为业务便捷函数 | heading及排除导航/操作元素后的标题文字 |
-| 可见正文 | `content`：expectVisible、expectCount、expectAbsent；text为业务便捷函数 | 精确可见文字 |
-| 二态选择 | `toggle`：read、set、expectState、expectVisible | 原生checkbox/radio、checkbox/switch角色、带可读取状态的操作元件 |
-| 收藏 | `favorite`：read、set、expectState | Favorite/Unfavorite入口及其互斥状态；set支持幂等调用 |
+| 操作入口 | action、navigationAction | 原生/role按钮链接等、HTML onclick自定义元件及summary；tabindex单独不作动作证据；用途、唯一和结果仍须验证 |
+| 对象操作/确认 | bookActions、deletionConfirmation、loginSubmit | 当前对象/凭据关系及确认目标，非某个role或容器层级的强制契约 |
+| 集合条目 | collection、item、visibleNames、expectMaxItems | 具名/标题/owner路径，精确身份、重复拒绝、混合记录计数；visibleNames只能从调用方提供的身份中返回可见目标 |
+| 文本字段 | textField、editableControl、pageEditor | label/placeholder关联input/textarea/contenteditable，填写/读取/清空/回填成套处理 |
+| 复合元数据 | metadata、fillTags、expectMetadata | 整组标签或Tag Name行；行式标签的产品交互仍须遵循书架需求，不为适配任意流程而放宽 |
+| 标题/正文 | title、heading、detailContent | 排除已识别集合/行及其他对象子树；detailContent排除导航/侧栏/编辑回显；content仅是精确可见文字接口 |
+| 状态 | toggle、favorite | 原生checked或可读自定义状态；收藏按明确Favorite/Unfavorite文案观测，幂等设置，未知状态拒绝 |
 
-原生radio可被当前代码识别，但是否满足二态选择需求仍由具体REQ的行为约束判断。操作候选能被定位也不证明业务成功，REQ继续检查保存、打开、持久化等结果。接口不暴露inputValue或click，防止调用方绕过适配。
+评分REQ通过公共语义接口表达业务动作，原始定位留在适配器/复合helper。openWithKeyboard实际触发键盘，仍需随后核对目标详情。字段支持不意味着所有自定义编辑器都支持。
 
-## 解析策略
+## 有限别名与路径
 
-1. 调用方先确定业务范围和目标名称，尽量使用本用例创建对象的随机身份。
-2. 操作入口、字段采用候选并集；多个候选同时命中不同元素时，由严格定位检查报错。内部文字节点不应与所属语义控件重复计数。
-3. 导航、集合、标题及开关按代码中的优先级尝试候选。当前优先级中出现多个匹配时等待消歧，不跳过该层去选择后续候选。
-4. 所有目标须可见，不以`.first()`或DOM顺序解决业务歧义。保留定位器的自动等待，避免跨渲染快照取元素。
-5. 定位成功后检查交互结果。能匹配到tab或带tabindex的元素，只证明它是候选，不能证明它已实现保存、导航等行为。
+集合别名当前为Shelf list/Shelves、Book list/Books、Page list/Pages、Chapter list/Chapters；创建书籍为New Book/Create New Book。它们是本项目有依据的有限映射，不是其他项目必须采用的文案。
 
-### 集合的具体顺序
+操作/字段等路径可合并等价候选，同一DOM去重、不同目标保留歧义。部分导航/集合/标题路径仍按代码优先级解析；该机制不能作为跳过已知业务歧义的理由，新增路径需完整正反例。
 
-命名region → 其他命名集合role → 显式aria-label容器 → 标题所属有限容器 → 调用方提供的对象上下文。最后一项用于有明确owner的Book list、Page list和Chapter list。
+集合owner约束具名与回退路径及实际条目。当前ownedBy通过可观察标题、交互卡片和记录边界排除其他对象；不能从共同祖先或Actions名称单独推导归属。正文中的复杂子标题、完全匿名卡片等仍需专门验证。
 
-任务5后已有集合别名：`Shelf list / Shelves`、`Book list / Books`、`Chapter list / Chapters`、`Page list / Pages`。`New Book / Create New Book`依据参考图统一兼容；两个真实操作同时出现仍报歧义，不使用任意模糊文字匹配。集合标题排除导航和面包屑。owner约束全部命名及回退分支，支持书架内未命名书籍列表；REQ-5.2/5.6传入书架owner。
+详情卡与具名集合可并列：owner标题位于独立article，Book/Page/Chapter list位于同一内容布局的兄弟section，不要求列表嵌入详情卡。适配器先识别具名/标题集合证据，再排除其他对象子树、侧栏和导航；有main时不越过所属main，无main时使用同时包含owner与集合证据的最小普通内容布局。等价集合路径合并后仍有多个组或重复入口时拒绝，不用优先级或DOM顺序隐藏歧义。未具名集合保留原有局部owner回退，不因兄弟区域存在同名条目就扩大范围。
 
-### 状态的读取顺序
+## 当前支持边界
 
-- 原生checkbox/radio读取真实checked状态。
-- 自定义控件依次读取aria-checked、aria-pressed、data-state；识别true/false、checked/unchecked、on/off。
-- 均不可读取时明确失败，不默认未选中。需求不要求这些属性，测试可以将其作为可选观测渠道。
-- 收藏当前通过Favorite/Unfavorite文字观测状态。这仍依赖产品文案，尚不覆盖仅用图标或固定名称表达收藏状态的实现。
+- 只有React事件、无可观察交互语义的节点，不能因tabindex而自动识别为动作。
+- iframe、select/组合框及未覆盖自定义编辑器需按类别扩展，不统一当textbox。
+- 收藏仅图标/固定文案状态未由当前Favorite/Unfavorite策略覆盖；未知状态不能吞掉。
+- 普通标题文字的回退与owner识别不保证任意布局；不能扩大为整页搜索掩盖失败。
+- 准备helper的参数拒绝不等于相关产品能力已实现，具体限制见项目适配说明。
 
-## 当前边界与待改进项
-
-当前实现已接入页面准备、标签读写及集合owner约束；新增控件仍需检查完整操作链。
-
-| 情况 | 当前处理 | 后续方向 |
-| --- | --- | --- |
-| React自定义div只有onClick，没有role/tabindex/HTML onclick属性 | entry通常无法识别 | 增加真实DOM变体验证后再设计候选，避免把所有静态文字都当作操作入口 |
-| tabindex存在但元素没有对应操作行为 | 可能进入候选，业务结果应失败 | 不把可聚焦等同于可操作 |
-| 标题只是普通文字 | 可使用文字回退，但结构排除仍有限 | 补充控件内部文字、重复标题等反例，避免误选 |
-| 标题容器结构与当前section/div规则差异较大 | 可能定位失败 | 按业务归属补充有界结构，不直接扩大为整页搜索 |
-| 字段使用select、组合框、iframe富文本或其他自定义编辑器 | 当前字段适配不覆盖 | 按新的业务控件类别增加操作策略，不统一当作textbox |
-| 状态仅通过图标、样式或其他可见提示表达 | 当前开关/收藏读取可能不覆盖 | 明确可观察状态与前后行为，再增加专用适配 |
-| 容器名称别名 | role查询、标题查询及显式aria-label结构回退使用完整别名 | 新增别名需同步验证各定位分支 |
-
-不得为使测试通过而把静态章节文字直接当作打开入口、删除归属检查或吞掉无法读取的状态。定位失败需区分：适配缺口、文案差异、数据未出现、操作功能缺失。
-
-## 扩展流程与验证
-
-新增适配时记录业务类别、候选role/元素、定位范围、状态/结果观测方式及失败边界；优先扩展公共helper，再迁移REQ。可将稳定候选集中为配置，但不同类别的范围与交互策略仍需分别实现，不做全局role互换。
-
-验证至少包括合理替代实现，以及同名目标、静态文本、错误归属、状态未知等反例。现有27组合成DOM检查已通过，具体覆盖以验证脚本为准（role_compatibility_checks.json为可重新生成的临时结果）；上表待改进项不能视为已覆盖。真实case回归需针对实际URL单独运行并记录，不能由合成检查外推。
-
+扩展时按主流程：先确定业务标准，再实现路径，使用真实helper验证合理替代和错误实现。默认合成DOM/状态模拟；仅用户提供/指定例程后才进入应用回归。合成检查数量和历史例程成绩保存在本地报告，不写成当前通用保证。

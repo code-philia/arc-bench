@@ -16,4 +16,7 @@ test("REQ-6.2: Confirm draft deletion", async ({ page }) => {
   await action(page, 'Confirm Delete').activate();
   await heading(page, book);
   await collection(page, 'Page list', { owner: book }).item(draft).expectCount(0);
+  await page.reload();
+  await heading(page, book);
+  await collection(page, 'Page list', { owner: book }).item(draft).expectCount(0);
 });

@@ -3,29 +3,24 @@ export const body = "I am building a Node.js service and need a safe retry patte
 export const answerBody = "Use exponential backoff together with an idempotency key so duplicate requests can be safely retried without creating duplicate side effects in downstream services.";
 export const commentBody = "Can you share what you tried so far?";
 export const retryTitle = "How can I safely retry an idempotent HTTP request in Node.js?";
-export const accounts = {
-  "stack_user": "stack_user@example.com",
-  "helpful_user": "helpful_user@example.com",
-  "activity_user": "activity_user@example.com",
-  "profile_editor": "profile_editor@example.com",
-  "question_creator": "question_creator@example.com",
-  "question_editor": "question_editor@example.com",
-  "question_deleter": "question_deleter@example.com",
-  "question_upvoter": "question_upvoter@example.com",
-  "question_downvoter": "question_downvoter@example.com",
-  "answer_submitter": "answer_submitter@example.com",
-  "answer_voter": "answer_voter@example.com",
-  "answer_accept_owner": "answer_accept_owner@example.com",
-  "answer_edit_user": "answer_edit_user@example.com",
-  "answer_validation_user": "answer_validation_user@example.com",
-  "answer_delete_user": "answer_delete_user@example.com",
-  "question_comment_user": "question_comment_user@example.com",
-  "comment_edit_user": "comment_edit_user@example.com",
-  "comment_delete_user": "comment_delete_user@example.com",
-  "comment_vote_user": "comment_vote_user@example.com",
-  "answer_comment_user": "answer_comment_user@example.com",
-  "comment_reply_user": "comment_reply_user@example.com",
-  "tag_watcher": "tag_watcher@example.com",
-  "filter_user": "filter_user@example.com",
-  "badge_user": "badge_user@example.com"
+export const accountRoles = ["stack_user","helpful_user","activity_user","profile_editor","question_creator","question_editor","question_deleter","question_upvoter","question_downvoter","answer_submitter","answer_voter","answer_accept_owner","answer_edit_user","answer_validation_user","answer_delete_user","question_comment_user","comment_edit_user","comment_delete_user","comment_vote_user","answer_comment_user","comment_reply_user","tag_watcher","filter_user","badge_user"] as const;
+// Teacher grants and unread award events have no product creation workflow.
+export const historicalAccounts = {
+  badge_user: {email:'badge_user@example.com',password,displayName:'Stack User'},
+} as const;
+export function identityFor(role: string, token: string) {
+  if (!/^[a-z_]+$/.test(role) || !/^[a-f0-9]+$/.test(token)) throw new Error('Invalid identity material');
+  return {email:role+'+'+token+'@example.com',password:'Valid9!'+token,displayName:role.replaceAll('_',' ')+' '+token};
+}
+
+// Immutable business examples; current-test entities are still created through the UI.
+export const questionVoteGain = 10;
+export const answerVoteGain = 10;
+export const deletionAnswerBody = 'Use an idempotency key to prevent duplicate side effects when retrying a request.';
+// No product workflow creates these catalog/editorial/award records.
+export const initialEnvironment = {
+  tags:['python','javascript','node.js','http','retry'],
+  widgets:['The Overflow Blog','Featured on Meta','Hot Network Questions'],
+  historicalAward:{account:'badge_user',badge:'Teacher',unread:true},
+  badgeCatalog:[['Gold','Great Answer','Recognizes a great answer',2],['Silver','Good Answer','Recognizes a good answer',3],['Bronze','Teacher','Recognizes a helpful first answer',5]],
 } as const;

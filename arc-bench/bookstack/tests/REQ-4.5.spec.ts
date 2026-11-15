@@ -1,7 +1,7 @@
 import { generateShelfData } from './fixtures/data';
 // requirement: REQ-4.5
 import { test } from '@playwright/test';
-import { expectMetadata, enter, heading, text, metadata, createShelf, openShelf, action, detailContent } from './helpers';
+import { expectMetadata, enter, heading, text, metadata, createShelf, openShelf, action, detailContent, go, collection } from './helpers';
 
 test("REQ-4.5: Save metadata changes", async ({ page }) => {
   await enter(page);
@@ -21,6 +21,9 @@ test("REQ-4.5: Save metadata changes", async ({ page }) => {
   await text(page, updatedData.description, updated);
   await action(page, 'Edit').activate();
   await expectMetadata(page, updated, updatedData.description, shelfData.tags);
+  await go(page, 'Shelves');
+  await collection(page, 'Shelf list').item(original).expectCount(0);
+  await collection(page, 'Shelf list').item(updated).expectCount(1);
 });
 
 test("REQ-4.5: Cancel metadata changes", async ({ page }) => {

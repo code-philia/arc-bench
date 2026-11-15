@@ -48,9 +48,9 @@ def initialize(document, current):
         'phases': {
             'data': {'status': 'pending', 'note': '新建本地工作记录；按实际范围复核，不自动执行或继承历史完成结论。'},
             'role': {'status': 'pending', 'note': '新建本地工作记录；当前适配实现不等于本轮已经验证。'},
-            'meta': {'status': 'pending', 'note': '任务3元说明与重复治理；按当前授权及已有参考恢复，不自动执行。'},
-            'ui': {'status': 'pending', 'note': '任务5 UI精确约束治理；按当前授权及已有参考恢复，不自动执行。'},
-            'quality': {'status': 'pending', 'note': '任务6测试数据与断言质量复查；按当前授权执行，不自动增加评分场景。'},
+            'meta': {'status': 'pending', 'note': '元说明与重复治理职责；按当前授权及问题依赖执行，不是固定顺序。'},
+            'ui': {'status': 'pending', 'note': '产品交互与需求对齐职责；按当前授权及问题依赖执行，不是固定顺序。'},
+            'quality': {'status': 'pending', 'note': '断言质量及误接受审计职责；按当前授权执行，不自动增加评分场景。'},
         },
         'items': [],
     }

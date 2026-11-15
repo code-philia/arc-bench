@@ -1,33 +1,25 @@
-# 治理 skill 与工具
+# 治理方法与项目工具
 
-本目录保留以 BookStack 为例的治理方法及复核工具。进度、审计、报告和一次性迁移脚本放在本地 `ref/`，不随分支共享，也不是使用 skill 的前置条件。
+方法入口为[bench-curation](bench-curation/SKILL.md)，负责范围、顺序、一次清点、状态、验证和收尾。由当前智能体按依赖读取子skill，不自动启动代理或后台治理：
 
-## Skill 框架
+- [data](bench-data-curation/SKILL.md)：来源、示例、逐test输入及准备契约。
+- [ui](bench-ui-curation/SKILL.md)：产品标准、可兼容差异、一般性需求和scenario同步。
+- [meta](bench-meta-curation/SKILL.md)：评测语言与父子重复整理。
+- [role](bench-role-curation/SKILL.md)：实际语义接口和定位/读写/状态适配。
+- [quality](bench-quality-curation/SKILL.md)：结果闭合、错误实现误接受与覆盖缺口。
 
-- [bench-curation](bench-curation/SKILL.md)：主流程，负责范围、状态、验证与收尾。
-- [bench-data-curation](bench-data-curation/SKILL.md)：自然示例、数据来源与随机素材。
-- [bench-role-curation](bench-role-curation/SKILL.md)：实现协议与语义适配。
-- [bench-meta-curation](bench-meta-curation/SKILL.md)：元说明与父子重复。
-- [bench-ui-curation](bench-ui-curation/SKILL.md)：产品要求与测试便利性约束。
-- [bench-quality-curation](bench-quality-curation/SKILL.md)：前提、操作、断言、容量和重复执行质量。
+默认仅依赖目标需求、图例和测试，以合成DOM/状态模拟验证；用户提供/指定例程后才进入应用迭代。方法不依赖workspace应用、旧URL、历史报告或本地状态。
 
-Skill由当前智能体读取执行，不会自动启动子智能体或后台治理。适配范围见[语义接口说明](bookstack_role_mapping.md)，推广到其他应用需重新清点。
+## 项目工具边界
 
-## 复核工具
+方法包本身可独立检查：`node curation_tool/check_curation_skills.mjs`。它检查六个skill元信息及包含参考文档在内的本地链接，不读取BookStack需求、测试数据或应用，也不执行网页回归。
 
-在仓库根目录安装依赖后执行：
+仓库已治理BookStack和StackOverflow的需求与测试。本目录的项目专用检查工具仍针对BookStack；通用skill检查入口为`node curation_tool/check_curation_skills.mjs`。BookStack命令、依赖、账号/容量等项目约定及各类证据边界唯一维护在[项目适配说明](bench-curation/references/bookstack-profile.md)。[当前接口映射](bookstack_role_mapping.md)说明BookStack已有实现，不是通用HTML/ARIA标准，也不保证任意布局兼容。
 
-```sh
-npm run check:bookstack
-node curation_tool/check_bookstack_delivery.mjs
-node curation_tool/check_bookstack_preparation.mjs
-node curation_tool/check_bookstack_role_compatibility.mjs
-```
+其他项目应重新映射工具和当前源码，不能直接用BookStack固定数量、词表或状态路径。需要时改造工具并验证其行为，不把文档泛化当作脚本已经通用。
 
-分别检查类型与语义API、结构与skill链接、模拟素材归属、合成DOM适配。素材模拟当前使用Node 24的TS加载能力；合成DOM需要Playwright Chromium。它们不代替真实case业务测试。
+## 本地记录
 
-`inventory_requirement_data.py bookstack`及`inventory_bookstack_roles.py`可生成初筛清单；命中不等于应删除，未命中仍须人工复核。生成报告统一位于 `ref/<应用>/`。
+进度、决定、临时报告和一次性迁移脚本在`ref/<目标>/`，不随分支共享。状态和临时产物规范见[状态说明](bench-curation/references/state-and-artifacts.md)；没有本地历史就从当前源码复核。
 
-可选本地状态工具：`python curation_tool/bench-curation/scripts/state.py init`首次建立 `ref/bookstack/governance_reference.json`，之后用 `status`查询。不存在记录时从当前源码开始，不继承他人的验证结论。规则见[状态与产物约定](bench-curation/references/state-and-artifacts.md)。
-
-状态门槛的内存回归：`python curation_tool/bench-curation/scripts/test_state.py`，不读写本地状态。只修改skill或文档时按主skill的验证选择表检查，无需重复运行全部工具。
+验证按主流程的改动影响表选择，只改skill不重跑应用或全部测试。运行成绩不能固化进共享skill，结构/类型/模拟/合成与应用回归分别报告。
