@@ -1,19 +1,17 @@
 // requirement: REQ-1.5
-import { test, expect } from "@playwright/test";
-import { field, button, action, dialog, nav, visible, heading, openHome, installClock, openLogin, login } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, field, button, action, dialog, nav, visible, heading, openHome, openLogin } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-1.5: Open registration agreement', async ({ page }, testInfo) => {
+test('REQ-1.5: Open registration agreement', async ({ page }) => {
   await openHome(page);
-  await nav(page).getByRole('link', { name: 'Register', exact: true }).click();
+  await action(nav(page), 'Register').click();
   await heading(page, 'Register');
   await visible(dialog(page, 'Registration agreement and privacy policy'));
   await visible(button(dialog(page, 'Registration agreement and privacy policy'), 'Agree and continue'));
   await visible(button(dialog(page, 'Registration agreement and privacy policy'), 'Decline'));
 });
 
-test('REQ-1.5: Accept from login registration entry', async ({ page }, testInfo) => {
+test('REQ-1.5: Accept from login registration entry', async ({ page }) => {
   await openHome(page);
   await openLogin(page);
   await action(page, 'Free registration').click();
@@ -23,13 +21,12 @@ test('REQ-1.5: Accept from login registration entry', async ({ page }, testInfo)
   await visible(field(page, 'Verification code'));
 });
 
-test('REQ-1.5: Decline registration', async ({ page }, testInfo) => {
+test('REQ-1.5: Decline registration', async ({ page }) => {
   await openHome(page);
-  await nav(page).getByRole('link', { name: 'Register', exact: true }).click();
+  await action(nav(page), 'Register').click();
   await button(dialog(page, 'Registration agreement and privacy policy'), 'Decline').click();
   await heading(page, 'Ctrip Travel');
-  await visible(nav(page).getByRole('link', { name: 'Log in', exact: true }));
+  await visible(action(nav(page), 'Log in'));
   await expect(dialog(page, 'Registration agreement and privacy policy')).toHaveCount(0);
   await expect(action(page, 'My account')).toHaveCount(0);
 });
-

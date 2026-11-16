@@ -1,25 +1,21 @@
 // requirement: REQ-1.2
-import { test, expect } from "@playwright/test";
-import { field, action, visible, heading, openHome, installClock, openLogin, login } from "./helpers";
+import { test, field, tab, visible, heading, openHome, openLogin, passwordField } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-1.2: Open password login', async ({ page }, testInfo) => {
+test('REQ-1.2: Open password login', async ({ page }) => {
   await openHome(page);
   await openLogin(page);
   await heading(page, 'Log in');
   await visible(field(page, 'Account'));
-  await visible(field(page, 'Password'));
+  await visible(passwordField(page));
 });
 
-test('REQ-1.2: Switch login modes', async ({ page }, testInfo) => {
+test('REQ-1.2: Switch login modes', async ({ page }) => {
   await openHome(page);
   await openLogin(page);
-  await action(page, 'Verification code login').click();
+  await tab(page, 'Verification code login').click();
   await visible(field(page, 'Mobile number'));
   await visible(field(page, 'Verification code'));
-  await action(page, 'Password login').click();
+  await tab(page, 'Password login').click();
   await visible(field(page, 'Account'));
-  await visible(field(page, 'Password'));
+  await visible(passwordField(page));
 });
-

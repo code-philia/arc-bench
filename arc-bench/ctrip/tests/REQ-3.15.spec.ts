@@ -1,15 +1,13 @@
 // requirement: REQ-3.15
-import { test, expect } from "@playwright/test";
-import { button, region, checkbox, total, openHome, installClock, openBooking } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, setChecked, button, region, checkbox, total, openHome, openBooking } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-3.15: Remove airport lounge service', async ({ page }, testInfo) => {
+test('REQ-3.15: Remove airport lounge service', async ({ page }) => {
   await openHome(page);
   await openBooking(page);
-  await checkbox(region(page, 'Airport services'), 'Tianfu T2 lounge').check();
+  await setChecked(checkbox(region(page, 'Airport services'), 'Tianfu T2 lounge'));
   await total(page, 610);
-  await checkbox(region(page, 'Airport services'), 'Tianfu T2 lounge').uncheck();
+  await setChecked(checkbox(region(page, 'Airport services'), 'Tianfu T2 lounge'), false);
   await expect(checkbox(region(page, 'Airport services'), 'Tianfu T2 lounge')).not.toBeChecked();
   await total(page, 530);
   await button(page, 'Fee details').click();

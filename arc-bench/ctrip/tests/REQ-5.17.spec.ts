@@ -1,14 +1,15 @@
 // requirement: REQ-5.17
-import { test, expect } from "@playwright/test";
-import { field, button, region, record, records, openHome, installClock, isolatedName, openCommon } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, field, button, region, record, records, openHome, openCommon, uniqueName, registerAccount, createContact, contactInput } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-5.17: Exclude nonmatching notification contacts', async ({ page }, testInfo) => {
+test('REQ-5.17: Exclude nonmatching notification contacts', async ({ page }) => {
   await openHome(page);
-  await openCommon(page, 'contact_search', 'Contacts');
-  await field(page, 'Contact name').fill(isolatedName('Absent Contact', testInfo));
+  await registerAccount(page);
+  await openCommon(page, undefined, 'Contacts');
+  const match = contactInput('Saved contact');
+  await createContact(page, match);
+  await field(page, 'Contact name').fill(uniqueName('Absent Contact'));
   await button(page, 'Search contacts').click();
   await expect(records(region(page, 'Contact list'))).toHaveCount(0);
-  await expect(record(region(page, 'Contact list'), 'Zhang San')).toHaveCount(0);
+  await expect(record(region(page, 'Contact list'), match.name)).toHaveCount(0);
 });

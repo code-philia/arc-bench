@@ -1,16 +1,14 @@
 // requirement: REQ-3.13
-import { test, expect } from "@playwright/test";
-import { button, region, checkbox, textVisible, total, openHome, installClock, openBooking } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, setChecked, button, region, checkbox, textVisible, total, openHome, openBooking } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-3.13: Remove purchased extra baggage', async ({ page }, testInfo) => {
+test('REQ-3.13: Remove purchased extra baggage', async ({ page }) => {
   await openHome(page);
   await openBooking(page);
-  await checkbox(region(page, 'Baggage allowance'), 'Extra 10 kg').check();
+  await setChecked(checkbox(region(page, 'Baggage allowance'), 'Extra 10 kg'));
   await total(page, 590);
   await textVisible(region(page, 'Baggage allowance'), 'Checked baggage: 30 kg');
-  await checkbox(region(page, 'Baggage allowance'), 'Extra 10 kg').uncheck();
+  await setChecked(checkbox(region(page, 'Baggage allowance'), 'Extra 10 kg'), false);
   await expect(checkbox(region(page, 'Baggage allowance'), 'Extra 10 kg')).not.toBeChecked();
   await total(page, 530);
   await button(page, 'Fee details').click();

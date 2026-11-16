@@ -1,15 +1,17 @@
 // requirement: REQ-5.8
-import { test, expect } from "@playwright/test";
-import { field, button, region, record, records, textVisible, openHome, installClock, openCommon } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, field, button, region, record, records, textVisible, openHome, openCommon, registerAccount, createInvoice, invoiceInput, uniqueName } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-5.8: Find company title by keyword', async ({ page }, testInfo) => {
+test('REQ-5.8: Find company title by keyword', async ({ page }) => {
   await openHome(page);
-  await openCommon(page, 'invoice_search', 'Invoice titles');
-  await field(page, 'Search invoice titles').fill('Shanghai Example');
+  await registerAccount(page);
+  await openCommon(page, undefined, 'Invoice titles');
+  const keyword = uniqueName('Company');
+  const match = invoiceInput(keyword);
+  await createInvoice(page, match);
+  await createInvoice(page, invoiceInput('Other company'));
+  await field(page, 'Search invoice titles').fill(keyword);
   await button(page, 'Search').click();
   await expect(records(region(page, 'Invoice title list'))).toHaveCount(1);
-  await textVisible(record(region(page, 'Invoice title list'), 'Shanghai Example Technology Co., Ltd.'), '91310000123456789A');
+  await textVisible(record(region(page, 'Invoice title list'), match.name), match.taxId);
 });
-

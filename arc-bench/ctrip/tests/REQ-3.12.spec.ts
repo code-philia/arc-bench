@@ -1,15 +1,14 @@
 // requirement: REQ-3.12
-import { test, expect } from "@playwright/test";
-import { field, button, region, checkbox, flight, visible, heading, openHome, installClock, openBooking, IDS } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, field, button, region, checkbox, visible, heading, openHome, openBooking, newMobile, travelerInput } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-3.12: Require booking terms before order submission', async ({ page }, testInfo) => {
+test('REQ-3.12: Require booking terms before order submission', async ({ page }) => {
   await openHome(page);
   await openBooking(page);
-  await field(region(page, 'Passenger details'), 'Full name').fill('Wang Wu');
-  await field(region(page, 'Passenger details'), 'ID number').fill(IDS[0]);
-  await field(page, 'Contact mobile').fill('13800000014');
+  const passenger = travelerInput('Passenger');
+  await field(region(page, 'Passenger details'), 'Full name').fill(passenger.name);
+  await field(region(page, 'Passenger details'), 'ID number').fill(passenger.id);
+  await field(page, 'Contact mobile').fill(newMobile());
   await expect(checkbox(page, 'Agree to booking terms')).not.toBeChecked();
   await button(page, 'Submit order').click();
   await visible(page.getByRole('alert'));

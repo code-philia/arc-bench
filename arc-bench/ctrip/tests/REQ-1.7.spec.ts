@@ -1,31 +1,30 @@
 // requirement: REQ-1.7
-import { test, expect } from "@playwright/test";
-import { field, button, action, checkbox, visible, heading, alertText, openHome, installClock, registrationPhone, registerToPassword } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, setChecked, field, button, action, checkbox, visible, heading, alertText, openHome, registerToPassword, newMobile, accountInput, textVisible, loginSubmit, passwordField } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-1.7: Complete registration and authenticate created account', async ({ page }, testInfo) => {
+test('REQ-1.7: Complete registration and authenticate created account', async ({ page }) => {
   await openHome(page);
-  const phone = registrationPhone(testInfo);
+  const account = accountInput();
+  const phone = account.mobile;
   await registerToPassword(page, phone);
-  await field(page, 'Password').fill('Travel1234');
-  await field(page, 'Confirm password').fill('Travel1234');
+  await passwordField(page).fill(account.password);
+  await field(page, 'Confirm password').fill(account.password);
   await button(page, 'Complete registration').click();
-  await visible(page.getByRole('status').filter({ hasText: 'Registration successful' }));
+  await textVisible(page, 'Registration successful');
   await heading(page, 'Log in');
   await visible(field(page, 'Account'));
-  await visible(field(page, 'Password'));
+  await visible(passwordField(page));
   await field(page, 'Account').fill(phone);
-  await field(page, 'Password').fill('Travel1234');
-  await checkbox(page, 'Agree to terms').check();
-  await button(page, 'Log in').click();
+  await passwordField(page).fill(account.password);
+  await setChecked(checkbox(page, 'Agree to terms'));
+  await loginSubmit(page).click();
   await visible(action(page, 'My account'));
 });
 
-test('REQ-1.7: Reject mismatched passwords', async ({ page }, testInfo) => {
+test('REQ-1.7: Reject mismatched passwords', async ({ page }) => {
   await openHome(page);
-  await registerToPassword(page, registrationPhone(testInfo));
-  await field(page, 'Password').fill('Travel1234');
+  await registerToPassword(page, newMobile());
+  await passwordField(page).fill('Travel1234');
   await field(page, 'Confirm password').fill('Travel5678');
   await button(page, 'Complete registration').click();
   await alertText(page, 'Passwords do not match');
@@ -33,14 +32,13 @@ test('REQ-1.7: Reject mismatched passwords', async ({ page }, testInfo) => {
   await expect(action(page, 'My account')).toHaveCount(0);
 });
 
-test('REQ-1.7: Reject weak password', async ({ page }, testInfo) => {
+test('REQ-1.7: Reject weak password', async ({ page }) => {
   await openHome(page);
-  await registerToPassword(page, registrationPhone(testInfo));
-  await field(page, 'Password').fill('1234567');
+  await registerToPassword(page, newMobile());
+  await passwordField(page).fill('1234567');
   await field(page, 'Confirm password').fill('1234567');
   await button(page, 'Complete registration').click();
   await alertText(page, 'Password must contain letters and numbers and be at least 8 characters');
   await heading(page, 'Set password');
   await expect(action(page, 'My account')).toHaveCount(0);
 });
-

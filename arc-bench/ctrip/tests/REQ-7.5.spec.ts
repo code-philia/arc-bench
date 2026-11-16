@@ -1,12 +1,10 @@
 // requirement: REQ-7.5
-import { test, expect } from "@playwright/test";
-import { button, action, region, visible, textVisible, openHome, installClock, loginOwner, openStatus, queryStatusNumber } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, button, action, region, visible, textVisible, openHome, openStatus, queryStatusNumber, registerAccount } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-7.5: Clear account search history', async ({ page }, testInfo) => {
+test('REQ-7.5: Clear account search history', async ({ page }) => {
   await openHome(page);
-  await loginOwner(page, 'status_history_clear');
+  await registerAccount(page);
   await openStatus(page);
   await queryStatusNumber(page, 'MU5234');
   await openStatus(page);
@@ -18,4 +16,3 @@ test('REQ-7.5: Clear account search history', async ({ page }, testInfo) => {
   await expect(action(region(page, 'Search history'), 'MU5234')).toHaveCount(0);
   await textVisible(region(page, 'Search history'), 'No search history');
 });
-

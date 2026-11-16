@@ -1,47 +1,46 @@
 // requirement: REQ-5.12
-import { test, expect } from "@playwright/test";
-import { button, region, dialog, checkbox, record, records, visible, openHome, installClock, isolatedName, openCommon, createContact } from "./helpers";
+import { expect } from "@playwright/test";
+import { test, setChecked, button, region, dialog, record, visible, openHome, openCommon, createContact, contactInput, registerAccount, recordCheckbox } from "./helpers";
 
-test.beforeEach(async ({ page }) => { await installClock(page); });
-
-test('REQ-5.12: Delete one contact after confirmation', async ({ page }, testInfo) => {
+test('REQ-5.12: Delete one contact after confirmation', async ({ page }) => {
   await openHome(page);
-  await openCommon(page, 'contact_delete', 'Contacts');
-  const target = isolatedName('Contact Delete A', testInfo);
-  const keep = isolatedName('Contact Keep A', testInfo);
+  await registerAccount(page);
+  await openCommon(page, undefined, 'Contacts');
+  const target = contactInput('Contact Delete A');
+  const keep = contactInput('Contact Keep A');
   await createContact(page, target);
   await createContact(page, keep);
-  await visible(record(region(page, 'Contact list'), target));
-  await button(record(region(page, 'Contact list'), target), 'Delete').click();
+  await visible(record(region(page, 'Contact list'), target.name));
+  await button(record(region(page, 'Contact list'), target.name), 'Delete').click();
   await visible(dialog(page, 'Delete contact'));
-  await visible(record(region(page, 'Contact list'), target));
+  await visible(record(region(page, 'Contact list'), target.name));
   await button(dialog(page, 'Delete contact'), 'Confirm deletion').click();
-  await expect(record(region(page, 'Contact list'), target)).toHaveCount(0);
-  await visible(record(region(page, 'Contact list'), keep));
+  await expect(record(region(page, 'Contact list'), target.name)).toHaveCount(0);
+  await visible(record(region(page, 'Contact list'), keep.name));
   await page.reload();
-  await expect(record(region(page, 'Contact list'), target)).toHaveCount(0);
-  await visible(record(region(page, 'Contact list'), keep));
+  await expect(record(region(page, 'Contact list'), target.name)).toHaveCount(0);
+  await visible(record(region(page, 'Contact list'), keep.name));
 });
 
-test('REQ-5.12: Delete only selected contact records', async ({ page }, testInfo) => {
+test('REQ-5.12: Delete only selected contact records', async ({ page }) => {
   await openHome(page);
-  await openCommon(page, 'contact_batch_1', 'Contacts');
-  const a = isolatedName('Contact Batch One A', testInfo);
-  const b = isolatedName('Contact Batch One B', testInfo);
-  const keep = isolatedName('Contact Keep One', testInfo);
+  await registerAccount(page);
+  await openCommon(page, undefined, 'Contacts');
+  const a = contactInput('Contact Batch One A');
+  const b = contactInput('Contact Batch One B');
+  const keep = contactInput('Contact Keep One');
   await createContact(page, a);
   await createContact(page, b);
   await createContact(page, keep);
-  await checkbox(region(page, 'Contact list'), a).check();
-  await checkbox(region(page, 'Contact list'), b).check();
+  await setChecked(recordCheckbox(region(page, 'Contact list'), a.name));
+  await setChecked(recordCheckbox(region(page, 'Contact list'), b.name));
   await button(page, 'Delete selected').click();
   await button(dialog(page, 'Delete contacts'), 'Confirm deletion').click();
-  await expect(record(region(page, 'Contact list'), a)).toHaveCount(0);
-  await expect(record(region(page, 'Contact list'), b)).toHaveCount(0);
-  await visible(record(region(page, 'Contact list'), keep));
+  await expect(record(region(page, 'Contact list'), a.name)).toHaveCount(0);
+  await expect(record(region(page, 'Contact list'), b.name)).toHaveCount(0);
+  await visible(record(region(page, 'Contact list'), keep.name));
   await page.reload();
-  await expect(record(region(page, 'Contact list'), a)).toHaveCount(0);
-  await expect(record(region(page, 'Contact list'), b)).toHaveCount(0);
-  await visible(record(region(page, 'Contact list'), keep));
+  await expect(record(region(page, 'Contact list'), a.name)).toHaveCount(0);
+  await expect(record(region(page, 'Contact list'), b.name)).toHaveCount(0);
+  await visible(record(region(page, 'Contact list'), keep.name));
 });
-
