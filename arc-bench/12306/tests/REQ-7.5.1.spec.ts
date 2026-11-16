@@ -1,22 +1,29 @@
 // requirement: REQ-7.5.1
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, button, row, addPassenger, manager } from './helpers';
+import { addPassenger, button, entry, manager, passengerKeyword, row } from './helpers';
+import { newPassenger } from './fixtures/data';
 test("REQ-7.5.1: Search passenger name", async ({ page }) => {
     await entry(page);
     await manager(page);
-    await addPassenger(page, 'Cancel Passenger', 'P20269982');
-    await page.getByPlaceholder('Please enter passenger name', { exact: true }).fill('Passenger Example');
+    const target = newPassenger();
+    await addPassenger(page, target);
+    const other = newPassenger();
+    await addPassenger(page, other);
+    await passengerKeyword(page).fill(target.name);
     await button(page, 'Search').click();
-    await expect(row(page, 'P20269999')).toContainText('Passenger Example');
-    await expect(row(page, 'P20269982')).not.toBeVisible();
+    await expect(row(page, target.passport)).toContainText(target.name);
+    await expect(row(page, other.passport)).not.toBeVisible();
 });
 test("REQ-7.5.1: Search passenger ID", async ({ page }) => {
     await entry(page);
     await manager(page);
-    await addPassenger(page, 'Cancel Passenger', 'P20269982');
-    await page.getByPlaceholder('Please enter passenger name', { exact: true }).fill('P20269999');
+    const target = newPassenger();
+    await addPassenger(page, target);
+    const other = newPassenger();
+    await addPassenger(page, other);
+    await passengerKeyword(page).fill(target.passport);
     await button(page, 'Search').click();
-    await expect(row(page, 'P20269999')).toContainText('Passenger Example');
-    await expect(row(page, 'P20269982')).not.toBeVisible();
+    await expect(row(page, target.passport)).toContainText(target.name);
+    await expect(row(page, other.passport)).not.toBeVisible();
 });

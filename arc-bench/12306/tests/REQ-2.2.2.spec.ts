@@ -1,13 +1,13 @@
 // requirement: REQ-2.2.2
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, link, text, login, home, region } from './helpers';
+import { entry, home, link, login, region, statusMessage, text } from './helpers';
+import { uniqueInput, verifiedLogin } from './fixtures/data';
 test("REQ-2.2.2: Authenticate by username email and mobile", async ({ page }) => {
     await entry(page);
-    for (const identity of ['registered_user', 'registered_user@example.com', '13800000010']) {
+    for (const identity of Object.values(verifiedLogin)) {
         await login(page, identity);
-        await expect.poll(async () => (await page.getByRole('status').filter({ visible: true }).allTextContents())
-            .some(message => message.includes('Login successful'))).toBe(true);
+        await expect(statusMessage(page, 'Login successful')).toBeVisible();
         await expect(link(page.getByRole('navigation'), 'Booking')).toBeVisible();
         await home(page);
         await expect(region(page, 'Ticket search')).toBeVisible();
@@ -28,19 +28,19 @@ test("REQ-2.2.2: Reject empty credentials", async ({ page }) => {
 });
 test("REQ-2.2.2: Reject unknown account", async ({ page }) => {
     await entry(page);
-    await login(page, "unknown_account", "Password123!", false);
+    await login(page, `unknown_${uniqueInput()}`, "Password123!", false);
     await text(page, "User not found.");
     await expect(link(page, 'Sign Out')).not.toBeVisible();
 });
 test("REQ-2.2.2: Reject wrong password", async ({ page }) => {
     await entry(page);
-    await login(page, "registered_user", "WrongPassword123!", false);
+    await login(page, verifiedLogin.username, "WrongPassword123!", false);
     await text(page, "Incorrect password.");
     await expect(link(page, 'Sign Out')).not.toBeVisible();
 });
 test("REQ-2.2.2: Reject missing password", async ({ page }) => {
     await entry(page);
-    await login(page, "registered_user", "", false);
+    await login(page, verifiedLogin.username, "", false);
     await text(page, 'Please enter your username/email/phone number and password.');
     await expect(link(page, 'Sign Out')).not.toBeVisible();
 });

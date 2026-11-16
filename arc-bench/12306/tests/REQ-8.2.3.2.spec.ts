@@ -1,15 +1,17 @@
 // requirement: REQ-8.2.3.2
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, button, text, row, booking } from './helpers';
+import { booking, bookingPassengers, button, confirmationDialog, entry, row, selectPassenger, text } from './helpers';
+import { bookingAccounts } from './fixtures/data';
 test("REQ-8.2.3.2: Remove selected booking passenger", async ({ page }) => {
     await entry(page);
-    await booking(page, 'bookable_user');
-    await page.getByRole('checkbox', { name: 'Passenger Example', exact: true }).check();
-    const table = page.getByRole('table', { name: 'Booking passengers', exact: true });
-    await button(row(table, 'P20269997'), 'Delete').click();
-    await expect(row(table, 'P20269997')).toHaveCount(0);
+    const journey = await booking(page, bookingAccounts.inspect);
+    const selected = await selectPassenger(page, journey.passenger);
+    const table = bookingPassengers(page);
+    await button(selected, 'Delete').click();
+    await expect(row(table, journey.passenger.passport)).toHaveCount(0);
     await button(page, 'Place order').click();
     await text(page, 'Please select at least one passenger.');
-    await expect(page.getByRole('dialog', { name: 'Please confirm the following information.', exact: true })).not.toBeVisible();
+    await expect(confirmationDialog(page)).not.toBeVisible();
+    await selectPassenger(page, journey.passenger);
 });

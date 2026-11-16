@@ -1,25 +1,29 @@
 // requirement: REQ-3.6.1
-import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, region, search, expectTrainIds } from './helpers';
+import { chooseFilter, entry, expectTrainIds, region, search } from './helpers';
+import { trains } from './fixtures/data';
+
+const highSpeed = trains.filter(train => /^[GCD]/.test(train.number)).map(train => train.number);
+const other = trains.filter(train => !/^[GCD]/.test(train.number)).map(train => train.number);
+
 test("REQ-3.6.1: Restrict train type", async ({ page }) => {
     await entry(page);
     await search(page);
-    await region(page, 'Filter').getByRole('group', { name: 'Train type', exact: true }).getByRole('checkbox', { name: 'G/C/D', exact: true }).check();
-    await expectTrainIds(page, ["G1001", "G1002"]);
+    await chooseFilter(region(page, 'Filter'), 'Train type', 'G/C/D');
+    await expectTrainIds(page, highSpeed);
 });
 test("REQ-3.6.1: Filter Other train types", async ({ page }) => {
     await entry(page);
     await search(page);
-    await region(page, 'Filter').getByRole('group', { name: 'Train type', exact: true }).getByRole('checkbox', { name: 'Other', exact: true }).check();
-    await expectTrainIds(page, ['K1003']);
+    await chooseFilter(region(page, 'Filter'), 'Train type', 'Other');
+    await expectTrainIds(page, other);
 });
 test("REQ-3.6.1: Restore all train types", async ({ page }) => {
     await entry(page);
     await search(page);
-    const group = region(page, 'Filter').getByRole('group', { name: 'Train type', exact: true });
-    await group.getByRole('checkbox', { name: 'G/C/D', exact: true }).check();
-    await expectTrainIds(page, ['G1001', 'G1002']);
-    await group.getByRole('checkbox', { name: 'All', exact: true }).check();
-    await expectTrainIds(page, ['G1001', 'G1002', 'K1003']);
+    const filters = region(page, 'Filter');
+    await chooseFilter(filters, 'Train type', 'G/C/D');
+    await expectTrainIds(page, highSpeed);
+    await chooseFilter(filters, 'Train type', 'All');
+    await expectTrainIds(page, trains.map(train => train.number));
 });

@@ -1,29 +1,30 @@
 // requirement: REQ-8.3.2
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, button, field, text, row, booking, confirmation } from './helpers';
+import { booking, button, confirmation, confirmationDialog, entry, field, selectChoice, selectPassenger, text } from './helpers';
+import { bookingAccounts } from './fixtures/data';
 test("REQ-8.3.2: Open confirmation for available seat", async ({ page }) => {
     await entry(page);
-    await confirmation(page, 'booking_submit_user');
-    const d = page.getByRole('dialog', { name: 'Please confirm the following information.', exact: true });
-    await expect(d).toContainText('G1001');
-    await expect(d).toContainText('Passenger Example');
+    const journey = await confirmation(page, bookingAccounts.submit);
+    const d = confirmationDialog(page);
+    await expect(d).toContainText(journey.train);
+    await expect(d).toContainText(journey.passenger.name);
     await expect(button(d, 'Confirm')).toBeVisible();
     await expect(button(d, 'Edit')).toBeVisible();
 });
 test("REQ-8.3.2: Reject no passenger", async ({ page }) => {
     await entry(page);
-    await booking(page, 'bookable_user');
+    await booking(page, bookingAccounts.inspect);
     await button(page, 'Place order').click();
     await text(page, "Please select at least one passenger.");
-    await expect(page.getByRole('dialog', { name: 'Please confirm the following information.', exact: true })).not.toBeVisible();
+    await expect(confirmationDialog(page)).not.toBeVisible();
 });
 test("REQ-8.3.2: Reject unavailable ticket class", async ({ page }) => {
     await entry(page);
-    await booking(page, 'bookable_user');
-    await page.getByRole('checkbox', { name: 'Passenger Example', exact: true }).check();
-    await field(row(page.getByRole('table', { name: 'Booking passengers', exact: true }), 'P20269997'), 'Ticket class').selectOption({ label: 'Second-class seat' });
+    const journey = await booking(page, bookingAccounts.inspect);
+    const selected = await selectPassenger(page, journey.passenger);
+    await selectChoice(field(selected, 'Ticket class'), 'Second-class seat');
     await button(page, 'Place order').click();
     await text(page, "Sorry, there are no tickets available for the selected ticket class.");
-    await expect(page.getByRole('dialog', { name: 'Please confirm the following information.', exact: true })).not.toBeVisible();
+    await expect(confirmationDialog(page)).not.toBeVisible();
 });

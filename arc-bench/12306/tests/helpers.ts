@@ -1,220 +1,497 @@
 import { expect, type Page, type Locator } from '@playwright/test';
 export { PASS, trains, plans } from './fixtures/data';
 import { PASS, trains, plans } from './fixtures/data';
+import { defaultTrain, newAccount, newPassenger, verifiedLogin, type Account, type BookingAccount, type Passenger } from './fixtures/data';
+import { afterTest, travelDate } from './fixtures/test';
+import { button, link, navigationEntries, field, region, row, heading, dialog, tab as categoryTab, selectedTab, guidePanel, loginFields, selectChoice, expectChoice } from './ui';
+export * from './ui';
 type Surface = Page | Locator;
 export const AGREEMENT = 'I have read and agree to abide by Terms of Service and Privacy Policy of 12306.cn.';
-export const link = (s: Surface, name: string) => s.getByRole('link', { name, exact: true });
-export const button = (s: Surface, name: string) => s.getByRole('button', { name, exact: true });
-export const field = (s: Surface, name: string) => {
-    // Required markers are presentation; match the field's label and exclude
-    // labelled containers that are not editable controls (for example groups).
-    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const label = new RegExp(`^\\s*(?:\\*\\s*)?${escaped}\\s*(?:\\*)?\\s*$`);
-    const controls = s.getByRole('textbox').or(s.getByRole('combobox'))
-        .or(s.getByRole('spinbutton')).or(s.getByRole('checkbox')).or(s.getByRole('radio'))
-        // Native password/date inputs have no implicit ARIA role.
-        .or(s.locator('input[type="password"], input[type="date"]'));
-    return s.getByLabel(label).and(controls);
+const registrationForm = (page: Page) => page.locator('form, [role=form]').filter({ has: field(page, 'Username') });
+const escapeText = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const exactText = (...labels: string[]) => new RegExp(`^\\s*(?:${labels.map(escapeText).join('|')})\\s*$`, 'i');
+export const registerEntry = /^(?:No account yet\?\s*)?Register now[.!]?$/i;
+export const recoveryEntry = /^Forgot (?:your )?password\??$/i;
+export const bookingLoginTitle = /^(?:.*\b12306\b.*)?Login$/;
+export const moreEntry = /^More(?:\s*[>›»→])*$/;
+export const registerSubmit = (page: Page) => {
+    const name = /^(Register|Next step)$/i;
+    const form = registrationForm(page);
+    return button(form, name).or(button(page, name).and(
+        page.locator('main button, main [role=button], input[type=submit], button[type=submit]'),
+    ));
 };
-// Equivalent links to the same public agreement may occur in the form and footer.
 export async function openAgreement(page: Page, name: string) {
-    await expect.poll(async () => {
-        for (const candidate of await link(page, name).all())
-            if (await candidate.isVisible()) return true;
-        return false;
-    }).toBe(true);
-    for (const candidate of await link(page, name).all()) {
-        if (await candidate.isVisible()) {
-            await candidate.click();
-            return;
-        }
+    const registration = registrationForm(page);
+    const inForm = link(registration, name);
+    if (await inForm.isVisible()) {
+        await inForm.click();
+        return;
     }
-    throw new Error(`No visible agreement link: ${name}`);
+    const candidates = link(page, name);
+    await expect.poll(() => candidates.count()).toBeGreaterThan(0);
+    const destinations = await candidates.evaluateAll(elements => elements.map(element => element.getAttribute('href')));
+    if (destinations.length > 1 && destinations[0] && new Set(destinations).size === 1) {
+        await candidates.first().click();
+        return;
+    }
+    await candidates.click();
 }
-export const region = (s: Surface, name: string) => s.getByRole('region', { name, exact: true });
-// Public row identity, independent of CSS, column order, and nesting.
-export const row = (s: Surface, identity: string) => s.getByRole('row').filter({ has: ('page' in s ? s.page() : s).getByText(identity, { exact: true }) });
 export async function text(page: Page, value: string, exact = true) { await expect(page.getByText(value, { exact })).toBeVisible(); }
 export async function entry(page: Page) { await page.goto('/'); }
 export async function home(page: Page) { await link(page.getByRole('navigation').filter({ has: link(page, 'Home') }), 'Home').click(); }
-export async function login(page: Page, user = 'registered_user', password: string = PASS, success = true) {
+export async function login(page: Page, user = verifiedLogin.username, password: string = PASS, success = true) {
     await link(page, 'Login').click();
-    await page.getByPlaceholder('Email/Username/Mobile number', { exact: true }).fill(user);
-    await page.getByPlaceholder('Password', { exact: true }).fill(password);
-    await button(page, 'LOGIN').click();
+    const form = loginFields(page);
+    await form.account.fill(user);
+    await form.password.fill(password);
+    await form.submit.click();
     if (success)
         await expect(link(page, 'Sign Out')).toBeVisible();
 }
-export async function register(page: Page, options: Record<string, string | boolean> = {}) {
-    await link(page, 'Register').click();
-    await expect.poll(() => field(page, 'Nationality')
-        .getByRole('option', { selected: true }).allTextContents()).toContain('Please select');
-    await field(page, 'Nationality').selectOption({ label: 'China' });
-    const defaults: Record<string, string> = { 'Name': 'Test Traveler', 'Passport number': 'P20260001', 'Passport expiration date': '2026-12-31', 'Date of birth': '1996-06-18', 'Username': 'traveler_new', 'Password': PASS, 'Confirm Password': PASS, 'Email address': 'traveler_new@example.com' };
-    if (typeof options.username === 'string' && options.email === undefined)
-        defaults['Email address'] = options.username + '@example.com';
-    const aliases: Record<string, string> = { name: 'Name', passport: 'Passport number', username: 'Username', password: 'Password', confirm: 'Confirm Password', email: 'Email address' };
-    for (const [key, value] of Object.entries(options))
-        if (aliases[key])
-            defaults[aliases[key]] = String(value);
-    for (const [label, value] of Object.entries(defaults))
-        await field(page, label).fill(value);
-    await page.getByRole('radio', { name: 'Male', exact: true }).check();
-    if (options.agree !== false)
-        await page.getByRole('checkbox', { name: AGREEMENT, exact: true }).check();
-    await button(page, 'Register').click();
+
+export function registrationConsent(page: Page) {
+    const form = registrationForm(page);
+    const fullLabel = form.getByRole('checkbox', { name: AGREEMENT, exact: true });
+    const agreementText = /\b(?:I have read and agree(?: to abide by)?|I agree to (?:the )?terms)\b/i;
+    const splitText = /^(?:I have read and agree(?: to abide by)?|I agree to (?:the )?terms)[.!:]?$/i;
+    const agreement = form.locator('fieldset, [role=group], label, p, div')
+        .filter({ hasText: agreementText })
+        .filter({ has: link(page, 'Terms of Service') })
+        .filter({ has: link(page, 'Privacy Policy') });
+    return fullLabel.or(agreement.getByRole('checkbox', { name: splitText }))
+        .filter({ visible: true });
 }
-export async function center(page: Page) { await home(page); await link(page, 'My 12306').click(); await expect(page.getByRole('navigation', { name: 'Personal center menu', exact: true })).toBeVisible(); }
+
+export async function register(page: Page, account: Account) {
+    await link(page, 'Register').click();
+    await expectChoice(field(page, 'Nationality'), 'Please select');
+    await selectChoice(field(page, 'Nationality'), 'China');
+    const values = {
+        'Name': account.name, 'Passport number': account.passport, 'Passport expiration date': account.expiration,
+        'Date of birth': account.birth, 'Username': account.username, 'Password': account.password,
+        'Confirm Password': account.confirm, 'Email address': account.email,
+    };
+    for (const [label, value] of Object.entries(values))
+        await field(page, label).fill(value);
+    await page.getByRole('radio', { name: account.gender, exact: true }).check();
+    if (account.agree)
+        await registrationConsent(page).check();
+    await registerSubmit(page).click();
+}
+
+export async function signOutIfSignedIn(page: Page) {
+    await home(page);
+    const signOut = link(page, 'Sign Out');
+    if (await signOut.isVisible()) await signOut.click();
+    await expect(link(page, 'Login')).toBeVisible();
+}
+
+export async function createAccount(page: Page, account = newAccount()) {
+    await register(page, account);
+    await text(page, 'Registration successful.');
+    await signOutIfSignedIn(page);
+    await login(page, account.username, account.password);
+    return account;
+}
+
+export function centerMenuEntry(menu: Surface, name: string) {
+    const text = exactText(name);
+    return link(menu, name).or(navigationEntries(menu).filter({ hasText: text }))
+        .or(menu.locator('summary').filter({ hasText: text })).filter({ visible: true });
+}
+
+export function centerMenu(page: Page) {
+    const name = 'Personal center menu';
+    const sidebar = page.getByRole('complementary', { name, exact: true });
+    const navigation = page.getByRole('navigation');
+    return page.getByRole('navigation', { name, exact: true })
+        .or(sidebar.getByRole('navigation'))
+        .or(sidebar.filter({ hasNot: navigation }))
+        .or(navigation.filter({ has: centerMenuEntry(page, 'Order center'), hasNot: link(page, 'Home') }))
+        .filter({ visible: true });
+}
+export async function center(page: Page) { await home(page); await link(page, 'My 12306').click(); await expect(centerMenu(page)).toBeVisible(); }
+
+export async function quickEntries(page: Page) {
+    return openDropdown(page, link(page, 'My 12306'), 'My 12306 quick entries',
+        ['Order center', 'User information', 'Account security', 'My passengers'].map(name => link(page, name)));
+}
+
+async function openDropdown(page: Page, trigger: Locator, name: string, entries: Locator[]) {
+    const menuId = await trigger.getAttribute('aria-controls');
+    const named = region(page, name).or(page.getByRole('menu', { name, exact: true })).filter({ visible: true });
+    const controlled = menuId ? page.locator('[id=' + JSON.stringify(menuId) + ']').filter({ visible: true }) : named;
+    const owners = entries.reduce((scope, entry) => scope.filter({ has: entry }),
+        trigger.locator('xpath=ancestor::*[not(self::html or self::body)]').filter({ hasNot: page.getByRole('main') }));
+    await trigger.hover();
+    if (await trigger.getAttribute('aria-expanded') === 'false' && !await controlled.isVisible()) await trigger.click();
+    let menu = controlled;
+    await expect.poll(async () => {
+        // Ancestors arrive in document order, so the last match is the closest owner.
+        menu = await controlled.count() ? controlled : await named.count() ? named : owners.last();
+        return menu.count();
+    }).toBe(1);
+    await expect(menu).toBeVisible();
+    return menu;
+}
+
+function guideCategoryLabel(page: Page, name: string) {
+    return page.getByText(name, { exact: true }).or(page.getByRole('region', { name, exact: true })).filter({ visible: true });
+}
+
+export async function guideDropdown(page: Page) {
+    return openDropdown(page, link(page.getByRole('navigation'), 'Travel guide'), 'Travel guide categories',
+        guideCategories.map(name => guideCategoryLabel(page, name)).concat(link(page, moreEntry)));
+}
+
+export function guideCategory(page: Page, dropdown: Locator, name: string) {
+    const blocks = guideCategories.filter(category => category !== name)
+        .reduce((scope, category) => scope.filter({ hasNot: guideCategoryLabel(page, category) }),
+            dropdown.locator('*').filter({ has: link(page, moreEntry), visible: true }));
+    const named = blocks.and(page.getByRole('region', { name, exact: true }));
+    const byLabel = blocks.filter({ has: guideCategoryLabel(page, name) });
+    return named.or(byLabel).filter({ hasNot: page.locator('*')
+        .filter({ has: guideCategoryLabel(page, name) }).filter({ has: link(page, moreEntry), visible: true }) });
+}
 export async function section(page: Page, parent: string, child: string) {
     await center(page);
-    const menu = page.getByRole('navigation', { name: 'Personal center menu', exact: true });
-    await link(menu, parent).click();
-    await link(menu, child).click();
+    const menu = centerMenu(page);
+    const destination = centerMenuEntry(menu, child);
+    if (!await destination.isVisible()) await centerMenuEntry(menu, parent).click();
+    await destination.click();
 }
-export async function orders(page: Page, tab: string) { await section(page, 'Order center', 'Ticket orders'); await page.getByRole('tab', { name: tab, exact: true }).click(); await expect(page.getByRole('tab', { name: tab, exact: true })).toHaveAttribute('aria-selected', 'true'); }
-export async function search(page: Page, from = 'Shanghai', to = 'Beijing', date = '2026-07-21', omit = '') {
+export async function orders(page: Page, tab: string) { await section(page, 'Order center', 'Ticket orders'); await categoryTab(page, tab).click(); await expect(selectedTab(page, tab)).toBeVisible(); }
+
+export const guideCategories = ['Ticketing', 'Endorsement and refund', 'Miscellaneous'];
+
+export async function selectedGuidePanel(page: Page) {
+    const active = selectedTab(page);
+    await expect(active).toHaveCount(1);
+    for (const category of guideCategories) {
+        if (await selectedTab(page, category).isVisible()) {
+            const panel = guidePanel(page, category);
+            await expect(panel).toBeVisible();
+            return panel;
+        }
+    }
+    throw new Error('No travel guide category is selected');
+}
+export function stationOption(page: Page, name: string) {
+    const bilingual = name.replace(' (', '(');
+    return button(page, name).or(button(page, bilingual))
+        .or(page.getByRole('option', { name, exact: true }))
+        .or(page.getByRole('option', { name: bilingual, exact: true })).filter({ visible: true });
+}
+
+export async function chooseDepartureDate(page: Page, date: string) {
+    const input = field(page, 'Date');
+    await expect(input).toBeVisible();
+    if (await input.getAttribute('type') === 'date') {
+        await input.fill(date);
+    } else {
+        await input.click();
+        const local = new Date(`${date}T00:00:00Z`);
+        const monthNames = (['long', 'short'] as const).map(month =>
+            new Intl.DateTimeFormat('en-US', { month, year: 'numeric', timeZone: 'UTC' }).format(local));
+        const title = page.getByText(exactText(...monthNames));
+        const panels = page.locator('section, fieldset, table, [role=group], [role=grid]')
+            .filter({ has: title }).filter({ visible: true });
+        const month = panels.filter({ hasNot: panels });
+        if (await month.isVisible()) {
+            const identified = dateChoice(month, date);
+            const day = navigationEntries(month).filter({ hasText: exactText(String(local.getUTCDate())) });
+            await (await identified.count() ? identified : day).click();
+        } else {
+            await dateChoice(page, date).click();
+        }
+    }
+    await expect(input).toHaveValue(date);
+}
+
+export function dateChoice(surface: Surface, date: string) {
+    const local = new Date(`${date}T00:00:00Z`);
+    const long = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC',
+    }).format(local);
+    const short = new Intl.DateTimeFormat('en-US', {
+        weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC',
+    }).format(local);
+    const names = exactText(date, long, short, `Today, ${date}`, `Tomorrow, ${date}`);
+    const entries = navigationEntries(surface);
+    return link(surface, names).or(entries.filter({ hasText: names }))
+        .or(entries.and(surface.locator(`[data-date="${date}"]`)))
+        .filter({ visible: true });
+}
+
+export function travelDates(page: Page) {
+    const name = 'Travel dates';
+    return region(page, name).or(page.getByRole('navigation', { name, exact: true }))
+        .or(page.getByRole('group', { name, exact: true }))
+        .or(page.locator('[aria-label="Travel dates"]').filter({ has: navigationEntries(page) }))
+        .filter({ visible: true });
+}
+
+export async function search(page: Page, from = 'Shanghai', to = 'Beijing', date = travelDate(page), omit = '') {
     const places: Record<string, [
         string,
         string
     ]> = { Shanghai: ['shang', 'Shanghai (上海)'], Beijing: ['bei', 'Beijing (北京)'], Yancheng: ['yan', 'Yancheng (盐城)'], Lhasa: ['lhasa', 'Lhasa (拉萨)'] };
     for (const [label, value] of [['From', from], ['To', to]]) {
-        const input = page.getByPlaceholder(label, { exact: true });
+        const input = field(page, label);
         if (omit === label) {
             await input.fill('');
             continue;
         }
         await input.fill(places[value][0]);
-        await button(page, places[value][1]).click();
+        await stationOption(page, places[value][1]).click();
     }
-    await field(page, 'Date').click();
-    await button(page, date).click();
+    await chooseDepartureDate(page, date);
     await button(page, 'Search').click();
     if (!omit)
         await expect(field(page, 'Date')).toHaveValue(date);
 }
 export async function defaultResults(page: Page) {
-    await expect(page.getByPlaceholder('From', { exact: true })).toHaveValue('Beijing');
-    await expect(page.getByPlaceholder('To', { exact: true })).toHaveValue('Shanghai');
-    await expect(field(page, 'Date')).toHaveValue('2026-07-21');
-    await expect(row(page, 'G3001')).toBeVisible();
+    await expect(field(page, 'From')).toHaveValue('Beijing');
+    await expect(field(page, 'To')).toHaveValue('Shanghai');
+    await expect(field(page, 'Date')).toHaveValue(travelDate(page));
+    await expect(row(page, defaultTrain)).toBeVisible();
 }
 export async function checkHeaders(s: Surface, names: string[]) {
     for (const name of names)
         await expect(s.getByRole('columnheader', { name, exact: true })).toBeVisible();
 }
 export async function trainIds(page: Page) {
-    const rows = await page.getByRole('row').filter({ has: button(page, 'Book') }).all();
+    const trainNumber = page.getByText(/^[GCDKZT]\d+$/, { exact: true });
+    const rows = await page.getByRole('row').filter({ has: trainNumber, visible: true }).all();
+    const transferPlans = region(page, 'Transfer plans').or(page.getByRole('table', { name: 'Transfer plans', exact: true }))
+        .filter({ has: page.getByRole('row'), visible: true });
+    const transferSections = await transferPlans.filter({ hasNot: transferPlans }).elementHandles();
     const result: string[] = [];
-    for (const r of rows) {
-        const cells = await r.getByRole('cell').allTextContents();
-        const ids = [...new Set(cells.flatMap(s => s.match(/\b[GCDKZT]\d+\b/g) ?? []))];
-        if (ids.length !== 1)
-            throw new Error('Train result needs one distinct train identity in its cells');
-        result.push(ids[0]);
+    try {
+        for (const row of rows) {
+            if (transferSections.length && await row.evaluate((element, sections) =>
+                sections.some(section => section.contains(element)), transferSections)) continue;
+            const cells = await row.getByRole('cell').allTextContents();
+            const ids = [...new Set(cells.flatMap(s => s.match(/\b[GCDKZT]\d+\b/g) ?? []))];
+            if (ids.length !== 1)
+                throw new Error('Train result needs one distinct train identity in its cells');
+            result.push(ids[0]);
+        }
+        return result;
+    } finally {
+        await Promise.all(transferSections.map(section => section.dispose()));
     }
-    return result;
 }
 export async function expectTrainIds(page: Page, ids: string[]) { await expect.poll(async () => (await trainIds(page)).sort()).toEqual([...ids].sort()); }
+
+export async function expectSecondClassFare(train: Locator, price: number) {
+    const label = 'Second-class seat';
+    const fare = new RegExp(`\\b${label}\\s*[:(]?\\s*(?:CNY|[¥￥])\\s*${price}(?:\\.0{1,2})?(?![\\d.])`, 'i');
+    await expect(train).toContainText(fare, { useInnerText: true });
+}
 export async function sortTrains(page: Page, label: string, key: 'departure' | 'duration' | 'arrival') {
     const ordered = [...trains].sort((a, b) => String(a[key]).localeCompare(String(b[key]), 'en', { numeric: true })).map(t => t.number);
-    await button(page.getByRole('columnheader', { name: label, exact: true }), label).click();
+    const column = page.getByRole('columnheader', { name: label, exact: true });
+    const nested = link(column, label);
+    const sort = nested.or(column.and(page.locator('[aria-sort], [tabindex]')).filter({ hasNot: link(page, label) }));
+    await sort.click();
     await expect.poll(() => trainIds(page)).toEqual(ordered);
-    await button(page.getByRole('columnheader', { name: label, exact: true }), label).click();
+    await sort.click();
     await expect.poll(() => trainIds(page)).toEqual([...ordered].reverse());
 }
+const trainIdentity = /\b[GCDKZT]\d+\b/g;
+export const planEntries = (page: Page) => {
+    const scope = region(page, 'Transfer plans');
+    const identity = page.getByText(/\b[GCDKZT]\d+\b/);
+    const cards = scope.getByRole('article').or(scope.getByRole('listitem')).filter({ has: identity, visible: true });
+    const rows = scope.getByRole('row').filter({ has: identity, hasNot: page.getByRole('columnheader'), visible: true });
+    // A companion row can repeat both trains without being a separate result.
+    const summary = rows.filter({ has: page.getByRole('cell').filter({ hasText: /^\s*[GCDKZT]\d+\s*$/ }) })
+        .or(rows.filter({ has: link(page, 'Book') }));
+    return cards.filter({ hasNot: cards }).or(summary);
+};
+
+export const planEntry = (page: Page, firstTrain: string) => planEntries(page)
+    .filter({ has: page.getByText(new RegExp('\\b' + escapeText(firstTrain) + '\\b')) });
+
+export async function planDetails(page: Page, firstTrain: string) {
+    const plan = planEntry(page, firstTrain);
+    const following = plan.locator('xpath=self::tr/following-sibling::tr[1]')
+        .filter({ has: page.getByText(new RegExp('\\b' + escapeText(firstTrain) + '\\b')), hasNot: link(page, 'Book'), visible: true });
+    return [await plan.innerText(), ...await following.allInnerTexts()].join('\n');
+}
+
 export async function planIds(page: Page) {
-    const articles = await region(page, 'Transfer plans').getByRole('article').all();
-    const result: string[] = [];
-    for (const article of articles) {
-        // A plan may repeat its first train number in a heading and details.
-        // Compare business identities, not the number of text elements.
-        const numbers = new Set((await article.getByText(/^D\d+$/, { exact: true })
-            .allTextContents()).map(value => value.trim()));
-        if (numbers.size !== 1)
-            throw new Error('Transfer plan needs one distinct first train identity');
-        result.push(...numbers);
-    }
-    return result;
+    return (await planEntries(page).allInnerTexts()).map(text => {
+        const [first] = text.match(trainIdentity) ?? [];
+        if (!first) throw new Error('Transfer plan must identify its first train');
+        return first;
+    });
 }
 export async function sortPlans(page: Page, label: string, key: 'departure' | 'total' | 'arrival') {
     const ordered = [...plans].sort((a, b) => String(a[key]).localeCompare(String(b[key]), 'en', { numeric: true })).map(p => p.first);
-    await button(region(page, 'Transfer plans'), label).click();
+    const sort = link(region(page, 'Transfer plans'), label);
+    await sort.click();
     await expect.poll(() => planIds(page)).toEqual(ordered);
-    await button(region(page, 'Transfer plans'), label).click();
+    await sort.click();
     await expect.poll(() => planIds(page)).toEqual([...ordered].reverse());
 }
 export async function passengerPage(page: Page) { await section(page, 'Information management', 'My Passengers'); }
-export async function addPassenger(page: Page, name: string, passport: string, options: Record<string, string> = {}, success = true) {
-    await button(page, 'Add new passengers').click();
-    const d = page.getByRole('dialog', { name: 'Add new passengers', exact: true });
-    await field(d, 'Nationality').selectOption({ label: 'China' });
-    const values: Record<string, string> = { 'Name': name, 'Passport number': passport, 'Passport expiration date': options.expiration ?? (name === 'Passenger Example' ? '2027-12-31' : '2028-12-31'), 'Date of birth': options.birth ?? (name === 'Passenger Example' ? '2000-01-15' : '1999-02-20'), 'Email address': options.email ?? (name === 'Passenger Example' ? 'passenger@example.com' : 'added.passenger@example.com'), 'Mobile number': options.mobile ?? (name === 'Passenger Example' ? '13800000040' : '13800000043') };
+const passengerAction = /^(?:[+＋]\s*)?Add new passengers$/i;
+export const addPassengerEntry = (page: Page) => link(page.getByRole('main'), passengerAction)
+    .or(link(region(page, 'My Passengers'), passengerAction));
+
+export function passengerForm(page: Page) {
+    const forms = dialog(page, 'Add new passengers').or(region(page, 'Add new passengers'))
+        .or(region(page, 'Essential information')).filter({ visible: true, has: field(page, 'Passenger type') });
+    return forms.filter({ hasNot: forms });
+}
+
+export async function addPassenger(page: Page, passenger: Passenger, success = true) {
+    await addPassengerEntry(page).click();
+    const form = passengerForm(page);
+    await selectChoice(field(form, 'Nationality'), 'China');
+    const values = {
+        'Name': passenger.name, 'Passport number': passenger.passport, 'Passport expiration date': passenger.expiration,
+        'Date of birth': passenger.birth, 'Email address': passenger.email, 'Mobile number': passenger.mobile,
+    };
     for (const [label, value] of Object.entries(values))
-        await field(d, label).fill(value);
-    await d.getByRole('radio', { name: options.gender ?? (name === 'Passenger Example' ? 'Female' : 'Male'), exact: true }).check();
-    await field(d, 'Passenger type').selectOption({ label: 'Adult' });
-    await button(d, 'Determine').click();
+        await field(form, label).fill(value);
+    await form.getByRole('radio', { name: passenger.gender, exact: true }).check();
+    await selectChoice(field(form, 'Passenger type'), 'Adult');
+    await button(form, /^(Determine|Confirm)$/).click();
     if (success) {
-        await expect(d).not.toBeVisible();
-        await expect(row(page, passport)).toBeVisible();
+        await expect(form).not.toBeVisible();
+        await expect(row(page, passenger.passport)).toContainText(passenger.name);
     }
 }
-export async function manager(page: Page) { await login(page, 'passenger_manager_user'); await passengerPage(page); await addPassenger(page, 'Passenger Example', 'P20269999'); }
-const passports: Record<string, string> = { bookable_user: 'P20269997', booking_submit_user: 'P20269998', booking_confirm_user: 'P20269991', booking_edit_user: 'P20269992', booking_payment_user: 'P20269993', booking_cancel_user: 'P20269994', booking_paid_user: 'P20269995', booking_unpaid_user: 'P20269990', booking_upcoming_user: 'P20269989', booking_cancelled_user: 'P20269988' };
-export async function booking(page: Page, user: string, existing = false, date = '2026-07-21', train = 'G1001') {
+
+export async function manager(page: Page) {
+    const account = await createAccount(page);
+    await passengerPage(page);
+    return account;
+}
+
+export type Journey = { train: string; date: string; passenger: Passenger; state: 'booking' | 'unpaid' | 'paid' | 'closed' };
+export const confirmationDialog = (page: Page) => dialog(page, 'Please confirm the following information.');
+export const bookingPassengers = (page: Page) => page.getByRole('table', { name: 'Booking passengers', exact: true })
+    .or(page.getByRole('table').filter({ has: page.getByRole('columnheader', { name: 'Ticket class', exact: true }) }));
+export const payAction = (surface: Surface) => link(surface, /^Pay(?:\s*\(\s*\d{1,2}:\d{2}\s*\))?$/);
+
+export function orderRow(page: Page, journey: Journey) {
+    return row(page, journey.train).filter({ has: page.getByText(journey.passenger.name, { exact: true }) });
+}
+
+export async function booking(page: Page, user: BookingAccount, date = travelDate(page, 1), train: string = trains[0].number, existing?: Journey) {
+    const journey: Journey = existing ?? { train, date, passenger: newPassenger(), state: 'booking' };
     if (!existing) {
         await login(page, user);
         await passengerPage(page);
-        await addPassenger(page, 'Passenger Example', passports[user] ?? 'P20269801');
+        await addPassenger(page, journey.passenger);
     }
     await home(page);
-    await search(page, 'Shanghai', 'Beijing', date);
-    await button(row(page, train), 'Book').click();
-    await expect(page.getByRole('heading', { name: 'Train Information:', exact: true })).toBeVisible();
+    await search(page, 'Shanghai', 'Beijing', journey.date);
+    await button(row(page, journey.train), 'Book').click();
+    await expect(heading(page, /^Train Information:?$/i)).toBeVisible();
+    return journey;
 }
-export async function confirmation(page: Page, user: string, existing = false, date = '2026-07-21', train = 'G1001') {
-    await booking(page, user, existing, date, train);
-    await page.getByRole('checkbox', { name: 'Passenger Example', exact: true }).check();
-    const table = page.getByRole('table', { name: 'Booking passengers', exact: true });
-    await field(row(table, passports[user] ?? 'P20269801'), 'Ticket class').selectOption({ label: 'Business-class seat' });
+
+export async function selectPassenger(page: Page, passenger: Passenger) {
+    const checkbox = page.getByRole('checkbox', { name: passenger.name, exact: true }).filter({ visible: true });
+    const toggle = button(page, passenger.name).and(page.locator('[aria-pressed]'));
+    await expect(checkbox.or(toggle)).toBeVisible();
+    if (await checkbox.isVisible()) {
+        await checkbox.check();
+    } else {
+        if (await toggle.getAttribute('aria-pressed') === 'false') await toggle.click();
+        await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    }
+    const selected = row(bookingPassengers(page), passenger.passport);
+    await expect(selected).toContainText(passenger.name);
+    return selected;
+}
+
+export async function confirmation(page: Page, user: BookingAccount, date?: string, train?: string, existing?: Journey) {
+    const journey = await booking(page, user, date, train, existing);
+    const selected = await selectPassenger(page, journey.passenger);
+    await selectChoice(field(selected, 'Ticket class'), 'Business-class seat');
     await button(page, 'Place order').click();
-    await expect(page.getByRole('dialog', { name: 'Please confirm the following information.', exact: true })).toBeVisible();
+    await expect(confirmationDialog(page)).toContainText(journey.passenger.name);
+    await expect(confirmationDialog(page)).toContainText(journey.train);
+    return journey;
 }
-export async function payment(page: Page, user: string, date = '2026-07-21', train = 'G1001') {
-    await confirmation(page, user, false, date, train);
-    await button(page.getByRole('dialog', { name: 'Please confirm the following information.', exact: true }), 'Confirm').click();
-    await expect(region(page, 'Order details')).toContainText(train);
+
+export async function payment(page: Page, user: BookingAccount, date?: string, train?: string) {
+    const journey = await confirmation(page, user, date, train);
+    await submitOrder(page, journey);
+    return journey;
 }
-export async function orderSetup(page: Page, user: string, date = '2026-07-21', paid = false, train = 'G1001') {
-    await payment(page, user, date, train);
+
+export async function submitOrder(page: Page, journey: Journey) {
+    await button(confirmationDialog(page), 'Confirm').click();
+    journey.state = 'unpaid';
+    afterTest(page, () => restoreOrderAvailability(page, journey));
+    const details = region(page, 'Order details');
+    await expect(details).toContainText(journey.train);
+    await expect(details).toContainText(journey.passenger.name);
+}
+
+export async function payOrder(page: Page, journey: Journey) {
+    await payAction(page).click();
+    journey.state = 'paid';
+    await text(page, 'Payment successful.');
+}
+
+export async function orderSetup(page: Page, user: BookingAccount, date?: string, paid = false, train?: string) {
+    const journey = await payment(page, user, date, train);
+    if (paid) await payOrder(page, journey);
+    return journey;
+}
+
+async function restoreOrderAvailability(page: Page, journey: Journey) {
+    if (journey.state === 'closed') return;
+    const paid = journey.state === 'paid';
+    await orders(page, paid ? 'Upcoming trips' : 'Uncompleted orders');
     if (paid) {
-        await button(page, 'Pay').click();
-        await text(page, 'Payment successful.');
+        await button(orderRow(page, journey), 'Refund').click();
+        await button(page, 'Confirm refund').click();
+        await expect(page.getByText('Refund successful', { exact: false })).toBeVisible();
+    } else {
+        await button(orderRow(page, journey), 'Cancel').click();
+        await button(dialog(page, 'Are you sure you want to cancel this order?'), 'Confirm').click();
+        await expect(orderRow(page, journey)).toContainText('Cancelled');
     }
 }
+
+export const orderKeyword = (page: Page) => field(page, 'Order number/train number/name', 'Order search', 'Order keyword');
+export const passengerKeyword = (page: Page) => field(page, 'Please enter passenger name', 'Passenger search', 'Passenger name or ID number');
+
 export async function fillDates(page: Page, start: string, end: string, keyword = '') {
-    await field(page, 'Order date type').selectOption({ label: 'Search by departure date' });
+    await selectChoice(field(page, 'Order date type'), /^(?:Search by\s+)?Departure\s+date$/i);
     await field(page, 'Start date').fill(start);
     await field(page, 'End date').fill(end);
-    await page.getByPlaceholder('Order number/train number/name', { exact: true }).fill(keyword);
+    await orderKeyword(page).fill(keyword);
     await button(page, 'Search').click();
 }
 export async function recover(page: Page, email: string, passport: string, success = true) {
     await link(page, 'Login').click();
-    await link(page, 'Forgot password?').click();
+    await link(page, recoveryEntry).click();
     await field(page, 'Email:').fill(email);
     await field(page, 'ID number:').fill(passport);
-    await button(page, 'submit').click();
+    await button(page, /^submit$/i).click();
     if (success)
         await expect(field(page, 'New password:')).toBeVisible();
 }
 export async function security(page: Page, kind: 'password' | 'mailbox') {
     await section(page, 'Personal', 'Account security');
-    await expect(link(page, 'Login password')).toBeVisible();
+    const password = link(page, 'Login password');
+    const passwordEdit = link(region(page, 'Login password'), 'Edit');
+    await expect(password.or(passwordEdit)).toBeVisible();
     await expect(region(page, 'Security mailbox')).toBeVisible();
     await expect(region(page, 'Mobile number')).toBeVisible();
     if (kind === 'password')
-        await link(page, 'Login password').click();
+        await password.or(passwordEdit).click();
     else
-        await button(region(page, 'Security mailbox'), 'Edit').click();
+        await link(region(page, 'Security mailbox'), 'Edit').click();
 }

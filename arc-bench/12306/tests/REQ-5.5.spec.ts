@@ -1,19 +1,23 @@
 // requirement: REQ-5.5
 import { expect } from '@playwright/test';
-import { test } from './fixtures/test';
-import { entry, link, button, row, region, orders, orderSetup } from './helpers';
+import { test, travelDate } from './fixtures/test';
+import { button, dialog, entry, link, orderRow, orderSetup, orders, region, statusMessage } from './helpers';
+import { additionalTrain, bookingAccounts } from './fixtures/data';
 test("REQ-5.5: Refund and inspect history", async ({ page }) => {
     await entry(page);
-    await orderSetup(page, 'orders_refund_user', '2026-07-22', true, 'G2002');
+    const journey = await orderSetup(page, bookingAccounts.refund, travelDate(page, 1), true, additionalTrain);
     await orders(page, 'Upcoming trips');
-    await button(row(page, 'G2002'), 'Refund').click();
-    await expect(region(page, 'Refund information')).toContainText('G2002');
-    await expect(region(page, 'Refund information')).toContainText('Refund amount');
-    await button(page, 'Confirm refund').click();
-    await expect.poll(async () => (await page.getByRole('status').filter({ visible: true }).allTextContents())
-        .some(message => message.includes('Refund successful'))).toBe(true);
+    await button(orderRow(page, journey), 'Refund').click();
+    const info = region(page, 'Refund information').or(dialog(page, 'Refund information'))
+        .filter({ has: button(page, 'Confirm refund') });
+    await expect(info).toContainText(journey.train);
+    await expect(info).toContainText('Refund amount');
+    await button(info, 'Confirm refund').click();
+    await expect(statusMessage(page, 'Refund successful').or(dialog(page, 'Refund successful'))).toBeVisible();
+    journey.state = 'closed';
     await link(page, 'View History orders').click();
-    await expect(row(page, 'G2002')).toContainText('refunded');
+    const refunded = orderRow(page, journey).getByRole('cell', { name: /^refunded$/i });
+    await expect(refunded).toBeVisible();
     await page.reload();
-    await expect(row(page, 'G2002')).toContainText('refunded');
+    await expect(refunded).toBeVisible();
 });

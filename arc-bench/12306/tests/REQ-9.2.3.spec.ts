@@ -1,12 +1,12 @@
 // requirement: REQ-9.2.3
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { entry, link, region } from './helpers';
+import { entry, guideCategory, guideDropdown, guidePanel, heading, link, selectedTab } from './helpers';
 test("REQ-9.2.3: Open dropdown question anchor", async ({ page }) => {
     await entry(page);
-    await link(page.getByRole('navigation'), 'Travel guide').hover();
-    await link(region(region(page, 'Travel guide categories'), 'Ticketing'), 'How to book tickets online?').click();
-    await expect(page.getByRole('tab', { name: 'Ticketing', exact: true })).toHaveAttribute('aria-selected', 'true');
-    await expect(page.getByRole('heading', { name: 'How to book tickets online?', exact: true })).toBeInViewport();
-    await expect(page.getByRole('tabpanel', { name: 'Ticketing', exact: true })).toContainText(/\S+/);
+    const dropdown = await guideDropdown(page);
+    await link(guideCategory(page, dropdown, 'Ticketing'), 'How to book tickets online?').click();
+    await expect(selectedTab(page, 'Ticketing')).toBeVisible();
+    await expect(heading(guidePanel(page, 'Ticketing'), 'How to book tickets online?')).toBeInViewport();
+    await expect(guidePanel(page, 'Ticketing')).toContainText(/\S+/);
 });
