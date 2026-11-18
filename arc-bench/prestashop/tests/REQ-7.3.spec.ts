@@ -1,11 +1,11 @@
 // requirement: REQ-7.3
 import { test, expect } from '@playwright/test';
-import { home, action, region, loginCustomer, account, createAddress, fillAddress, addressRecord } from './helpers';
+import { home, action, region, loginExisting, account, createAddress, fillAddress, addressRecord } from './helpers';
 import { addressInput } from './fixtures/data';
 
 test("REQ-7.3: View Home address", async ({ page }) => {
   await home(page);
-  const customer = await loginCustomer(page);
+  const customer = await loginExisting(page, 'address_view_user');
   const address = addressInput(customer);
   await createAddress(page, address);
   await account(page);
@@ -18,7 +18,7 @@ test("REQ-7.3: View Home address", async ({ page }) => {
 
 test("REQ-7.3: Create Office address", async ({ page }) => {
   await home(page);
-  const customer = await loginCustomer(page);
+  const customer = await loginExisting(page, 'address_create_user');
   await account(page);
   await action(region(page, 'Account overview'), 'Addresses').click();
   await expect(action(page, 'Update')).toHaveCount(0);

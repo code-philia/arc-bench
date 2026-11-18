@@ -5,7 +5,7 @@ import { wishlistInput } from './fixtures/data';
 
 test("REQ-7.8: Rename Favorites wishlist", async ({ page }) => {
   await home(page);
-  await wishlistPage(page);
+  await wishlistPage(page, 'wishlist_rename_user');
   const original = wishlistInput();
   const renamed = wishlistInput();
   await createWishlist(page, original);
@@ -21,7 +21,7 @@ test("REQ-7.8: Rename Favorites wishlist", async ({ page }) => {
 
 test("REQ-7.8: Delete Favorites wishlist", async ({ page }) => {
   await home(page);
-  await wishlistPage(page);
+  await wishlistPage(page, 'wishlist_delete_user');
   const name = wishlistInput();
   await createWishlist(page, name);
   const record = wishlist(page, name);

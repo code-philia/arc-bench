@@ -5,7 +5,7 @@ import { home, nav, action, region, expectMoney, checkoutSetup, paymentStep, pla
 test("REQ-5.6: Place order for selected product", async ({ page }) => {
   await home(page);
   const product = 'Hummingbird order-confirmation t-shirt';
-  const address = await checkoutSetup(page, product);
+  const address = await checkoutSetup(page, product, 'checkout_6_6_user');
   await paymentStep(page, address.alias);
   await placeOrder(page);
   await expect(page.getByRole('heading', { name: 'Order confirmation', exact: true })).toBeVisible();
@@ -15,7 +15,7 @@ test("REQ-5.6: Place order for selected product", async ({ page }) => {
 test("REQ-5.6: Inspect completed order and continue shopping", async ({ page }) => {
   await home(page);
   const product = 'Hummingbird order-complete t-shirt';
-  const address = await checkoutSetup(page, product);
+  const address = await checkoutSetup(page, product, 'checkout_6_7_user');
   await paymentStep(page, address.alias);
   await placeOrder(page);
   await expect(page.getByRole('heading', { name: 'Order confirmation', exact: true })).toBeVisible();

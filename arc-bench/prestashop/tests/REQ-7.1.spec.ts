@@ -1,10 +1,10 @@
 // requirement: REQ-7.1
 import { test, expect } from '@playwright/test';
-import { home, action, region, loginCustomer, account } from './helpers';
+import { home, action, region, loginExisting, account } from './helpers';
 
 test("REQ-7.1: Inspect account overview", async ({ page }) => {
   await home(page);
-  const customer = await loginCustomer(page);
+  const customer = await loginExisting(page, 'user');
   await account(page);
   await expect(page.getByRole('heading', { name: 'My account', exact: true })).toBeVisible();
   const overview = region(page, 'Account overview');

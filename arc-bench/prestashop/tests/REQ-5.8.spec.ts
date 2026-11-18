@@ -4,7 +4,7 @@ import { home, action, region, expectMoney, checkoutSetup, paymentStep, choice, 
 
 test("REQ-5.8: Reopen completed shipping step", async ({ page }) => {
   await home(page);
-  const address = await checkoutSetup(page, STEP);
+  const address = await checkoutSetup(page, STEP, 'checkout_invoice_user');
   await paymentStep(page, address.alias);
   await action(page, 'Edit Shipping Method').click();
   const shipping = region(page, 'Shipping Method');

@@ -1,11 +1,11 @@
 // requirement: REQ-5.3
 import { test, expect } from '@playwright/test';
-import { home, action, region, cartSetup, loginCustomer, addressesStep, fillAddress, choice, STEP } from './helpers';
+import { home, action, region, cartSetup, loginExisting, addressesStep, fillAddress, choice, STEP } from './helpers';
 import { addressInput } from './fixtures/data';
 
 test("REQ-5.3: Save new checkout address", async ({ page }) => {
   await home(page);
-  const customer = await loginCustomer(page);
+  const customer = await loginExisting(page, 'checkout_new_address_user');
   await cartSetup(page, STEP);
   await action(page, 'Proceed to checkout').click();
   await addressesStep(page);

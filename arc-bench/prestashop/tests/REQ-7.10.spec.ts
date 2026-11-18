@@ -1,11 +1,11 @@
 // requirement: REQ-7.10
 import { test, expect } from '@playwright/test';
-import { home, action, loginCustomer, createAddress, addressRecord, confirmDeletion } from './helpers';
+import { home, action, loginExisting, createAddress, addressRecord, confirmDeletion } from './helpers';
 import { addressInput } from './fixtures/data';
 
 test("REQ-7.10: Delete only the selected address", async ({ page }) => {
   await home(page);
-  const customer = await loginCustomer(page);
+  const customer = await loginExisting(page, 'address_delete_user');
   const target = addressInput(customer, 'Primary');
   const other = addressInput(customer, 'Secondary');
   await createAddress(page, target);

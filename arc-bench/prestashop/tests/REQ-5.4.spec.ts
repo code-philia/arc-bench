@@ -4,7 +4,7 @@ import { home, region, expectMoney, checkoutSetup, shippingStep, choice, setChoi
 
 test("REQ-5.4: Use separate invoice address", async ({ page }) => {
   await home(page);
-  const address = await checkoutSetup(page, STEP);
+  const address = await checkoutSetup(page, STEP, 'checkout_invoice_user');
   await setChoice(choice(region(page, 'Addresses'), 'checkbox', 'Use same address'), false);
   await expect(region(page, 'Invoice address')).toBeVisible();
   await expect(region(page, 'Invoice address')).toContainText(address.alias);
@@ -12,7 +12,7 @@ test("REQ-5.4: Use separate invoice address", async ({ page }) => {
 
 test("REQ-5.4: Choose Delivery", async ({ page }) => {
   await home(page);
-  const address = await checkoutSetup(page, STEP);
+  const address = await checkoutSetup(page, STEP, 'checkout_invoice_user');
   await shippingStep(page, address.alias);
   const shipping = region(page, 'Shipping Method');
   await expectMoney(region(shipping, 'Shipping cost'), 5);

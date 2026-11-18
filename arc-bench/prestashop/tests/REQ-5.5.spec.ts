@@ -4,7 +4,7 @@ import { home, action, region, checkoutSetup, paymentStep, choice, setChoice, ST
 
 test("REQ-5.5: Choose bank wire and read terms", async ({ page }) => {
   await home(page);
-  const address = await checkoutSetup(page, STEP);
+  const address = await checkoutSetup(page, STEP, 'checkout_invoice_user');
   await paymentStep(page, address.alias);
   const payment = region(page, 'Payment');
   await setChoice(choice(payment, 'radio', 'Bank wire'));
@@ -16,7 +16,7 @@ test("REQ-5.5: Choose bank wire and read terms", async ({ page }) => {
 
 test("REQ-5.5: Require terms before completion", async ({ page }) => {
   await home(page);
-  const address = await checkoutSetup(page, STEP);
+  const address = await checkoutSetup(page, STEP, 'checkout_invoice_user');
   await paymentStep(page, address.alias);
   const payment = region(page, 'Payment');
   await setChoice(choice(payment, 'radio', 'Bank wire'));

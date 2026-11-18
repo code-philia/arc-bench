@@ -1,7 +1,7 @@
 // requirement: REQ-6.1
 import { test, expect } from '@playwright/test';
-import { home, nav, action, inputForm, field, choice, setChoice, registerCustomer } from './helpers';
-import { customerInput } from './fixtures/data';
+import { home, nav, action, inputForm, field, choice, setChoice } from './helpers';
+import { verifiedCustomer } from './fixtures/data';
 
 test("REQ-6.1: Open sign-in entry", async ({ page }) => {
   await home(page);
@@ -15,9 +15,7 @@ test("REQ-6.1: Open sign-in entry", async ({ page }) => {
 
 test("REQ-6.1: Reveal password and sign in", async ({ page }) => {
   await home(page);
-  const customer = customerInput();
-  await registerCustomer(page, customer);
-  await action(nav(page), 'Sign out').click();
+  const customer = verifiedCustomer('user');
   await action(nav(page), 'Sign in').click();
   const form = inputForm(page, ['Email', 'Password'], 'Sign in');
   const email = field(form, 'Email');

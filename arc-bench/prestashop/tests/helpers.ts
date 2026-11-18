@@ -1,6 +1,6 @@
 import { expect, type Page, type Locator } from '@playwright/test';
 import { createHash } from 'node:crypto';
-import { addressInput, catalog, customerInput, existingAccounts, type Address, type Customer } from './fixtures/data';
+import { addressInput, catalog, verifiedCustomer, type Address, type Customer, type VerifiedAccount } from './fixtures/data';
 
 export const DETAIL = 'Hummingbird detail t-shirt';
 export const CART = 'Hummingbird cart t-shirt';
@@ -328,17 +328,12 @@ export async function registerCustomer(page: Page, customer: Customer) {
   await expect(nav(page)).toContainText(customer.firstName + ' ' + customer.lastName);
 }
 
-export async function loginCustomer(page: Page, customer = customerInput()) {
-  await registerCustomer(page, customer);
-  await action(nav(page), 'Sign out').click();
+export async function loginExisting(page: Page, account: VerifiedAccount) {
+  const customer = verifiedCustomer(account);
   await loginEmail(page, customer.email, customer.password);
-  await expect(nav(page)).toContainText(customer.firstName + ' ' + customer.lastName);
   return customer;
 }
 
-export async function loginExisting(page: Page, account: keyof typeof existingAccounts) {
-  await loginEmail(page, existingAccounts[account], 'ShopPass123!');
-}
 export async function account(page: Page) {
   await action(nav(page), 'My account').click();
   await expect(region(page, 'Account overview')).toBeVisible();
@@ -373,8 +368,8 @@ export async function addressesStep(page: Page, alias?: string) {
   }
   await expect(addresses).toBeVisible();
 }
-export async function checkoutSetup(page: Page, product: string) {
-  const customer = await loginCustomer(page);
+export async function checkoutSetup(page: Page, product: string, account: VerifiedAccount) {
+  const customer = await loginExisting(page, account);
   const address = addressInput(customer);
   await createAddress(page, address);
   await cartSetup(page, product);
@@ -407,20 +402,35 @@ export async function confirmDeletion(page: Page, control: Locator) {
   try { await control.click(); } finally { page.off('dialog', accept); }
 }
 export async function history(page: Page) {
-  await loginExisting(page, 'orderHistory'); await account(page);
+  await loginExisting(page, 'order_history_user'); await account(page);
   await action(region(page, 'Account overview'), 'Order history and details').click();
   await expect(historyRow(page)).toBeVisible();
 }
 export function historyRow(page: Page) { return record(region(page, 'Order history'), 'PS-HISTORY-001', 'order'); }
+
+export async function expectOnlyHistoryOrder(page: Page) {
+  const history = region(page, 'Order history');
+  await expect(history).toHaveCount(1);
+  const rows = page.locator('tr:has(td), [role="row"]:has([role="cell"], [role="gridcell"])')
+    .or(page.getByRole('row').filter({ has: action(page, 'Details') }))
+    .and(page.locator(':not(tfoot *)'));
+  const card = page.locator('article, li, [role="article"], [role="listitem"]');
+  // A card can be an order even without an opening action, but a menu item is not a record.
+  const shown = card.filter({ has: page.locator('time').or(page.getByText(/^PS-HISTORY-\d+$/)) });
+  const titled = card.filter({ has: page.getByRole('heading') }).filter({ has: action(page, 'Details') });
+  const entries = visibleLeaves(rows.or(shown).or(titled)).and(history.locator('*'));
+  await expect(entries, 'order history must contain exactly one order').toHaveCount(1);
+  await expect(entries.and(historyRow(page))).toHaveCount(1);
+}
+
 export function wishlist(page: Page, name: string) { return record(page, name, 'wishlist'); }
 export function wishlistProduct(page: Page) { return wishlist(page, WISH_PRODUCT); }
 export function wishlistOpening(page: Page, name: string) {
   const collection = wishlist(page, name);
   return action(collection, name, true).or(action(collection, 'Open'));
 }
-export async function wishlistPage(page: Page, existing?: 'wishlistView' | 'wishlistRemove' | 'wishlistCart') {
-  if (existing) await loginExisting(page, existing);
-  else await loginCustomer(page);
+export async function wishlistPage(page: Page, existing: Extract<VerifiedAccount, `wishlist_${string}`>) {
+  await loginExisting(page, existing);
   await account(page);
   await action(region(page, 'Account overview'), 'Wishlist').click();
   await expect(action(page, 'Create new wishlist')).toBeVisible();

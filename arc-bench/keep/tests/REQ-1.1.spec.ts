@@ -1,11 +1,11 @@
 // requirement: REQ-1.1
-import { test, expect, action, openHome, sidebar as workspaceSidebar, searchField, expectCurrent } from './helpers';
+import { test, expect, action, openHome, sidebar as workspaceSidebar, sidebarControl, expectSidebarExpanded, searchField, expectCurrent } from './helpers';
 
 test('REQ-1.1: Open the workspace', async ({ page }) => {
   await openHome(page);
   const sidebar = workspaceSidebar(page);
   await expect(sidebar).toBeVisible();
-  await expect(action(page, 'Toggle sidebar')).toHaveAttribute('aria-expanded', 'true');
+  await expectSidebarExpanded(page, true);
   for (const name of ['Notes', 'Reminders', 'Archived', 'Trash', 'Edit Labels']) {
     await expect(action(sidebar, name)).toBeVisible();
   }
@@ -18,15 +18,17 @@ test('REQ-1.1: Open the workspace', async ({ page }) => {
 test('REQ-1.1: Collapse and expand the sidebar', async ({ page }) => {
   await openHome(page);
   const sidebar = workspaceSidebar(page);
-  const toggle = action(page, 'Toggle sidebar');
-  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  const toggle = sidebarControl(page);
+  await expectSidebarExpanded(page, true);
   await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
-  await expect(sidebar.getByText('Notes', { exact: true })).toBeHidden();
+  await expectSidebarExpanded(page, false);
   for (const name of ['Notes', 'Reminders', 'Archived', 'Trash']) {
     await expect(action(sidebar, name)).toBeVisible();
+    await expect(sidebar.getByText(name, { exact: true }).filter({ visible: true })).toHaveCount(0);
   }
   await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-  await expect(sidebar.getByText('Notes', { exact: true })).toBeVisible();
+  await expectSidebarExpanded(page, true);
+  for (const name of ['Notes', 'Reminders', 'Archived', 'Trash']) {
+    await expect(sidebar.getByText(name, { exact: true }).filter({ visible: true })).toBeVisible();
+  }
 });

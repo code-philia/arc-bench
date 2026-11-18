@@ -1,9 +1,9 @@
 // requirement: REQ-7.5
 import { test, expect } from '@playwright/test';
-import { home, action, region, expectMoney, history, historyRow, HISTORY_PRODUCT } from './helpers';
+import { home, action, region, expectMoney, history, historyRow, expectOnlyHistoryOrder, HISTORY_PRODUCT } from './helpers';
 
 test("REQ-7.5: Inspect historical order list", async ({ page }) => {
-  await home(page); await history(page); const row = historyRow(page); await expect(row).toHaveCount(1);
+  await home(page); await history(page); await expectOnlyHistoryOrder(page); const row = historyRow(page);
   for (const text of ['PS-HISTORY-001', HISTORY_PRODUCT, '2026-07-18', 'Delivered']) await expect(row).toContainText(text); await expectMoney(region(row, 'Total'), 34);
   for (const command of ['Details', 'Reorder', 'PDF']) await expect(action(row, command)).toBeVisible();
 });

@@ -4,7 +4,7 @@ import { home, nav, action, success, cartRow, wishlistPage, wishlistProduct, wis
 
 test("REQ-7.9: Remove Favorites product", async ({ page }) => {
   await home(page);
-  await wishlistPage(page, 'wishlistRemove');
+  await wishlistPage(page, 'wishlist_remove_user');
   await wishlistOpening(page, 'Favorites').click();
   const product = wishlistProduct(page);
   await expect(product).toBeVisible();
@@ -14,7 +14,7 @@ test("REQ-7.9: Remove Favorites product", async ({ page }) => {
 
 test("REQ-7.9: Add Favorites product to cart", async ({ page }) => {
   await home(page);
-  await wishlistPage(page, 'wishlistCart');
+  await wishlistPage(page, 'wishlist_cart_user');
   await wishlistOpening(page, 'Favorites').click();
   await action(wishlistProduct(page), 'Add to cart').click();
   await expect(action(nav(page), 'Cart')).toContainText(/\b1\b/);

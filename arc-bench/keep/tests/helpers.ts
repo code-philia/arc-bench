@@ -30,8 +30,26 @@ export function section(page: Page, name: string) {
 }
 
 export function sidebar(page: Page) {
+  const controls = (scope: Locator) => scope.filter({ has: action(page, 'Notes') }).filter({ has: action(page, 'Edit Labels') });
   return innermost(page.getByRole('navigation', { name: 'Sidebar', exact: true })
-    .or(page.getByRole('navigation').filter({ has: action(page, 'Notes') }).filter({ has: action(page, 'Edit Labels') })));
+    .or(controls(page.getByRole('navigation')))
+    .or(controls(page.locator('aside')).filter({ has: action(page, 'Trash') })));
+}
+
+export function sidebarControl(page: Page) {
+  return action(page, 'Toggle sidebar').or(action(page, 'Expand sidebar')).or(action(page, 'Collapse sidebar'));
+}
+
+export async function expectSidebarExpanded(page: Page, expanded: boolean) {
+  const control = sidebarControl(page);
+  await expect(control).toBeVisible();
+  const expected = action(page, expanded ? 'Collapse sidebar' : 'Expand sidebar');
+  const opposite = action(page, expanded ? 'Expand sidebar' : 'Collapse sidebar');
+  await expect.poll(async () => {
+    const values = await control.evaluateAll(elements => elements.map(el => el.getAttribute('aria-expanded')));
+    if (values.length !== 1 || await opposite.count()) return false;
+    return values[0] === String(expanded) || values[0] === null && await expected.count() === 1;
+  }, { message: 'sidebar control must indicate its current expanded or collapsed state' }).toBe(true);
 }
 
 export function field(scope: Scope, name: string) {
@@ -72,6 +90,17 @@ export function notice(page: Page, name: string) {
 
 export const noteAction = (page: Page, title: string, name: string) =>
   action(note(page, title), name + ' ' + title).or(action(note(page, title), name));
+
+export async function expectPinAction(page: Page, title: string, pinned: boolean) {
+  const command = noteAction(page, title, pinned ? 'Unpin' : 'Pin');
+  await expect(command).toBeVisible();
+  await expect(noteAction(page, title, pinned ? 'Pin' : 'Unpin')).toHaveCount(0);
+  // The complementary command conveys the state; reject an explicit contradictory state.
+  await expect.poll(async () => {
+    const value = await command.getAttribute('aria-pressed');
+    return value === null || value === String(pinned);
+  }, { message: 'pin state disagrees with the note action' }).toBe(true);
+}
 
 export async function expectCurrent(page: Page, name: string) {
   const entry = action(sidebar(page), name);

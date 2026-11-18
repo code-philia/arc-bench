@@ -46,10 +46,22 @@ export const catalog = [
   ['Catalog item 1', 11, 'Black'], ['Catalog item 2', 12, 'Black'], ['Catalog item 3', 13, 'Black'], ['Catalog item 4', 14, 'Black'],
 ] as const;
 
-// These exact historical objects cannot be created with the available customer workflows.
-export const existingAccounts = {
-  orderHistory: 'prestashop_order_history_user@example.com',
-  wishlistView: 'prestashop_wishlist_view_user@example.com',
-  wishlistRemove: 'prestashop_wishlist_remove_user@example.com',
-  wishlistCart: 'prestashop_wishlist_cart_user@example.com',
-};
+// Verification is not part of the registration workflow under test.
+const verifiedAccounts = [
+  'user', 'profile_user',
+  'checkout_user', 'checkout_address_user', 'checkout_new_address_user', 'checkout_invoice_user',
+  'checkout_6_6_user', 'checkout_6_7_user',
+  'address_view_user', 'address_create_user', 'address_edit_user', 'address_delete_user',
+  'order_history_user',
+  'wishlist_view_user', 'wishlist_create_user', 'wishlist_rename_user',
+  'wishlist_delete_user', 'wishlist_remove_user', 'wishlist_cart_user',
+] as const;
+
+export type VerifiedAccount = typeof verifiedAccounts[number];
+
+export function verifiedCustomer(account: VerifiedAccount): Customer {
+  return {
+    firstName: 'Store', lastName: 'User', birthdate: '1995-08-21',
+    email: 'prestashop_' + account + '@example.com', password: 'ShopPass123!',
+  };
+}

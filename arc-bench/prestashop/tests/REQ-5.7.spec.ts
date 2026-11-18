@@ -5,7 +5,7 @@ import { replacementStreet } from './fixtures/data';
 
 test("REQ-5.7: Edit shipping address during checkout", async ({ page }) => {
   await home(page);
-  const address = await checkoutSetup(page, STEP);
+  const address = await checkoutSetup(page, STEP, 'checkout_address_user');
   await shippingAddressEdit(page, address.alias).click();
   const form = inputForm(page, ['Alias', 'Address'], 'Save');
   const street = field(form, 'Address');

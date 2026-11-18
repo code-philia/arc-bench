@@ -5,7 +5,7 @@ import { wishlistInput } from './fixtures/data';
 
 test("REQ-7.11: Delete only the selected wishlist", async ({ page }) => {
   await home(page);
-  await wishlistPage(page);
+  await wishlistPage(page, 'wishlist_delete_user');
   const target = wishlistInput();
   const other = wishlistInput();
   await createWishlist(page, target);

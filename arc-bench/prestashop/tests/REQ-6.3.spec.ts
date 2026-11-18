@@ -1,13 +1,11 @@
 // requirement: REQ-6.3
 import { test, expect } from '@playwright/test';
-import { home, nav, action, inputForm, field, registerCustomer, feedback } from './helpers';
-import { customerInput } from './fixtures/data';
+import { home, nav, action, inputForm, field, feedback } from './helpers';
+import { verifiedCustomer } from './fixtures/data';
 
 test("REQ-6.3: Request existing-account reset", async ({ page }) => {
   await home(page);
-  const customer = customerInput();
-  await registerCustomer(page, customer);
-  await action(nav(page), 'Sign out').click();
+  const customer = verifiedCustomer('user');
   await action(nav(page), 'Sign in').click();
   await action(page, 'Forgot your password?').click();
   const form = inputForm(page, ['Email'], 'Send');

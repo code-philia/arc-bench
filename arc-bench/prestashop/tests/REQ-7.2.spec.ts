@@ -1,11 +1,11 @@
 // requirement: REQ-7.2
 import { test, expect } from '@playwright/test';
-import { home, nav, action, region, loginCustomer, loginEmail, account, field, inputForm, feedback } from './helpers';
+import { home, nav, action, region, loginExisting, loginEmail, account, field, inputForm, feedback } from './helpers';
 import { customerInput } from './fixtures/data';
 
 test("REQ-7.2: Save email then password", async ({ page }) => {
   await home(page);
-  const customer = await loginCustomer(page);
+  const customer = await loginExisting(page, 'profile_user');
   const next = customerInput();
   await account(page);
   await action(region(page, 'Account overview'), 'Information').click();

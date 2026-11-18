@@ -4,7 +4,7 @@ import { home, action, region, checkoutSetup, shippingStep, choice, STEP } from 
 
 test("REQ-5.9: Collapse completed address step and reopen it", async ({ page }) => {
   await home(page);
-  const address = await checkoutSetup(page, STEP);
+  const address = await checkoutSetup(page, STEP, 'checkout_address_user');
   await shippingStep(page, address.alias);
   const addresses = region(page, 'Addresses');
   const saved = choice(addresses, 'radio', address.alias);

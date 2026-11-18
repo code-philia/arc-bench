@@ -2,21 +2,29 @@ id: ROOT
 name: Keep personal note management
 description:
   text: |-
-    A workspace in US English for creating, editing, organizing, searching, archiving, and deleting personal notes without signing in. Reminders comes with the workspace as a label, not a scheduler. Users create their own notes and additional labels.
+    A personal note management application for creating, editing, organizing, searching, archiving, and deleting notes.
+
+    The interface uses en-US. Note states are established through normal user actions. The titles, content and user-created label names in the examples illustrate values users can enter.
 scenarios: []
 children:
 - id: REQ-1
   name: Workspace navigation
   description:
     text: |-
-      The sidebar lets users navigate between Notes, Reminders, their own labels, Archived, and Trash. Users can identify the current destination visually and with assistive technology.
+      Entry workspace and sidebar navigation.
+
+      The personal workspace requires no authentication or reminder scheduler. Sidebar navigation actions expose current state when selected.
   scenarios: []
   children:
   - id: REQ-1.1
     name: Open and navigate the personal workspace
     description:
       text: |-
-        The workspace initially opens in grid view with Notes selected and the sidebar expanded. The sidebar shows Notes, Reminders, Edit Labels, Archived, Trash, and any user labels; Reminders has its own icon. Search finds notes, Take a note starts a new note, Settings menu opens settings, and List view switches the layout. Toggle sidebar hides and restores navigation text while keeping the actions identifiable and making the expanded or collapsed state clear. Alignment, hover feedback, selection highlighting, and appearance follow the visual references.
+        Opening the application displays a personal notes workspace with the "Sidebar" expanded and "Notes" selected. The sidebar provides "Reminders", user-label actions, "Edit Labels", "Archived", and "Trash", each with an identifiable icon; Reminders is a default label with its own icon. Users can find notes through "Search", begin creation with "Take a note", open settings through "Settings menu", and switch the initial layout through "List view". The Toggle sidebar control collapses the sidebar to icons and expands it again, exposing the current state while preserving accessible navigation names. Text labels disappear when collapsed and return when expanded. Alignment, hover feedback, selected-item highlighting, and appearance follow the visual references.
+
+        The personal workspace requires no authentication or reminder scheduler. Sidebar navigation actions expose current state when selected.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
       image:
       - id: IMG-HOME-PAGE
         reference: reference/home_page.png
@@ -33,11 +41,11 @@ children:
       steps:
       - id: STEP-REQ-1.1-01-01
         Given: |-
-          The workspace is ready to open without signing in.
-        When: |-
-          Open the workspace and inspect the navigation, Search, Settings menu, List view, and Take a note.
-        Then: |-
-          Notes is selected, the layout is a grid, and the expanded sidebar shows Notes, Reminders, Archived, Trash, and Edit Labels. The workspace controls are available.
+          A fresh browser opens the personal workspace without authentication; default label exists, the default layout is grid, and the sidebar starts expanded with Notes selected.
+        When: Open the application entry and inspect "Sidebar", its Notes, Reminders, Archived, Trash and Edit Labels
+          buttons, and the Search field, Settings menu, List view and Take a note buttons.
+        Then: The sidebar is expanded and Notes is identifiable as selected. Each named sidebar action and each
+          workspace control is visible, including the default Reminders action.
         references:
         - \ref[image](IMG-HOME-PAGE)
         - \ref[image](IMG-SIDEBAR)
@@ -47,11 +55,11 @@ children:
       steps:
       - id: STEP-REQ-1.1-02-01
         Given: |-
-          Notes is selected and the sidebar is expanded.
-        When: |-
-          Use Toggle sidebar to collapse it, inspect the remaining actions, and use Toggle sidebar again.
-        Then: |-
-          Collapsing hides the navigation text but leaves the Notes, Reminders, Archived, and Trash actions identifiable. Expanding restores the text. Both states are understandable with assistive technology.
+          The entry workspace is open with the sidebar expanded and Notes selected.
+        When: Use Toggle sidebar, inspect sidebar text and accessible actions, then use the same control again.
+        Then: After collapse, the visible Notes text is hidden while Notes, Reminders, Archived and Trash remain
+          accessible and visible as actions. After expansion, the Notes text is visible again. The toggle makes
+          both its expanded and collapsed states identifiable.
         references:
         - \ref[image](IMG-HOME-PAGE)
         - \ref[image](IMG-SIDEBAR)
@@ -61,14 +69,24 @@ children:
   name: Manage the note lifecycle
   description:
     text: |-
-      Users create notes with their own nonempty titles and content. Each operation acts on the intended note, identified by its title in the current collection. Note actions that appear on hover are also available by keyboard.
+      All note states are created and changed through the personal workspace UI.
+
+      Note actions revealed on hover remain keyboard-accessible. Users can identify the note actions and fields, including with assistive technology. Note actions are scoped to the note identified by its visible title.
+
+      Personal notes are created through Take a note, using their chosen title and content. Mutable note states and action notifications are produced by note actions, including delete, archive and Undo.
   scenarios: []
   children:
   - id: REQ-2.1
     name: List pinned and regular notes separately
     description:
       text: |-
-        Notes has one Pinned notes section and one Other notes section. Each active note appears exactly once, with its title and content, in the section that matches its pin state. Neither section contains archived or deleted notes.
+        The active Notes view separates pinned notes into exactly one "Pinned notes" and regular notes into exactly one "Other notes". Every active note appears once in the appropriate section and is identifiable by its visible title, including with assistive technology. Archived and trashed notes do not appear in either section. Business identity identifies each note regardless of whether the presentation uses cards, a table, or another layout.
+
+        Note actions revealed on hover remain keyboard-accessible. Users can identify the note actions and fields, including with assistive technology. Note actions are scoped to the note identified by its visible title.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
+
+        Notes and their mutable action states are produced by the described note interactions.
       image:
       - id: IMG-HOME-PAGE
         reference: reference/home_page.png
@@ -78,12 +96,12 @@ children:
       name: Separate pinned and regular notes
       steps:
       - id: STEP-REQ-2.1-01-01
-        Given: |-
-          Create two notes with distinct titles and content, using Pin note for one and leaving the other unpinned.
-        When: |-
-          Inspect Pinned notes and Other notes.
-        Then: |-
-          There is one section of each kind. The pinned note appears once only in Pinned notes and the regular note once only in Other notes, both with their saved content.
+        Given: Notes is open. Through Take a note, Title, Content and Close, create a Sprint goals note with Finish the
+          sprint and Pin note selected, and a regular Groceries note with Milk and bread.
+        When: Inspect the "Pinned notes" and "Other notes" collections using each note's full title.
+        Then: Each collection exists once. Sprint goals appears exactly once only in Pinned notes and Groceries
+          exactly once only in Other notes; neither note is duplicated across sections and each remains visible
+          with its saved content.
         references:
         - \ref[requirement](REQ-2.9)
         - \ref[image](IMG-HOME-PAGE)
@@ -92,7 +110,13 @@ children:
     name: Create and autosave a personal note
     description:
       text: |-
-        Take a note opens an editor with Title and Content, accepting a nonempty title and multiline content. Close ends editing and saves exactly one active note without a separate Save action. The title, content, and line breaks persist after reload. Pin note, Background color, and Change labels are available while editing. Empty-input behavior is unspecified.
+        Clicking "Take a note" opens "Note editor", where users enter "Title" and "Content". Clicking "Close" closes the editor and automatically saves one active note with the entered title and content; the note survives reload without an explicit save action. Creation accepts the nonempty titles and multiline content used in the scenarios; empty-input rules are unspecified. The editor also provides Pin note, Background color, and Change labels for their corresponding behaviors.
+
+        Note actions revealed on hover remain keyboard-accessible. Users can identify the note actions and fields, including with assistive technology. Note actions are scoped to the note identified by its visible title.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
+
+        Notes and their mutable action states are produced by the described note interactions.
       image:
       - id: IMG-CREATE-NOTE-HOME-PAGE
         reference: reference/create_note_home_page.png
@@ -105,12 +129,11 @@ children:
       name: Autosave on closing the editor
       steps:
       - id: STEP-REQ-2.2-01-01
-        Given: |-
-          Notes is ready for a new note.
-        When: |-
-          Select Take a note, enter a chosen title and multiline content, then choose Close.
-        Then: |-
-          The editor closes without a separate Save action. One note displays the entered title and both content lines, preserving the line break.
+        Given: The personal Notes workspace is open and the New note title does not yet exist.
+        When: Click "Take a note"; in "Note editor", fill Title with the New note name and Content with First line
+          followed by a newline and Second line, then click Close without using any Save action.
+        Then: Note editor closes and exactly one visible note with that title displays the entered title and both
+          content lines.
         references:
         - \ref[requirement](REQ-1.1)
         - \ref[image](IMG-CREATE-NOTE-HOME-PAGE)
@@ -119,12 +142,11 @@ children:
       name: Keep a created note after reload
       steps:
       - id: STEP-REQ-2.2-02-01
-        Given: |-
-          Notes is ready for a new note.
-        When: |-
-          Use Take a note to enter a chosen title and content, choose Close, and reload.
-        Then: |-
-          The editor closes and exactly one note retains the title and content after reload.
+        Given: Notes is open and no note uses the Persistent note title.
+        When: Open Note editor through Take a note, enter the Persistent note title and Saved personal content, click
+          Close, and reload the page.
+        Then: The editor closes on save; after reload exactly one visible note retains that title and Saved personal
+          content.
         references:
         - \ref[requirement](REQ-1.1)
         - \ref[image](IMG-CREATE-NOTE-HOME-PAGE)
@@ -134,7 +156,13 @@ children:
     name: Edit and persist note content
     description:
       text: |-
-        Opening a saved note shows its current Title and Content. Replacing Content and choosing Close saves the replacement on the same note, keeps its title, and creates no duplicate. The new content remains after reload.
+        Opening a particular note opens Note editor with that note's existing title and content. Changing Content and closing the editor saves the replacement content on the same note without changing its title or creating a duplicate. The updated content remains visible after reload.
+
+        Note actions revealed on hover remain keyboard-accessible. Users can identify the note actions and fields, including with assistive technology. Note actions are scoped to the note identified by its visible title.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
+
+        Notes and their mutable action states are produced by the described note interactions.
       image:
       - id: IMG-NOTE-EDITING
         reference: reference/note_editing.png
@@ -144,12 +172,12 @@ children:
       name: Save an edited note
       steps:
       - id: STEP-REQ-2.3-01-01
-        Given: |-
-          Create a note with a chosen title and initial content.
-        When: |-
-          Open that note, inspect its Title and Content, replace Content, choose Close, and reload.
-        Then: |-
-          The editor initially shows the saved values and closes after saving. The original title and replacement content appear on exactly one note, with the old content gone.
+        Given: Notes contains a UI-created Project ideas note with Initial editable content, created through Take a
+          note, Title, Content and Close.
+        When: Open that note; verify Title and Content are prefilled, replace Content with Updated editable content,
+          click Close, and reload.
+        Then: The editor initially contains the saved title and content, then closes. After reload exactly one note
+          retains the original title and replacement content, with no Initial editable content in that note.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-NOTE-EDITING)
@@ -158,7 +186,13 @@ children:
     name: Delete notes and recover through notification Undo
     description:
       text: |-
-        Choose More options for the intended note and select Delete Note. The note leaves Notes immediately and goes to Trash without a confirmation step. Note deleted offers Undo and Dismiss notification. Undo restores the same note and displays Action undone. Dismiss notification closes the message without restoring the note, which remains in Trash after reload. Automatic dismissal timing is unspecified.
+        Users reveal a note's actions by hovering if necessary, then click "More options" and choose "Delete Note". Deletion immediately removes that note from active Notes, moves it to Trash without an additional confirmation, and displays "Note deleted" with "Undo" and "Dismiss notification". Undo restores the same title and content to active Notes, removes the note from Trash, and displays "Action undone". Dismiss notification closes the notification without reversing deletion; the same deleted note and its content remain in Trash after reload. Automatic notification dismissal and its timing are outside the acceptance scope.
+
+        Note actions revealed on hover remain keyboard-accessible. Users can identify the note actions and fields, including with assistive technology. Note actions are scoped to the note identified by its visible title.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
+
+        Notes and their mutable action states are produced by the described note interactions.
       image:
       - id: IMG-NOTE-MORE-OPTIONS-DROPDOWN
         reference: reference/note_more_options_dropdown.png
@@ -171,12 +205,11 @@ children:
       name: Move a deleted note to Trash
       steps:
       - id: STEP-REQ-2.4-01-01
-        Given: |-
-          Create a note with a chosen title and content in Notes.
-        When: |-
-          From its More options menu, select Delete Note and then open Trash.
-        Then: |-
-          Deletion needs no confirmation. The note leaves Notes immediately, Note deleted offers Undo, and Trash contains that note once with its title and content.
+        Given: Notes contains the UI-created Delete me 2.3.1 note with Deletion preserves this content.
+        When: Hover that note if necessary, click More options, choose Delete Note from the menu, then click Trash in
+          Sidebar.
+        Then: Deletion opens no confirmation dialog and removes the note from Notes immediately. Note deleted status
+          exposes Undo, and Trash contains exactly one note with the same title and content.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-NOTE-MORE-OPTIONS-DROPDOWN)
@@ -185,12 +218,10 @@ children:
       name: Undo deletion
       steps:
       - id: STEP-REQ-2.4-02-01
-        Given: |-
-          Create a note with a chosen title and content in Notes.
-        When: |-
-          Choose Delete Note for it, select Undo in Note deleted, and inspect Notes and Trash.
-        Then: |-
-          Action undone appears. The note returns once to Notes with its original content and is absent from Trash.
+        Given: Notes contains the UI-created Delete me 2.3.2 note with Undo restores this content.
+        When: Use More options and Delete Note, click Undo within Note deleted status, then open Trash.
+        Then: Action undone status appears and Notes again contains exactly one note with the same title and content.
+          The restored note is absent from Trash.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-NOTE-MORE-OPTIONS-DROPDOWN)
@@ -199,12 +230,11 @@ children:
       name: Dismiss deletion notifications
       steps:
       - id: STEP-REQ-2.4-03-01
-        Given: |-
-          Create a note with a chosen title and content in Notes.
-        When: |-
-          Delete it, select Dismiss notification, open Trash, and reload.
-        Then: |-
-          The message closes and deletion is not reversed. The note stays absent from Notes and appears once in Trash with its original title and content before and after reload.
+        Given: Notes contains the UI-created Manual dismissal note with Dismissal preserves deleted content.
+        When: Delete the note through its menu, click Dismiss notification in Note deleted status, then open Trash
+          and reload.
+        Then: The notification closes without Undo. The note stays absent from active Notes, while Trash retains
+          exactly one note with the same title and content before and after reload.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-NOTE-MORE-OPTIONS-DROPDOWN)
@@ -214,7 +244,15 @@ children:
     name: Inspect and empty Trash with persistent deleted notes
     description:
       text: |-
-        The Deleted notes collection in Trash shows deleted notes separately from active and archived notes. They keep their titles and content across navigation and reload. Empty Trash permanently removes all deleted notes without changing active notes. If confirmation is offered, its Empty Trash action confirms the removal. Automatic age-based deletion is unspecified.
+        Clicking "Trash" displays deleted notes in "Deleted notes", excluding active and archived notes. Deleted notes retain their titles and contents across navigation and reload until a user action restores or permanently removes them. "Empty Trash" permanently removes all currently deleted notes while preserving active notes. If confirmation is offered, it appears as "Empty Trash" with an "Empty Trash" confirmation action. Automatic age-based deletion is outside the acceptance scope.
+
+        Note actions revealed on hover remain keyboard-accessible. Users can identify the note actions and fields, including with assistive technology. Note actions are scoped to the note identified by its visible title.
+
+        Users create and delete their own notes; Trash does not require pre-existing deleted notes.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
+
+        Notes and their mutable action states are produced by the described note interactions.
       image:
       - id: IMG-HOME-PAGE
         reference: reference/home_page.png
@@ -227,12 +265,11 @@ children:
       name: Keep a deleted note in Trash after reload
       steps:
       - id: STEP-REQ-2.5-01-01
-        Given: |-
-          Create a note through Take a note and Close, then delete it through More options.
-        When: |-
-          Open Trash, reload, then return to Notes.
-        Then: |-
-          Trash keeps one copy with its saved title and content after reload; Notes does not contain it.
+        Given: Through Take a note, Title, Content and Close, create the Trash persistence note with Deleted content
+          survives reload, then delete it through its More options menu.
+        When: Open Trash in Sidebar, reload the page, then select Notes.
+        Then: Deleted notes contains exactly one note with the saved title and content after reload. The same
+          deleted note remains absent from active Notes.
         references:
         - \ref[requirement](REQ-2.4)
         - \ref[image](IMG-HOME-PAGE)
@@ -241,12 +278,11 @@ children:
       name: Show deleted notes separately
       steps:
       - id: STEP-REQ-2.5-02-01
-        Given: |-
-          Create two distinct notes and delete only one.
-        When: |-
-          Open Trash.
-        Then: |-
-          The deleted note is listed once with its content; the still-active note is absent.
+        Given: Through normal note creation, create Delete me 2.3.3 with Recently deleted content and Movie list with
+          Active control content; delete only Delete me 2.3.3 through its menu.
+        When: Click Trash in Sidebar and inspect Deleted notes.
+        Then: The deleted note appears exactly once with its saved content; the active Movie list note is absent
+          from Trash.
         references:
         - \ref[requirement](REQ-2.4)
         - \ref[image](IMG-HOME-PAGE)
@@ -255,12 +291,12 @@ children:
       name: Empty Trash without deleting active notes
       steps:
       - id: STEP-REQ-2.5-03-01
-        Given: |-
-          Create three distinct notes. Delete two and leave the third active. Open Trash with both deleted notes present.
-        When: |-
-          Select Empty Trash and confirm if asked. Reload Trash, then open Notes.
-        Then: |-
-          No deleted notes remain before or after reload. Notes retains the active note once with its original content and neither permanently removed note reappears.
+        Given: Create Empty trash A with Discard A, Empty trash B with Discard B and Active control with Keep active
+          content. Delete A and B through UI and open Trash, confirming both deleted notes are present.
+        When: Click Empty Trash. If an Empty Trash dialog is offered, click its Empty Trash confirmation button.
+          Reload Trash, then click Notes.
+        Then: Deleted notes contains no notes before and after reload. Active control remains exactly once with its
+          content, while deleted A and B remain absent from Notes.
         references:
         - \ref[requirement](REQ-2.4)
         - \ref[image](IMG-HOME-PAGE)
@@ -270,7 +306,13 @@ children:
     name: Archive notes and restore them to active Notes
     description:
       text: |-
-        Archive moves the selected note from Notes into Archived and shows Note archived with Undo. Undo returns the same note to Notes and shows Action undone. Unarchive returns the selected note to Notes without changing other archived notes. The note keeps its title and content, and these changes persist after reload.
+        Clicking "Archive" moves the selected active note out of Notes into "Archived notes" and displays "Note archived" with "Undo". Undo restores the same note and content to Notes, removes it from the archive, and shows Action undone. Clicking "Archived" displays archived notes separately from active notes; "Unarchive" returns the chosen note to Notes. Every transition addresses that note's business identity and remains observable after reload.
+
+        Note actions revealed on hover remain keyboard-accessible. Users can identify the note actions and fields, including with assistive technology. Note actions are scoped to the note identified by its visible title.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
+
+        Notes and their mutable action states are produced by the described note interactions.
       image:
       - id: IMG-ARCHIVE-BUTTON
         reference: reference/archive_button.png
@@ -286,12 +328,12 @@ children:
       name: Archive a note into its separate list
       steps:
       - id: STEP-REQ-2.6-01-01
-        Given: |-
-          Create two distinct notes in Notes.
-        When: |-
-          Archive one, inspect Archived, then return to Notes and reload.
-        Then: |-
-          Note archived offers Undo. Archived contains the selected note once with its content and excludes the active note. After reload Notes still contains only the active one of these two, with unchanged content.
+        Given: Notes contains UI-created Travel plans 2.5.1 with Trip itinerary and Active archive control with Stay
+          active.
+        When: Hover Travel plans, click Archive, open Archived in Sidebar, then return to Notes and reload.
+        Then: Note archived status exposes Undo; Archived notes contains exactly one Travel plans note with Trip
+          itinerary and excludes the active control. After reload Notes excludes Travel plans and retains the active
+          control with Stay active.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-ARCHIVE-BUTTON)
@@ -301,12 +343,10 @@ children:
       name: Undo archiving
       steps:
       - id: STEP-REQ-2.6-02-01
-        Given: |-
-          Create a note with a chosen title and content.
-        When: |-
-          Archive the note and select Undo in Note archived. Inspect Notes and Archived.
-        Then: |-
-          Action undone appears, the note returns once with its unchanged content, and Archived no longer contains it.
+        Given: Notes contains Travel plans 2.5.2 with Return this itinerary.
+        When: Click Archive, then Undo in Note archived status, and inspect Archived.
+        Then: Action undone appears, Notes restores the same title and content exactly once, and Archived excludes
+          the restored note.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-ARCHIVE-BUTTON)
@@ -316,12 +356,11 @@ children:
       name: Unarchive the selected note
       steps:
       - id: STEP-REQ-2.6-03-01
-        Given: |-
-          Create and archive two distinct notes, then open Archived.
-        When: |-
-          Unarchive one note, return to Notes, and reload.
-        Then: |-
-          Archived loses only the selected note. Notes retains that note once after reload with unchanged title and content and excludes the still-archived note.
+        Given: Create Travel plans 2.5.4 with Selected itinerary and Other archived note with Other itinerary, archive
+          both through UI, and open Archived where both are visible.
+        When: Hover only Travel plans, click its Unarchive, then open Notes and reload.
+        Then: Archived removes only Travel plans and retains Other archived note with its content. Notes displays
+          Travel plans exactly once with Selected itinerary after reload and excludes the other archived note.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-ARCHIVE-BUTTON)
@@ -332,7 +371,13 @@ children:
     name: Apply note background colors
     description:
       text: |-
-        Background color opens a palette on an existing note or in the editor. Choosing Light green recolors the note's surface, not only a palette or badge. The selected color is identifiable with assistive technology. Closing a new note saves it with that background; the color, title, and content remain after reload. The reference illustrates the shade.
+        Clicking "Background color" on an existing note, or "Background color" in Note editor, opens a palette where "Light green" applies a visibly light-green background to the note itself. The existing-note control then identifies Light green as the selected background. Notes created with this selection autosave with the same background, and selected colors persist after reload. Changing only a palette or badge is insufficient; the reference guides the appearance without requiring an exact shade.
+
+        Note actions revealed on hover remain keyboard-accessible. Users can identify the note actions and fields, including with assistive technology. Note actions are scoped to the note identified by its visible title.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
+
+        Notes and their mutable action states are produced by the described note interactions.
       image:
       - id: IMG-NOTE-COLORING
         reference: reference/note_coloring.png
@@ -342,12 +387,11 @@ children:
       name: Color an existing note
       steps:
       - id: STEP-REQ-2.7-01-01
-        Given: |-
-          Create a note with a chosen title and content.
-        When: |-
-          Select Background color for it, choose Light green, and reload.
-        Then: |-
-          The note itself is light green; the selected color is identifiable, and the title and content are unchanged.
+        Given: Notes contains Garden tasks existing with Water the herbs, created through the normal editor.
+        When: Hover that note, click Background color, choose Light green, then reload and inspect the note and its
+          color action.
+        Then: The same note and content persist. Its surface has a light-green background and its color control
+          identifies Light green as selected; a changed action name alone is insufficient.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-NOTE-COLORING)
@@ -355,12 +399,11 @@ children:
       name: Create a colored note
       steps:
       - id: STEP-REQ-2.7-02-01
-        Given: |-
-          Notes is ready for a new note.
-        When: |-
-          Enter a title and content, choose Light green through Background color, then choose Close and reload.
-        Then: |-
-          One note keeps its title and content on a light-green surface, and the selected color remains identifiable.
+        Given: Notes is open and no note uses the Garden tasks created title.
+        When: Click Take a note, enter that title and Plant spring herbs, click Background color in Note editor
+          and choose Light green, then Close and reload.
+        Then: Exactly one note retains the entered content after reload with a light-green surface and Light green
+          identified as the selected color.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-NOTE-COLORING)
@@ -369,7 +412,13 @@ children:
     name: Assign and remove note labels
     description:
       text: |-
-        Change labels, in a note's More options or in the editor, opens Note labels. Users select one or more named labels or clear a selection. Done closes the chooser and retains the changes. Selected labels appear on the note, determine which sidebar filters include it, and persist after reload. Reminders is available when creating a note.
+        Users open a note's More options menu and choose "Change labels", or click "Change labels" in Note editor, to open "Note labels". Each available label is selectable through "{label}". Users may assign one or more labels, or clear a checked label to remove its assignment; "Done" closes the chooser and retains the selections. Assigned labels appear visibly on the note, drive sidebar filtering consistently, and persist after closing and reload. The default Reminders label is available when creating a note.
+
+        Note actions revealed on hover remain keyboard-accessible. Users can identify the note actions and fields, including with assistive technology. Note actions are scoped to the note identified by its visible title.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
+
+        Notes and their mutable action states are produced by the described note interactions.
       image:
       - id: IMG-ASSIGN-LABEL-TO-NOTE
         reference: reference/assign_label_to_note.png
@@ -379,12 +428,12 @@ children:
       name: Assign multiple labels and filter by either
       steps:
       - id: STEP-REQ-2.8-01-01
-        Given: |-
-          Create two distinct labels through Edit Labels and a note without labels.
-        When: |-
-          Choose Change labels for that note, select both labels, select Done, and reload. Select each sidebar label in turn.
-        Then: |-
-          Both labels appear on the note after reload. Either filter includes the same note once with its saved title and content.
+        Given: Through Edit Labels, New label and Create label, create Work and Personal labels. Create Team retro add
+          label with Retro decisions and no assigned labels.
+        When: On that note choose More options then Change labels; check Work and Personal in Note labels, click Done,
+          reload, and select each label in Sidebar in turn.
+        Then: Both labels are visible on the note after reload. Either sidebar selection displays exactly one matching
+          note with the same title and Retro decisions.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[requirement](REQ-3.1)
@@ -393,12 +442,12 @@ children:
       name: Remove an assigned label
       steps:
       - id: STEP-REQ-2.8-02-01
-        Given: |-
-          Create one label and two notes. Assign that label to both notes.
-        When: |-
-          Clear the label from one note, choose Done, reload, and select that label in the sidebar.
-        Then: |-
-          The changed note no longer shows the label and is absent from the filtered list. The other note still appears once with unchanged content.
+        Given: Create Work and two notes through UI, Team retro remove label with Remove membership and Other Work note
+          with Keep membership; assign Work to both through the editor's Change labels chooser.
+        When: Open Change labels for Team retro, clear its Work checkbox and click Done; reload, then select Work
+          in Sidebar.
+        Then: Work no longer appears on Team retro. The Work-filtered list excludes that note and retains Other
+          Work note exactly once with Keep membership.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[requirement](REQ-3.1)
@@ -408,11 +457,11 @@ children:
       steps:
       - id: STEP-REQ-2.8-03-01
         Given: |-
-          Notes is ready for a new note and Reminders is available.
-        When: |-
-          Enter a title and content, use Change labels to choose Reminders, then select Done and Close. Select Reminders in the sidebar.
-        Then: |-
-          The new note shows Reminders and is listed once with its saved title and content.
+          The default Reminders label exists and Notes is open; the Call dentist created title is unused.
+        When: Open Note editor, enter that title and Arrange the appointment, choose Change labels, check Reminders,
+          click Done and Close, then select Reminders in Sidebar.
+        Then: The saved note visibly carries Reminders and appears exactly once with Arrange the appointment in
+          the Reminders-filtered list.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-ASSIGN-LABEL-TO-NOTE)
@@ -421,7 +470,13 @@ children:
     name: Pin and unpin notes
     description:
       text: |-
-        Pin moves the selected note into Pinned notes exactly once and offers Unpin. Unpin returns it to Other notes and offers Pin. Pin note lets users choose the pin state before closing a new note. The current state is identifiable with assistive technology. Changes preserve the title and content, never duplicate the note, and persist after reload.
+        Clicking "Pin" moves that regular active note into Pinned notes exactly once and changes its pin action to "Unpin" to indicate that it is pinned. Unpin moves it back to Other notes and restores Pin to indicate that it is not pinned. In Note editor, "Pin note" toggles the pin state so closing the editor creates the note with the chosen pin state. These transitions preserve content, never duplicate the note, and survive reload.
+
+        Note actions revealed on hover remain keyboard-accessible. Users can identify the note actions and fields, including with assistive technology. Note actions are scoped to the note identified by its visible title.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
+
+        Notes and their mutable action states are produced by the described note interactions.
       image:
       - id: IMG-PIN-BUTTON
         reference: reference/pin_button.png
@@ -431,12 +486,10 @@ children:
       name: Pin an existing note
       steps:
       - id: STEP-REQ-2.9-01-01
-        Given: |-
-          Create a regular unpinned note.
-        When: |-
-          Select Pin for that note and reload.
-        Then: |-
-          It appears once only in Pinned notes, keeps its title and content, and offers Unpin.
+        Given: Notes contains Meeting agenda 2.8.1 with Discuss the launch as a regular unpinned note.
+        When: Hover it, click Pin, reload, and inspect its section and pin action.
+        Then: The same note and content appear exactly once in Pinned notes and not Other notes. Unpin identifies that
+          the note is pinned.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-PIN-BUTTON)
@@ -444,12 +497,10 @@ children:
       name: Unpin an existing note
       steps:
       - id: STEP-REQ-2.9-02-01
-        Given: |-
-          Create a note with Pin note selected in the editor.
-        When: |-
-          Select Unpin for that note and reload.
-        Then: |-
-          It appears once only in Other notes, keeps its title and content, and offers Pin.
+        Given: Create Meeting agenda 2.8.2 with Keep meeting content through Note editor with Pin note selected.
+        When: Hover the saved pinned note, click Unpin, reload, and inspect its section and action.
+        Then: The note appears exactly once only in Other notes with unchanged content; Pin identifies that the note
+          is not pinned.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-PIN-BUTTON)
@@ -457,12 +508,10 @@ children:
       name: Create a pinned note
       steps:
       - id: STEP-REQ-2.9-03-01
-        Given: |-
-          Notes is ready for a new note.
-        When: |-
-          Enter a title and content, choose Pin note and Close, then reload.
-        Then: |-
-          The note appears once only in Pinned notes with its title and content and offers Unpin.
+        Given: Notes is open and the Pinned at creation title is unused.
+        When: Open Note editor, enter that title and Pinned creation content, click Pin note, click Close, and reload.
+        Then: The note and content persist exactly once only in Pinned notes, and its Unpin action identifies that it
+          is pinned.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-PIN-BUTTON)
@@ -471,14 +520,20 @@ children:
   name: Organize with labels
   description:
     text: |-
-      Users create their own labels with Edit Labels and organize active notes with those labels or the built-in Reminders label.
+      User-created labels and the default Reminders label organize active notes.
+
+      User labels are created through Edit Labels.
   scenarios: []
   children:
   - id: REQ-3.1
     name: Create user labels
     description:
       text: |-
-        In Edit Labels, users enter a chosen nonempty name in New label and select Create label. The new label appears in exactly one editable entry and exactly once in the sidebar as a filter. Done closes management. The label persists after reload. Empty-name and duplicate-name behavior are unspecified.
+        Clicking "Edit Labels" opens "Edit Labels". Users enter a nonempty name in "New label" and click "Create label", adding that label exactly once to management and the sidebar. Its editable name appears in "Label name", and the sidebar exposes "{label}" for filtering. "Done" closes management, and the created label persists after reload. Empty-name and duplicate-name validation are unspecified.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
+
+        User labels are created through Edit Labels, while the default Reminders label already exists.
       image:
       - id: IMG-MANAGE-LABELS
         reference: reference/manage_labels.png
@@ -489,11 +544,11 @@ children:
       steps:
       - id: STEP-REQ-3.1-01-01
         Given: |-
-          Notes is open and a new nonempty label name has been chosen.
-        When: |-
-          Open Edit Labels, enter the name in New label, choose Create label and Done, then reload and reopen Edit Labels.
-        Then: |-
-          The same name appears once in the sidebar and in one editable entry. Done closes management.
+          Notes is open with the default Reminders label; the New user label name does not exist.
+        When: Click Edit Labels, enter the name in New label, click Create label and Done; reload, reopen Edit Labels
+          and inspect Label name.
+        Then: Sidebar exposes exactly one visible action with the new label name, and management exposes exactly one
+          Label name field containing that name. Done closes management.
         references:
         - \ref[requirement](REQ-1.1)
         - \ref[image](IMG-MANAGE-LABELS)
@@ -502,7 +557,11 @@ children:
     name: Filter Notes through sidebar labels
     description:
       text: |-
-        Selecting a sidebar label shows only active notes assigned that label, each exactly once. The selected destination is identifiable visually and with assistive technology. Notes clears the filter. Reminders, identified by its own icon, filters notes like other labels.
+        Clicking "{label}" within "Sidebar" displays only active notes assigned that label, each exactly once, and makes the selected navigation action identifiable. "Notes" clears the label filter and restores the complete active list. The always-present "Reminders", with its own icon, filters by the default label in the same way. Both sidebar actions and labels on notes are identified by business identity rather than position.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
+
+        User labels are created through Edit Labels, while the default Reminders label already exists.
       image:
       - id: IMG-SIDEBAR
         reference: reference/sidebar.png
@@ -512,12 +571,11 @@ children:
       name: Filter by a user label
       steps:
       - id: STEP-REQ-3.2-01-01
-        Given: |-
-          Create a label and two distinct notes. Assign the label to one and leave the other unlabeled.
-        When: |-
-          Select the new label from the sidebar.
-        Then: |-
-          The labeled note appears once with its saved content, the unlabeled note is hidden, and the label is identifiable as selected.
+        Given: Create Work and two notes through UI, Design review with Work design decisions assigned Work and
+          unlabeled Movie list with An unlabeled movie note.
+        When: Select the Work button in Sidebar.
+        Then: Exactly one Design review note displays its saved content; Movie list is hidden and the selected Work
+          action is identifiable as selected.
         references:
         - \ref[requirement](REQ-2.8)
         - \ref[requirement](REQ-3.1)
@@ -526,12 +584,10 @@ children:
       name: Return to the complete notes list
       steps:
       - id: STEP-REQ-3.2-02-01
-        Given: |-
-          Create two notes with different content, assign a new label to one, and select that label so the other note is hidden.
-        When: |-
-          Select Notes from the sidebar.
-        Then: |-
-          Both notes return once each with their saved content and Notes is identifiable as selected.
+        Given: Create Work, Design review with Design details assigned Work, and Movie list with Movie details. Select
+          Work and verify Movie list is hidden.
+        When: Click Notes in Sidebar.
+        Then: Both notes reappear exactly once with their saved contents, and Notes is identifiable as selected.
         references:
         - \ref[requirement](REQ-2.8)
         - \ref[requirement](REQ-3.1)
@@ -541,11 +597,10 @@ children:
       steps:
       - id: STEP-REQ-3.2-03-01
         Given: |-
-          Create two notes and assign Reminders to one but not the other.
-        When: |-
-          Select Reminders from the sidebar.
-        Then: |-
-          The note with Reminders appears once with its content, the unlabeled note is hidden, and Reminders is identifiable as selected.
+          Create Call dentist existing with Dentist details assigned Reminders and unlabeled Movie list with Movie details through the editor.
+        When: Click Reminders in Sidebar.
+        Then: The reminder note appears exactly once with Dentist details, Movie list is hidden, and Reminders is
+          identifiable as selected.
         references:
         - \ref[requirement](REQ-2.8)
         - \ref[image](IMG-SIDEBAR)
@@ -554,7 +609,11 @@ children:
     name: Rename and delete user labels
     description:
       text: |-
-        In Edit Labels, users can rename a label by editing its current name and selecting its Save label action, or remove it with its Delete label action. Renaming updates the sidebar and assigned notes without losing membership. Deleting removes the label but preserves its notes and their content. Done closes management and changes persist after reload. Modifying Reminders is unspecified.
+        Clicking "Edit Labels" opens "Edit Labels", where each user label is identified by its business name. Users change "Label name" and click "Save label". Rename updates the sidebar's "{label}" and labels on notes without losing membership. Clicking "Delete label" removes the label from the sidebar and assigned notes while preserving their content. "Done" closes management; renames and deletions persist after reload. Modifying Reminders is outside scope.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
+
+        User labels are created through Edit Labels, while the default Reminders label already exists.
       image:
       - id: IMG-MANAGE-LABELS
         reference: reference/manage_labels.png
@@ -564,12 +623,12 @@ children:
       name: Rename a label and retain membership
       steps:
       - id: STEP-REQ-3.3-01-01
-        Given: |-
-          Create a label and assign it to a note with its own title and content.
-        When: |-
-          Open Edit Labels, change that label's name, select its Save label action and Done, then reload and select the renamed label.
-        Then: |-
-          The sidebar and note show the new label, not the old one. Filtering by the new name still finds the same note and content.
+        Given: Create Work editable and a Label rename control note with Retain label membership assigned to it through
+          UI.
+        When: Open Edit Labels, replace Label name with Work renamed, click Save label and Done; reload and select the
+          renamed sidebar label.
+        Then: Sidebar contains the renamed label once and no original label. The note displays the new label without
+          the old one, and filtering by the new name still finds the same note and content.
         references:
         - \ref[requirement](REQ-2.8)
         - \ref[image](IMG-MANAGE-LABELS)
@@ -577,12 +636,10 @@ children:
       name: Delete a label without deleting its note
       steps:
       - id: STEP-REQ-3.3-02-01
-        Given: |-
-          Create a label and assign it to a note with its own title and content.
-        When: |-
-          Delete that label through Edit Labels, select Done, and reload.
-        Then: |-
-          The sidebar and note no longer show the label. The note remains once with its original title and content.
+        Given: Create Disposable label and Label delete control with Keep this labeled note assigned to that label.
+        When: Open Edit Labels, click Delete label, click Done, and reload.
+        Then: The deleted label is absent from Sidebar and the note, while the note remains exactly once with unchanged
+          title and Keep this labeled note.
         references:
         - \ref[requirement](REQ-2.8)
         - \ref[image](IMG-MANAGE-LABELS)
@@ -590,15 +647,18 @@ children:
 - id: REQ-4
   name: Find personal notes
   description:
-    text: |-
-      Users find active notes by keyword or suggested label and can return to the complete active list.
+    text: Search results follow keyword and suggested-filter criteria.
   scenarios: []
   children:
   - id: REQ-4.1
     name: Search keywords and suggested filters
     description:
       text: |-
-        Search finds active notes whose title or content includes the entered keyword, ignoring case. Every matching fragment is visibly highlighted without highlighting the surrounding text. For example, st matches Study schedule and Read a story. Focusing Search shows Suggested filters; selecting Reminders shows notes with that label. Clearing Search and choosing Notes restores all active notes.
+        Entering a keyword in "Search" filters active notes by case-insensitive title or content matches. Each matching fragment is visibly distinguished from surrounding text within its note, and the highlighting covers only the matching text. Searching st includes Study schedule by title and a separate note containing st only in its content, while excluding notes with neither match. Focusing Search displays "Suggested filters"; choosing "Reminders" there filters active notes by the default label. Clearing Search and selecting Notes restores the full active list.
+
+        The current search follows Search input or the Suggested filters selection.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
       image:
       - id: IMG-SEARCH-SUGGESTED-FILTERS
         reference: reference/search_suggested_filters.png
@@ -608,12 +668,12 @@ children:
       name: Search title and content with highlights
       steps:
       - id: STEP-REQ-4.1-01-01
-        Given: |-
-          Create three notes: one with the keyword only in its title, one with it only in its content, and one with it in neither. The matching text may differ in capitalization.
-        When: |-
-          Enter the keyword, inspect matching notes, clear Search, and select Notes.
-        Then: |-
-          Both matching notes appear once, the other is hidden, and only the matching fragments are highlighted, ignoring case. All three notes return with unchanged content after clearing.
+        Given: Through UI create Study schedule with Math on Monday, Reading plan with Read a story, and Ocean memo
+          with Calm blue waves.
+        When: Enter st in Search; inspect the highlighted text in each matching note. Clear Search and click Notes.
+        Then: Study schedule and Reading plan appear once while Ocean memo is hidden; each match has a visible
+          highlight on only the matching st, case-insensitively. Clearing restores all three notes with their
+          contents.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-SEARCH-SUGGESTED-FILTERS)
@@ -622,11 +682,10 @@ children:
       steps:
       - id: STEP-REQ-4.1-02-01
         Given: |-
-          Create two notes and assign Reminders to only one.
-        When: |-
-          Focus Search, select Reminders from Suggested filters, then clear Search and select Notes.
-        Then: |-
-          Suggested filters appears on focus. Its Reminders choice shows only the labeled note. Clearing restores both once with their saved content.
+          Create Call dentist existing with Reminder content assigned Reminders and unlabeled Movie list with Unlabeled content.
+        When: Focus Search, click Reminders within Suggested filters, then clear Search and select Notes.
+        Then: Suggested filters is visible on focus; its Reminders choice includes only the reminder note. Clearing
+          restores both notes exactly once with their saved contents.
         references:
         - \ref[requirement](REQ-2.8)
         - \ref[image](IMG-SEARCH-SUGGESTED-FILTERS)
@@ -634,15 +693,18 @@ children:
 - id: REQ-5
   name: Configure the workspace
   description:
-    text: |-
-      Users can save or discard workspace settings and change how their notes are arranged.
+    text: Settings and note layouts are user observable configuration behaviors.
   scenarios: []
   children:
   - id: REQ-5.1
     name: Open and save or cancel application settings
     description:
       text: |-
-        Settings menu offers Settings, where Add new items to the bottom and Move checked items to bottom expose their selected states. Save applies the choices and closes settings. Cancel closes without applying pending changes. Reopening shows saved choices, including after reload. Initial values and additional checklist behavior are unspecified.
+        Clicking "Settings menu" opens a menu; choosing "Settings" opens "Settings". Users configure "Add new items to the bottom" and "Move checked items to bottom", then click "Save" to commit the options and close, or "Cancel" to close without applying pending changes. Reopening reflects saved selections and discards canceled edits, and saved selections survive reload. Additional checklist or list-item behavior is unspecified.
+
+        Saved setting selections are produced through Settings and Save. Initial setting values are not fixed by the requirements.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
       image:
       - id: IMG-SETTINGS-DROPDOWN
         reference: reference/settings_dropdown.png
@@ -655,12 +717,12 @@ children:
       name: Save settings and discard canceled changes
       steps:
       - id: STEP-REQ-5.1-01-01
-        Given: |-
-          Open Settings and note the current Add new items to the bottom setting. Move checked items to bottom, Save, and Cancel are available.
-        When: |-
-          Change the first setting and select Save. Reload, reopen Settings, change it back but select Cancel, then reopen Settings.
-        Then: |-
-          Save and Cancel close settings. The saved choice persists after reload and the canceled change is not applied.
+        Given: Notes is open. Open Settings menu, choose Settings and record the current Add new items to the bottom
+          checkbox value; Move checked items to bottom, Save and Cancel are available.
+        When: Toggle Add new items to the bottom to the opposite value and click Save. Reload and reopen Settings,
+          toggle it back but click Cancel, then reopen once more.
+        Then: Save closes the dialog and the saved value survives reload. Cancel closes the dialog without committing
+          its pending toggle; reopening still shows the previously saved value.
         references:
         - \ref[requirement](REQ-1.1)
         - \ref[image](IMG-SETTINGS-DROPDOWN)
@@ -670,7 +732,9 @@ children:
     name: Switch between default grid and list layouts
     description:
       text: |-
-        Notes starts in grid view. List view presents the same notes in a single nonoverlapping column and offers Grid view to switch back. Grid view restores multiple columns when the desktop has enough room. Users can identify the current layout with assistive technology. Both layouts preserve each note's title, content, and occurrence count.
+        A fresh workspace displays a grid in "Notes" and makes Grid view identifiable, including with assistive technology. Clicking "List view" changes the same notes to a single-column list, makes List view identifiable, and offers "Grid view". Grid view restores the grid and List view action. At a desktop width, populated grid cards occupy multiple columns while list surfaces align in one column; switching preserves titles, content, and note count. Appearance follows the visual references.
+
+        This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.
       image:
       - id: IMG-HOME-PAGE
         reference: reference/home_page.png
@@ -683,12 +747,12 @@ children:
       name: Switch grid to list and back
       steps:
       - id: STEP-REQ-5.2-01-01
-        Given: |-
-          Notes starts in grid view on a desktop wide enough for multiple columns. Create three notes with distinct titles and saved content.
-        When: |-
-          Choose List view, inspect the notes, then choose Grid view and inspect them again.
-        Then: |-
-          List view shows one nonoverlapping column and offers Grid view. Grid view restores multiple columns and offers List view. Both show the current layout and retain one unchanged copy of each note.
+        Given: At a desktop width, Notes starts in Grid view with the List view action available. Create View alpha,
+          View beta and View gamma notes, each with Layout content.
+        When: Click List view and inspect the three note surfaces, then click Grid view and inspect them again.
+        Then: List mode reports List view, offers Grid view, and aligns nonoverlapping notes in one column; grid
+          mode reports Grid view, offers List view and arranges populated cards across multiple columns. Both modes
+          retain exactly one of each note and its content without prescribing exact pixel widths.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[image](IMG-HOME-PAGE)

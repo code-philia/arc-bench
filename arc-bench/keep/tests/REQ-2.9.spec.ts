@@ -1,5 +1,5 @@
 // requirement: REQ-2.9
-import { test, expect, action, note, section, openHome, createNote, expectNote, noteAction } from './helpers';
+import { test, expect, note, section, openHome, createNote, expectNote, noteAction, expectPinAction } from './helpers';
 import { noteInput } from './fixtures/data';
 
 test('REQ-2.9: Pin an existing note', async ({ page }) => {
@@ -14,7 +14,7 @@ test('REQ-2.9: Pin an existing note', async ({ page }) => {
   await expect(note(section(page, 'Pinned notes'), title)).toHaveCount(1);
   await expect(note(section(page, 'Other notes'), title)).toHaveCount(0);
   await note(page, title).hover();
-  await expect(noteAction(page, title, 'Unpin')).toHaveAttribute('aria-pressed', 'true');
+  await expectPinAction(page, title, true);
 });
 
 test('REQ-2.9: Unpin an existing note', async ({ page }) => {
@@ -29,7 +29,7 @@ test('REQ-2.9: Unpin an existing note', async ({ page }) => {
   await expect(note(section(page, 'Pinned notes'), title)).toHaveCount(0);
   await expect(note(section(page, 'Other notes'), title)).toHaveCount(1);
   await note(page, title).hover();
-  await expect(noteAction(page, title, 'Pin')).toHaveAttribute('aria-pressed', 'false');
+  await expectPinAction(page, title, false);
 });
 
 test('REQ-2.9: Create a pinned note', async ({ page }) => {
@@ -42,5 +42,5 @@ test('REQ-2.9: Create a pinned note', async ({ page }) => {
   await expect(note(section(page, 'Pinned notes'), title)).toHaveCount(1);
   await expect(note(section(page, 'Other notes'), title)).toHaveCount(0);
   await note(page, title).hover();
-  await expect(noteAction(page, title, 'Unpin')).toHaveAttribute('aria-pressed', 'true');
+  await expectPinAction(page, title, true);
 });

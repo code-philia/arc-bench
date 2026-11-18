@@ -1,6 +1,6 @@
 // requirement: REQ-5.1
 import { test, expect } from '@playwright/test';
-import { home, action, region, cartSetup, loginCustomer, createAddress, addressesStep, choice, STEP } from './helpers';
+import { home, action, region, cartSetup, loginExisting, createAddress, addressesStep, choice, STEP } from './helpers';
 import { addressInput } from './fixtures/data';
 
 test("REQ-5.1: Start anonymous checkout", async ({ page }) => {
@@ -13,7 +13,7 @@ test("REQ-5.1: Start anonymous checkout", async ({ page }) => {
 
 test("REQ-5.1: Inspect signed-in customer", async ({ page }) => {
   await home(page);
-  const customer = await loginCustomer(page);
+  const customer = await loginExisting(page, 'checkout_user');
   const address = addressInput(customer);
   await createAddress(page, address);
   await cartSetup(page, STEP);

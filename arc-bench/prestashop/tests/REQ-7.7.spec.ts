@@ -5,7 +5,7 @@ import { wishlistInput } from './fixtures/data';
 
 test("REQ-7.7: Inspect seeded wishlist and products", async ({ page }) => {
   await home(page);
-  await wishlistPage(page, 'wishlistView');
+  await wishlistPage(page, 'wishlist_view_user');
   await expect(wishlist(page, 'Favorites')).toBeVisible();
   await wishlistOpening(page, 'Favorites').click();
   const product = wishlistProduct(page);
@@ -16,7 +16,7 @@ test("REQ-7.7: Inspect seeded wishlist and products", async ({ page }) => {
 
 test("REQ-7.7: Create Holiday Picks wishlist", async ({ page }) => {
   await home(page);
-  await wishlistPage(page);
+  await wishlistPage(page, 'wishlist_create_user');
   const name = wishlistInput();
   await createWishlist(page, name);
   const record = wishlist(page, name);
