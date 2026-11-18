@@ -4,7 +4,7 @@ description:
   text: |-
     A knowledge base for organizing and reading shelves, books, chapters, and pages.
 
-    Session and personal dashboard state reflect login, viewed content, favorites, and saved pages or drafts.
+    Session state and personal dashboard content reflect authentication status, browsing history, favorites, and saved pages or drafts.
 
     The application provides an Admin account with email "admin@example.com" and password "password". Account creation is outside scope.
     For example, users can create a shelf named "Documentation" with the description "Guides for maintaining shared documentation.", no tags, and no books. This example is not required initial content; users can create their first shelf when the shelf list is empty.
@@ -70,7 +70,7 @@ children:
   name: Account access
   description:
     text: |-
-      A preverified account can log in; account verification is outside scope. Content browsing and the content operations described below remain available while logged out; drafts and personal lists require login.
+      An existing verified account can log in; account verification is outside scope. Content browsing and the content operations described below remain available while logged out; drafts and personal lists require login.
 
   scenarios: []
   children:
@@ -184,7 +184,7 @@ children:
     name: Browse shelves
     description:
       text: |-
-        Activating "Shelves" on the page displays the shelf list. Each shelf appears exactly once as a keyboard-accessible opening entry identifiable by its business name. The list reflects the current shelves in the knowledge base.
+        Activating "Shelves" on the page displays the shelf list. Each shelf appears exactly once, can be identified by its shelf name, and can be opened using the keyboard. The list reflects the current shelves in the knowledge base.
       image:
       - id: IMG-INDEX
         reference: reference/index.png
@@ -282,6 +282,48 @@ children:
         - \ref[image](IMG-SHELF)
         - \ref[image](IMG-CREATE-SHELF)
     children: []
+  - id: REQ-4.4
+    name: Delete or retain shelf
+    description:
+      text: Choosing "Delete Shelf" on a selected shelf opens confirmation for that shelf. "Confirm Delete"
+        removes that shelf and returns to Shelves, where its entry is absent from the shelf list; the
+        deletion remains effective across navigation. "Cancel" keeps the shelf and preserves its original
+        heading and description.
+      image:
+      - id: IMG-DELETE-SHELVES
+        reference: reference/delete_shelves.png
+        page: shelf
+      - id: IMG-SHELVES
+        reference: reference/shelves.png
+        page: shelves
+    scenarios:
+    - id: SCN-REQ-4.4-01
+      name: Confirm deletion
+      steps:
+      - id: STEP-REQ-4.4-01-01
+        Given: |-
+          An anonymous visitor has created "Shelf 4.4.1" through New Shelf, with description "Guides for maintaining shared documentation.", and is viewing that shelf's details.
+        When: Choose Delete Shelf, inspect confirmation with Confirm Delete and Cancel, then click Confirm Delete; reopen
+          Shelves after reload.
+        Then: Shelves list returns and contains no entry for the deleted shelf before or after reload.
+        references:
+        - \ref[requirement](REQ-4.2)
+        - \ref[image](IMG-DELETE-SHELVES)
+        - \ref[image](IMG-SHELVES)
+    - id: SCN-REQ-4.4-02
+      name: Cancel deletion
+      steps:
+      - id: STEP-REQ-4.4-02-01
+        Given: |-
+          An anonymous visitor has created "Shelf 4.4.2" through New Shelf, with description "Guides for maintaining shared documentation.", and is viewing that shelf's details.
+        When: Choose Delete Shelf and then Cancel in the confirmation.
+        Then: |-
+          The same shelf details remain, with the original heading and description "Guides for maintaining shared documentation."; the shelf is not deleted.
+        references:
+        - \ref[requirement](REQ-4.2)
+        - \ref[image](IMG-DELETE-SHELVES)
+        - \ref[image](IMG-SHELVES)
+    children: []
   - id: REQ-4.5
     name: Edit or abandon shelf metadata
     description:
@@ -326,48 +368,6 @@ children:
         - \ref[image](IMG-SHELF)
         - \ref[image](IMG-EDIT-SHELVE)
     children: []
-  - id: REQ-4.4
-    name: Delete or retain shelf
-    description:
-      text: Choosing "Delete Shelf" on a selected shelf opens confirmation for that shelf. "Confirm Delete"
-        removes that shelf and returns to Shelves, where its entry is absent from the shelf list; the
-        deletion remains effective across navigation. "Cancel" keeps the shelf and preserves its original
-        heading and description.
-      image:
-      - id: IMG-DELETE-SHELVES
-        reference: reference/delete_shelves.png
-        page: shelf
-      - id: IMG-SHELVES
-        reference: reference/shelves.png
-        page: shelves
-    scenarios:
-    - id: SCN-REQ-4.4-01
-      name: Confirm deletion
-      steps:
-      - id: STEP-REQ-4.4-01-01
-        Given: |-
-          An anonymous visitor has created "Shelf 4.4.1" through New Shelf, with description "Guides for maintaining shared documentation.", and is viewing that shelf's details.
-        When: Choose Delete Shelf, inspect confirmation with Confirm Delete and Cancel, then click Confirm Delete; reopen
-          Shelves after reload.
-        Then: Shelves list returns and contains no entry for the deleted shelf before or after reload.
-        references:
-        - \ref[requirement](REQ-4.2)
-        - \ref[image](IMG-DELETE-SHELVES)
-        - \ref[image](IMG-SHELVES)
-    - id: SCN-REQ-4.4-02
-      name: Cancel deletion
-      steps:
-      - id: STEP-REQ-4.4-02-01
-        Given: |-
-          An anonymous visitor has created "Shelf 4.4.2" through New Shelf, with description "Guides for maintaining shared documentation.", and is viewing that shelf's details.
-        When: Choose Delete Shelf and then Cancel in the confirmation.
-        Then: |-
-          The same shelf details remain, with the original heading and description "Guides for maintaining shared documentation."; the shelf is not deleted.
-        references:
-        - \ref[requirement](REQ-4.2)
-        - \ref[image](IMG-DELETE-SHELVES)
-        - \ref[image](IMG-SHELVES)
-    children: []
 - id: REQ-5
   name: Manage books
   description:
@@ -385,7 +385,7 @@ children:
     name: Browse books
     description:
       text: |-
-        Clicking "Books" on the page displays the book list. Each book appears exactly once as a keyboard-accessible opening entry identifiable by its business name. The list reflects the current books in the knowledge base.
+        Clicking "Books" on the page displays the book list. Each book appears exactly once, can be identified by its book name, and can be opened using the keyboard. The list reflects the current books in the knowledge base.
       image:
       - id: IMG-INDEX
         reference: reference/index.png
@@ -442,9 +442,8 @@ children:
       steps:
       - id: STEP-REQ-5.2-02-01
         Given: |-
-          An anonymous visitor has created "Shelf 5.2.2" through New Shelf and "Book 5.2.2" through that shelf's New Book action, with description "Manuals for day-to-day operations.". The book belongs to that shelf.
-        When: Follow the containing shelf's named parent entry, then choose the book from that shelf's
-          Book list.
+          An anonymous visitor has created "Shelf 5.2.2" through New Shelf and "Book 5.2.2" through that shelf's New Book action, with description "Manuals for day-to-day operations." The book belongs to that shelf, and its details are open.
+        When: From the book's details, select the navigation entry bearing its containing shelf's name, then select the created book from that shelf's Book list.
         Then: The selected book detail heading matches its name and the shelf-created description is visible, preserving
           the parent association.
         references:

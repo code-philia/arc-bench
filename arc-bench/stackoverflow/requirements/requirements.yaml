@@ -109,7 +109,7 @@ children:
         When: Open Questions, enter the published question’s exact title in banner Search, press Enter and choose that
           same title from Search results.
         Then: The public heading, question content body and node.js/http/retry tags are readable without a login form;
-          existing Answers remains readable and the banner still offers Log in and Sign up.
+          existing answers remain readable and the banner still offers Log in and Sign up.
         references:
         - \ref[requirement](REQ-1.1)
         - \ref[image](IMG-HOMEPAGE)
@@ -296,7 +296,7 @@ children:
         Given: |-
           Bob registers an account, sets his display name through Edit profile, and signs in through Log in.
         When: Click Bob to open the personal profile and inspect its summary and navigation.
-        Then: Profile navigation offers Activity, Activity navigation marks Summary the current section, numeric
+        Then: Profile navigation offers Activity; Activity navigation marks Summary as the current section. Numeric
           Reputation is visible, and Badges and Recent activity are visible sections.
         references:
         - \ref[requirement](REQ-2.1)
@@ -810,7 +810,7 @@ children:
       - id: STEP-REQ-4.2-01-01
         Given: |-
           A registered question author publishes a question, and a second member posts an answer through Post Your Answer. A third member signs in without an active vote, opens the question and records the question score and answer author reputation. The answer starts at score 0.
-        When: Click Up vote inside Alice’s answer, then click the same action again.
+        When: Click Up vote on the second member's answer, then click the same action again.
         Then: First activation makes answer Score 1, an active vote and author reputation 10 points higher than before; second restores
           Score 0, an inactive vote and the recorded author reputation. The parent question's recorded Score is unchanged at both
           stages.
@@ -880,7 +880,7 @@ children:
         - \ref[image](IMG-QUESTION-PAGE)
     children: []
   - id: REQ-4.5
-    name: Revise an own answer
+    name: Revise your own answer
     description:
       text: |-
         An answer owner clicks "Edit answer" to open prefilled "Body" and "Edit Summary". "Save edits" updates visible content, adds a revision available through "Timeline" in "Revision history", and shows edited metadata even if the submitted body is unchanged. An empty body shows Body cannot be empty and retains the editor and original answer. "Cancel" discards pending changes.
@@ -1001,7 +1001,7 @@ children:
         - \ref[image](IMG-QUESTION-PAGE)
     children: []
   - id: REQ-4.9
-    name: Protect another author answer from deletion
+    name: Protect another author's answer from deletion
     description:
       text: |-
         An ordinary member who does not own an answer cannot use Delete answer on it. The selected unaccepted answer remains readable under its original author and Answer count is unchanged.
@@ -1066,7 +1066,7 @@ children:
     name: Open a question comment thread
     description:
       text: |-
-        Visitors can open a public question and read its comment thread, including the Add a comment entry.
+        Visitors can open a public question, read its comment thread and see the Add a comment entry without signing in. Posting a comment requires signing in, as described in REQ-5.2.
       image:
       - id: IMG-ADD-COMMENT
         reference: reference/add-comment.jpeg
@@ -1079,7 +1079,7 @@ children:
         Given: |-
           Alice registers and publishes a question with its comment thread. A separate visitor opens the public community without a session.
         When: Open the question through public navigation and search.
-        Then: question content exposes its Comments region and Add a comment.
+        Then: The question content exposes its Comments region and Add a comment.
         references:
         - \ref[requirement](REQ-3.2)
         - \ref[image](IMG-ADD-COMMENT)
@@ -1162,7 +1162,7 @@ children:
         - \ref[image](IMG-QUESTION-PAGE)
     children: []
   - id: REQ-5.5
-    name: Delete an own comment immediately
+    name: Delete your own comment immediately
     description:
       text: |-
         A comment author can choose Delete comment on their own comment to remove it immediately without confirmation. The remaining post and other comments are preserved, and reload retains the deletion.
@@ -1342,11 +1342,11 @@ children:
       steps:
       - id: STEP-REQ-6.1-01-01
         Given: |-
-          The public tag catalog includes python, javascript, node.js, http and retry with their descriptions and current counts. Alice registers and publishes two python-tagged questions and a node.js question. Bob registers and answers one Python question.
+          The public tag catalog includes python, javascript, node.js, http and retry with their descriptions and current counts. Alice and Bob have registered separate accounts.
         When: |-
-          Compare the tag catalog with its values before publication, inspect popularity order and Next page, then select python. Then the author changes the answered question’s tag from python to javascript, saves it, and deletes the unanswered Python question; revisit Tags after each operation. Refresh Tags when reading changes made in another browser.
+          Record the tag descriptions and counts. Alice publishes two python-tagged questions and one node.js question, and Bob answers one of the Python questions. Reload Tags, compare the counts, inspect popularity order and Next page, then select python and inspect its question feed. Next, Alice changes the answered question's tag from python to javascript and saves it; reopen or reload Tags. Finally, Alice deletes the remaining unanswered Python question and revisits Tags.
         Then: |-
-          Python count increases by two and node.js by one; other observed tag counts and descriptions remain unchanged. Counts are descending by popularity. Python tag retains its description and Related tags; its feed includes both newly published Python titles, excludes the node.js question, and shows python in every summary. Retagging subtracts one from python and adds one to javascript without changing other tag counts. Deleting the remaining Python question subtracts one more from python; the unchanged tag descriptions remain attached to their tags.
+          After publication and before retagging, the python count is two higher and the node.js count is one higher than the recorded values; other observed tag counts are unchanged. Tags are ordered by descending question count. At this stage, Python tag retains its description and Related tags; its feed includes both newly published Python titles, excludes the node.js question, and shows python in every summary. After retagging, the python count decreases by one and the javascript count increases by one; other tag counts are unchanged. After deletion, the python count decreases by one more. Throughout these operations, the recorded descriptions remain attached to the same tags.
         references:
         - \ref[requirement](REQ-1.2)
         - \ref[image](IMG-TAGS-PAGE)
@@ -1371,7 +1371,7 @@ children:
       - id: STEP-REQ-6.2-01-01
         Given: |-
           A registered member who does not watch python signs in, opens Tags and chooses python.
-        When: Click Watch tag, navigate to Questions and reload, open Questions and reopen python through Watched tags, then click
+        When: Click Watch tag, navigate to Questions and reload, reopen python through Watched tags, then click
           Unwatch tag and return to Questions.
         Then: Watch tag changes to Unwatch tag and the personal Watched tags list retains python after reload. Unwatch
           restores Watch tag and removes python from that list.
@@ -1569,8 +1569,8 @@ children:
       steps:
       - id: STEP-REQ-7.1-01-01
         Given: |-
-          Alice, Bob and another member register accounts. Alice publishes a question and answers Bob’s question. Another member first upvotes Alice’s question and then her answer, producing +10 for each contribution reputation contributions.
-        When: Open the own profile and click Reputation in Profile navigation.
+          Alice, Bob and another member register accounts. Alice publishes a question and answers Bob’s question. Another member first upvotes Alice’s question and then her answer, resulting in two +10 reputation contributions.
+        When: Alice opens her own profile and clicks Reputation in Profile navigation.
         Then: |-
           Reputation history shows answer upvoted +10 and question upvoted +10 with links to the two actual parent questions. The later answer contribution precedes the question contribution.
         references:
@@ -1603,7 +1603,7 @@ children:
     name: Explore badge catalog
     description:
       text: |-
-        Clicking "Badges" displays "Badge catalog", grouped into "Gold", "Silver", and "Bronze". Entries include Great Answer and Teacher with the stated descriptions and a numeric earned count for each badge. Great Answer (Gold) says "Recognizes a great answer" with earn count 2, Good Answer (Silver) says "Recognizes a good answer" with earn count 3, and Teacher (Bronze) says "Recognizes a helpful first answer" with earn count 5.
+        Clicking "Badges" displays "Badge catalog", grouped into "Gold", "Silver", and "Bronze". Entries include Great Answer and Teacher with the stated descriptions and a numeric earned count for each badge. Great Answer (Gold) says "Recognizes a great answer" with an earned count of 2, Good Answer (Silver) says "Recognizes a good answer" with an earned count of 3, and Teacher (Bronze) says "Recognizes a helpful first answer" with an earned count of 5.
       image:
       - id: IMG-PROFILE-PAGE
         reference: reference/profile-page.jpeg
@@ -1614,7 +1614,7 @@ children:
       steps:
       - id: STEP-REQ-7.3-01-01
         Given: |-
-          The public community contains badge catalog and earned event with Great Answer, Good Answer and Teacher catalog entries and existing earn counts 2, 3 and 5.
+          The public badge catalog contains Great Answer, Good Answer and Teacher, with existing earned counts of 2, 3 and 5 respectively.
         When: Click Badges and inspect Badge catalog and its Gold, Silver and Bronze groups.
         Then: |-
           Gold shows Great Answer with Recognizes a great answer and earned count 2; Silver shows Good Answer with Recognizes a good answer and count 3; Bronze shows Teacher with Recognizes a helpful first answer and count 5. Each name, description and count belong to that same badge entry.
@@ -1638,8 +1638,8 @@ children:
       - id: STEP-REQ-7.4-01-01
         Given: |-
           Alice and other members register accounts. Alice publishes a question that receives an answer and one upvote. She answers Bob’s React-state question with an explanation beginning Batch state updates safely.; Bob accepts her answer.
-        When: Open the own profile and Activity, inspect all sidebar categories, choose Answers and inspect
-          sorting/pagination and answer content, then choose Questions.
+        When: Alice opens her own profile and Activity, inspects all sidebar categories, chooses Answers and inspects
+          sorting/pagination and answer content, then chooses Questions.
         Then: The selected category reports its current state. Answers shows its sorting/pagination controls, Alice’s
           actual React parent, excerpt and accepted status. Questions shows Alice’s published question with
           Score 1 and Answer count 1. View count is a nonnegative integer and does not decrease after reload.
@@ -1651,8 +1651,8 @@ children:
       steps:
       - id: STEP-REQ-7.4-02-01
         Given: |-
-          Alice and other members register accounts and publish her question and her answer under Bob’s question. Other members comment separately on Alice’s question and answer; another comment is posted on Bob’s question itself. A member upvotes Alice’s question and answer, and Alice upvotes Bob’s question.
-        When: Open own Activity and Responses, then choose Votes and Reputation from Activity navigation.
+          Alice, Bob and other members register accounts. Alice publishes a question and posts an answer to Bob’s question. Other members comment separately on Alice’s question and answer; another comment is posted on Bob’s question itself. A member upvotes Alice’s question and answer, and Alice upvotes Bob’s question.
+        When: Alice opens her own Activity and Responses, then chooses Votes and Reputation from Activity navigation.
         Then: |-
           Responses shows both comments on Alice’s own content with their correct parent links and excludes the comment on Bob’s question. Votes shows Alice’s upvote with its actual parent only to her. Reputation shows answer/question upvote reasons with +10 for each upvote.
         references:
