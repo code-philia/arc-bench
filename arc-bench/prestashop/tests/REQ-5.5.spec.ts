@@ -1,6 +1,6 @@
 // requirement: REQ-5.5
 import { test, expect } from '@playwright/test';
-import { home, action, region, checkoutSetup, paymentStep, choice, setChoice, STEP } from './helpers';
+import { home, action, region, checkoutSetup, paymentStep, choice, setChoice, orderConfirmationHeading, STEP } from './helpers';
 
 test("REQ-5.5: Choose bank wire and read terms", async ({ page }) => {
   await home(page);
@@ -24,7 +24,7 @@ test("REQ-5.5: Require terms before completion", async ({ page }) => {
   await setChoice(terms, false);
   const place = action(payment, 'Place order');
   if (await place.isEnabled()) await place.click();
-  await expect(page.getByRole('heading', { name: 'Order confirmation', exact: true })).toHaveCount(0);
+  await expect(orderConfirmationHeading(page)).toHaveCount(0);
   await expect(payment).toBeVisible();
   await expect(terms).not.toBeChecked();
   await expect(region(page, 'Order summary')).toContainText(STEP);

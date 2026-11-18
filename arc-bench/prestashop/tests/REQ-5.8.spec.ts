@@ -1,6 +1,6 @@
 // requirement: REQ-5.8
 import { test, expect } from '@playwright/test';
-import { home, action, region, expectMoney, checkoutSetup, paymentStep, choice, STEP } from './helpers';
+import { home, action, region, expectMoney, checkoutSetup, paymentStep, choice, orderConfirmationHeading, STEP } from './helpers';
 
 test("REQ-5.8: Reopen completed shipping step", async ({ page }) => {
   await home(page);
@@ -14,5 +14,5 @@ test("REQ-5.8: Reopen completed shipping step", async ({ page }) => {
   const summary = region(page, 'Order summary');
   await expect(summary).toContainText(STEP);
   await expectMoney(region(summary, 'Total'), 31);
-  await expect(page.getByRole('heading', { name: 'Order confirmation', exact: true })).toHaveCount(0);
+  await expect(orderConfirmationHeading(page)).toHaveCount(0);
 });

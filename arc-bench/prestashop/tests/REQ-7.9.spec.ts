@@ -1,6 +1,6 @@
 // requirement: REQ-7.9
 import { test, expect } from '@playwright/test';
-import { home, nav, action, success, cartRow, wishlistPage, wishlistProduct, wishlistOpening, confirmDeletion, WISH_PRODUCT } from './helpers';
+import { home, signedInNav, action, success, cartRow, wishlistPage, wishlistProduct, wishlistOpening, confirmDeletion, WISH_PRODUCT } from './helpers';
 
 test("REQ-7.9: Remove Favorites product", async ({ page }) => {
   await home(page);
@@ -17,8 +17,9 @@ test("REQ-7.9: Add Favorites product to cart", async ({ page }) => {
   await wishlistPage(page, 'wishlist_cart_user');
   await wishlistOpening(page, 'Favorites').click();
   await action(wishlistProduct(page), 'Add to cart').click();
-  await expect(action(nav(page), 'Cart')).toContainText(/\b1\b/);
+  const cart = action(await signedInNav(page), 'Cart');
+  await expect(cart).toContainText(/\b1\b/);
   if (await success(page).isVisible()) await action(success(page), 'Continue shopping').click();
-  if (!(await cartRow(page, WISH_PRODUCT).isVisible())) await action(nav(page), 'Cart').click();
+  if (!(await cartRow(page, WISH_PRODUCT).isVisible())) await cart.click();
   await expect(cartRow(page, WISH_PRODUCT)).toBeVisible();
 });

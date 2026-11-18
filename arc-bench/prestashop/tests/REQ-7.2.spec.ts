@@ -1,6 +1,6 @@
 // requirement: REQ-7.2
 import { test, expect } from '@playwright/test';
-import { home, nav, action, region, loginExisting, loginEmail, account, field, inputForm, feedback } from './helpers';
+import { home, signedInNav, action, region, loginExisting, loginEmail, account, field, inputForm, feedback } from './helpers';
 import { customerInput } from './fixtures/data';
 
 test("REQ-7.2: Save email then password", async ({ page }) => {
@@ -21,7 +21,7 @@ test("REQ-7.2: Save email then password", async ({ page }) => {
   await field(form, 'New password').fill(next.password);
   await action(form, 'Save').click();
   await expect(saved).toBeVisible();
-  await action(nav(page), 'Sign out').click();
+  await action(await signedInNav(page), 'Sign out').click();
   await loginEmail(page, next.email, next.password);
-  await expect(nav(page)).toContainText(customer.firstName + ' ' + customer.lastName);
+  await expect(await signedInNav(page)).toContainText(customer.firstName + ' ' + customer.lastName);
 });

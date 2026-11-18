@@ -99,6 +99,38 @@ export function nav(page: Page) {
     .or(page.locator('nav, header').filter({ has: action(page, 'Logo') }).filter({ has: action(page, 'Cart') })));
 }
 
+function navigationSurfaces(page: Page) {
+  const body = 'main, article, aside, footer, dialog, [role="main"], [role="complementary"], [role="contentinfo"], [role="dialog"]';
+  const eligible = page.locator(`:not(:is(${body}), :is(${body}) *)`)
+    .filter({ hasNot: page.locator(body) });
+  const chrome = page.locator('header, nav, div, section, [role="banner"], [role="navigation"]').and(eligible);
+  const shopLogo = action(page, 'Logo').or(page.getByRole('link', { name: /^my\s*store$/i })
+    .and(page.locator('a[href="/"], a[href="./"]')));
+  const ordinary = visibleLeaves(chrome
+    .filter({ has: shopLogo }).filter({ has: field(page, 'Search').or(action(page, 'Menu')) })
+    .filter({ has: action(page, 'Cart') }).filter({ hasNot: region(page, 'Account overview') }));
+  const marked = page.getByRole('banner').or(page.getByRole('navigation', { name: 'Global navigation', exact: true }))
+    .and(eligible).filter({ hasNot: region(page, 'Account overview') }).filter({ visible: true });
+  const controls = ['My account', 'Sign out', 'Cart'];
+  const withControls = (scope: Locator) => controls.reduce((result, name) =>
+    result.filter({ has: action(page, name) }), scope);
+  return { controls, utility: visibleLeaves(withControls(chrome)), known: withControls(marked.or(ordinary)),
+    guestHeader: nav(page).or(ordinary).filter({ has: action(page, 'Sign in') }).filter({ visible: true }) };
+}
+
+export async function signedInNav(page: Page): Promise<Locator> {
+  const { controls, utility, known, guestHeader } = navigationSurfaces(page);
+  await expect(utility).toHaveCount(1);
+  await expect(guestHeader).toHaveCount(0);
+  // Count the controls across recognized header owners before using the inner utility group.
+  for (const name of controls) await expect(action(known.or(utility), name)).toHaveCount(1);
+  return utility;
+}
+
+export async function expectSignedOutNav(page: Page) {
+  await expect(navigationSurfaces(page).utility).toHaveCount(0);
+}
+
 export function record(scope: Scope, name: string, kind: 'product' | 'cart' | 'address' | 'wishlist' | 'order'): Locator {
   if ('page' in scope) return record(scope.page(), name, kind).and(scope.locator('*'));
   const named = { name, exact: true };
@@ -116,7 +148,69 @@ export function count(page: Page) {
   return visibleLeaves(page.getByRole('status', { name: 'Product count', exact: true })
     .or(page.getByText(/^Showing\s+\d+\s*[-\u2013]\s*\d+\s+of\s+\d+(?:\s+item\(s\)|\s+items?)?$/i, { exact: true })));
 }
-export function cartRow(page: Page, name: string) { return record(page, name, 'cart'); }
+const pageChrome = 'nav, aside, footer, [role="banner"], [role="navigation"], [role="complementary"], [role="contentinfo"]';
+function pageContent(page: Page) {
+  return page.locator(`:not(:is(${pageChrome}), :is(${pageChrome}) *)`);
+}
+
+const shoppingCartTitle = { name: /^Shopping cart$/i };
+export function cartHeading(page: Page) {
+  return page.getByRole('heading', shoppingCartTitle).and(pageContent(page)).filter({ visible: true });
+}
+function cartSurface(page: Page, content: Locator) {
+  const declared = page.getByRole('region', shoppingCartTitle).or(page.getByRole('main', shoppingCartTitle))
+    .and(pageContent(page));
+  const titled = visibleLeaves(page.locator('main, section, div, [role="main"]').and(pageContent(page))
+    .filter({ has: cartHeading(page) }).filter({ has: content }));
+  return declared.or(titled).filter({ visible: true });
+}
+export function cartRow(page: Page, name: string) {
+  const candidates = record(page, name, 'cart').and(pageContent(page));
+  const items = { name: 'Cart items', exact: true };
+  const collection = page.getByRole('list', items).or(page.getByRole('table', items)).and(pageContent(page));
+  return candidates.and(cartSurface(page, candidates).or(collection).locator('*'));
+}
+export function emptyCartMessage(page: Page) {
+  const sentence = /(?:(?:your )?(?:shopping )?cart is empty|(?:there are )?no (?:more )?items in your cart)/.source;
+  const wording = new RegExp('^' + sentence + '(?:[.!]\\s+' + sentence + ')?[.!]?$', 'i');
+  const message = page.getByText(wording)
+    .and(pageContent(page)).filter({ visible: true });
+  return message.and(cartSurface(page, message).locator('*'));
+}
+export function orderConfirmationHeading(page: Page) {
+  return page.getByRole('heading', { name: /^(?:Order confirmation|Your order is confirmed)$/i }).and(pageContent(page));
+}
+export async function expectProductDetails(page: Page) {
+  const panel = region(page, 'Product Details');
+  await expect(panel).toBeVisible();
+  for (const text of ['Reference', 'HB-DETAIL', 'Data sheet', 'Features', /regular.fit/i]) {
+    await expect(panel).toContainText(text, { useInnerText: true });
+  }
+  const sheetLabel = page.getByText('Data sheet', { exact: true }).filter({ visible: true });
+  const sheet = panel.getByRole('region', { name: 'Data sheet', exact: true })
+    .or(panel.locator('section, article, div, dl, table, fieldset').filter({ has: sheetLabel })
+      .filter({ hasNot: page.getByText('Features', { exact: true }) }))
+    .or(panel.getByText('Data sheet', { exact: true }).locator('xpath=following-sibling::*[1]'));
+  const cotton = panel.getByText(/^(?:Composition\s*:\s*)?(?:100%\s+)?Cotton$/i);
+  await expect(cotton.and(sheet.or(sheet.locator('*')))).toBeVisible();
+}
+const insufficientStock = /(?:insufficient|not enough|exceeds).*stock|stock.*(?:insufficient|not enough)/i;
+const availableStockLimit = /\bonly\s+(\d+)(?:\s+of\s+([^.!?\r\n]+?))?\s+(?:are\s+)?available in stock\b/i;
+export function stockRejectionAlert(page: Page) {
+  const wording = new RegExp(insufficientStock.source + '|' + availableStockLimit.source, 'i');
+  return page.getByRole('alert').and(pageContent(page)).filter({ hasText: wording, visible: true });
+}
+export async function expectStockRejection(page: Page, requested: number, variant: string) {
+  const alert = stockRejectionAlert(page);
+  await expect(alert).toBeVisible();
+  await expect.poll(async () => {
+    const text = await alert.innerText();
+    const limit = availableStockLimit.exec(text);
+    if (limit) return Number(limit[1]) < requested && (!limit[2] || limit[2].trim() === variant);
+    return insufficientStock.test(text);
+  }, { message: 'Expected an insufficient-stock alert for the requested quantity' }).toBe(true);
+}
+
 export function success(page: Page) { return region(page, 'Product successfully added to your shopping cart'); }
 export function addressRecord(page: Page, alias: string) { return record(page, alias, 'address'); }
 
@@ -305,7 +399,7 @@ export async function loginEmail(page: Page, email: string, password: string) {
   await field(form, 'Email').fill(email);
   await field(form, 'Password').fill(password);
   await action(form, 'Sign in').click();
-  await expect(action(nav(page), 'My account')).toBeVisible();
+  await signedInNav(page);
 }
 
 export async function registerCustomer(page: Page, customer: Customer) {
@@ -324,8 +418,8 @@ export async function registerCustomer(page: Page, customer: Customer) {
   await setChoice(choice(form, 'radio', 'Mr.'));
   for (const name of ['Receive offers', 'Newsletter', 'Terms']) await setChoice(choice(form, 'checkbox', name));
   await action(form, 'Save').click();
-  await expect(action(nav(page), 'My account')).toBeVisible();
-  await expect(nav(page)).toContainText(customer.firstName + ' ' + customer.lastName);
+  const header = await signedInNav(page);
+  await expect(header).toContainText(customer.firstName + ' ' + customer.lastName);
 }
 
 export async function loginExisting(page: Page, account: VerifiedAccount) {
@@ -335,7 +429,7 @@ export async function loginExisting(page: Page, account: VerifiedAccount) {
 }
 
 export async function account(page: Page) {
-  await action(nav(page), 'My account').click();
+  await action(await signedInNav(page), 'My account').click();
   await expect(region(page, 'Account overview')).toBeVisible();
 }
 export async function fillAddress(page: Page, address: Address) {
@@ -379,9 +473,17 @@ export async function checkoutSetup(page: Page, product: string, account: Verifi
 }
 export async function shippingStep(page: Page, alias: string) {
   const addresses = region(page, 'Addresses');
-  await setChoice(choice(addresses, 'radio', alias));
+  await setChoice(savedAddressChoice(addresses, alias));
   await action(addresses, 'Continue').click();
   await expect(region(page, 'Shipping Method')).toBeVisible();
+}
+export function savedAddressChoice(addresses: Locator, alias: string) {
+  const page = addresses.page();
+  const radio = page.getByRole('radio').filter({ visible: true });
+  const label = page.getByText(alias, { exact: true }).filter({ visible: true });
+  const rows = page.locator('label, li, article, tr, [role="listitem"], [role="row"]').and(addresses.locator('*'));
+  const owner = visibleLeaves(rows.filter({ has: label }).filter({ has: radio }));
+  return choice(addresses, 'radio', alias).or(radio.and(owner.locator('*')));
 }
 export async function paymentStep(page: Page, alias: string) {
   await shippingStep(page, alias);

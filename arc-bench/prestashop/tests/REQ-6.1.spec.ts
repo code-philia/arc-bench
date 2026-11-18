@@ -1,6 +1,6 @@
 // requirement: REQ-6.1
 import { test, expect } from '@playwright/test';
-import { home, nav, action, inputForm, field, choice, setChoice } from './helpers';
+import { home, nav, signedInNav, action, inputForm, field, choice, setChoice } from './helpers';
 import { verifiedCustomer } from './fixtures/data';
 
 test("REQ-6.1: Open sign-in entry", async ({ page }) => {
@@ -29,6 +29,6 @@ test("REQ-6.1: Reveal password and sign in", async ({ page }) => {
   await expect(password).toHaveValue(customer.password);
   await setChoice(choice(form, 'checkbox', 'Remember me'));
   await action(form, 'Sign in').click();
-  await expect(nav(page)).toContainText(customer.firstName + ' ' + customer.lastName);
-  for (const name of ['My account', 'Sign out']) await expect(action(nav(page), name)).toBeVisible();
+  const header = await signedInNav(page);
+  await expect(header).toContainText(customer.firstName + ' ' + customer.lastName);
 });

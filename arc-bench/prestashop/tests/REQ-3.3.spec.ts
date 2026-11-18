@@ -1,6 +1,6 @@
 // requirement: REQ-3.3
 import { test, expect } from '@playwright/test';
-import { home, nav, action, region, openProduct, expectMoney, cartRow, success, addProduct, CART, field } from './helpers';
+import { home, nav, action, region, openProduct, expectMoney, cartHeading, cartRow, success, addProduct, CART, field } from './helpers';
 
 test("REQ-3.3: Add default product", async ({ page }) => {
   await home(page); await openProduct(page, CART); await expect(field(page, 'Quantity')).toHaveValue('1');
@@ -16,6 +16,6 @@ test("REQ-3.3: Continue on same product", async ({ page }) => {
 
 test("REQ-3.3: Proceed from confirmation to cart", async ({ page }) => {
   await home(page); await addProduct(page, CART); await action(success(page), 'Proceed to checkout').click();
-  await expect(page.getByRole('heading', { name: 'Shopping cart', exact: true })).toBeVisible();
+  await expect(cartHeading(page)).toBeVisible();
   await expect(cartRow(page, CART)).toBeVisible(); await expectMoney(region(cartRow(page, CART), 'Subtotal'), 25);
 });

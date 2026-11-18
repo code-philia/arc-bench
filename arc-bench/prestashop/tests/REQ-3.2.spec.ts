@@ -1,6 +1,6 @@
 // requirement: REQ-3.2
 import { test, expect } from '@playwright/test';
-import { home, nav, action, openProduct, cartRow, success, DETAIL, field, selectField, chooseOption, choice, setChoice } from './helpers';
+import { home, nav, action, openProduct, cartRow, emptyCartMessage, success, DETAIL, field, selectField, chooseOption, choice, setChoice, expectStockRejection, stockRejectionAlert } from './helpers';
 import { storefrontInput } from './fixtures/data';
 
 test("REQ-3.2: Choose M and White", async ({ page }) => {
@@ -26,8 +26,14 @@ test("REQ-3.2: Adjust and directly enter quantity", async ({ page }) => {
 
 test("REQ-3.2: Reject quantity exceeding stock", async ({ page }) => {
   await home(page); await openProduct(page, DETAIL);
-  await field(page, 'Quantity').fill(String(storefrontInput().beyondStock)); await action(page, 'Add to cart').click();
-  await expect(page.getByRole('alert')).toContainText(/(?:insufficient|not enough|exceeds).*stock|stock.*(?:insufficient|not enough)/i);
+  const requested = storefrontInput().beyondStock;
+  await expect(stockRejectionAlert(page)).toHaveCount(0);
+  await field(page, 'Quantity').fill(String(requested));
+  await expect(field(page, 'Quantity')).toHaveValue(String(requested));
+  await action(page, 'Add to cart').click();
+  await expectStockRejection(page, requested, 'M/White');
   await expect(success(page)).toBeHidden();
-  await action(nav(page), 'Cart').click(); await expect(cartRow(page, DETAIL)).toHaveCount(0);
+  await action(nav(page), 'Cart').click();
+  await expect(emptyCartMessage(page)).toBeVisible();
+  await expect(cartRow(page, DETAIL)).toHaveCount(0);
 });

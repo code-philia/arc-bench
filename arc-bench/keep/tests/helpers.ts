@@ -36,6 +36,23 @@ export function sidebar(page: Page) {
     .or(controls(page.locator('aside')).filter({ has: action(page, 'Trash') })));
 }
 
+export function sidebarAction(sidebar: Locator, name: string) {
+  const item = action(sidebar, name);
+  return name === 'Archived' ? item.or(action(sidebar, 'Archive')) : item;
+}
+
+export async function sidebarItemText(sidebar: Locator, name: string) {
+  if (name !== 'Archived') return sidebar.getByText(name, { exact: true }).filter({ visible: true });
+  const item = sidebarAction(sidebar, name);
+  let owner = item.or(item.locator('*'));
+  const labels = (await item.getAttribute('aria-labelledby'))?.trim().split(/\s+/).filter(Boolean) ?? [];
+  for (const id of labels) {
+    const label = sidebar.locator('[id=' + JSON.stringify(id) + ']');
+    owner = owner.or(label).or(label.locator('*'));
+  }
+  return sidebar.getByText(/^(?:Archive|Archived)$/).and(owner).filter({ visible: true });
+}
+
 export function sidebarControl(page: Page) {
   return action(page, 'Toggle sidebar').or(action(page, 'Expand sidebar')).or(action(page, 'Collapse sidebar'));
 }
@@ -114,7 +131,7 @@ export async function openHome(page: Page) {
   await expect(action(page, 'Take a note')).toBeVisible();
 }
 export async function navigate(page: Page, name: string) {
-  await action(sidebar(page), name).click();
+  await sidebarAction(sidebar(page), name).click();
 }
 export async function beginNote(page: Page) {
   await action(page, 'Take a note').click();

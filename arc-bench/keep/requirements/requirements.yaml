@@ -22,6 +22,8 @@ children:
       text: |-
         Opening the application displays a personal notes workspace with the "Sidebar" expanded and "Notes" selected. The sidebar provides "Reminders", user-label actions, "Edit Labels", "Archived", and "Trash", each with an identifiable icon; Reminders is a default label with its own icon. Users can find notes through "Search", begin creation with "Take a note", open settings through "Settings menu", and switch the initial layout through "List view". The Toggle sidebar control collapses the sidebar to icons and expands it again, exposing the current state while preserving accessible navigation names. Text labels disappear when collapsed and return when expanded. Alignment, hover feedback, selected-item highlighting, and appearance follow the visual references.
 
+        The Archived destination may display Archive, as shown in the sidebar reference. It remains identifiable when the sidebar text is hidden.
+
         The personal workspace requires no authentication or reminder scheduler. Sidebar navigation actions expose current state when selected.
 
         This is a personal workspace without authentication or a reminder scheduler; Reminders is a label, not a scheduled notification feature. The interface uses en-US.

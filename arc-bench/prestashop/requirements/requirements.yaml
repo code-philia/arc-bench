@@ -1369,6 +1369,8 @@ children:
       text: |-
         Using checkout_6_6_user with the order-confirmation t-shirt or checkout_6_7_user with the order-complete t-shirt, users complete Home, Delivery, Bank wire, and agreement, then click "Place order". Order confirmation displays the chosen product; "Order reference" contains a nonempty assigned reference, and "Order details" shows product, quantity, amounts, shipping, and payment. "Continue shopping" returns home with Search, My account, and Cart.
 
+        The completed view can show Your order is confirmed, as in the reference. The purchased product and assigned order reference distinguish it from the checkout form.
+
         Order summary and checkout steps Personal Information, Addresses, Shipping Method, and Payment are identifiable. Continue actions are scoped to their step. Expanded steps expose inputs; completed collapsed steps expose summaries and edit actions and hide completed inputs. The shipping cost is identifiable. Step data remain consistent across navigation within a flow.
 
         Order details identifies "Quantity: <value>".
