@@ -1,14 +1,32 @@
 // requirement: REQ-7.8
 import { test, expect } from '@playwright/test';
-import { home, nav, action, region, card, count, tabTo, men, openProduct, slideIdentity, expectMoney, listingPrices, cartRow, success, addProduct, cartSetup, login, loginEmail, account, createAddress, fillAddress, addressesStep, checkoutSetup, shippingStep, paymentStep, placeOrder, confirmDeletion, history, historyRow, wishlistPage, createWishlist, wishlist, wishlistProduct, DETAIL, CART, STEP, WHITE, BLACK, HISTORY_PRODUCT, WISH_PRODUCT } from './helpers';
+import { home, action, wishlistPage, createWishlist, wishlist, field, inputForm, confirmDeletion } from './helpers';
+import { wishlistInput } from './fixtures/data';
 
 test("REQ-7.8: Rename Favorites wishlist", async ({ page }) => {
-  await home(page); await wishlistPage(page, 'wishlist_rename_user'); await createWishlist(page, 'Favorites'); await action(wishlist(page, 'Favorites'), 'Edit').click();
-  await expect(page.getByLabel('Name', { exact: true })).toHaveValue('Favorites'); await page.getByLabel('Name', { exact: true }).fill('Holiday Picks'); await action(page, 'Save').click();
-  await expect(wishlist(page, 'Holiday Picks')).toHaveCount(1); await expect(wishlist(page, 'Favorites')).toHaveCount(0);
+  await home(page);
+  await wishlistPage(page, 'wishlist_rename_user');
+  const original = wishlistInput();
+  const renamed = wishlistInput();
+  await createWishlist(page, original);
+  await action(wishlist(page, original), 'Edit').click();
+  const form = inputForm(page, ['Name'], 'Save');
+  await expect(field(form, 'Name')).toHaveValue(original);
+  await field(form, 'Name').fill(renamed);
+  await action(form, 'Save').click();
+  await expect(wishlist(page, renamed)).toHaveCount(1);
+  await expect(wishlist(page, renamed)).toBeVisible();
+  await expect(wishlist(page, original)).toHaveCount(0);
 });
 
 test("REQ-7.8: Delete Favorites wishlist", async ({ page }) => {
-  await home(page); await wishlistPage(page, 'wishlist_delete_user'); await createWishlist(page, 'Favorites'); await expect(wishlist(page, 'Favorites')).toBeVisible();
-  await confirmDeletion(page, action(wishlist(page, 'Favorites'), 'Delete')); await expect(wishlist(page, 'Favorites')).toHaveCount(0); await expect(action(page, 'Create new wishlist')).toBeVisible();
+  await home(page);
+  await wishlistPage(page, 'wishlist_delete_user');
+  const name = wishlistInput();
+  await createWishlist(page, name);
+  const record = wishlist(page, name);
+  await expect(record).toBeVisible();
+  await confirmDeletion(page, action(record, 'Delete'));
+  await expect(record).toHaveCount(0);
+  await expect(action(page, 'Create new wishlist')).toBeVisible();
 });

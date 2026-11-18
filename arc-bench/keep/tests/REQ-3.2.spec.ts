@@ -1,45 +1,48 @@
 // requirement: REQ-3.2
-import { test, expect, action, note, openHome, navigate, createNote, createLabel, expectNote } from './helpers';
-import { identity } from './fixtures/data';
+import { test, expect, action, note, openHome, navigate, createNote, createLabel, expectNote, sidebar as workspaceSidebar, expectCurrent } from './helpers';
+import { noteInput } from './fixtures/data';
 
-test('REQ-3.2: Filter by a user label', async ({ page }, info) => {
+test('REQ-3.2: Filter by a user label', async ({ page }) => {
+  const input = noteInput();
   await openHome(page);
-  const work = identity(info, 'Work');
-  const matching = identity(info, 'Design review');
-  const other = identity(info, 'Movie list');
+  const work = input.name('Work');
+  const matching = input.name('Design review');
+  const other = input.name('Movie list');
   await createLabel(page, work);
-  await createNote(page, matching, 'Work design decisions', { labels: [work] });
-  await createNote(page, other, 'An unlabeled movie note');
+  await createNote(page, matching, input.body('Work design decisions'), { labels: [work] });
+  await createNote(page, other, input.body('An unlabeled movie note'));
   await navigate(page, work);
-  await expectNote(page, matching, 'Work design decisions');
+  await expectNote(page, matching, input.body('Work design decisions'));
   await expect(note(page, other)).toBeHidden();
-  await expect(action(page.getByRole('navigation', { name: 'Sidebar', exact: true }), work)).toHaveAttribute('aria-current', 'true');
+  await expectCurrent(page, work);
 });
 
-test('REQ-3.2: Return to the complete notes list', async ({ page }, info) => {
+test('REQ-3.2: Return to the complete notes list', async ({ page }) => {
+  const input = noteInput();
   await openHome(page);
-  const work = identity(info, 'Work');
-  const matching = identity(info, 'Design review');
-  const other = identity(info, 'Movie list');
+  const work = input.name('Work');
+  const matching = input.name('Design review');
+  const other = input.name('Movie list');
   await createLabel(page, work);
-  await createNote(page, matching, 'Design details', { labels: [work] });
-  await createNote(page, other, 'Movie details');
+  await createNote(page, matching, input.body('Design details'), { labels: [work] });
+  await createNote(page, other, input.body('Movie details'));
   await navigate(page, work);
   await expect(note(page, other)).toBeHidden();
   await navigate(page, 'Notes');
-  await expectNote(page, matching, 'Design details');
-  await expectNote(page, other, 'Movie details');
-  await expect(action(page.getByRole('navigation', { name: 'Sidebar', exact: true }), 'Notes')).toHaveAttribute('aria-current', 'true');
+  await expectNote(page, matching, input.body('Design details'));
+  await expectNote(page, other, input.body('Movie details'));
+  await expectCurrent(page, 'Notes');
 });
 
-test('REQ-3.2: Filter by the default Reminders label', async ({ page }, info) => {
+test('REQ-3.2: Filter by the default Reminders label', async ({ page }) => {
+  const input = noteInput();
   await openHome(page);
-  const matching = identity(info, 'Call dentist existing');
-  const other = identity(info, 'Movie list');
-  await createNote(page, matching, 'Dentist details', { labels: ['Reminders'] });
-  await createNote(page, other, 'Movie details');
+  const matching = input.name('Call dentist existing');
+  const other = input.name('Movie list');
+  await createNote(page, matching, input.body('Dentist details'), { labels: ['Reminders'] });
+  await createNote(page, other, input.body('Movie details'));
   await navigate(page, 'Reminders');
-  await expectNote(page, matching, 'Dentist details');
+  await expectNote(page, matching, input.body('Dentist details'));
   await expect(note(page, other)).toBeHidden();
-  await expect(action(page.getByRole('navigation', { name: 'Sidebar', exact: true }), 'Reminders')).toHaveAttribute('aria-current', 'true');
+  await expectCurrent(page, 'Reminders');
 });

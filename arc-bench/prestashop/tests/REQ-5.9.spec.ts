@@ -1,10 +1,18 @@
 // requirement: REQ-5.9
 import { test, expect } from '@playwright/test';
-import { home, nav, action, region, card, count, tabTo, men, openProduct, slideIdentity, expectMoney, listingPrices, cartRow, success, addProduct, cartSetup, login, loginEmail, account, createAddress, fillAddress, addressesStep, checkoutSetup, shippingStep, paymentStep, placeOrder, confirmDeletion, history, historyRow, wishlistPage, createWishlist, wishlist, wishlistProduct, DETAIL, CART, STEP, WHITE, BLACK, HISTORY_PRODUCT, WISH_PRODUCT } from './helpers';
+import { home, action, region, checkoutSetup, shippingStep, choice, STEP } from './helpers';
 
 test("REQ-5.9: Collapse completed address step and reopen it", async ({ page }) => {
-  await home(page); await checkoutSetup(page, 'checkout_address_user', STEP);
-  const addresses = region(page, 'Addresses'); const choice = addresses.getByRole('radio', { name: 'Home', exact: true }); await choice.check(); await action(addresses, 'Continue').click();
-  await expect(choice).not.toBeVisible(); await expect(action(page, 'Edit Addresses')).toBeVisible(); await expect(region(page, 'Shipping Method').getByRole('radio', { name: 'Delivery', exact: true })).toBeVisible();
-  await action(page, 'Edit Addresses').click(); await expect(choice).toBeVisible(); await expect(choice).toBeChecked(); await expect(region(page, 'Order summary')).toContainText(STEP);
+  await home(page);
+  const address = await checkoutSetup(page, STEP, 'checkout_address_user');
+  await shippingStep(page, address.alias);
+  const addresses = region(page, 'Addresses');
+  const saved = choice(addresses, 'radio', address.alias);
+  await expect(saved).toBeHidden();
+  await expect(addresses).toContainText(address.Address);
+  await expect(choice(region(page, 'Shipping Method'), 'radio', 'Delivery')).toBeVisible();
+  await action(addresses, 'Edit Addresses').click();
+  await expect(saved).toBeVisible();
+  await expect(saved).toBeChecked();
+  await expect(region(page, 'Order summary')).toContainText(STEP);
 });
