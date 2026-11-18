@@ -1,12 +1,12 @@
 // requirement: REQ-6.4
-import { test, setChecked, field, button, action, region, checkbox, visible, textVisible, alertText, openHome, openLogin, openSecurity, passwordInput, registerAccount, loginSubmit, passwordField } from "./helpers";
+import { test, setChecked, field, button, action, region, checkbox, visible, textVisible, alertText, openHome, openLogin, openSecurity, securityChange, passwordInput, registerAccount, loginSubmit, passwordField } from "./helpers";
 
 test('REQ-6.4: Replace password and require reauthentication', async ({ page }) => {
   await openHome(page);
   const account = await registerAccount(page);
   const newPassword = passwordInput();
   await openSecurity(page);
-  await button(region(page, 'Login password'), 'Change').click();
+  await (await securityChange(page, 'Login password')).click();
   await field(page, 'Current password').fill(account.password);
   await field(page, 'New password').fill(newPassword);
   await field(page, 'Confirm new password').fill(newPassword);

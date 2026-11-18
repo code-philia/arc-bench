@@ -1,20 +1,25 @@
 // requirement: REQ-1.4
 import { expect } from "@playwright/test";
-import { test, setChecked, field, button, action, checkbox, visible, heading, textVisible, alertText, openHome, smsLoginForm, SMS_CODE, loginSubmit, createMobileAccount } from "./helpers";
+import { test, setChecked, field, button, action, checkbox, visible, expectHomeQuickSearch, textVisible, alertText, openHome, smsLoginForm, SMS_CODE, loginSubmit, createMobileAccount } from "./helpers";
 
 test('REQ-1.4: Authenticate with sent code', async ({ page }) => {
   await openHome(page);
   const { mobile } = await createMobileAccount(page);
   await openHome(page);
   await smsLoginForm(page);
-  await textVisible(page, '+86');
+  const countryCode = page.getByRole('combobox', { name: 'Country code', exact: true }).filter({ visible: true });
+  if (await countryCode.count()) {
+    await expect(countryCode).toHaveValue(/^\+?86$/);
+  } else {
+    await textVisible(page, /^(?:\+86|(?:中国大陆|Mainland China)\s*\+?86)(?:\s*[▾▼])?$/i);
+  }
   await field(page, 'Mobile number').fill(mobile);
   await button(page, 'Send code').click();
   await visible(action(page, 'Resend code'));
   await field(page, 'Verification code').fill(SMS_CODE);
   await setChecked(checkbox(page, 'Agree to terms'));
   await loginSubmit(page).click();
-  await heading(page, 'Ctrip Travel');
+  await expectHomeQuickSearch(page);
   await visible(action(page, 'My account'));
 });
 

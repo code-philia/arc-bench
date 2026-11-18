@@ -9,7 +9,7 @@ test('REQ-3.9: Pay with simulated Alipay', async ({ page }) => {
   const number = await displayedOrderNumber(page);
   await setChecked(radio(page, 'Alipay'));
   await button(page, 'Pay now').click();
-  await textVisible(page, 'Payment successful');
+  await textVisible(page, /^(?:[✓✔]\s*)?Payment successful[.!]?$/i);
   await textVisible(page, textToken('JD5162'));
   if (number) await textVisible(page, textToken(number));
 });

@@ -1,15 +1,17 @@
 // requirement: REQ-7.5
 import { expect } from "@playwright/test";
-import { test, button, action, region, visible, textVisible, openHome, openStatus, queryStatusNumber, registerAccount } from "./helpers";
+import { test, action, region, visible, textVisible, openHome, openStatus, reopenStatus, queryStatusNumber, registerAccount } from "./helpers";
+import { localizedAction } from './ui';
 
 test('REQ-7.5: Clear account search history', async ({ page }) => {
   await openHome(page);
   await registerAccount(page);
   await openStatus(page);
   await queryStatusNumber(page, 'MU5234');
-  await openStatus(page);
-  await visible(action(region(page, 'Search history'), 'MU5234'));
-  await button(region(page, 'Search history'), 'Clear history').click();
+  await reopenStatus(page);
+  const history = region(page, 'Search history');
+  await visible(action(history, 'MU5234'));
+  await (await localizedAction(history, 'Clear history', /^(?:清除|清空)(?:搜索|查询)?历史(?:记录)?$/)).click();
   await expect(action(region(page, 'Search history'), 'MU5234')).toHaveCount(0);
   await textVisible(region(page, 'Search history'), 'No search history');
   await page.reload();

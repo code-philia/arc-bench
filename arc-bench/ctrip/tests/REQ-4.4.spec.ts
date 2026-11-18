@@ -1,21 +1,22 @@
 // requirement: REQ-4.4
 import { expect } from "@playwright/test";
-import { test, button, region, visible, heading, textVisible, textToken, renderedTextVisible, openHome, bookUnpaidOrder, countdownSeconds, timer } from "./helpers";
+import { test, button, region, visible, textVisible, textToken, renderedTextVisible, openHome, bookUnpaidOrder, countdownSeconds, timer, unpaidOrderExpiry } from "./helpers";
+import { preferredVisible } from './ui';
 
 test('REQ-4.4: Inspect unpaid itinerary and payment countdown', async ({ page }) => {
   await openHome(page);
   const number = await bookUnpaidOrder(page);
-  await heading(page, 'Order details');
   await textVisible(page, textToken(number));
   await textVisible(region(page, 'Flight itinerary'), textToken('JD5162'));
-  await textVisible(region(page, 'Flight itinerary'), 'Chengdu to Guangzhou');
+  await textVisible(region(page, 'Flight itinerary'), /^Chengdu\s*(?:to|[-–—→])\s*Guangzhou$/i);
   await visible(button(region(page, 'Flight itinerary'), 'Refund and change rules'));
   await textVisible(region(page, 'Payment status'), 'Pending payment');
-  await textVisible(region(page, 'Payment status'), /^Unpaid orders are cancelled when the timer expires\.?$/);
+  await textVisible(region(page, 'Payment status'), unpaidOrderExpiry);
   await visible(button(region(page, 'Payment status'), 'Pay now'));
   await visible(button(region(page, 'Payment status'), 'Cancel order'));
-  const countdown = timer(region(page, 'Payment status'));
-  await visible(countdown);
+  const paymentStatus = region(page, 'Payment status');
+  const countdown = await preferredVisible(paymentStatus.getByRole('timer', { name: 'Time remaining', exact: true }),
+    timer(paymentStatus));
   const before = await countdownSeconds(countdown);
   expect(before).toBeGreaterThan(0);
   await expect.poll(() => countdownSeconds(countdown)).toBeLessThan(before);

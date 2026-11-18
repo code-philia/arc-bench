@@ -9,7 +9,7 @@ test('REQ-2.8: Switch to nearby low-fare date', async ({ page }) => {
   await dayAction(region(page, 'Date bar'), tripDate(page, 3)).click();
   await expectDateField(dateControl(page, 'Departure date'), tripDate(page, 3));
   await expect(flightRows(page)).toHaveCount(1);
-  await textVisible(flight(page, 'CZ3401'), '¥320');
+  await textVisible(flight(page, 'CZ3401'), /[¥￥]\s*320(?![\d.,])/);
 });
 
 test('REQ-2.8: Open monthly fares', async ({ page }) => {

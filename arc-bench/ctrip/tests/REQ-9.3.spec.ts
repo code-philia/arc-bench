@@ -14,7 +14,13 @@ test('REQ-9.3: Read airport bus timetable', async ({ page }) => {
   await openHome(page);
   await openAirportDetails(page);
   await tab(page, 'Transportation').click();
-  for (const value of ['Fangzhuang', '06:00', '21:00', '30 minutes']) await textVisible(record(region(page, 'City buses'), 'Fangzhuang line'), value);
+  const timetable = record(region(page, 'City buses'), 'Fangzhuang line');
+  for (const value of [
+    /^(?:Stop\s*[:：]\s*)?Fangzhuang$/i,
+    /^(?:First service\s*[:：]\s*)?06:00$/i,
+    /^(?:Last service\s*[:：]\s*)?21:00$/i,
+    /^(?:Headway\s*[:：]\s*)?30\s*(?:minutes?|min)$/i,
+  ]) await textVisible(timetable, value);
 });
 
 test('REQ-9.3: Read airport medical hotline', async ({ page }) => {

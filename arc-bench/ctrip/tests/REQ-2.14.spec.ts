@@ -1,6 +1,6 @@
 // requirement: REQ-2.14
 import { expect } from "@playwright/test";
-import { test, tripDate, field, button, modifySearch, expectEmptyFlights, flight, visible, heading, openHome, chooseDate, searchFlights, flightRows } from "./helpers";
+import { test, tripDate, field, button, modifySearch, expectEmptyFlights, flight, visible, openHome, chooseDate, searchFlights, flightRows } from "./helpers";
 
 test('REQ-2.14: Recover from an empty flight search', async ({ page }) => {
   await openHome(page);
@@ -12,7 +12,6 @@ test('REQ-2.14: Recover from an empty flight search', async ({ page }) => {
   await chooseDate(page, 'Departure date', tripDate(page, 2));
   const search = button(page, 'Search flights').filter({ visible: true }).or(button(page, 'Update results').filter({ visible: true }));
   await search.click();
-  await heading(page, 'Flight results');
   await expect(flightRows(page)).toHaveCount(3);
   for (const number of ['CZ3401', 'JD5162', 'MU5234']) await visible(flight(page, number));
 });

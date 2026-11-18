@@ -1,12 +1,12 @@
 // requirement: REQ-6.7
 import { expect } from "@playwright/test";
-import { test, field, button, action, accountDestination, region, visible, openHome, openSecurity, registerAccount, login } from "./helpers";
+import { test, field, button, action, accountDestination, region, visible, openHome, openSecurity, securityChange, registerAccount, login } from "./helpers";
 
 test('REQ-6.7: Reject a password change with an incorrect current password', async ({ page }) => {
   await openHome(page);
   const account = await registerAccount(page);
   await openSecurity(page);
-  await button(region(page, 'Login password'), 'Change').click();
+  await (await securityChange(page, 'Login password')).click();
   await field(page, 'Current password').fill('WrongPass123');
   await field(page, 'New password').fill('NewTravel1234!');
   await field(page, 'Confirm new password').fill('NewTravel1234!');

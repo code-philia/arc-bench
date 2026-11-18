@@ -1,5 +1,5 @@
 import { test as base, expect, type Page, type Locator } from '@playwright/test';
-import { action, checkbox, clockDuration, dateControl, dayAction, field, flightEntry, flightIdentity, flights, radio, record, records, region, selectChoice, setChecked, unitDuration } from './ui';
+import { action, checkbox, clockDuration, dateControl, dayAction, field, flightEntry, flightIdentity, flights, localizedAction, preferredVisible, radio, record, records, region, selectChoice, setChecked, unitDuration } from './ui';
 import { accountInput, newMobile, travelerInput, addressInput, contactInput, invoiceInput } from './fixtures/inputs';
 import { ACCOUNTS, SMS_CODE, ORDERS, VOUCHERS } from './fixtures/data';
 import { tripDate } from './fixtures/dates';
@@ -19,7 +19,10 @@ export const selectedTab = (s: Scope, name: string) => s.getByRole('tab', { ...n
 export const nav = (page: Page) => page.getByRole('navigation', named('Global navigation'))
   .or(page.getByRole('banner').getByRole('navigation'))
   .or(page.getByRole('banner').filter({ hasNot: page.getByRole('navigation') }));
-export const flightRows = (page: Page) => flights(region(page, 'Flight list'));
+export const navigationLogin = (page: Page) => action(nav(page), 'Log in')
+  .or(action(nav(page), 'Log in and Register')).filter({ visible: true });
+export const flightList = (page: Page) => region(page, 'Flight list').filter({ visible: true });
+export const flightRows = (page: Page) => flights(flightList(page));
 export const flight = (page: Page, number: string) => flightEntry(region(page, 'Flight list'), number);
 export const visible = async (l: Locator) => { await expect(l).toBeVisible(); };
 export const heading = async (page: Page, name: string) => visible(page.getByRole('heading', { name, exact: true }));
@@ -31,6 +34,11 @@ export const textVisible = async (s: Scope, text: string | RegExp) => {
   for (const match of await matches.all()) await expect(match).toBeVisible();
 };
 const escape = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+export function optionalFee(scope: Scope, name: string, amount: number) {
+  const line = new RegExp(`^${escape(name)}\\s*[:：]?\\s*[¥￥]\\s*${amount}(?:\\.00)?$`, 'i');
+  return scope.getByText(line).filter({ visible: true });
+}
+export const unpaidOrderExpiry = /(?:Unpaid orders? (?:are|will be) (?:automatically )?cancell?ed when (?:the )?(?:timer|countdown) expires\b|(?:超时|逾期)(?:未支付|未付款)?[，,：:\s]*(?:订单)?(?:将|会)?(?:被)?自动取消)/i;
 export const textToken = (value: string) => {
   const literal = escape(value).replaceAll("'", '\\x27').replaceAll('"', '\\x22');
   return new RegExp(`(?<![A-Za-z0-9.,])${literal}(?![A-Za-z0-9]|[.,]\\d)`);
@@ -47,7 +55,22 @@ export async function openHome(page: Page) {
   tripDate(page, 0);
   await page.goto('/');
 }
-export async function openLogin(page: Page) { await action(nav(page), 'Log in').click(); }
+export async function expectHomeQuickSearch(page: Page) {
+  await visible(field(page, 'Origin'));
+  await visible(field(page, 'Destination'));
+  await visible(action(page, 'Search flights'));
+  await expect(flightList(page)).toHaveCount(0);
+}
+export async function openLogin(page: Page) {
+  const exactLogin = action(nav(page), 'Log in').filter({ visible: true });
+  const exactText = exactLogin.filter({ hasText: /^\s*Log in\s*$/ });
+  await expect.poll(() => navigationLogin(page).count()).toBeGreaterThan(0);
+  if (await exactText.count()) {
+    await exactText.click();
+  } else {
+    await ((await exactLogin.count()) ? exactLogin : navigationLogin(page)).click();
+  }
+}
 export const passwordField = (page: Page) => field(page, 'Password').filter({ visible: true });
 export const loginSubmit = (page: Page) => action(page, 'Log in').and(
   page.locator('form *, [role="form"] *, :not(header *, nav *, [role="navigation"] *)'),
@@ -66,7 +89,7 @@ async function loginOwner(page: Page, owner: SeedAccount) {
 }
 export async function smsLoginForm(page: Page) { await openLogin(page); await tab(page, 'Verification code login').click(); }
 export async function signedOut(page: Page) {
-  await visible(action(nav(page), 'Log in'));
+  await visible(navigationLogin(page));
   await expect(action(page, 'My account')).toHaveCount(0);
 }
 export async function registerToPassword(page: Page, phone: string) {
@@ -86,6 +109,21 @@ export async function createMobileAccount(page: Page) {
   await button(page, 'Complete registration').click();
   await heading(page, 'Log in');
   return account;
+}
+export async function submitInvalidRegistrationPassword(page: Page) {
+  const step = region(page, 'Set password');
+  const message = 'Password must contain letters and numbers and be at least 8 characters';
+  const alert = step.getByRole('alert');
+  const alertMessage = alert.and(step.getByText(message, { exact: true }))
+    .or(alert.getByText(message, { exact: true }));
+  const strength = region(step, 'Password strength');
+  const feedback = step.getByText(message, { exact: true }).filter({ visible: true });
+  const strengthFeedback = feedback.and(strength.or(strength.locator('*')));
+  const feedbackCount = async () => (await feedback.count()) - (await strengthFeedback.count());
+  const existingFeedback = await feedbackCount();
+  await button(step, 'Complete registration').click();
+  await expect.poll(async () => (await alertMessage.filter({ visible: true }).count()) > 0
+    || (await feedbackCount()) > existingFeedback).toBe(true);
 }
 export async function registerAccount(page: Page) {
   const account = await createMobileAccount(page);
@@ -117,17 +155,19 @@ export async function chooseDate(page: Page, label: string, date: string) {
   }
   await day.click();
 }
-export async function searchFlights(page: Page, origin = 'Chengdu', destination = 'Guangzhou', date = tripDate(page, 2)) {
+export async function submitFlightSearch(page: Page, origin = 'Chengdu', destination = 'Guangzhou', date = tripDate(page, 2)) {
   await field(page, 'Origin').fill(origin);
   await field(page, 'Destination').fill(destination);
   await chooseDate(page, 'Departure date', date);
   await button(page, 'Search flights').click();
-  await heading(page, 'Flight results');
+}
+export async function searchFlights(page: Page, origin?: string, destination?: string, date?: string) {
+  await submitFlightSearch(page, origin, destination, date);
+  await visible(flightList(page));
 }
 export const modifySearch = (page: Page) => action(page, 'Modify search');
 export async function expectEmptyFlights(page: Page) {
-  await heading(page, 'Flight results');
-  await textVisible(page, 'No flights found');
+  await textVisible(flightList(page), 'No flights found');
   await expect(flightRows(page)).toHaveCount(0);
   await visible(modifySearch(page));
 }
@@ -142,11 +182,28 @@ export async function sortFlights(page: Page, option: string) {
   if (await menu.count()) await selectChoice(page, 'Sort by', option);
   else await direct.click();
 }
+export function economyFare(scope: Scope) {
+  return preferredVisible(region(scope, 'Economy fare'), region(scope, 'Economy'),
+    region(scope, '经济舱').or(region(scope, 'Economy class')));
+}
+export async function expectBookingForm(page: Page) {
+  await visible(field(region(page, 'Passenger details'), 'Full name'));
+  await visible(field(page, 'Contact mobile'));
+  await visible(button(page, 'Submit order'));
+}
+export async function expectSelectedPassenger(page: Page, name: string, selected = true) {
+  const scope = region(page, 'Selected passengers');
+  const row = record(scope, name);
+  const text = scope.getByText(name, { exact: true });
+  const decorated = scope.getByText(new RegExp(`^[●•✓✔]\\s*${escape(name)}$`));
+  if (selected) await preferredVisible(row, text, decorated);
+  else await expect(row.or(text).or(decorated).filter({ visible: true })).toHaveCount(0);
+}
 export async function openBooking(page: Page) {
   await searchFlights(page);
   await button(flight(page, 'JD5162'), 'Show fares').click();
-  await button(region(flight(page, 'JD5162'), 'Economy fare'), 'Book').click();
-  await heading(page, 'Book flight');
+  await button(await economyFare(flight(page, 'JD5162')), 'Book').click();
+  await expectBookingForm(page);
 }
 export async function submitBooking(page: Page) {
   const traveler = travelerInput('Passenger');
@@ -177,19 +234,21 @@ export async function bookUnpaidOrder(page: Page) {
   await textVisible(region(page, 'Payment status'), 'Pending payment');
   return number;
 }
-const orderNumberLabel = /^Order (?:number|no\.?)\s*:\s*\S+$/i;
+const orderNumberPrefix = /^(?:Order (?:number|no\.?)|订单号)\s*[:：]\s*/i;
+const orderNumberLabel = new RegExp(`${orderNumberPrefix.source}\\S+$`, 'i');
 const visibleOrderNumber = (scope: Scope) => scope.getByText(orderNumberLabel).or(scope.getByText(/^CTRIP[0-9A-Z-]*\d[0-9A-Z-]*$/i)).filter({ visible: true });
 export const orderRecord = (scope: Scope, number: string) => {
   const page = 'page' in scope ? scope.page() : scope;
-  const escaped = escape(number);
-  const label = new RegExp(`^Order (?:number|no\\.?)\\s*:\\s*${escaped}$`, 'i');
-  return record(scope, number).or(records(scope).filter({ has: page.getByText(label) }));
+  const fullNumber = new RegExp(`(?<![A-Z0-9-])${escape(number)}(?![A-Z0-9-])`, 'i');
+  return record(scope, number).or(records(scope).filter({
+    has: page.getByText(fullNumber).filter({ visible: true }),
+  }));
 };
 
 export async function orderNumber(scope: Scope) {
   const value = visibleOrderNumber(scope);
   await expect(value).toBeVisible();
-  return (await value.innerText()).replace(/^Order (?:number|no\.?)\s*:\s*/i, '').trim();
+  return (await value.innerText()).replace(orderNumberPrefix, '').trim();
 }
 export async function displayedOrderNumber(scope: Scope) {
   if (await visibleOrderNumber(scope).count()) return orderNumber(scope);
@@ -255,9 +314,23 @@ export async function createInvoice(page: Page, invoice: ReturnType<typeof invoi
 }
 export async function openSecurity(page: Page, owner?: SeedAccount) {
   await openPersonal(page, owner);
-  await action(page, 'Account security').click();
+  await (await localizedAction(page, 'Account security', /^(?:账户安全|账号安全|Account security settings)$/i)).click();
+}
+
+const securitySettingLabels = { 'Login password': '登录密码', 'Bound phone': '绑定手机', 'Bound email': '绑定邮箱' };
+export async function securityChange(page: Page, setting: keyof typeof securitySettingLabels) {
+  const section = await preferredVisible(region(page, setting), region(page, securitySettingLabels[setting]));
+  return localizedAction(section, 'Change', /^(?:修改|更改)$/);
 }
 export async function openStatus(page: Page) { await action(page, 'Flights').click(); await action(page, 'Flight status').click(); }
+export async function reopenStatus(page: Page) {
+  await openHome(page);
+  await openStatus(page);
+}
+export function statusFlightRecord(page: Page, number: string) {
+  const results = region(page, 'Flight status results');
+  return preferredVisible(record(results, number), records(results).filter({ hasText: textToken(number) }));
+}
 export async function setStatusDate(page: Page, date: string) {
   const control = dateControl(page, 'Departure date');
   if (await control.evaluate(element => element.matches('input:not([readonly]), textarea:not([readonly]), [contenteditable="true"]'))) {
@@ -275,11 +348,44 @@ export async function queryStatusNumber(page: Page, number: string) {
 }
 export async function openVouchers(page: Page, owner?: SeedAccount) {
   if (owner) await loginOwner(page, owner);
-  await action(page, 'More services').click();
-  await action(page, 'Reimbursement vouchers').click();
+  const more = action(page, 'More services').or(action(page, '更多服务')).filter({ visible: true });
+  const flights = action(page, 'Flights');
+  await preferredVisible(more, flights);
+  if (!(await more.count())) await flights.click();
+  await (await localizedAction(page, 'More services', /^更多服务$/)).click();
+  await (await localizedAction(page, 'Reimbursement vouchers', /^(?:报销凭证|Reimbursement voucher)$/i)).click();
 }
-export async function openAirport(page: Page) { await action(page, 'Flights').click(); await action(page, 'More services').click(); await action(page, 'Airport guide').click(); }
-export async function openAirportDetails(page: Page) { await openAirport(page); await action(region(page, 'Popular airports'), 'Beijing Capital Airport').click(); }
+const airportGuideName = /^(?:机场攻略|机场指南|Airport information guide)$/i;
+export async function expectAirportGuideHeading(page: Page) {
+  await preferredVisible(page.getByRole('heading', named('Airport guide')),
+    page.getByRole('heading', { name: airportGuideName }));
+}
+export async function openAirport(page: Page) {
+  await action(page, 'Flights').click();
+  await action(page, 'More services').click();
+  await (await localizedAction(page, 'Airport guide', airportGuideName)).click();
+}
+const popularAirportLabels = {
+  'Beijing Capital Airport': /^(?:北京首都(?:国际)?机场|Beijing Capital International Airport)$/i,
+  'Shanghai Pudong Airport': /^(?:上海浦东(?:国际)?机场|Shanghai Pudong International Airport)$/i,
+  'Guangzhou Baiyun Airport': /^(?:广州白云(?:国际)?机场|Guangzhou Baiyun International Airport)$/i,
+};
+export function popularAirport(page: Page, name: keyof typeof popularAirportLabels) {
+  return localizedAction(region(page, 'Popular airports'), name, popularAirportLabels[name]);
+}
+const domesticAirportCityLabels = {
+  Chengdu: /^(?:\bChengdu\b|成都)/i,
+  Chongqing: /^(?:\bChongqing\b|重庆)/i,
+  Changchun: /^(?:\bChangchun\b|长春)/i,
+};
+export async function expectDomesticAirportCity(page: Page, city: keyof typeof domesticAirportCityLabels) {
+  const links = action(region(page, 'Domestic airports'), domesticAirportCityLabels[city]).filter({ visible: true });
+  await expect.poll(() => links.count()).toBeGreaterThan(0);
+}
+export async function openAirportDetails(page: Page) {
+  await openAirport(page);
+  await (await popularAirport(page, 'Beijing Capital Airport')).click();
+}
 
 export async function countdownSeconds(timer: Locator) {
   const text = (await timer.innerText()).trim().replace(/^Time remaining\s*:?\s*/i, '');

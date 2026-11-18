@@ -1,6 +1,6 @@
 // requirement: REQ-1.5
 import { expect } from "@playwright/test";
-import { test, field, button, action, dialog, nav, visible, heading, openHome, openLogin } from "./helpers";
+import { navigationLogin, test, field, button, action, dialog, nav, visible, heading, expectHomeQuickSearch, openHome, openLogin } from "./helpers";
 
 test('REQ-1.5: Open registration agreement', async ({ page }) => {
   await openHome(page);
@@ -25,8 +25,8 @@ test('REQ-1.5: Decline registration', async ({ page }) => {
   await openHome(page);
   await action(nav(page), 'Register').click();
   await button(dialog(page, 'Registration agreement and privacy policy'), 'Decline').click();
-  await heading(page, 'Ctrip Travel');
-  await visible(action(nav(page), 'Log in'));
+  await expectHomeQuickSearch(page);
+  await visible(navigationLogin(page));
   await expect(dialog(page, 'Registration agreement and privacy policy')).toHaveCount(0);
   await expect(action(page, 'My account')).toHaveCount(0);
 });

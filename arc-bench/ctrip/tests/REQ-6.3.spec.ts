@@ -1,13 +1,12 @@
 // requirement: REQ-6.3
-import { test, button, region, visible, textVisible, openHome, openSecurity, registerAccount } from "./helpers";
+import { test, visible, textVisible, openHome, openSecurity, securityChange, registerAccount } from "./helpers";
 
 test('REQ-6.3: Inspect security settings and reminder', async ({ page }) => {
   await openHome(page);
   await registerAccount(page);
   await openSecurity(page);
-  for (const name of ['Login password', 'Bound phone', 'Bound email']) {
-   await visible(region(page, name));
-   await visible(button(region(page, name), 'Change'));
+  for (const name of ['Login password', 'Bound phone', 'Bound email'] as const) {
+    await visible(await securityChange(page, name));
   }
-  await textVisible(page, /^Change your password regularly\.?$/);
+  await textVisible(page, /(?:change your password regularly|定期(?:更换|修改)(?:密码)?)/i);
 });

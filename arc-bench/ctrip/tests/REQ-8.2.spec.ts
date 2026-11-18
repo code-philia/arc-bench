@@ -1,6 +1,6 @@
 // requirement: REQ-8.2
 import { expect } from "@playwright/test";
-import { test, region, tab, record, records, visible, openHome, openVouchers, VOUCHERS } from "./helpers";
+import { test, region, tab, orderRecord, records, visible, openHome, openVouchers, VOUCHERS } from "./helpers";
 
 test('REQ-8.2: Read completed voucher and issuance rules', async ({ page }) => {
   await openHome(page);
@@ -9,5 +9,5 @@ test('REQ-8.2: Read completed voucher and issuance rules', async ({ page }) => {
   await expect(region(page, 'Issuance rules')).toContainText('365');
   await tab(page, 'Completed').click();
   await expect(records(region(page, 'Completed vouchers'))).toHaveCount(1);
-  await visible(record(region(page, 'Completed vouchers'), VOUCHERS.completed));
+  await visible(orderRecord(region(page, 'Completed vouchers'), VOUCHERS.completed));
 });

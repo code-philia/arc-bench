@@ -1,30 +1,30 @@
 // requirement: REQ-1.3
 import { expect } from "@playwright/test";
-import { test, setChecked, field, action, checkbox, nav, visible, heading, alertText, openHome, openLogin, login, ACCOUNTS, loginSubmit, createMobileAccount, passwordField } from "./helpers";
+import { navigationLogin, test, setChecked, field, action, checkbox, nav, visible, expectHomeQuickSearch, alertText, openHome, openLogin, login, ACCOUNTS, loginSubmit, createMobileAccount, passwordField } from "./helpers";
 
 test('REQ-1.3: Authenticate by email', async ({ page }) => {
   await openHome(page);
   await login(page, ACCOUNTS.user.email!, ACCOUNTS.user.password!);
-  await heading(page, 'Ctrip Travel');
+  await expectHomeQuickSearch(page);
   await visible(action(page, 'My account'));
-  await expect(action(nav(page), 'Log in')).toHaveCount(0);
+  await expect(navigationLogin(page)).toHaveCount(0);
 });
 
 test('REQ-1.3: Authenticate by username', async ({ page }) => {
   await openHome(page);
   await login(page, ACCOUNTS.user.username!, ACCOUNTS.user.password!);
-  await heading(page, 'Ctrip Travel');
+  await expectHomeQuickSearch(page);
   await visible(action(page, 'My account'));
-  await expect(action(nav(page), 'Log in')).toHaveCount(0);
+  await expect(navigationLogin(page)).toHaveCount(0);
 });
 
 test('REQ-1.3: Authenticate by mobile', async ({ page }) => {
   await openHome(page);
   const account = await createMobileAccount(page);
   await login(page, account.mobile, account.password, false);
-  await heading(page, 'Ctrip Travel');
+  await expectHomeQuickSearch(page);
   await visible(action(page, 'My account'));
-  await expect(action(nav(page), 'Log in')).toHaveCount(0);
+  await expect(navigationLogin(page)).toHaveCount(0);
 });
 
 test('REQ-1.3: Reject missing account', async ({ page }) => {

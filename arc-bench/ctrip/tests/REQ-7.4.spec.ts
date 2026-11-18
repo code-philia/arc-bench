@@ -1,13 +1,13 @@
 // requirement: REQ-7.4
-import { test, dateControl, expectDateField, action, region, textVisible, openHome, openStatus, queryStatusNumber, tripDate, registerAccount } from "./helpers";
+import { test, dateControl, expectDateField, action, region, textVisible, textToken, openHome, openStatus, reopenStatus, queryStatusNumber, tripDate, registerAccount } from "./helpers";
 
 test('REQ-7.4: Record and reuse a flight query', async ({ page }) => {
   await openHome(page);
   await registerAccount(page);
   await openStatus(page);
   await queryStatusNumber(page, 'JD5162');
-  await openStatus(page);
+  await reopenStatus(page);
   await action(region(page, 'Search history'), 'JD5162').click();
   await expectDateField(dateControl(page, 'Departure date'), tripDate(page, 2));
-  for (const value of ['JD5162', 'Chengdu', 'Guangzhou']) await textVisible(region(page, 'Flight details'), value);
+  for (const value of ['JD5162', 'Chengdu', 'Guangzhou']) await textVisible(region(page, 'Flight details'), textToken(value));
 });

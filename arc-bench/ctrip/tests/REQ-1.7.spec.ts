@@ -1,6 +1,6 @@
 // requirement: REQ-1.7
 import { expect } from "@playwright/test";
-import { test, setChecked, field, button, action, checkbox, visible, heading, alertText, openHome, registerToPassword, newMobile, accountInput, textVisible, loginSubmit, passwordField } from "./helpers";
+import { test, setChecked, field, button, action, checkbox, visible, heading, alertText, submitInvalidRegistrationPassword, openHome, registerToPassword, newMobile, accountInput, textVisible, loginSubmit, passwordField } from "./helpers";
 
 test('REQ-1.7: Complete registration and authenticate created account', async ({ page }) => {
   await openHome(page);
@@ -37,8 +37,7 @@ test('REQ-1.7: Reject weak password', async ({ page }) => {
   await registerToPassword(page, newMobile());
   await passwordField(page).fill('1234567');
   await field(page, 'Confirm password').fill('1234567');
-  await button(page, 'Complete registration').click();
-  await alertText(page, 'Password must contain letters and numbers and be at least 8 characters');
+  await submitInvalidRegistrationPassword(page);
   await heading(page, 'Set password');
   await expect(action(page, 'My account')).toHaveCount(0);
 });

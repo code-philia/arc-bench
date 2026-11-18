@@ -13,13 +13,42 @@ export const action = (scope: Scope, name: string | RegExp) => {
     .or(scope.locator('details > summary').filter({ hasText: summaryText }));
 };
 
+// Resolve one visible candidate at a time so a fallback cannot shadow an exact match.
+export async function preferredVisible(...candidates: Locator[]): Promise<Locator> {
+  const visible = candidates.map(candidate => candidate.filter({ visible: true }));
+  let match: Locator | undefined;
+  await expect.poll(async () => {
+    match = undefined;
+    for (const candidate of visible) {
+      if (await candidate.count()) {
+        match = candidate;
+        return true;
+      }
+    }
+    return false;
+  }, { message: `Expected a visible match for ${candidates.map(String).join(' or ')}` }).toBe(true);
+  await expect(match!).toHaveCount(1);
+  return match!;
+}
+
+export function localizedAction(scope: Scope, english: string, alternate: RegExp) {
+  const controls = action(scope, /.+/);
+  return preferredVisible(controls.and(scope.getByText(english, { exact: true })),
+    action(scope, english), action(scope, alternate), controls.filter({ hasText: alternate }));
+}
+
 export const field = (scope: Scope, name: string) =>
   scope.getByLabel(name, { exact: true }).and(scope.locator('input:not([type="radio"], [type="checkbox"], [type="hidden"], [type="button"], [type="submit"], [type="reset"]), textarea, select, [contenteditable], [role="combobox"]'))
     .or(scope.getByRole('textbox', exact(name))).or(scope.getByRole('combobox', exact(name)))
     .or(scope.getByRole('searchbox', exact(name)));
 
 export const checkbox = (scope: Scope, name: string) => scope.getByRole('checkbox', exact(name));
-export const radio = (scope: Scope, name: string) => scope.getByRole('radio', exact(name));
+export const radio = (scope: Scope, name: string) => {
+  const bilingual = name === 'Round trip' ? /^(?:往返(?:\s+Round trip)?|Round trip)$/
+    : name === 'One way' ? /^(?:单程(?:\s+One way)?|One way)$/
+    : name === 'Multi-city' ? /^(?:Multi[ -]city|多程(?:\s*\([含可]?缺口程\))?(?:\s+Multi[ -]city)?)$/i : name;
+  return scope.getByRole('radio', exact(bilingual));
+};
 
 export async function setChecked(control: Locator, checked = true) {
   await expect(control).toBeVisible();
@@ -77,7 +106,12 @@ export function records(scope: Scope) {
 export function record(scope: Scope, name: string) {
   const legacy = scope.getByRole('listitem', exact(`Record ${name}`))
     .or(scope.getByRole('row', exact(`Record ${name}`))).or(scope.getByRole('group', exact(`Record ${name}`)));
-  return legacy.or(records(scope).filter({ has: pageOf(scope).getByText(name, { exact: true }) }))
+  const page = pageOf(scope);
+  const identity = page.getByText(name, { exact: true })
+    .or(page.getByRole('checkbox', exact(name)))
+    .or(page.getByText(`Record ${name}`, { exact: true }));
+  const rows = records(scope);
+  return legacy.or(rows.and(identity)).or(rows.filter({ has: identity.filter({ visible: true }) }))
     .or(scope.getByRole('group', exact(name))).filter({ visible: true });
 }
 
@@ -103,6 +137,7 @@ export const flightEntry = (scope: Scope, number: string) =>
 
 export const recordCheckbox = (scope: Scope, name: string) =>
   scope.getByRole('checkbox', exact(name)).or(record(scope, name).getByRole('checkbox', exact('Select')))
+    .or(record(scope, name).getByRole('checkbox', { name: new RegExp(`^(?:Select|选择)\\s+${escape(name)}$`, 'i') }))
     .or(record(scope, name).getByRole('checkbox', exact('')));
 
 const dateDisplay = (date: string) => {
@@ -133,25 +168,40 @@ export async function expectDateField(control: Locator, date: string) {
 export const dateControl = (scope: Scope, name: string) => field(scope, name).or(action(scope, name)).filter({ visible: true });
 
 export function dayAction(scope: Scope, date: string) {
-  const label = new RegExp(`^${dateDisplay(date)}(?:,\\s+${escape(shortDate(date))})?(?:,?\\s+[¥￥].*)?$`);
+  // Keep the full date anchored. A weekday, fare, or calendar annotation may follow it.
+  const label = new RegExp(`^${dateDisplay(date)}(?=$|[\\s,])`);
   return scope.getByRole('button', { name: label }).or(scope.getByRole('gridcell', { name: label })).filter({ visible: true });
 }
 
 export async function selectChoice(scope: Scope, label: string, option: string) {
   const control = field(scope, label);
   await expect(control).toBeVisible();
+  const alternative = label === 'Type' && option === 'Company' ? '企业' : option;
   if (await control.evaluate(element => element instanceof HTMLSelectElement)) {
-    await control.selectOption({ label: option });
+    const exactOption = control.getByRole('option', exact(option));
+    const fallbackOption = control.getByRole('option', exact(alternative));
+    await expect.poll(async () => (await exactOption.count()) + (await fallbackOption.count())).toBeGreaterThan(0);
+    const chosen = (await exactOption.count()) ? exactOption : fallbackOption;
+    await expect(chosen).toHaveCount(1);
+    const value = await chosen.evaluate(element => (element as HTMLOptionElement).value);
+    await control.selectOption(value);
   } else {
     await control.click();
-    await scope.getByRole('option', exact(option)).click();
+    const exactOption = scope.getByRole('option', exact(option)).filter({ visible: true });
+    const fallbackOption = scope.getByRole('option', exact(alternative)).filter({ visible: true });
+    await expect.poll(async () => (await exactOption.count()) + (await fallbackOption.count())).toBeGreaterThan(0);
+    await ((await exactOption.count()) ? exactOption : fallbackOption).click();
   }
 }
 
 export async function expectChoice(scope: Scope, label: string, option: string) {
   const control = field(scope, label);
   if (await control.evaluate(element => element instanceof HTMLSelectElement)) {
-    await expect(control.getByRole('option', exact(option))).toHaveJSProperty('selected', true);
+    const exactOption = control.getByRole('option', exact(option));
+    const alternative = label === 'Type' && option === 'Company' ? '企业' : option;
+    const fallbackOption = control.getByRole('option', exact(alternative));
+    await expect.poll(async () => (await exactOption.count()) + (await fallbackOption.count())).toBeGreaterThan(0);
+    await expect((await exactOption.count()) ? exactOption : fallbackOption).toHaveJSProperty('selected', true);
   } else if (await control.evaluate(element => element instanceof HTMLInputElement)) {
     await expect(control).toHaveValue(option);
   } else {

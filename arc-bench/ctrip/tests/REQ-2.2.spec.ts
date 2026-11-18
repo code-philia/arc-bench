@@ -16,7 +16,7 @@ test('REQ-2.2: Choose a popular origin', async ({ page }) => {
   await field(page, 'Origin').click();
   await expect(selectedTab(dialog(page, 'City selection'), 'Popular')).toBeVisible();
   await button(dialog(page, 'City selection'), 'Chengdu').click();
-  await expectFieldValue(field(page, 'Origin'), 'Chengdu (CTU)');
+  await expectFieldValue(field(page, 'Origin'), /^Chengdu\s*[(（]\s*CTU\s*[)）]$/);
   await expect(dialog(page, 'City selection')).toHaveCount(0);
 });
 
@@ -25,6 +25,6 @@ test('REQ-2.2: Choose destination by pinyin group', async ({ page }) => {
   await field(page, 'Destination').click();
   await tab(dialog(page, 'City selection'), 'GHIJ').click();
   await button(dialog(page, 'City selection'), 'Guangzhou').click();
-  await expectFieldValue(field(page, 'Destination'), 'Guangzhou (CAN)');
+  await expectFieldValue(field(page, 'Destination'), /^Guangzhou\s*[(（]\s*CAN\s*[)）]$/);
   await expect(dialog(page, 'City selection')).toHaveCount(0);
 });
