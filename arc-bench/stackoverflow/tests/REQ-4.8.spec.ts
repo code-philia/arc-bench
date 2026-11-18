@@ -17,6 +17,6 @@ test('REQ-4.8: Publish an actual answer correction', async ({ page, browser }, i
    await expectBody(answer(visitor,actorName('answer_edit_user')),revised);
    await expectBodyAbsent(answer(visitor,actorName('answer_edit_user')),answerBody);
    await expect(answer(visitor,actorName('answer_edit_user'))).toContainText(/edited/i);
-   await expect(await openRevisionHistory(answer(visitor,actorName('answer_edit_user')))).toContainText('Added deadline guidance.');
+   await expect(await openRevisionHistory(answer(visitor,actorName('answer_edit_user')),'Added deadline guidance.')).toContainText('Added deadline guidance.');
   });
 });

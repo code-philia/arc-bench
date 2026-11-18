@@ -1,4 +1,4 @@
-import { catalogPagination, test, expect, entry, action, region, mainNav, collection, createQuestion, createAnswer, displayTag, tagDescription, tagQuestionCount, asUser, openQuestion, post, field, verifySavedQuestion, confirmDeletion, expectPaginationEnd } from './helpers';
+import { expectDisplayedTag, catalogPagination, test, expect, entry, action, region, mainNav, collection, createQuestion, createAnswer, displayTag, tagDescription, tagQuestionCount, asUser, openQuestion, post, field, verifySavedQuestion, confirmDeletion, expectPaginationEnd } from './helpers';
 import { body, initialEnvironment, retryTitle } from './fixtures/data';
 
 // requirement: REQ-6.1
@@ -38,7 +38,7 @@ test('REQ-6.1: Browse popular tags and python questions', async ({ page, browser
   await expect(action(feed,control)).toHaveCount(0);
   const summaries=collection(feed,'Question');
   expect(await summaries.count()).toBeGreaterThan(0);
-  for (const summary of await summaries.all()) await expect(displayTag(summary,'python')).toBeVisible();
+  for (const summary of await summaries.all()) await expectDisplayedTag(summary,'python');
   await asUser(browser,'question_creator',async owner=>{
     await openQuestion(owner,answered);await action(post(owner),'Edit question').click();
     await field(owner,'Tags').fill('javascript');await field(owner,'Edit Summary').fill('Corrected the language tag.');

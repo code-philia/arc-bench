@@ -35,6 +35,10 @@ async function resolveUnique(candidates: Locator[], description: string): Promis
       const count = await candidate.count();
       if (count > 1) return false;
       if (count === 1) {
+        // Confirm within this polling attempt. If the provisional scope changes
+        // between observations, retry the entire priority list instead of
+        // waiting indefinitely on the previously selected fallback.
+        if (await candidate.count() !== 1) return false;
         selected = candidate;
         return true;
       }
@@ -42,9 +46,6 @@ async function resolveUnique(candidates: Locator[], description: string): Promis
     return false;
   }, { message: `Find ${description}` }).toBe(true);
   if (!selected) throw new Error(`No visible ${description}`);
-  // Keep the chosen locator across a render transition; the count assertion
-  // waits for it to reappear rather than failing in a second snapshot loop.
-  await expect(selected, `Unambiguous ${description}`).toHaveCount(1);
   return selected;
 }
 
@@ -76,7 +77,8 @@ function ownedBy(scope: Scope, candidates: Locator, ownerName: string, itemName?
   const foreignHeading = `${container}:has(${heading})`;
   // Plain captions are object evidence when paired with interactions, not
   // when they are merely spans within the current object's prose.
-  const foreignCaption = `${container}:has(> span${except}):has(button,a,[role="button"],[role="link"],[onclick])`;
+  const caption = `span:not([aria-hidden="true"], [hidden], [role="presentation"], [role="none"]):visible:text-matches(${JSON.stringify(String.raw`\S`)})${except}`;
+  const foreignCaption = `${container}:has(> ${caption}):has(button,a,[role="button"],[role="link"],[onclick])`;
   return candidates.and(scope.locator(`:not(${foreignHeading}, ${foreignHeading} *, ${foreignCaption}, ${foreignCaption} *)`));
 }
 
@@ -120,12 +122,26 @@ export async function region(page: Page, name: string, contextTitle?: string): P
     // A main is a hard upper boundary: another main, header or sidebar must
     // not supply a missing collection. Without main, require an enclosing
     // content layout containing both the owner and positive group evidence.
-    const layout = await main.count() > 0 ? main : smallestContainers(
+    const hasMain = await main.count() > 0;
+    if (!hasMain) {
+      // If the nearest existing content boundary already contains exactly one
+      // owned collection, every smaller qualifying layout can only select that
+      // same collection. Avoid inferring and embedding a larger layout again.
+      // Zero or multiple groups retain the full sibling-layout inference.
+      const local = smallestContainers(groups).and(boundary.locator('*'));
+      if (await local.count() === 1) {
+        return resolveUnique([local], `collection ${name} owned by ${contextTitle}`);
+      }
+    }
+    const layout = hasMain ? main : smallestContainers(
       visible(page.locator('section, article, div')).filter({ has: owner })
         .filter({ has: groups }),
     );
     if (await layout.count() === 1) {
-      const related = smallestContainers(groups.and(layout.locator('*')));
+      // Prune nested aliases before intersecting the layout. Descendants of
+      // a group inside this layout cannot escape it; factoring the intersection
+      // avoids re-evaluating the entire owner/layout search inside each group.
+      const related = smallestContainers(groups).and(layout.locator('*'));
       if (await related.count() > 0) {
         return resolveUnique([related], `collection ${name} owned by ${contextTitle}`);
       }
@@ -163,8 +179,19 @@ export async function region(page: Page, name: string, contextTitle?: string): P
 
 async function visibleTitle(page: Page, name: string): Promise<Locator> {
   const detailOnly = page.locator(`:not(li, li *, tr, tr *, [role="listitem"], [role="listitem"] *, [role="row"], [role="row"] *, ${COLLECTION_NAMES.map(value => `[aria-label=${JSON.stringify(value)}] *`).join(',')})`);
+  // A collection's own page heading may live in its named card. Record
+  // headings and opening labels remain excluded, including nested record cards.
+  const aliases = Object.values(COLLECTION_ALIASES).find(values => values.includes(name));
+  const labels = (aliases ?? []).map(value => `[aria-label=${JSON.stringify(value)}]`);
+  const record = 'li, tr, [role="listitem"], [role="row"], a, button, [role="link"], [role="button"]';
+  const nestedCards = labels.flatMap(label => [`${label} article *`, `${label} section *`]);
+  const ownCollectionHeading = labels.length
+    ? page.getByRole('heading', { name, exact: true })
+      .and(page.locator(labels.map(label => `${label} *`).join(',')))
+      .and(page.locator(`:not(${record}, ${record.split(', ').map(value => value + ' *').join(',')}, ${nestedCards.join(',')})`))
+    : page.locator(':not(*)');
   return resolveUnique([
-    page.getByRole('heading', { name, exact: true }).and(detailOnly).filter({ visible: true }),
+    page.getByRole('heading', { name, exact: true }).and(detailOnly).or(ownCollectionHeading).filter({ visible: true }),
     page.getByText(name, { exact: true })
       .and(page.locator(':not(a, button, input, nav *, header *, [role="navigation"] *, [role="banner"] *, [role="link"], [role="button"])'))
       .and(detailOnly).filter({ visible: true }),
@@ -295,7 +322,9 @@ export function bookActions(page: Page, bookName: string) {
       .filter({ has: controls })).or(named).filter({ visible: true });
     // Explicit action groups may themselves use lists. Outside them, list/row
     // controls belong to child content, not to the selected book.
-    const grouped = entry(labelled, name).and(controls);
+    // Intersect the already identified controls with the group once instead
+    // of copying the entire group query into every action-role alternative.
+    const grouped = controls.and(labelled.locator('*'));
     const standalone = controls.and(page.locator(':not(li *, tr *, [role="listitem"] *, [role="row"] *, ul *, ol *, table *, [role="list"] *, [aria-label="Page list"] *, [aria-label="Chapter list"] *)'));
     const eligible = grouped.or(standalone);
     // Filter child ownership before uniqueness; Actions does not establish owner.
@@ -315,7 +344,7 @@ export function deletionConfirmation(page: Page, ownerName: string) {
       .filter({ visible: true });
     return resolveUnique([smallestContainers(scopes).filter({ has: identity })], `deletion confirmation for ${ownerName}`);
   };
-  return { ...observable(target), action(name: 'Confirm Delete' | 'Cancel') { return actionable(async () => entry(await target(), name)); } };
+  return { ...observable(target), action(name: 'Confirm Delete' | 'Cancel') { return actionable(async () => entry(page, name).and((await target()).locator('*'))); } };
 }
 
 export function navigationAction(page: Page, name: string) {
@@ -369,6 +398,35 @@ export function collection(page: Page, name: string, options: { owner?: string }
   const target = () => region(page, name, options.owner);
   return {
     ...observable(target),
+    async displayedNames(): Promise<string[]> {
+      const scope=await target();
+      const names=await scope.evaluate(root=>{
+        const shown=(el:Element)=>el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden';
+        const controls=[...root.querySelectorAll('a,button,[role="link"],[role="button"]')].filter(shown);
+        const result:string[]=[];
+        for(const control of controls){
+          const text=(control.textContent||'').trim();
+          if(/^(?:View All|See All|Edit|Delete|Favorite|Unfavorite)$/i.test(text))continue;
+          const row=control.closest('li,article,tr,[role="listitem"]');
+          const headings=[...(row||control).querySelectorAll('h1,h2,h3,h4,h5,h6')].filter(shown);
+          if(headings.length>1)throw new Error('Favorite row contains ambiguous captions');
+          let caption=headings[0]?.textContent?.trim();
+          if(!caption&&/^(?:Open|View|Read)$/.test(text)){
+            if(!row)throw new Error('Generic favorite action has no record owner');
+            const captions=[...row.querySelectorAll(':scope > span,:scope > p')].filter(shown);
+            if(captions.length!==1)throw new Error('Generic favorite action requires one readable caption');
+            caption=captions[0].textContent?.trim();
+          }
+          caption=caption||text.replace(/^(?:Open|View|Read)\s+/,'');
+          if(!caption)throw new Error('Favorite entry has no readable identity');
+          result.push(caption);
+        }
+        if(new Set(result).size!==result.length)throw new Error('Duplicate favorite identities');
+        return result;
+      });
+      for(const name of names)await expect(itemEntry(page,name).and(scope.locator('*'))).toHaveCount(1);
+      return names;
+    },
     async visibleNames(names: string[]): Promise<string[]> {
       const scope = await target();
       const visible: string[] = [];

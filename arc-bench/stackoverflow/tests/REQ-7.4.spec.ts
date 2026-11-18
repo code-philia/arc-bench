@@ -1,4 +1,6 @@
-import { acceptedAnswer, reputationContribution, upvoteDescription,test, expect, entry, login, ownProfile, activity, action, region, mainNav, profileNav, activityNav, answer, output, noUsableAction, expectCurrent, prepareActivity, actor, numeric, expectResponse, publicUserAction , expectNumeric, asUser, composeQuestion, titleFor, field, saveProfile } from './helpers';
+import {expectPrivateVotesHidden} from './helpers';
+import { acceptedAnswer, reputationContribution, upvoteDescription,test, expect, entry, login, ownProfile, activity, action, region, mainNav, profileNav, activityNav, answer, output, noUsableAction, expectCurrent, prepareActivity, actor, numeric, expectResponse, publicUserAction , expectNumeric, asUser, composeQuestion, titleFor, field, saveProfile,openQuestions,openMembers } from './helpers';
+import {expectPublicMember} from './helpers';
 import { retryTitle } from './fixtures/data';
 
 // requirement: REQ-7.4
@@ -43,16 +45,19 @@ test('REQ-7.4: Protect private voting history', async ({ page, browser }, info) 
   const namesakeTitle=titleFor(info,'A separate question by a namesake');
   await asUser(browser,'stack_user',async other=>{
     await ownProfile(other);await action(other,'Edit profile').click();await field(other,'Display name').fill(owner.displayName);await saveProfile(other,owner.displayName);
-    await action(mainNav(other),'Questions').click();await composeQuestion(other,namesakeTitle);
-    await action(mainNav(other),'Users').click();await (await publicUserAction(other,owner,true)).click();
-    await action(profileNav(other),'Activity').click();await noUsableAction(activityNav(other),'Votes');
-    await expect(region(other,'Activity content')).not.toContainText(data.reactTitle);
+    await openQuestions(other);await composeQuestion(other,namesakeTitle);
+    await openMembers(other);await (await publicUserAction(other,owner,true,{ownedQuestion:data.ownedTitle,excludedQuestion:namesakeTitle})).click();
+    await expectPublicMember(other,owner,{ownedQuestion:data.ownedTitle,excludedQuestion:namesakeTitle});
+    await action(activityNav(other),'Summary').click();await expectCurrent(action(activityNav(other),'Summary'));
+    await noUsableAction(activityNav(other),'Votes');
+    await expectPrivateVotesHidden(region(other,'Activity content'),data.reactTitle);
   });
-  await entry(page); await action(mainNav(page),'Users').click();
-  await (await publicUserAction(page,owner,true)).click();
-  await action(profileNav(page),'Activity').click();
+  await entry(page); await openMembers(page);
+  await (await publicUserAction(page,owner,true,{ownedQuestion:data.ownedTitle,excludedQuestion:namesakeTitle})).click();
+  await expectPublicMember(page,owner,{ownedQuestion:data.ownedTitle,excludedQuestion:namesakeTitle});
+  await action(activityNav(page),'Summary').click();await expectCurrent(action(activityNav(page),'Summary'));
   await noUsableAction(activityNav(page),'Votes');
-  await expect(region(page,'Activity content')).not.toContainText(data.reactTitle);
+  await expectPrivateVotesHidden(region(page,'Activity content'),data.reactTitle);
   await expect(profileNav(page)).toBeVisible();
   await action(activityNav(page),'Questions').click();await expect(action(region(page,'Activity content'),data.ownedTitle)).toBeVisible();await expect(action(region(page,'Activity content'),namesakeTitle)).toHaveCount(0);
 });

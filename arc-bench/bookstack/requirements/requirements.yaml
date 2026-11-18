@@ -171,7 +171,7 @@ children:
   name: Organize shelves
   description:
     text: |-
-      Shelves contain a name, description, related books and tags. Support browsing, creation, editing, cancellation and confirmed deletion.
+      Shelves contain a name, description, related books and tags. Users can browse, create and edit shelves, cancel pending changes, and confirm or cancel deletion.
 
       Users can open Shelves and choose New Shelf to create a shelf, including when Shelf list is empty.
 
@@ -260,7 +260,7 @@ children:
           The visitor is logged out and no shelf has the Shelf Created 4.3.1 name.
         When: |-
           Open Shelves, click New Shelf, enter "Shelf Created 4.3.1" in Name and "Guides for maintaining shared documentation." in Description. When using tag rows, add another blank row while the existing row is still empty, then enter "created" and "shelf" as the tag names. Click Save Shelf. Open the saved shelf, reload and reopen Edit.
-        Then: Saving returns to Shelf list with exactly one visible entry. The saved name, description and tags
+        Then: Saving returns to Shelf list with exactly one visible entry for the new shelf. The saved name, description and tags
           remain in the reopened metadata form after reload, demonstrating persistence of the entered metadata.
         references:
         - \ref[requirement](REQ-1.1)
@@ -372,7 +372,7 @@ children:
   name: Manage books
   description:
     text: |-
-      Books contain a name, rich-text description, optional cover image, tags, default page template, chapters and pages. Support creation from the global list and from a shelf, metadata editing and confirmed deletion.
+      Books contain a name, rich-text description, optional cover image, tags, default page template, chapters and pages. Users can create books from the global list or a shelf, edit their metadata, and confirm or cancel deletion.
 
       Book metadata forms allow users to choose, replace or remove a cover image and to configure or clear a default page template. Save Book commits these changes together with the other metadata; Cancel discards pending changes. A saved cover is shown with the book and remains after reload.
 
@@ -614,8 +614,8 @@ children:
 - id: REQ-6
   name: Author and read content
   description:
-    text: Pages are reading units, chapters organize pages. Support published pages, user-owned drafts, draft deletion,
-      chapter creation and entry, and reading pages from book or chapter page lists.
+    text: Pages provide reading content, and chapters organize pages within a book. Users can publish and read pages,
+      save and delete their own drafts, create and open chapters, and read pages from book or chapter page lists.
   scenarios: []
   children:
   - id: REQ-6.1
@@ -640,7 +640,7 @@ children:
       name: Publish a page
       steps:
       - id: STEP-REQ-6.1-01-01
-        Given: An anonymous visitor has UI-created Book 6.1.1 and is viewing it; Page Created
+        Given: An anonymous visitor has created Book 6.1.1 through the book creation form and Save Book and is viewing it; Page Created
           6.1.1 does not exist.
         When: |-
           Click New Page, enter "Page Created 6.1.1" as the title and "Read this guide before updating shared documentation." as the body, then click Save Page. Reopen the saved page to read it, then return to the parent book.
@@ -721,7 +721,7 @@ children:
       name: Save and open a chapter
       steps:
       - id: STEP-REQ-6.3-01-01
-        Given: An anonymous visitor has UI-created Book 6.2.1 and is viewing it; Chapter Created
+        Given: An anonymous visitor has created Book 6.2.1 through the book creation form and Save Book and is viewing it; Chapter Created
           6.2.1 does not exist.
         When: |-
           Click New Chapter, enter "Chapter Created 6.2.1" in Name and "Getting started with the documentation workflow." in Description, then click Save Chapter. Click that chapter's entry in Chapter list.
@@ -936,10 +936,10 @@ children:
       steps:
       - id: STEP-REQ-8.2-01-01
         Given: |-
-          The verified account is authenticated and has UI-created and favorited five books, including Book 8.2, observing Unfavorite for each.
+          The verified account is authenticated and has created and favorited five books through the application, including Book 8.2, observing Unfavorite for each.
         When: |-
-          Open /, inspect My Most Viewed Favorites, choose a displayed book from those created in this interaction, and activate its exact entry.
-        Then: The favorite entry appears once in a list of no more than four items and opens the same book's heading.
+          Open /, inspect My Most Viewed Favorites, choose a favorite currently displayed in the shortlist, and activate its exact entry. The selected favorite may predate the five new books.
+        Then: The favorite entry appears once in a list of no more than four items and opens that selected item's heading.
         references:
         - \ref[requirement](REQ-8.1)
         - \ref[image](IMG-INDEX-AFTER-LOGIN)

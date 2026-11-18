@@ -120,7 +120,7 @@ children:
   name: Account and public identity
   description:
     text: |-
-      Users register and log in with email and password, manage their public profile, and access their own activity. Log in and Sign up open the corresponding account forms; Sign in submits login credentials and Create account submits registration. Errors appear in the relevant form. Profiles and contributions retain the identity of the account that created them, including after a display-name change. Profile entries distinguish people with the same display name. Unauthorized actions are unavailable. Social login and SSO are outside this account workflow.
+      Users register and log in with email and password, manage their public profile, and access their own activity. Log in and Sign up open the corresponding account forms; Sign in submits login credentials and Create account submits registration. Errors appear in the relevant form. Profiles and contributions retain the identity of the account that created them, including after a display-name change. Profile entries distinguish people with the same display name through their public profile identity or contributions; displaying their email addresses is not required. Unauthorized actions are unavailable. Social login and SSO are outside this account workflow.
 
       For example, Alice registers with alice@example.com and Password123!, then sets her public display name through Edit profile. Bob registers a separate account. Alice and Bob can publish, answer, comment, vote and manage their own content as described below; ownership follows their distinct accounts. Registration alone does not grant historical activity, earned badges or additional privileges. The initial badge award and its associated member are described below.
 
@@ -381,7 +381,7 @@ children:
       - id: STEP-REQ-2.6-01-01
         Given: |-
           A new member registers through Sign up using an unused email address and Password123!. Registration signs the member in. The member then opens the same application in a separate anonymous browser, where no account profile action is present.
-        When: In the fresh context open Log in, enter the created Email and Password123!, and submit Sign in.
+        When: In the separate anonymous browser session open Log in, enter the created Email and Password123!, and submit Sign in.
         Then: |-
           Credential submission displays that exact registered email as the profile action and opens the question feed; the account is usable independently of the original registration session.
         references:
@@ -392,7 +392,7 @@ children:
         - \ref[image](IMG-HOMEPAGE)
     children: []
 - id: REQ-3
-  name: Publish and maintain questions capability
+  name: Publish and maintain questions
   description:
     text: >-
       Visitors browse and read questions with titles, rendered bodies, tags, engagement metadata and author
@@ -509,11 +509,11 @@ children:
       steps:
       - id: STEP-REQ-3.3-02-01
         Given: |-
-          A registered author is signed in with an empty Ask Question editor and has not published the draft.
+          A registered author is signed in with an empty Ask Question editor and has not published the draft. A different, valid question has already been published and is available as a public-search comparison.
         When: |-
           Click Post Your Question with all fields empty; enter a valid title and submit again with Body empty; enter the valid example body in REQ-3 and submit again with Tags empty.
         Then: |-
-          Each stage shows the corresponding exact Title is required (minimum 15 characters), Question body is required (minimum 220 characters), or Please add at least one tag message. The editor remains available and no question content is published. Searching the attempted nonempty title finds no published question.
+          Each stage shows the corresponding exact Title is required (minimum 15 characters), Question body is required (minimum 220 characters), or Please add at least one tag message. The editor remains available and no draft content is published. The existing valid question remains discoverable, while searching the attempted nonempty title finds no published question. A search with no matches makes that outcome apparent.
         references:
         - \ref[requirement](REQ-3.1)
         - \ref[requirement](REQ-2.1)
@@ -620,7 +620,7 @@ children:
         Given: |-
           Alice publishes a question. A different signed-in user opens it with no active vote and records its score and author reputation.
         When: Click Up vote, reload the detail, then click Up vote again.
-        Then: Upvoting and reloading retain score baseline+1, an active vote and author reputation baseline+10.
+        Then: Upvoting and reloading retain a score one higher than before, an active vote and author reputation 10 points higher than before.
           Activating again restores the recorded score, inactive vote and reputation.
         references:
         - \ref[requirement](REQ-3.1)
@@ -717,7 +717,7 @@ children:
           A registered author has published a retry question using the example body in REQ-3 and node.js, http and retry tags, then opens Edit question. A different registered member can read the public question.
         When: Append clarified to Title and Use a bounded retry budget. to Body, set Tags to http,retry and Edit
           Summary to Documented bounded retry budget.; Save edits. Authenticate another member in an
-          independent context, search the replacement title, reload the detail and open Timeline.
+          independent browser session, search the replacement title, reload the detail and open Timeline.
         Then: The owner sees the new heading. The independent visitor reads replacement body and only http/retry tags;
           Revision history retains the submitted summary rather than an editor-local draft. Searching the
           former title does not return a separate original copy.
@@ -811,8 +811,8 @@ children:
         Given: |-
           A registered question author publishes a question, and a second member posts an answer through Post Your Answer. A third member signs in without an active vote, opens the question and records the question score and answer author reputation. The answer starts at score 0.
         When: Click Up vote inside Alice’s answer, then click the same action again.
-        Then: First activation makes answer Score 1, an active vote and author reputation baseline+10; second restores
-          Score 0, an inactive vote and baseline. The parent question's recorded Score is unchanged at both
+        Then: First activation makes answer Score 1, an active vote and author reputation 10 points higher than before; second restores
+          Score 0, an inactive vote and the recorded author reputation. The parent question's recorded Score is unchanged at both
           stages.
         references:
         - \ref[requirement](REQ-4.1)
@@ -957,7 +957,7 @@ children:
     name: Order answers by modification date
     description:
       text: |-
-        Selecting Date modified in "Sorted by" orders "Answers" by newest modification first. The question's distinct timestamps place Recent answer before Highest score answer. Switching from Highest score visibly reverses their sequence without changing "Answer count" or their parent question.
+        Selecting Date modified in "Sorted by" orders "Answers" by newest modification first. Each answer is ordered by its own modification time. For example, a more recently modified answer appears before an older, higher-scored answer. Switching from Highest score visibly reverses their sequence without changing "Answer count" or their parent question.
       image:
       - id: IMG-QUESTION-PAGE
         reference: reference/question-page.jpeg
@@ -1050,7 +1050,7 @@ children:
         - \ref[image](IMG-QUESTION-PAGE)
     children: []
 - id: REQ-5
-  name: Discuss posts capability
+  name: Discuss posts
   description:
     text: >-
       Question and answer comments show text, author and timestamp in chronological order in their own post
@@ -1152,9 +1152,9 @@ children:
         Given: |-
           A signed-in author has just published a comment on a newly published question.
         When: |-
-          Two minutes after publishing, choose Edit comment, verify its prefilled text, replace it with Can you share a minimal retry example? and press Enter. Reload and inspect editing again four minutes after publication. Six minutes after publication, reload and inspect the same comment.
+          Before five minutes have elapsed since publication, choose Edit comment, verify its prefilled text, replace it with Can you share a minimal retry example? and press Enter. Reload and verify the saved edit while the editing window remains open. After the five-minute window has elapsed, reload and inspect the same comment again.
         Then: |-
-          The new text and edited indicator remain in the same thread after reload. Editing is available at four minutes; by six minutes Edit comment is absent or disabled. The saved replacement remains readable after expiry and reload.
+          The new text and edited indicator remain in the same thread after reload. Editing is available before the five-minute window expires; afterwards Edit comment is absent or disabled. The saved replacement remains readable after expiry and reload.
         references:
         - \ref[requirement](REQ-5.1)
         - \ref[requirement](REQ-2.1)
@@ -1371,7 +1371,7 @@ children:
       - id: STEP-REQ-6.2-01-01
         Given: |-
           A registered member who does not watch python signs in, opens Tags and chooses python.
-        When: Click Watch tag, navigate to Questions and reload, reopen python through Watched tags, then click
+        When: Click Watch tag, navigate to Questions and reload, open Questions and reopen python through Watched tags, then click
           Unwatch tag and return to Questions.
         Then: Watch tag changes to Unwatch tag and the personal Watched tags list retains python after reload. Unwatch
           restores Watch tag and removes python from that list.
@@ -1385,7 +1385,7 @@ children:
     name: Search public questions
     description:
       text: |-
-        Entering words from a published question title in banner Search displays real-time Search suggestions. Pressing Enter opens Search results containing relevant public question links; unrelated questions are excluded. Selecting a result opens that same saved question. Search also accepts [tag] to restrict tags, user:"public display name" to restrict authors, and created:YYYY-MM-DD to restrict the UTC publication date. These criteria combine with the title words: a result must satisfy every supplied criterion. For example, React-state title words together with [node.js], user:"Alice" and created:2026-07-12 return Alice’s matching Node.js question published on that UTC day, excluding questions with a different tag, author or publication date.
+        Entering words from a published question title in banner Search displays real-time Search suggestions. Pressing Enter opens Search results containing relevant public question links; unrelated questions are excluded. A search with no matches makes the empty outcome apparent and exposes no matching question entries. Selecting a result opens that same saved question. Search also accepts [tag] to restrict tags, user:"public display name" to restrict authors, and created:YYYY-MM-DD to restrict the UTC publication date. These criteria combine with the title words: a result must satisfy every supplied criterion. For example, React-state title words together with [node.js], user:"Alice" and created:2026-07-12 return Alice’s matching Node.js question published on that UTC day, excluding questions with a different tag, author or publication date.
       image:
       - id: IMG-HOMEPAGE
         reference: reference/homepage.jpeg
@@ -1535,7 +1535,7 @@ children:
         Given: |-
           Two members register separate accounts and neither watches python. The first opens the Python tag.
         When: |-
-          Open python and Watch tag as the creator. In an a different member in a separate browser context inspect Questions/Watched tags and reopen python, then return to the creator and click Unwatch tag.
+          Open python and Watch tag as the creator. As another member in a separate browser session, inspect Questions/Watched tags and reopen python. Reload the creator's application, reopen python and click Unwatch tag.
         Then: |-
           Only the first member sees Unwatch tag and python in Watched tags. The other member still sees Watch tag and no python entry. Unwatching restores Watch tag for the first member.
         references:
@@ -1663,9 +1663,9 @@ children:
       steps:
       - id: STEP-REQ-7.4-03-01
         Given: |-
-          Alice registers, publishes a question and an answer, and upvotes another member’s question. Another registered member sets the same public display name as Alice and publishes a different question; their accounts remain distinguishable by their user entries. A separate visitor is anonymous.
+          Alice registers, publishes a question and an answer, and upvotes another member’s question. Another registered member sets the same public display name as Alice and publishes a different question. Their public profile entries and contributions distinguish the accounts; their email addresses need not be public. A separate visitor is anonymous.
         When: |-
-          As both the other registered member and the anonymous visitor, open Users and select Alice’s own identifiable entry, then open Activity and inspect Votes. As the anonymous visitor, open Alice’s Questions activity.
+          As both the other registered member and the anonymous visitor, open Users and select Alice’s own entry, using the public profile identity or published questions to distinguish it from the namesake, then open Activity and inspect Votes. As the anonymous visitor, open Alice’s Questions activity.
         Then: |-
           Votes is absent or disabled for both visitors and Alice’s private vote entry is not disclosed. Public profile navigation remains available. Alice’s Questions activity contains her own question and excludes the namesake member’s question.
         references:

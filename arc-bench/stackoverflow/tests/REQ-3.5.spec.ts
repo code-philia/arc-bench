@@ -1,4 +1,4 @@
-import { test, expect, login, openQuestion, action, region, mainNav, post, createQuestion, confirmDeletion, expectQuestionAbsent } from './helpers';
+import { test, expect, login, openQuestion, action, region, mainNav, post, createQuestion, confirmDeletion, expectQuestionAbsent,openQuestions } from './helpers';
 import { retryTitle } from './fixtures/data';
 
 // requirement: REQ-3.5
@@ -11,8 +11,8 @@ test('REQ-3.5: Confirm own question deletion', async ({ page, browser }, info) =
   await action(post(page),'Delete question').click();
   await confirmDeletion(page);
   await expect(region(page,'Question feed')).toBeVisible();
-  await expectQuestionAbsent(page,title);
+  await expectQuestionAbsent(page,title,retained);
   await openQuestion(page,retained);
-  await action(mainNav(page),'Questions').click();
+  await openQuestions(page);
   await expect(action(region(page,'Question feed'),title)).toHaveCount(0);
 });

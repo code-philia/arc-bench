@@ -142,6 +142,74 @@ try {
       await assert.rejects(() => ui.collection(page, 'Page list', { owner: 'Own parent' }).item('Target page').open());
     }
   });
+  await check('local collection shortcut preserves no-main ambiguity and foreign-owner rejection', async () => {
+    const list = body => `<ul aria-label="Page list"><li>${body}</li></ul>`;
+    for (const markup of [
+      list('<button>Target page</button><button>Target page</button>'),
+      list('<button>Target page</button>') + list('<button>Target page</button>'),
+      '<section><span>Other parent</span>' + list('<button onclick="window.wrongLocal=true">Target page</button>') + '</section>',
+    ]) {
+      await page.setContent('<div><h1>Own parent</h1>' + markup + '</div>');
+      await page.evaluate(() => { window.wrongLocal = false; });
+      await assert.rejects(() => ui.collection(page, 'Page list', { owner: 'Own parent' }).item('Target page').open());
+      assert.equal(await page.evaluate(() => window.wrongLocal), false);
+    }
+  });
+  await check('local collection shortcut remains live after replacement and added duplicates', async () => {
+    const markup = '<div><h1>Own parent</h1><ul aria-label="Page list"><li><button onclick="window.currentOpened=true">Target page</button></li></ul></div>';
+    await page.setContent(markup);
+    const item = ui.collection(page, 'Page list', { owner: 'Own parent' }).item('Target page');
+    await item.expectCount(1);
+    await page.setContent(markup);
+    await item.open();
+    assert.equal(await page.evaluate(() => window.currentOpened), true);
+    await page.locator('ul').evaluate(node => node.insertAdjacentHTML('beforeend', '<li><button>Target page</button></li>'));
+    await assert.rejects(() => item.open());
+    await page.setContent('<div><h1>Other parent</h1><ul aria-label="Page list"><li><button onclick="window.staleOpened=true">Target page</button></li></ul></div>');
+    await page.evaluate(() => { window.staleOpened = false; });
+    await assert.rejects(() => item.open());
+    assert.equal(await page.evaluate(() => window.staleOpened), false);
+  });
+  await check('title priority follows a provisional caption replaced by a semantic heading', async () => {
+    await page.setContent('<div><span>Own parent</span><p>Loading</p></div>');
+    const prototype = Object.getPrototypeOf(page.locator('body'));
+    const originalCount = prototype.count;
+    let replaced = false;
+    prototype.count = async function (...args) {
+      const count = await originalCount.apply(this, args);
+      if (!replaced && count === 1 && String(this).includes('Own parent')) {
+        replaced = true;
+        await page.setContent('<aside><p>Own parent</p></aside><main><h1>Own parent</h1><p>Loaded</p></main>');
+      }
+      return count;
+    };
+    try {
+      await ui.title(page, 'Own parent').expectVisible();
+      assert.equal(replaced, true);
+    } finally { prototype.count = originalCount; }
+    await page.setContent('<h1>Own parent</h1><h1>Own parent</h1><span>Own parent</span>');
+    await assert.rejects(() => ui.title(page, 'Own parent').expectVisible());
+  });
+  await check('navigation priority follows removal of a provisional public header', async () => {
+    await page.setContent('<header><nav><a href="#">Shelves</a><a href="#">Books</a></nav></header>');
+    const prototype = Object.getPrototypeOf(page.locator('body'));
+    const originalCount = prototype.count;
+    let replaced = false;
+    prototype.count = async function (...args) {
+      const count = await originalCount.apply(this, args);
+      if (!replaced && count === 1 && String(this).includes('Books')) {
+        replaced = true;
+        await page.setContent('<nav><a href="#" onclick="window.currentNavigation=true">Books</a></nav>');
+      }
+      return count;
+    };
+    try {
+      const current = await ui.navigationEntry(page, 'Books');
+      await current.click();
+      assert.equal(replaced, true);
+      assert.equal(await page.evaluate(() => window.currentNavigation), true);
+    } finally { prototype.count = originalCount; }
+  });
   await check('A3 other object body cannot satisfy detail text', async () => {
     await page.setContent('<section><h1>Own book</h1><div><h2>Other book</h2><p>Required body</p></div></section>');
     await assert.rejects(() => ui.detailContent(page, 'Own book', 'Required body').expectVisible());
@@ -384,6 +452,28 @@ try {
     await ui.expectFavoriteState(page, true);
     await ui.entry(page, 'Unfavorite').click();
     await ui.expectFavoriteState(page, false);
+  });
+  await check('collection page heading is distinct from record headings', async () => {
+    for (const tag of ['section', 'article', 'div']) {
+      await page.setContent(`<${tag} aria-label="Shelf list"><div><h1>Shelves</h1></div><ul><li><a href="#one">One shelf</a></li></ul></${tag}>`);
+      await ui.title(page, 'Shelves').expectVisible();
+    }
+    for (const record of ['<li><h1>Shelves</h1></li>', '<article><h2>Shelves</h2></article>', '<a href="#record"><h2>Shelves</h2></a>']) {
+      await page.setContent(`<section aria-label="Shelf list">${record}</section>`);
+      await assert.rejects(() => ui.title(page, 'Shelves').expectVisible());
+    }
+    await page.setContent('<section aria-label="Shelf list"><h1>Shelves</h1><h1>Shelves</h1></section>');
+    await assert.rejects(() => ui.title(page, 'Shelves').expectVisible());
+  });
+  await check('decorative spans are not foreign object identities', async () => {
+    for (const decoration of ['<span></span>', '<span>  </span>', '<span aria-hidden="true">•</span>', '<span style="display:none">Decoration</span>']) {
+      await page.setContent(`<main><h1>Own book</h1><section aria-label="Page list"><ul><li>${decoration}<button>Own page</button></li></ul></section></main>`);
+      await ui.collection(page, 'Page list', { owner: 'Own book' }).item('Own page').expectCount(1);
+    }
+    await page.setContent('<main><h1>Own book</h1><section aria-label="Page list"><ul><li><span>Other object</span><button>Own page</button></li></ul></section></main>');
+    await ui.collection(page, 'Page list', { owner: 'Own book' }).item('Own page').expectCount(0);
+    await page.setContent('<main><h1>Own book</h1><section aria-label="Page list"><button>Own page</button><button>Own page</button></section></main>');
+    await assert.rejects(() => ui.collection(page, 'Page list', { owner: 'Own book' }).item('Own page').open());
   });
   await check('title can be a semantic heading or plain visible title', async () => {
     for (const markup of ['<h1>Own title</h1>', '<div>Own title</div>']) {

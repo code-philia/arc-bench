@@ -1,6 +1,14 @@
 import { expect, type Page, type Locator } from '@playwright/test';
 
 type Scope = Page | Locator;
+export function pageBanner(page:Page) {
+  const boundary=':not(article *,[role="article"] *,aside *,nav *,form *,[aria-label="Question post"] *,[aria-label="Question content"] *,[aria-label^="Answer by "] *,[aria-label="Comments"] *)';
+  const local=page.locator(':not(article *,[role="article"] *,aside *)');
+  const brand=page.getByRole('link',{name:/^Stack\s*Overflow$/i}).or(page.getByRole('img',{name:/^Stack\s*Overflow$/i}))
+    .or(page.getByText(/^Stack\s*Overflow$/i)).and(local);
+  const native=page.locator('header').filter({has:brand}).filter({has:rawField(page,'Search').and(local)});
+  return page.getByRole('banner').or(native).and(page.locator(boundary)).filter({visible:true});
+}
 const pageOf=(scope:Scope):Page=>'page' in scope?scope.page():scope;
 const owners = new WeakSet<Locator>();
 const commentRows = new WeakSet<Locator>();
@@ -40,10 +48,13 @@ export function metric(scope: Scope, name: string) {
   if(name==='badge notification') {
     // A textual notification is not necessarily an output element. It must
     // still belong to the displayed profile, never an editor or sidebar.
-    const main=scope.locator('main').or('page' in scope ? scope.and(scope.page().locator('main')) : scope.locator('main'))
-      .filter({has:pageOf(scope).locator('[aria-label="Public profile"]')})
+    const page=pageOf(scope);
+    const profile=region(scope,'Public profile').and(scope.locator(':not(aside,aside *,nav,nav *,form,form *)'));
+    const main=profile.locator('xpath=ancestor-or-self::main[1]')
       .locator('xpath=self::*[count(.//*[@aria-label="Public profile"])=1]');
-    const boundary=main.locator(':scope *:not(:scope aside *,:scope nav *,:scope form *,[contenteditable]:not([contenteditable="false"]) *)');
+    const layout=profile.locator('xpath=parent::*[not(ancestor-or-self::main)][count(.//*[@aria-label="Public profile"])=1]')
+      .filter({has:navigation(page,'Profile navigation',['Activity','Reputation'])});
+    const boundary=main.or(layout).locator(':scope *:not(:scope aside *,:scope nav *,:scope form *,[contenteditable]:not([contenteditable="false"]) *)');
     const explicit=result.and(boundary);
     const notices=region(main,name).and(boundary).filter({hasNot:pageOf(scope).locator('input,textarea,select,form,[contenteditable]:not([contenteditable="false"])')});
     const nested=pageOf(scope).getByRole('status',{name,exact:true}).or(pageOf(scope).locator('output,span,dd').and(pageOf(scope).getByLabel(name,{exact:true})));
@@ -123,6 +134,28 @@ export async function readInteger(scope: Scope, name: string): Promise<number> {
   const candidates=own(scope,explicit.or(boundedFallback))
     .and(scope.locator(':scope *:not(:scope [aria-label^="Comment "] *,:scope [aria-label^="Answer by "] *,:scope [aria-label="Author"] *)')).filter({visible:true});
   let values=commentValues;
+  if(!values&&name==='Answer count') {
+    // One question may repeat its answer count in its own metadata and in the
+    // associated Answers section. Establish that relationship before comparing
+    // values; equal numbers alone do not make two observations equivalent.
+    const snapshot=()=>candidates.evaluateAll((items,pattern)=>{
+      if(items.length!==1&&items.length!==2)return null;
+      const format=new RegExp(pattern,'i');
+      const numbers=items.map(item=>{const text=(item as HTMLElement).innerText.trim(),m=text.match(format);return /^-?\d+$/.test(text)?Number(text):m?Number(m[1]??m[2]):NaN});
+      if(!numbers.every(Number.isSafeInteger))return null;
+      if(items.length===1)return numbers[0];
+      const owners=items.map(item=>item.closest('[aria-label="Question post"],[aria-label="Question content"],[aria-label="Answers"]'));
+      const post=owners.find(owner=>owner?.getAttribute('aria-label')!=='Answers');
+      const answers=owners.find(owner=>owner?.getAttribute('aria-label')==='Answers');
+      if(!post||!answers||post===answers||!(post.contains(answers)||post.parentElement===answers.parentElement))return null;
+      const root=post.contains(answers)?post:post.parentElement!;
+      if(root.querySelectorAll('[aria-label="Answers"]').length!==1||root.querySelectorAll('[aria-label="Question post"],[aria-label="Question content"]').length!==(root===post?0:1))return null;
+      return numbers[0]===numbers[1]?numbers[0]:null;
+    },formatted.source);
+    let observed:number|null=null;
+    await expect.poll(async()=>{observed=await snapshot();return observed!==null;},{message:'Repeated answer counts must belong to the same question and agree'}).toBe(true);
+    return observed!;
+  }
   if(!values){
     await expect(candidates,`One visible integer must belong to ${name}`).toHaveCount(1);
     values=await candidates.evaluateAll(elements=>elements.map(element=>{
@@ -146,9 +179,32 @@ export function displayTag(scope: Scope, name: string): Locator {
   return own(scope,rawAction(scope,name).or(scope.locator('ul li > span,[aria-label="Tags"] > span,[role="list"] > span')
     .and(scope.getByText(name,{exact:true})))).and(scope.locator(':scope *:not(:scope [aria-label^="Comment "] *,:scope [aria-label^="Answer by "] *,:scope [aria-label="Author"] *,:scope [aria-label="Badges"] *,:scope aside *,:scope nav *)')).filter({visible:true});
 }
+export async function tagDisplayCount(scope:Scope,name:string) {
+  const chips=own(scope,scope.locator('div > span').and(scope.getByText(name,{exact:true})))
+    .and(scope.locator(':scope *:not(:scope [aria-label^="Comment "] *,:scope [aria-label^="Answer by "] *,:scope [aria-label="Author"] *,:scope [aria-label="Badges"] *,:scope aside *,:scope nav *,:scope form *,:scope [aria-label="Preview"] *)'));
+  const candidates=displayTag(scope,name).or(chips).filter({visible:true});
+  return candidates.evaluateAll(elements=>elements.filter(element=>{
+    if(element.closest('[aria-hidden="true"],form,input,textarea,select,[contenteditable]:not([contenteditable="false"])'))return false;
+    if(element.matches('a,button,[role="button"],[role="link"],ul li > span,[aria-label="Tags"] > span,[role="list"] > span'))return true;
+    if(!(element instanceof HTMLElement)||element.tagName!=='SPAN'||element.closest('p,blockquote,pre,[aria-label="Question body"]'))return false;
+    const group=element.parentElement;if(!group||group.tagName!=='DIV'||[...group.children].some(child=>child.tagName!=='SPAN')||[...group.childNodes].some(node=>node.nodeType===Node.TEXT_NODE&&node.textContent?.trim()))return false;
+    const style=getComputedStyle(element),background=style.backgroundColor;
+    const colored=background!=='transparent'&&!/^rgba\(.*,[\s]*0(?:\.0+)?\)$/.test(background);
+    const outlined=parseFloat(style.borderLeftWidth)>0&&style.borderLeftStyle!=='none';
+    const padded=parseFloat(style.paddingLeft)>0||parseFloat(style.paddingRight)>0;
+    // Flex/grid items are blockified by layout even when their authored display
+    // is inline-block. This changes neither their tag identity nor openability.
+    const layout=getComputedStyle(group).display;
+    const chipDisplay=['inline-block','inline-flex'].includes(style.display)||style.display==='block'&&['flex','inline-flex','grid','inline-grid'].includes(layout);
+    return chipDisplay&&padded&&(colored||outlined);
+  }).length);
+}
+export async function expectDisplayedTag(scope:Scope,name:string,count:0|1=1) {
+  await expect.poll(()=>tagDisplayCount(scope,name),{message:'Tag display belongs to the current object: '+name}).toBe(count);
+}
 
 export async function expectBrand(page: Page) {
-  const banner=page.getByRole('banner');
+  const banner=pageBanner(page);
   const text=content(banner,'Stack Overflow');
   const images=banner.getByRole('img',{name:'Stack Overflow',exact:true}).filter({visible:true});
   const decorated=banner.getByText(/^[▤≡]\s*Stack Overflow$/).and(banner.locator('*:not(input,textarea,form *,[contenteditable]:not([contenteditable="false"]),[contenteditable]:not([contenteditable="false"]) *)'));
@@ -181,8 +237,7 @@ export function navigation(page: Page, name: string, entries: string[]) {
     .or(page.locator('nav').and(page.getByLabel(name,{exact:true}))).or(native);
 }
 const escaped = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-// Interface wording may differ in case; titles, bodies and user identities may not.
-const labels = new Set(['Log in','Sign up','Ask Question','Post Your Question','Post Your Answer','Save edits','Cancel','Edit','Delete','Up vote','Down vote','Add a comment','Reply','Add Reply','Confirm deletion','Show password','Hide password','Watch tag','Unwatch tag']);
+// Current action names are explicitly prescribed by the requirements.
 export function region(scope: Scope, name: string): Locator {
   scope=feedScopes.get(scope as Locator)||scope;
   const page=pageOf(scope);
@@ -253,13 +308,18 @@ export async function catalogPagination(page:Page,name:'Tags'|'Users') {
 export function reputationContribution(scope:Locator,reason:string,change:number,parentTitle:string) {
   const signed=(change>0?'+':'')+change;
   const line=new RegExp(`^\\s*${escaped(reason)}\\s*${escaped(signed)}(?=\\s|${escaped(parentTitle)}|$)`);
-  const row=scope.locator(':scope > :is(article,li,[role="listitem"])').filter({hasText:line}).filter({has:pageOf(scope).getByRole('link',{name:parentTitle,exact:true})});
-  return row.and(scope.locator(':scope *:not(:scope aside *,:scope nav *,:scope form *)')).filter({visible:true});
+  const page=pageOf(scope),types='article,li,[role="listitem"],div';
+  const contribution=/^\s*(?:question|answer) upvoted\s*[+-]\d+/;
+  const controls=page.getByRole('button').or(page.getByRole('link'));
+  const nested=page.locator(types).filter({hasText:contribution}).filter({has:controls});
+  const rows=scope.locator(types).filter({hasText:contribution}).filter({has:controls})
+    .filter({hasNot:nested}).and(scope.locator(':scope *:not(:scope aside *,:scope nav *,:scope form *)'));
+  return rows.filter({hasText:line}).filter({has:action(page,parentTitle)}).filter({visible:true});
 }
 function rawAction(scope: Scope, name: string): Locator {
   const feed=feedScopes.get(scope as Locator);
   const source=feed&&!feedControls.has(name)?feed:scope;
-  const identity = labels.has(name) ? new RegExp(`^${escaped(name)}$`, 'i') : name;
+  const identity = name;
   let result = source.getByRole('button',{name:identity,exact:true}).or(source.getByRole('link',{name:identity,exact:true}));
   if(['Newest','Active'].includes(name)) {
     // Finite presentation suffixes only; never a substring match on user data.
@@ -284,22 +344,31 @@ function rawAction(scope: Scope, name: string): Locator {
 }
 function rawField(scope: Scope, name: string): Locator {
   // Labels and placeholders are both ordinary user-visible field descriptions.
-  const candidate=scope.getByLabel(name,{exact:true}).or(scope.getByPlaceholder(name,{exact:true}))
-    .or(scope.getByRole('textbox',{name,exact:true})).or(scope.getByRole('searchbox',{name,exact:true})).or(scope.getByRole('combobox',{name,exact:true}));
-  const bounded=own(scope,candidate);
-  return (['Comment','Reply'].includes(name)?bounded.or(discussionEditor(scope,candidate)):bounded).filter({visible:true});
+  const aliases:Record<string,string[]>={X:['X','X link or username'],GitHub:['GitHub','GitHub link or username']};
+  const identity=aliases[name]?new RegExp(`^(?:${aliases[name].map(escaped).join('|')})$`):name;
+  const candidate=scope.getByLabel(identity,{exact:true}).or(scope.getByPlaceholder(identity,{exact:true}))
+    .or(scope.getByRole('textbox',{name:identity,exact:true})).or(scope.getByRole('searchbox',{name:identity,exact:true})).or(scope.getByRole('combobox',{name:identity,exact:true}));
+  const writableKinds=scope.locator('input,textarea,select,[role="textbox"],[role="searchbox"],[role="combobox"],[contenteditable]:not([contenteditable="false"])');
+  const bounded=own(scope,candidate.and(writableKinds));
+  return (['Comment','Reply'].includes(name)?bounded.or(discussionEditor(scope,candidate.and(writableKinds))):bounded).filter({visible:true});
 }
 export const minimumPasswordMessage=/(?:minimum(?: of)?|at least)\s+(?:8|eight)\s+characters/i;
 export const upvoteDescription=/up\s*vote/i;
-export function publicIdentityAction(directory:Locator,name:string,email:string) {
+export function publicIdentityAction(directory:Locator,name:string,email:string,allowNameOnly=false) {
   const page=directory.page();
   const rows=directory.locator('article,li,[role="listitem"]').filter({has:content(page,email)})
     .filter({hasNot:page.locator('article,li,[role="listitem"]')})
     .and(directory.locator(':scope *:not(:scope form *,:scope aside *,:scope nav *)'));
-  return action(directory,`${name} ${email}`).or(action(owned(rows),name));
+  const qualified=action(directory,`${name} ${email}`).or(action(owned(rows),name));
+  if(!allowNameOnly)return qualified;
+  // A different visible email identifies a different record, even when names
+  // coincide. A hidden/decorative email must not disqualify a name-only record.
+  const emailText='[^\\s@]+@[^\\s@]+\\.[^\\s@]+';
+  const unqualified=action(directory,name).and(directory.locator(`:scope *:not(:scope :is(article,li,[role="listitem"]):has(:text-matches(${JSON.stringify(emailText)}):visible) *)`));
+  return qualified.or(unqualified);
 }
 export function searchField(page:Page) {
-  return field(page.getByRole('banner'),'Search').and(page.locator('input:not([type]),input[type="text"],input[type="search"],[role="textbox"],[role="searchbox"],[contenteditable="true"]'));
+  return field(pageBanner(page),'Search').and(page.locator('input:not([type]),input[type="text"],input[type="search"],[role="textbox"],[role="searchbox"],[contenteditable="true"]'));
 }
 export function acceptedAnswer(scope:Scope) {
   return own(scope,scope.getByText(/^(?:✓\s*)?Accepted answer$/)).and(scope.locator('*:not(input,textarea,form,form *,nav *,aside *,[contenteditable]:not([contenteditable="false"]),[contenteditable]:not([contenteditable="false"]) *)')).filter({visible:true});
@@ -307,11 +376,18 @@ export function acceptedAnswer(scope:Scope) {
 export async function profileReputation(page:Page,name:string) {
   const view=profileView(page,name);await expect(view).toHaveCount(1);await expect(profileText(view,name)).toBeVisible();
   const main=view.locator('xpath=ancestor-or-self::main[1]');
-  const summary=region(main,'Activity Summary').or(region(main,'Summary')).filter({visible:true});
+  const hasMain=await main.count()>0;
+  // A profile and its summary may be siblings in a content layout without main.
+  // Stay in the profile's immediate layout: nested other profiles cannot supply it.
+  const layout=hasMain?main:view.locator('xpath=parent::*[not(ancestor-or-self::main)][count(.//*[@aria-label="Public profile"])=1]')
+    .filter({has:navigation(page,'Profile navigation',['Activity','Reputation'])});
+  let summaries=region(layout,'Activity Summary').or(region(layout,'Summary')).filter({visible:true});
+  if(!hasMain)summaries=summaries.and(layout.locator(':scope > :is(section,article,div)'));
+  const summary=summaries.filter({has:metric(page,'Reputation')});
   if(await summary.count()) {
     await expect(summary).toHaveCount(1);const value=await readInteger(summary,'Reputation');
-    const publicProfile=region(main,'Public profile');
-    if(await publicProfile.count()) {await expect(publicProfile).toHaveCount(1);expect(await readInteger(publicProfile,'Reputation'),'Profile and summary reputation must agree').toBe(value);}
+    const publicProfile=region(layout,'Public profile');
+    if(await metric(publicProfile,'Reputation').count()) {await expect(publicProfile).toHaveCount(1);expect(await readInteger(publicProfile,'Reputation'),'Profile and summary reputation must agree').toBe(value);}
     return value;
   }
   return readInteger(view,'Reputation');

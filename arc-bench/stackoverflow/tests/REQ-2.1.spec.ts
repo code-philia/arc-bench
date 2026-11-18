@@ -1,4 +1,4 @@
-import {test, expect, login, openLogin, action, field, expectField, actorName, actor, prepareActor, expectAnonymous } from './helpers';
+import { pageBanner,test, expect, login, openLogin, action, field, expectField, actorName, actor, prepareActor, expectAnonymous } from './helpers';
 import { password } from './fixtures/data';
 
 // requirement: REQ-2.1
@@ -6,8 +6,8 @@ import { password } from './fixtures/data';
 test('REQ-2.1: Sign in and retain session', async ({ page, browser }, info) => {
   await login(page, 'stack_user');
   await page.reload();
-  await expect(action(page.getByRole('banner'), actorName('stack_user'))).toBeVisible();
-  await expect(action(page.getByRole('banner'), 'Log in')).toHaveCount(0);
+  await expect(action(pageBanner(page), actorName('stack_user'))).toBeVisible();
+  await expect(action(pageBanner(page), 'Log in')).toHaveCount(0);
 });
 
 test('REQ-2.1: Reject empty credentials', async ({ page, browser }, info) => {
@@ -46,7 +46,7 @@ test('REQ-2.1: Reject wrong password', async ({ page, browser }, info) => {
   await action(form, 'Sign in').click();
   await expect(form.getByText('The email or password does not match any account', { exact: true })).toBeVisible();
   await expect(form).toBeVisible();
-  await expect(action(page.getByRole('banner'),identity.displayName)).toHaveCount(0);
+  await expect(action(pageBanner(page),identity.displayName)).toHaveCount(0);
   await expectAnonymous(page);
 });
 

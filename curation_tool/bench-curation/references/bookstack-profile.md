@@ -19,6 +19,8 @@
 - 页面编辑标签按用途识别；未规定的界面文案可忽略大小写完整匹配，明确文案及用户值仍精确。BookStack已有有限别名New Book/Create New Book、集合名称等，见[当前接口映射](../../bookstack_role_mapping.md)，不是通用别名词典。
 - 当前createPage明确拒绝chapterName，未实现章节页面准备；跨用户/跨类型等覆盖不能由现有评分通过推导。支持边界以当前源码及反例为准，不继承旧“已完成”结论。
 - owner详情卡与具名列表可为兄弟区域，集合无需嵌套在详情article；兼容范围及外部main、侧栏、错误对象、重复集合的拒绝边界见[当前接口映射](../../bookstack_role_mapping.md)。无集合证据时不扩大原局部回退。
+- 具名集合可包含自己的页面语义标题，不能与记录内部标题混同；空白/隐藏装饰span不独立证明其他owner。通用判定见role的[集合身份与查询成本](../../bench-role-curation/references/collection-identity-and-query-cost.md)，不要求应用搬移标题或删除装饰。
+- REQ-6.1的首页My Recent Drafts观察为草稿出现一次，重开编辑器从父书籍Page list完成。不能由当前item接口的动作型计数反推首页必须可打开；这是观察契约与实现支持需分开核实的边界，不因本说明更新便声称评分已兼容静态记录。
 
 ## 专用工具：不能直接当作通用脚本
 

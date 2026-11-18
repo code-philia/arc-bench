@@ -1,10 +1,10 @@
-import { test, expect, entry, login, action, field, region, loginForm, loginForms, signupForm, signupForms, expectAnonymous } from './helpers';
+import { pageBanner, test, expect, entry, login, action, field, region, loginForm, loginForms, signupForm, signupForms, expectAnonymous } from './helpers';
 import {  } from './fixtures/data';
 
 // requirement: REQ-2.5
 
 test('REQ-2.5: Move between login and registration', async ({ page, browser }, info) => {
-  await entry(page); await action(page.getByRole('banner'),'Log in').click();
+  await entry(page); await action(pageBanner(page),'Log in').click();
   await action(await loginForm(page),'Sign up').click();
   const signup=await signupForm(page);
   await expect(signup).toBeVisible();

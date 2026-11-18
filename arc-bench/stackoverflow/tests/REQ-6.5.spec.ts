@@ -1,4 +1,5 @@
-import {test, expect, login, action, field, region, mainNav, output, titleFor, expectField, collection, createQuestion, createAnswer , expectNumeric, displayTag, beforeText } from './helpers';
+import {selectChoice,expectChoice,setSwitch,expectSwitch,selectionDialog} from './helpers';
+import { expectDisplayedTag,test, expect, login, action, field, region, mainNav, output, titleFor, expectField, collection, createQuestion, createAnswer , expectNumeric, displayTag, beforeText } from './helpers';
 import { retryTitle } from './fixtures/data';
 
 // requirement: REQ-6.5
@@ -12,14 +13,14 @@ test('REQ-6.5: Save and reapply python unanswered criteria', async ({ page, brow
   await login(page,'filter_user'); await action(mainNav(page),'Questions').click();
   await action(page,'Filter').click();
   const panel=region(page,'Filter panel');
-  await panel.getByRole('checkbox',{name:'Unanswered',exact:true}).check();
-  await panel.getByRole('combobox',{name:'Sort',exact:true}).selectOption({label:'Newest'});
+  await setSwitch(panel,'Unanswered',true);
+  await selectChoice(panel,'Sort','Newest');
   await field(panel,'Tags').fill('python');
-  await expect(panel.getByRole('checkbox',{name:'Unanswered',exact:true})).toBeChecked();
-  await expect(panel.getByRole('combobox',{name:'Sort',exact:true}).getByRole('option',{selected:true})).toHaveText('Newest');
+  await expectSwitch(panel,'Unanswered',true);
+  await expectChoice(panel,'Sort','Newest');
   await expectField(field(panel,'Tags'),'python');
   await action(panel,'Save custom filter').click();
-  const dialog=page.getByRole('dialog',{name:'Save custom filter',exact:true});
+  const dialog=selectionDialog(page);
   await expect(dialog).toBeVisible();
   const name=titleFor(info,'Python unanswered filter');
   await field(dialog,'Filter title').fill(name); await action(dialog,'Save filter').click();
@@ -31,7 +32,7 @@ test('REQ-6.5: Save and reapply python unanswered criteria', async ({ page, brow
    const summaries=collection(feed,'Question');
    expect(await summaries.count()).toBeGreaterThan(0);
    for (const summary of await summaries.all()) {
-    await expect(displayTag(summary,'python')).toBeVisible();
+    await expectDisplayedTag(summary,'python');
     await expectNumeric(summary,'Answer count',0);
    }
   };
@@ -40,7 +41,7 @@ test('REQ-6.5: Save and reapply python unanswered criteria', async ({ page, brow
   await action(region(page,'Saved filters'),name).click();
   await assertResults();
   await action(page,'Filter').click();
-  await expect(panel.getByRole('checkbox',{name:'Unanswered',exact:true})).toBeChecked();
+  await expectSwitch(panel,'Unanswered',true);
   await expectField(field(panel,'Tags'),'python');
-  await expect(panel.getByRole('combobox',{name:'Sort',exact:true}).getByRole('option',{selected:true})).toHaveText('Newest');
+  await expectChoice(panel,'Sort','Newest');
 });

@@ -1,4 +1,4 @@
-import {test, expect, login, activity, action, post, titleFor, composeQuestion, expectBody } from './helpers';
+import { expectDisplayedTag,test, expect, login, activity, action, post, titleFor, composeQuestion, expectBody } from './helpers';
 import { body } from './fixtures/data';
 
 // requirement: REQ-3.8
@@ -9,5 +9,5 @@ test('REQ-3.8: Follow an owned question to its detail', async ({ page, browser }
   const content=await activity(page,'Questions'); await action(content,title).click();
   await expect(page.getByRole('heading',{name:title,exact:true})).toBeVisible();
   await expectBody(post(page),body);
-  for (const tag of ['node.js','http','retry']) await expect(action(post(page),tag)).toBeVisible();
+  for (const tag of ['node.js','http','retry']) await expectDisplayedTag(post(page),tag);
 });

@@ -14,9 +14,9 @@ test('REQ-4.5: Record same-body answer revision', async ({ page, browser }, info
   await action(page,'Save edits').click();
   await expectBody(answer(page,actorName('answer_edit_user')),answerBody);
   await expect(answer(page,actorName('answer_edit_user'))).toContainText(/edited/i);
-  await expect(await openRevisionHistory(answer(page,actorName('answer_edit_user')))).toContainText('Clarified retry safety.');
+  await expect(await openRevisionHistory(answer(page,actorName('answer_edit_user')),'Clarified retry safety.')).toContainText('Clarified retry safety.');
   await page.reload();
-  await expect(await openRevisionHistory(answer(page,actorName('answer_edit_user')))).toContainText('Clarified retry safety.');
+  await expect(await openRevisionHistory(answer(page,actorName('answer_edit_user')),'Clarified retry safety.')).toContainText('Clarified retry safety.');
   await openQuestion(page,title);
   await expectBody(answer(page,actorName('answer_edit_user')),answerBody);
 });

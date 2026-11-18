@@ -9,10 +9,10 @@ test('REQ-5.7: Publish in the answer thread', async ({ page, browser }, info) =>
   await login(page,'answer_comment_user'); await openQuestion(page,title);
   const posted=await publishComment(answer(page));
   await expect(comment(answer(page))).toContainText(actorName('answer_comment_user'));
-  await expectCommentTimestamp(comment(answer(page)),posted);
+  await expectCommentTimestamp(comment(answer(page)),posted,{author:actorName('answer_comment_user'),body:commentBody});
   await expect(comment(post(page))).toHaveCount(0);
   await page.reload();
   await expect(comment(answer(page))).toContainText(actorName('answer_comment_user'));
   await expect(comment(post(page))).toHaveCount(0);
-  await expectBody(comment(answer(page)),commentBody);await expectCommentTimestamp(comment(answer(page)),posted);
+  await expectBody(comment(answer(page)),commentBody);await expectCommentTimestamp(comment(answer(page)),posted,{author:actorName('answer_comment_user'),body:commentBody});
 });

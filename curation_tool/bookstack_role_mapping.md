@@ -11,7 +11,7 @@
 | 集合条目 | collection、item、visibleNames、expectMaxItems | 具名/标题/owner路径，精确身份、重复拒绝、混合记录计数；visibleNames只能从调用方提供的身份中返回可见目标 |
 | 文本字段 | textField、editableControl、pageEditor | label/placeholder关联input/textarea/contenteditable，填写/读取/清空/回填成套处理 |
 | 复合元数据 | metadata、fillTags、expectMetadata | 整组标签或Tag Name行；行式标签的产品交互仍须遵循书架需求，不为适配任意流程而放宽 |
-| 标题/正文 | title、heading、detailContent | 排除已识别集合/行及其他对象子树；detailContent排除导航/侧栏/编辑回显；content仅是精确可见文字接口 |
+| 标题/正文 | title、heading、detailContent | 排除记录内部标题及其他对象子树，允许具名集合自身的页面标题；detailContent排除导航/侧栏/编辑回显；content仅是精确可见文字接口 |
 | 状态 | toggle、favorite | 原生checked或可读自定义状态；收藏按明确Favorite/Unfavorite文案观测，幂等设置，未知状态拒绝 |
 
 评分REQ通过公共语义接口表达业务动作，原始定位留在适配器/复合helper。openWithKeyboard实际触发键盘，仍需随后核对目标详情。字段支持不意味着所有自定义编辑器都支持。
@@ -35,3 +35,18 @@
 - 准备helper的参数拒绝不等于相关产品能力已实现，具体限制见项目适配说明。
 
 扩展时按主流程：先确定业务标准，再实现路径，使用真实helper验证合理替代和错误实现。默认合成DOM/状态模拟；仅用户提供/指定例程后才进入应用回归。合成检查数量和历史例程成绩保存在本地报告，不写成当前通用保证。
+
+
+## 集合自身标题与装饰性条目节点
+
+Shelf/Book/Page/Chapter集合卡片可以包含自身的页面标题（例如Shelf list卡片内的Shelves），不要求标题位于具名容器外。此路径仅接受语义标题，仍排除li/tr、打开控件及嵌套article/section记录中的标题；重复页面标题保持拒绝，不扩大普通文本回退。
+
+普通span只有可见且非空、未标为隐藏/装饰时才用作外部对象caption证据。空白节点、隐藏色条和明确装饰不提供业务身份；可见的其他对象caption仍须阻止跨owner操作，条目入口的身份与重复检查保持。
+
+
+## 集合范围推断的计算复用
+
+有owner且无main时，先查询最近内容边界内的最小所属具名集合；恰好一个时直接使用该集合。此边界本来就在owner祖先链上，局部唯一集合不会因继续推断更大布局而改变身份。零个或多个时仍执行完整兄弟集合/最小布局推断，不按DOM顺序选择。先折叠等价嵌套集合，再与所属布局取交集，避免在hasNot中重复嵌入整个布局定位器。每次调用重新解析live locator，不缓存DOM节点或首次唯一结果；重新渲染、增加重复入口或切换owner后仍重新检查。所属main硬边界、错误对象caption、侧栏和重名拒绝保持。
+
+
+动作组也采用先识别动作、再与作用域后代取交集的组合顺序；不把整段容器定位器复制进每个role分支。书籍Actions与删除确认保留相同的owner、确认正文、控件身份和唯一性要求。候选首次唯一后在同一轮轮询再次确认；临时节点变化时重新按原优先级选择，重复候选仍阻止回退，不把已失效的候选留给长时间等待。此确认不构造持久的多路径组合，也不缓存DOM节点。

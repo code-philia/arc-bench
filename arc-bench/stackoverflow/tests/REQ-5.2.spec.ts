@@ -8,7 +8,7 @@ test('REQ-5.2: Publish a question comment', async ({ page, browser }, info) => {
   await login(page,'question_comment_user'); await openQuestion(page,title);
   const posted=await publishComment(post(page));
   await expect(comment(post(page))).toContainText(actorName('question_comment_user'));
-  await expectCommentTimestamp(comment(post(page)),posted);
+  await expectCommentTimestamp(comment(post(page)),posted,{author:actorName('question_comment_user'),body:commentBody});
   await page.reload(); await expect(comment(post(page))).toBeVisible();
-  await expectBody(comment(post(page)),commentBody);await expectCommentTimestamp(comment(post(page)),posted);
+  await expectBody(comment(post(page)),commentBody);await expectCommentTimestamp(comment(post(page)),posted,{author:actorName('question_comment_user'),body:commentBody});
 });

@@ -1,4 +1,4 @@
-import {test, expect, entry, action, region, mainNav, post, expectBody, createQuestion } from './helpers';
+import { pageBanner, expectDisplayedTag,test, expect, entry, action, region, mainNav, post, expectBody, createQuestion } from './helpers';
 import { body } from './fixtures/data';
 
 // requirement: REQ-6.6
@@ -9,6 +9,6 @@ test('REQ-6.6: Follow a python question from tag discovery', async ({ page, brow
   await action(region(region(page,'Tags'),'Tag python'),'python').click();
   await action(region(page,'Question feed'),title).click();
   await expect(page.getByRole('heading',{name:title,exact:true})).toBeVisible();
-  await expectBody(post(page),body); await expect(action(post(page),'python')).toBeVisible();
-  await expect(action(page.getByRole('banner'),'Log in')).toBeVisible();
+  await expectBody(post(page),body); await expectDisplayedTag(post(page),'python');
+  await expect(action(pageBanner(page),'Log in')).toBeVisible();
 });

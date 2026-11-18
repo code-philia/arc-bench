@@ -1,4 +1,5 @@
-import {test, expect, login, activity, action, field, region, post, output, titleFor, expectBody , expectNumeric, expectQuestionAbsent } from './helpers';
+import { expectDisplayedTag,test, expect, login, activity, action, field, region, post, output, titleFor, expectBody , expectNumeric, expectQuestionAbsent,createQuestion,entry } from './helpers';
+import {createSearchControl} from './helpers';
 import { body } from './fixtures/data';
 
 // requirement: REQ-3.3
@@ -19,12 +20,13 @@ test('REQ-3.3: Publish with preview and tags', async ({ page, browser }, info) =
   await expect(page.getByRole('heading',{name:title,exact:true})).toBeVisible();
   await expectBody(post(page),body);
   await expect(post(page).locator('strong,b').filter({hasText:'Retry safety'})).toHaveText('Retry safety');
-  for (const tag of ['node.js','http','retry']) await expect(action(post(page),tag)).toBeVisible();
+  for (const tag of ['node.js','http','retry']) await expectDisplayedTag(post(page),tag);
   const content = await activity(page,'Questions');
   await expect(action(content,title)).toBeVisible();
 });
 
 test('REQ-3.3: Reject missing required fields', async ({ page, browser }, info) => {
+  const control=await createQuestion(browser,info,'question_creator','A published control for rejected draft search');
   await login(page,'question_creator');
   await action(region(page,'Question feed'),'Ask Question').click();
   await action(page,'Post Your Question').click();
@@ -37,10 +39,11 @@ test('REQ-3.3: Reject missing required fields', async ({ page, browser }, info) 
   await expect(page.getByText('Please add at least one tag',{exact:true})).toBeVisible();
   await expect(field(page,'Title')).toBeVisible();
   await expect(post(page)).toHaveCount(0);
-  await expectQuestionAbsent(page,rejectedTitle);
+  await entry(page);await expectQuestionAbsent(page,rejectedTitle,control);
 });
 
 test('REQ-3.3: Validate title and body minimum lengths', async ({ page, browser }, info) => {
+  const control=await createSearchControl(browser,'question_creator');
   await login(page,'question_creator');
   await action(region(page,'Question feed'),'Ask Question').click();
   const acceptedTitle=titleFor(info,'').trim().slice(0,15),shortTitle=acceptedTitle.slice(0,14);
@@ -57,5 +60,5 @@ test('REQ-3.3: Validate title and body minimum lengths', async ({ page, browser 
   await expect(post(page)).toHaveCount(0);
   await field(page,'Title').fill(acceptedTitle);await field(page,'Body').fill('a'.repeat(220));await action(page,'Post Your Question').click();
   await expect(page.getByRole('heading',{name:acceptedTitle,exact:true})).toBeVisible();await expectBody(post(page),'a'.repeat(220));
-  await expectQuestionAbsent(page,shortTitle);await expectQuestionAbsent(page,rejectedBodyTitle);
+  await entry(page);await expectQuestionAbsent(page,shortTitle,control);await expectQuestionAbsent(page,rejectedBodyTitle,control);
 });
