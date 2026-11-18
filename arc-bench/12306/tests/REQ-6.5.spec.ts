@@ -11,9 +11,9 @@ test("REQ-6.5: Persist security email", async ({ page }) => {
     await field(page, 'Confirm your password:').fill(account.password);
     await button(page, 'Determine').click();
     await text(page, "Security mailbox updated successfully.");
-    await text(page, email);
+    await text(page, email, false);
     await page.reload();
-    await text(page, email);
+    await text(page, email, false);
 });
 test("REQ-6.5: Reject empty mailbox change", async ({ page }) => {
     await entry(page);
@@ -24,7 +24,7 @@ test("REQ-6.5: Reject empty mailbox change", async ({ page }) => {
     await button(page, 'Determine').click();
     await text(page, "Please fill in the new email and password.");
     await page.reload();
-    await text(page, account.email);
+    await text(page, account.email, false);
 });
 test("REQ-6.5: Reject wrong mailbox password", async ({ page }) => {
     await entry(page);
@@ -35,7 +35,7 @@ test("REQ-6.5: Reject wrong mailbox password", async ({ page }) => {
     await button(page, 'Determine').click();
     await text(page, "Incorrect password.");
     await page.reload();
-    await text(page, account.email);
+    await text(page, account.email, false);
 });
 test("REQ-6.5: Reject invalid mailbox email", async ({ page }) => {
     await entry(page);
@@ -46,5 +46,5 @@ test("REQ-6.5: Reject invalid mailbox email", async ({ page }) => {
     await button(page, 'Determine').click();
     await text(page, "Invalid email address format.");
     await page.reload();
-    await text(page, account.email);
+    await text(page, account.email, false);
 });

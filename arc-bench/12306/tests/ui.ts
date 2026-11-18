@@ -21,11 +21,14 @@ export function heading(surface: Surface, name: string | RegExp) {
 }
 
 export function region(surface: Surface, name: string) {
-    const page = 'page' in surface ? surface.page() : surface;
+    const scope = 'page' in surface ? surface : surface.locator('html');
+    const page = scope.page();
+    const named = page.getByRole('region', { name, exact: true }).filter({ visible: true });
     const title = heading(page, new RegExp(`^${escape(name)}:?$`, 'i'));
-    return surface.getByRole('region', { name, exact: true })
-        .or(surface.locator('section, aside, fieldset').filter({ has: title }))
-        .filter({ visible: true });
+    const titled = page.locator('section, aside, fieldset').filter({ has: title, visible: true });
+    // Recheck the priority on every locator evaluation so it follows page updates.
+    const fallback = scope.filter({ hasNot: named }).locator(titled).filter({ hasNot: titled });
+    return scope.locator(named).or(fallback);
 }
 
 export function dialog(surface: Surface, title: string | RegExp) {

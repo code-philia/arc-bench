@@ -1,7 +1,7 @@
 // requirement: REQ-8.5
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { button, entry, orderRow, orders, payOrder, payment } from './helpers';
+import { button, entry, orderRow, orders, payOrder, payment, tab } from './helpers';
 import { bookingAccounts } from './fixtures/data';
 test("REQ-8.5: Pay and persist upcoming state", async ({ page }) => {
     await entry(page);
@@ -11,5 +11,6 @@ test("REQ-8.5: Pay and persist upcoming state", async ({ page }) => {
     await expect(orderRow(page, journey)).toContainText('Paid');
     await expect(button(orderRow(page, journey), 'Refund')).toBeVisible();
     await page.reload();
+    await tab(page, 'Upcoming trips').click();
     await expect(orderRow(page, journey)).toContainText('Paid');
 });

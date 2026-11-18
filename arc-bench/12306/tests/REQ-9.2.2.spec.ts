@@ -5,7 +5,6 @@ import { entry, guideCategories, guideCategory, guideDropdown, guidePanel, home,
 test("REQ-9.2.2: Open all dropdown guide categories", async ({ page }) => {
     await entry(page);
     for (const category of guideCategories) {
-        await home(page);
         const dropdown = await guideDropdown(page);
         for (const name of guideCategories) {
             const group = guideCategory(page, dropdown, name);
@@ -19,5 +18,6 @@ test("REQ-9.2.2: Open all dropdown guide categories", async ({ page }) => {
         await link(guideCategory(page, dropdown, category), moreEntry).click();
         await expect(selectedTab(page, category)).toBeVisible();
         await expect(guidePanel(page, category)).toContainText(/\S+/);
+        await home(page);
     }
 });

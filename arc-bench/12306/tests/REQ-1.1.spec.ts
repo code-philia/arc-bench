@@ -1,7 +1,7 @@
 // requirement: REQ-1.1
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { button, entry, field, link, moreEntry, picture, region } from './helpers';
+import { button, entry, field, home, link, moreEntry, picture, quickGuide, region } from './helpers';
 test("REQ-1.1: Browse public homepage", async ({ page }) => {
     await entry(page);
     await expect(picture(page, '12306')).toBeVisible();
@@ -15,12 +15,14 @@ test("REQ-1.1: Browse public homepage", async ({ page }) => {
     await expect(picture(banners, 'Banner 2')).toBeVisible();
     await button(banners, 'Next banner').click();
     await expect(picture(banners, 'Banner 3')).toBeVisible();
+    await home(page);
     const s = region(page, 'Ticket search');
     await expect(field(s, 'From')).toHaveCount(1);
     await expect(field(s, 'To')).toHaveCount(1);
     await expect(field(s, 'Date')).toHaveCount(1);
     await expect(button(s, 'Search')).toBeEnabled();
-    await expect(region(page, 'Quick Guide')).toBeVisible();
+    const guide = quickGuide(page);
+    await expect(guide).toBeVisible();
     for (const name of ['How to book tickets online?', moreEntry])
-        await expect(link(region(page, 'Quick Guide'), name)).toBeVisible();
+        await expect(link(guide, name)).toBeVisible();
 });

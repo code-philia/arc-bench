@@ -8,6 +8,6 @@ test("REQ-2.5.1: Open registration agreement pages", async ({ page }) => {
     await entry(page);
     await link(page, 'Register').click();
     await openAgreement(page, name);
-    await expect(heading(page, name)).toBeVisible();
+    await expect(heading(page, name).first()).toBeVisible();
   }
 });

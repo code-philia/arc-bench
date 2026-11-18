@@ -14,13 +14,15 @@ children:
       Public entry capability.
 
       The homepage gives visitors access to account actions, train search and travel guidance. Forms identify their fields, and only current results are shown.
+
+      Visitors can return to the homepage by clicking the 12306 logo in the upper-left corner of the page.
   scenarios: []
   children:
   - id: REQ-1.1
     name: Explore homepage and banner carousel
     description:
       text: |-
-        The homepage shows the 12306 logo on the left and Login, Register and My 12306 on the right. Its main navigation offers Home, Booking and Travel guide. The banner carousel starts with the first of three images and advances through them in order. Ticket search offers From, To and Date fields and an enabled Search action. Quick Guide includes How to book tickets online? and More.
+        The homepage shows the 12306 logo in the upper left and Login, Register and My 12306 on the right. Clicking the logo opens the homepage. Its main navigation offers Home, Booking and Travel guide. The banner carousel starts with the first of three images and advances through them in order. Ticket search offers From, To and Date fields and an enabled Search action. Quick Guide includes How to book tickets online? and More.
       image:
       - id: IMG-HOMEPAGE
         reference: reference/homepage.png
@@ -32,8 +34,8 @@ children:
       - id: STEP-REQ-1.1-01-01
         Given: |-
           The visitor is logged out on the homepage.
-        When: Inspect the homepage and click Next banner twice within Home banners.
-        Then: The 12306 logo, Login, Register, My 12306 and Home/Booking/Travel guide navigation are visible; Banner
+        When: Inspect the homepage, click Next banner twice within Home banners, and click the 12306 logo.
+        Then: The upper-left 12306 logo opens the homepage. Login, Register, My 12306 and Home/Booking/Travel guide navigation are visible; Banner
           1 changes to Banner 2 then Banner 3; Ticket search exposes From, To, Date and enabled Search, and Quick
           Guide exposes How to book tickets online? and More.
         references:
@@ -60,7 +62,7 @@ children:
       name: Open traveler registration
       description:
         text: |-
-          Follow Register from the public header. Registration displays Nationality, Name, Passport number, Password, Confirm Password, and the Register submit action.
+          Follow Register from the public header. Registration displays Nationality, Name, Passport number, Password, Confirm Password, and the Next step submit action.
         image:
         - id: IMG-HOMEPAGE
           reference: reference/homepage.png
@@ -75,7 +77,7 @@ children:
         - id: STEP-REQ-2.1.1-01-01
           Given: A signed-out visitor is on the public homepage.
           When: Follow Register from the public header.
-          Then: Registration displays Nationality, Name, Passport number, Password, Confirm Password, and the Register
+          Then: Registration displays Nationality, Name, Passport number, Password, Confirm Password, and the Next step
             submit action.
           references:
           - \ref[requirement](REQ-1.1)
@@ -86,7 +88,7 @@ children:
       name: Create a traveler account
       description:
         text: |-
-          Clicking "Register" opens traveler registration with "Nationality", "Name", "Passport number", "Passport expiration date", "Date of birth", "Gender", "Username", "Password", "Confirm Password", and "Email address". Users provide valid identity and credential values, accept "I have read and agree to abide by Terms of Service and Privacy Policy of 12306.cn.", and click "Register". Registration creates and persists that identity, whose saved credentials authenticate the same account.
+          Clicking "Register" opens traveler registration with "Nationality", "Name", "Passport number", "Passport expiration date", "Date of birth", "Gender", "Username", "Password", "Confirm Password", and "Email address". Users provide valid identity and credential values, accept "I have read and agree to abide by Terms of Service and Privacy Policy of 12306.cn.", and click "Next step". Registration creates and persists that identity, whose saved credentials authenticate the same account.
         image:
         - id: IMG-REGISTER
           reference: reference/register.png
@@ -106,7 +108,7 @@ children:
           When: Open Register. Select China in Nationality, enter Name Test Traveler, Passport expiration date 2026-12-31,
             Date of birth 1996-06-18, select Male, enter Password and Confirm Password Password123!, and agree to
             the Terms of Service and Privacy Policy. Enter Passport number P20260001, Username traveler_new
-            and Email address traveler_new@example.com, then click Register. Return Home, sign out if signed in,
+            and Email address traveler_new@example.com, then click Next step. Return Home, sign out if signed in,
             reload, use Login to submit traveler_new / Password123!, then reload again.
           Then: Registration successful. is displayed; the saved credentials sign in after reload, and Sign Out
             remains visible after the second reload.
@@ -120,7 +122,7 @@ children:
       name: Reject invalid traveler registration
       description:
         text: |-
-          After "Register" opens registration, users complete "Nationality", "Name", "Passport number", "Passport expiration date", "Date of birth", "Gender", "Username", "Password", "Confirm Password", "Email address", and "I have read and agree to abide by Terms of Service and Privacy Policy of 12306.cn.". "Register" rejects missing, duplicate, mismatched, invalid, or unaccepted information with the applicable error message, retains the form, and creates no account.
+          After "Register" opens registration, users complete "Nationality", "Name", "Passport number", "Passport expiration date", "Date of birth", "Gender", "Username", "Password", "Confirm Password", "Email address", and "I have read and agree to abide by Terms of Service and Privacy Policy of 12306.cn.". "Next step" rejects missing, duplicate, mismatched, invalid, or unaccepted information with the applicable error message, retains the form, and creates no account.
         image:
         - id: IMG-REGISTER
           reference: reference/register.png
@@ -174,7 +176,7 @@ children:
             Date of birth 1996-06-18, select Male, enter Password and Confirm Password Password123!, and agree to
             the Terms of Service and Privacy Policy. Enter passport P20260007, Username traveler_mismatch
             and Email address traveler_mismatch@example.com; replace Confirm Password with Password123!Mismatch
-            and submit Register.
+            and click Next step.
           Then: Passwords do not match. appears; Username remains visible and no registration success is shown.
           references:
           - \ref[requirement](REQ-2.1.1)
@@ -187,7 +189,7 @@ children:
           When: Open Register. Select China in Nationality, enter Name Test Traveler, Passport expiration date 2026-12-31,
             Date of birth 1996-06-18, select Male, enter Password and Confirm Password Password123!, and agree to
             the Terms of Service and Privacy Policy. Enter passport P20260008, Username traveler_invalid_email
-            and Email address invalid-email, then submit Register.
+            and Email address invalid-email, then click Next step.
           Then: Invalid email address format. appears; the form remains and no registration success is shown.
           references:
           - \ref[requirement](REQ-2.1.1)
@@ -199,7 +201,7 @@ children:
           Given: The visitor is logged out on the homepage.
           When: Open Register and fill China, Test Traveler, passport P20260009, expiration 2026-12-31, birth 1996-06-18,
             Male, Username traveler_agreement, matching Password123! values and email traveler_agreement@example.com;
-            leave the agreement unchecked and click Register.
+            leave the agreement unchecked and click Next step.
           Then: Please agree to the Terms of Service and Privacy Policy. appears; the form remains without registration
             success.
           references:
@@ -213,7 +215,7 @@ children:
           When: Open Register. Select China in Nationality, enter Name Test Traveler, Passport expiration date 2026-12-31,
             Date of birth 1996-06-18, select Male, enter Password and Confirm Password Password123!, and agree to
             the Terms of Service and Privacy Policy. Enter passport P20260015, Username traveler_missing_confirm
-            and email traveler_missing_confirm@example.com; clear Confirm Password and click Register.
+            and email traveler_missing_confirm@example.com; clear Confirm Password and click Next step.
           Then: Please fill in all required fields. appears; Confirm Password remains visible and registration success
             is absent.
           references:
@@ -235,7 +237,7 @@ children:
       name: Open credential login
       description:
         text: |-
-          Follow Login from the public header. The login page displays Email/Username/Mobile number, Password, and LOGIN without authenticating merely by navigation.
+          Follow Login from the public header. The login page displays Email/Username/Mobile number, Password, and LOGIN without authenticating merely by navigation. The 12306 logo is visible in the upper left. Clicking it returns the visitor to the homepage.
         image:
         - id: IMG-HOMEPAGE
           reference: reference/homepage.png
@@ -249,9 +251,9 @@ children:
         steps:
         - id: STEP-REQ-2.2.1-01-01
           Given: A signed-out visitor is on the public homepage.
-          When: Follow Login from the public header.
+          When: Follow Login from the public header, inspect the login form, and click the upper-left 12306 logo.
           Then: The login page displays Email/Username/Mobile number, Password, and LOGIN without authenticating
-            merely by navigation.
+            merely by navigation. Clicking the logo returns the visitor to the homepage.
           references:
           - \ref[requirement](REQ-1.1)
           - \ref[image](IMG-HOMEPAGE)
@@ -347,7 +349,7 @@ children:
       name: Open registration from login
       description:
         text: |-
-          From login, "No account yet? Register now." opens registration with Nationality, Passport number, and Register available. Navigation alone creates no account.
+          From login, "No account yet? Register now." opens registration with Nationality, Passport number, and Next step available. Navigation alone creates no account.
         image:
         - id: IMG-LOGIN
           reference: reference/login.png
@@ -362,7 +364,7 @@ children:
         - id: STEP-REQ-2.2.3-01-01
           Given: The visitor is logged out on the homepage.
           When: Open Login, then activate No account yet? Register now.
-          Then: Registration opens with Nationality, Passport number and Register visible.
+          Then: Registration opens with Nationality, Passport number and Next step visible.
           references:
           - \ref[requirement](REQ-2.2.1)
           - \ref[image](IMG-LOGIN)
@@ -1290,7 +1292,7 @@ children:
         - id: STEP-REQ-5.1.2-02-01
           Given: |-
             A traveler, for example personal_center_user, has signed in to their account.
-          When: Return Home and activate My 12306.
+          When: Click the upper-left 12306 logo to return to the homepage, then activate My 12306.
           Then: Personal center menu contains Personal Center, Order center, Personal and Information management;
             Notice displays personal_center_user and its Notice image.
           references:
@@ -2350,8 +2352,7 @@ children:
   description:
     text: >-
       Travelers can manage frequent passengers on their account. The account holder’s passenger record is
-      provided automatically and is protected from deletion. Names and passport identities are visible in
-      passenger records.
+      provided automatically and is protected from deletion. Passenger records show names and masked passport numbers.
   scenarios: []
   children:
   - id: REQ-7.1
@@ -2359,6 +2360,8 @@ children:
     description:
       text: |-
         "Information management" exposes "My Passengers", showing columns Name, ID type, ID number, Mobile number, and Operation, with "All" and scoped "Delete" maintenance. The account holder’s passenger record is always present and is protected from deletion. For example, a traveler can add Passenger Example with passport P20269999, expiration 2027-12-31, birth 2000-01-15, China, Female, passenger@example.com, 13800000040, and Adult; the traveler can add and later delete this passenger through My Passengers.
+
+        In the "ID number" column, every passport number, including the account holder’s, shows its first two and last two characters, with one asterisk for each character in between. For example, C6123477 appears as C6****77. Passport numbers of four characters or fewer show an asterisk for every character.
       image:
       - id: IMG-USER-CENTER
         reference: reference/user-center.png
@@ -2375,7 +2378,7 @@ children:
           A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected.
         When: Inspect passenger headers and the account-holder row.
         Then: All, Name, ID type, ID number, Mobile number and Operation headers are visible; the passenger_manager_user
-          row offers no Delete action.
+          row shows the masked passport number and offers no Delete action.
         references:
         - \ref[requirement](REQ-5.1.2)
         - \ref[image](IMG-USER-CENTER)
@@ -2385,7 +2388,7 @@ children:
     name: Add and validate frequent passenger
     description:
       text: |-
-        Add new passengers opens a form for nationality, name, passport number and expiration date, date of birth, gender, email address, mobile number and passenger type (Adult or Child). Cancel abandons the entry. Confirming valid details adds a passenger, persists the record and shows “Passenger added successfully.”.
+        Add new passengers opens a form for nationality, name, passport number and expiration date, date of birth, gender, email address, mobile number and passenger type (Adult or Child). Cancel abandons the entry. Clicking "Confirm" with valid details adds a passenger, persists the record and shows “Passenger added successfully.”.
 
         The form remains open and adds no passenger on validation errors. Missing required information shows “Please fill in all required fields.”, a duplicate passport shows “Passport number already exists.”, malformed email shows “Invalid email address format.”, and malformed mobile shows “Invalid mobile number format.”
       image:
@@ -2400,9 +2403,8 @@ children:
         Given: |-
           A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected. Passport P20269996 is unused.
         When: Click Add new passengers; enter Added Passenger, P20269996, China, expiration 2028-12-31, birth 1999-02-20,
-          Male, Adult, added.passenger@example.com and 13800000043, then click Determine; reload.
-        Then: Passenger added successfully. appears; exactly one P20269996 row identifies Added Passenger before
-          and after reload.
+          Male, Adult, added.passenger@example.com and 13800000043, then click Confirm; reload.
+        Then: Passenger added successfully. appears; exactly one Added Passenger row displays P2*****96 before and after reload.
         references:
         - \ref[requirement](REQ-7.1)
         - \ref[image](IMG-ADD-PASSENGER)
@@ -2412,7 +2414,7 @@ children:
       - id: STEP-REQ-7.2-02-01
         Given: |-
           A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected.
-        When: Click Add new passengers, inspect its form controls and Cancel, then click Determine without entering
+        When: Click Add new passengers, inspect its form controls and Cancel, then click Confirm without entering
           required values.
         Then: Nationality, Name, Passport number, expiration, birth, Gender, Email address, Mobile number and Passenger
           type are visible; Please fill in all required fields. appears and the dialog remains open.
@@ -2424,10 +2426,10 @@ children:
       steps:
       - id: STEP-REQ-7.2-03-01
         Given: |-
-          A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected. Passenger Example has been created through Add new passengers using China, passport P20269999, expiration 2027-12-31, birth 2000-01-15, Female, Adult, passenger@example.com and 13800000040, then Determine.
+          A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected. Passenger Example has been created through Add new passengers using China, passport P20269999, expiration 2027-12-31, birth 2000-01-15, Female, Adult, passenger@example.com and 13800000040, then Confirm.
         When: Open Add new passengers and fill Duplicate Passenger with existing passport P20269999 and otherwise
           valid China, expiration 2028-12-31, birth 1999-02-20, Male, Adult, added.passenger@example.com and 13800000043,
-          then Determine.
+          then Confirm.
         Then: Passport number already exists. appears; the dialog stays open and no Duplicate Passenger row is added.
         references:
         - \ref[requirement](REQ-7.1)
@@ -2437,9 +2439,9 @@ children:
       steps:
       - id: STEP-REQ-7.2-04-01
         Given: |-
-          A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected. Passenger Example has been created through Add new passengers using China, passport P20269999, expiration 2027-12-31, birth 2000-01-15, Female, Adult, passenger@example.com and 13800000040, then Determine.
+          A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected. Passenger Example has been created through Add new passengers using China, passport P20269999, expiration 2027-12-31, birth 2000-01-15, Female, Adult, passenger@example.com and 13800000040, then Confirm.
         When: Open Add new passengers and fill Invalid Email Passenger, passport P20260013, China, expiration 2028-12-31,
-          birth 1999-02-20, Male, Adult, Email address invalid-email and Mobile number 13800000043, then Determine.
+          birth 1999-02-20, Male, Adult, Email address invalid-email and Mobile number 13800000043, then Confirm.
         Then: Invalid email address format. appears; the dialog remains and no Invalid Email Passenger row is added.
         references:
         - \ref[requirement](REQ-7.1)
@@ -2470,9 +2472,9 @@ children:
         - id: STEP-REQ-7.3.1-01-01
           Given: |-
             A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected. Delete Passenger/P20269981 was created on the site.
-          When: Click Delete in the P20269981 row, then Confirm in Are you sure you want to delete this passenger?;
+          When: Click Delete in the Delete Passenger row, then Confirm in Are you sure you want to delete this passenger?;
             reload after success.
-          Then: The dialog closes, Passenger deleted successfully. appears, and P20269981 is absent before and after
+          Then: The dialog closes, Passenger deleted successfully. appears, and Delete Passenger is absent before and after
             reload.
           references:
           - \ref[requirement](REQ-7.2)
@@ -2494,9 +2496,9 @@ children:
         - id: STEP-REQ-7.3.2-01-01
           Given: |-
             A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected. Cancel Passenger/P20269982 was created on the site.
-          When: Click Delete in the P20269982 row, then Cancel in Are you sure you want to delete this passenger?;
+          When: Click Delete in the Cancel Passenger row, then Cancel in Are you sure you want to delete this passenger?;
             reload.
-          Then: The dialog closes and P20269982 remains visible before and after reload.
+          Then: The dialog closes and Cancel Passenger remains visible with the masked passport number before and after reload.
           references:
           - \ref[requirement](REQ-7.2)
           - \ref[image](IMG-MY-PASSENGERS)
@@ -2505,7 +2507,7 @@ children:
     name: Delete selected passengers as a batch
     description:
       text: |-
-        Users select deletable passenger rows by "Select {passport number}", or select all deletable rows through "All". "Batch deletion" opens "Are you sure you want to delete the selected passengers?". "Confirm" deletes only selected passengers with success feedback and persists their absence, preserving the holder and unselected records. "Cancel" dismisses without deleting. Business identity determines selection.
+        Users select individual deletable passenger rows in the list, or select all deletable rows through "All". "Batch deletion" opens "Are you sure you want to delete the selected passengers?". "Confirm" deletes only selected passengers with success feedback and persists their absence, preserving the holder and unselected records. "Cancel" dismisses without deleting.
       image:
       - id: IMG-MY-PASSENGERS
         reference: reference/my-passengers.png
@@ -2528,7 +2530,7 @@ children:
     name: Search and clear passenger filters
     description:
       text: |-
-        Provide a search input above the passenger table for a passenger name or ID number and a "Search" action, allow the user to search by passenger name or ID number, and show the matching passenger information.
+        Travelers can use "Search" above the passenger table to look up a passenger by name or full ID number. Matching rows retain the masked passport display.
 
         Clearing the passenger search empties the search field and restores the full passenger list.
     scenarios: []
@@ -2548,9 +2550,9 @@ children:
         steps:
         - id: STEP-REQ-7.5.1-01-01
           Given: |-
-            A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected. Passenger Example has been created through Add new passengers using China, passport P20269999, expiration 2027-12-31, birth 2000-01-15, Female, Adult, passenger@example.com and 13800000040, then Determine. Cancel Passenger/P20269982 has also been created on the site.
+            A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected. Passenger Example has been created through Add new passengers using China, passport P20269999, expiration 2027-12-31, birth 2000-01-15, Female, Adult, passenger@example.com and 13800000040, then Confirm. Cancel Passenger/P20269982 has also been created on the site.
           When: Enter Passenger Example in the passenger search field and click Search.
-          Then: P20269999 displays Passenger Example and the nonmatching P20269982 row is hidden.
+          Then: Passenger Example appears with the masked passport number and Cancel Passenger is hidden.
           references:
           - \ref[requirement](REQ-7.2)
           - \ref[image](IMG-MY-PASSENGERS)
@@ -2559,9 +2561,9 @@ children:
         steps:
         - id: STEP-REQ-7.5.1-02-01
           Given: |-
-            A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected. Passenger Example has been created through Add new passengers using China, passport P20269999, expiration 2027-12-31, birth 2000-01-15, Female, Adult, passenger@example.com and 13800000040, then Determine. Cancel Passenger/P20269982 has also been created on the site.
+            A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected. Passenger Example has been created through Add new passengers using China, passport P20269999, expiration 2027-12-31, birth 2000-01-15, Female, Adult, passenger@example.com and 13800000040, then Confirm. Cancel Passenger/P20269982 has also been created on the site.
           When: Enter P20269999 in the passenger search field and click Search.
-          Then: P20269999 displays Passenger Example and the nonmatching P20269982 row is hidden.
+          Then: Passenger Example appears with the masked passport number and Cancel Passenger is hidden.
           references:
           - \ref[requirement](REQ-7.2)
           - \ref[image](IMG-MY-PASSENGERS)
@@ -2581,9 +2583,9 @@ children:
         steps:
         - id: STEP-REQ-7.5.2-01-01
           Given: |-
-            A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected. Passenger Example has been created through Add new passengers using China, passport P20269999, expiration 2027-12-31, birth 2000-01-15, Female, Adult, passenger@example.com and 13800000040, then Determine. Cancel Passenger/P20269982 has also been created on the site.
+            A traveler has registered as passenger_manager_user, signed in and opened My 12306 → Information management → My Passengers. The account holder’s passenger record is protected. Passenger Example has been created through Add new passengers using China, passport P20269999, expiration 2027-12-31, birth 2000-01-15, Female, Adult, passenger@example.com and 13800000040, then Confirm. Cancel Passenger/P20269982 has also been created on the site.
           When: Search for Passenger Example, verify Cancel Passenger is hidden, then clear the passenger search.
-          Then: The query becomes empty and both P20269999 and previously excluded P20269982 return.
+          Then: The query becomes empty and both Passenger Example and the previously excluded Cancel Passenger appear with masked passport numbers.
           references:
           - \ref[requirement](REQ-7.2)
           - \ref[requirement](REQ-7.5.1)
@@ -2704,7 +2706,7 @@ children:
             The visitor has searched Shanghai to Beijing for today; published results are G1001, G1002 and
             K1003. The anonymous visitor has clicked Book for G1001 and the Login dialog is open.
           When: Activate No account yet? Register now. within Login.
-          Then: Public registration exposes Username, Password, Confirm Password and Register.
+          Then: Public registration exposes Username, Password, Confirm Password and Next step.
           references:
           - \ref[requirement](REQ-3.2)
           - \ref[requirement](REQ-8.1.1)
@@ -3121,8 +3123,8 @@ children:
           searched Shanghai–Beijing for tomorrow and chose Book for G1001. booking_paid_user has selected
           Passenger Example/P20269995 and Business-class seat and confirmed an unpaid G1001 order.
         When: Click Pay, open Upcoming trips through My 12306 → Order center → Ticket orders, then reload.
-        Then: Payment successful. appears; G1001 displays Paid with Refund available in Upcoming trips and remains
-          Paid after reload.
+        Then: Payment successful. appears; G1001 displays "Paid" with Refund available in Upcoming trips and remains
+          "Paid" after reload.
         references:
         - \ref[requirement](REQ-8.3.3.1)
         - \ref[image](IMG-PAYMENT)
@@ -3150,8 +3152,8 @@ children:
           searched Shanghai–Beijing for tomorrow and chose Book for G1001. booking_unpaid_user has selected
           Passenger Example/P20269990 and Business-class seat and confirmed an order without paying.
         When: Open Uncompleted orders, inspect the order and reload, then select Upcoming trips.
-        Then: G1001 is Unpaid with Pay available in Uncompleted orders, remains Unpaid after reload, and is absent
-          from Upcoming trips.
+        Then: G1001 displays "Unpaid" with Pay available in Uncompleted orders, still displays "Unpaid" after reload,
+          and is absent from Upcoming trips.
         references:
         - \ref[requirement](REQ-8.3.3.1)
         - \ref[image](IMG-PAYMENT)
@@ -3161,7 +3163,7 @@ children:
     name: Cancel unpaid payment and release seat
     description:
       text: |-
-        Clicking "Cancel" on payment cancels the G1001 order, releases its locked seats, and shows Order cancelled successfully. The order remains visible in "Uncompleted orders" as canceled without Pay, including after reload, and released availability can be reached through "Book". Unpaid orders remain outside Upcoming trips.
+        Clicking "Cancel" on payment cancels the G1001 order, releases its locked seats, and shows Order cancelled successfully. The order remains visible in "Uncompleted orders" with the status "Cancelled" and without Pay, including after reload, and released availability can be reached through "Book". Unpaid orders remain outside Upcoming trips.
       image:
       - id: IMG-PAYMENT
         reference: reference/payment.png
@@ -3190,7 +3192,7 @@ children:
           Passenger Example/P20269994 and Business-class seat and confirmed its unpaid order.
         When: Click Cancel on payment, open Uncompleted orders and reload; return Home, search the same journey,
           click Book, select the same passenger/business class and click Place order.
-        Then: Order cancelled successfully. appears; G1001 is Cancelled without Pay before and after reload; rebooking
+        Then: Order cancelled successfully. appears; G1001 displays "Cancelled" without Pay before and after reload; rebooking
           reaches confirmation, showing the released business seat is available again.
         references:
         - \ref[requirement](REQ-8.3.3.1)
@@ -3213,7 +3215,7 @@ children:
       name: Confirm cancellation from order center
       description:
         text: |-
-          "Cancel" on the identified unpaid order opens "Are you sure you want to cancel this order?". "Confirm" changes it to canceled without Pay and releases the seat for rebooking.
+          "Cancel" on the identified unpaid order opens "Are you sure you want to cancel this order?". "Confirm" cancels the order, shows the status "Cancelled" without Pay and releases the seat for rebooking.
         image:
         - id: IMG-TICKET-ORDERS
           reference: reference/ticket-orders.png
@@ -3237,7 +3239,7 @@ children:
             business-class order through booking; Uncompleted orders is open.
           When: Click Cancel within G1001, click Confirm in Are you sure you want to cancel this order?, then repeat
             the same booking up to Place order.
-          Then: The dialog closes with Order cancelled successfully.; G1001 becomes Cancelled without Pay and rebooking
+          Then: The dialog closes with Order cancelled successfully.; G1001 displays "Cancelled" without Pay and rebooking
             reaches confirmation using the released seat.
           references:
           - \ref[requirement](REQ-8.3.3.1)
@@ -3251,7 +3253,7 @@ children:
       name: Dismiss cancellation from order center
       description:
         text: |-
-          The order row's "Cancel" opens "Are you sure you want to cancel this order?" with "Confirm". Choosing the dialog's Cancel instead closes it without changing the order, which remains Unpaid with Pay available.
+          The order row's "Cancel" opens "Are you sure you want to cancel this order?" with "Confirm". Choosing the dialog's Cancel instead closes it without changing the order, which still displays "Unpaid" with Pay available.
         image:
         - id: IMG-TICKET-ORDERS
           reference: reference/ticket-orders.png
@@ -3268,7 +3270,7 @@ children:
             orders_unpaid_dismiss_user has created Passenger Example/P20269801 and confirmed an unpaid G1001
             business-class order through booking; Uncompleted orders is open.
           When: Click Cancel within G1001 and then Cancel within Are you sure you want to cancel this order?.
-          Then: The dialog closes; G1001 remains Unpaid with Pay available.
+          Then: The dialog closes; G1001 still displays "Unpaid" with Pay available.
           references:
           - \ref[requirement](REQ-8.3.3.1)
           - \ref[requirement](REQ-5.1.2)
@@ -3288,7 +3290,7 @@ children:
     name: Read travel guide categories
     description:
       text: |-
-        "Travel guide" opens one unified guide with "Ticketing", "Endorsement and refund", and "Miscellaneous". Each selected tab shows its matching guidance. Navigation dropdown and homepage Quick Guide provide additional entry routes to these same categories.
+        "Travel guide" opens one unified guide with "Ticketing", "Endorsement and refund", and "Miscellaneous". Each selected tab shows its matching guidance. Navigation dropdown and homepage Quick Guide provide additional entry routes to these same categories. The guide displays the 12306 logo in the upper left. Clicking it returns the visitor to the homepage.
       image:
       - id: IMG-HOMEPAGE
         reference: reference/homepage.png
@@ -3303,9 +3305,9 @@ children:
       - id: STEP-REQ-9.1-01-01
         Given: |-
           The visitor is logged out on the homepage.
-        When: Activate Travel guide in navigation; select Ticketing, Endorsement and refund and Miscellaneous in
-          turn.
-        Then: How to book tickets online? initially appears; each chosen tab is selected and its matching category contains nonempty guidance.
+        When: Activate Travel guide in navigation, select Ticketing, Endorsement and refund and Miscellaneous in
+          turn, then click the upper-left 12306 logo.
+        Then: How to book tickets online? initially appears. Each chosen tab is selected and its matching category contains nonempty guidance. Clicking the logo returns the visitor to the homepage.
         references:
         - \ref[image](IMG-HOMEPAGE)
         - \ref[image](IMG-TRAVEL-GUIDE)
@@ -3362,9 +3364,9 @@ children:
         - id: STEP-REQ-9.2.2-01-01
           Given: |-
             The visitor is logged out on the homepage.
-          When: For each of Ticketing, Endorsement and refund and Miscellaneous, return Home, hover Travel guide,
-            inspect the three category regions and activate More within the chosen category.
-          Then: Each dropdown category contains four question links and one unique More link; its More opens the matching selected guide tab and visible guidance for that category.
+          When: For each of Ticketing, Endorsement and refund and Miscellaneous, hover Travel guide on the homepage,
+            inspect the three category regions, activate More within the chosen category, then click the upper-left 12306 logo on the guide page.
+          Then: Each dropdown category contains four question links and one unique More link. Its More opens the matching selected guide tab and visible guidance. Clicking the logo returns the visitor to the homepage.
           references:
           - \ref[requirement](REQ-9.1)
           - \ref[requirement](REQ-9.2.1)

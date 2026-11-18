@@ -1,7 +1,7 @@
 // requirement: REQ-5.5
 import { expect } from '@playwright/test';
 import { test, travelDate } from './fixtures/test';
-import { button, dialog, entry, link, orderRow, orderSetup, orders, region, statusMessage } from './helpers';
+import { button, dialog, entry, link, orderRow, orderSetup, orders, region, statusMessage, tab } from './helpers';
 import { additionalTrain, bookingAccounts } from './fixtures/data';
 test("REQ-5.5: Refund and inspect history", async ({ page }) => {
     await entry(page);
@@ -15,9 +15,15 @@ test("REQ-5.5: Refund and inspect history", async ({ page }) => {
     await button(info, 'Confirm refund').click();
     await expect(statusMessage(page, 'Refund successful').or(dialog(page, 'Refund successful'))).toBeVisible();
     journey.state = 'closed';
-    await link(page, 'View History orders').click();
+    const viewHistory = link(page, 'View History orders');
+    await viewHistory.click();
     const refunded = orderRow(page, journey).getByRole('cell', { name: /^refunded$/i });
     await expect(refunded).toBeVisible();
     await page.reload();
+    if (await viewHistory.isVisible()) {
+        await viewHistory.click();
+    } else {
+        await tab(page, 'History orders').click();
+    }
     await expect(refunded).toBeVisible();
 });

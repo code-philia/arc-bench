@@ -1,7 +1,7 @@
 // requirement: REQ-7.4
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { addPassenger, button, dialog, entry, manager, row, text } from './helpers';
+import { addPassenger, button, dialog, entry, expectMaskedPassenger, manager, passengerRow, text } from './helpers';
 import { newPassenger } from './fixtures/data';
 test("REQ-7.4: Select all protects holder", async ({ page }) => {
     await entry(page);
@@ -17,11 +17,11 @@ test("REQ-7.4: Select all protects holder", async ({ page }) => {
     await button(d, 'Confirm').click();
     await expect(d).not.toBeVisible();
     await text(page, 'Passengers deleted successfully.');
-    await expect(row(page, first.passport)).toHaveCount(0);
-    await expect(row(page, second.passport)).toHaveCount(0);
-    await expect(row(page, holder.passport)).toBeVisible();
+    await expect(passengerRow(page, first.name)).toHaveCount(0);
+    await expect(passengerRow(page, second.name)).toHaveCount(0);
+    await expectMaskedPassenger(page, holder);
     await page.reload();
-    await expect(row(page, first.passport)).toHaveCount(0);
-    await expect(row(page, second.passport)).toHaveCount(0);
-    await expect(row(page, holder.passport)).toBeVisible();
+    await expect(passengerRow(page, first.name)).toHaveCount(0);
+    await expect(passengerRow(page, second.name)).toHaveCount(0);
+    await expectMaskedPassenger(page, holder);
 });

@@ -1,12 +1,12 @@
 // requirement: REQ-8.1.2
 import { expect } from '@playwright/test';
 import { test } from './fixtures/test';
-import { bookingLoginTitle, button, dialog, entry, heading, loginFields, picture, row, search } from './helpers';
+import { availableBookAction, bookingLoginTitle, button, dialog, entry, heading, loginFields, picture, row, search } from './helpers';
 import { trains } from './fixtures/data';
 test("REQ-8.1.2: Require quick login before booking", async ({ page }) => {
     await entry(page);
     await search(page);
-    await button(row(page, trains[0].number), 'Book').click();
+    await (await availableBookAction(row(page, trains[0].number))).click();
     const d = dialog(page, bookingLoginTitle);
     await expect(picture(d, /\b12306\b|^Login$/i)).toBeVisible();
     await expect(heading(d, bookingLoginTitle)).toBeVisible();

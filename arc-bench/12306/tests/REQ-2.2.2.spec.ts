@@ -8,12 +8,12 @@ test("REQ-2.2.2: Authenticate by username email and mobile", async ({ page }) =>
     for (const identity of Object.values(verifiedLogin)) {
         await login(page, identity);
         await expect(statusMessage(page, 'Login successful')).toBeVisible();
-        await expect(link(page.getByRole('navigation'), 'Booking')).toBeVisible();
+        await page.reload();
+        await expect(link(page, 'Sign Out')).toBeVisible();
         await home(page);
+        await expect(link(page.getByRole('navigation'), 'Booking')).toBeVisible();
         await expect(region(page, 'Ticket search')).toBeVisible();
         await expect(link(page, 'My 12306')).toBeVisible();
-        await expect(link(page, 'Sign Out')).toBeVisible();
-        await page.reload();
         await expect(link(page, 'Sign Out')).toBeVisible();
         await link(page, 'Sign Out').click();
         await expect(link(page, 'Login')).toBeVisible();

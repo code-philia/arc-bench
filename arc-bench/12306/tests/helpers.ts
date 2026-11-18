@@ -3,24 +3,43 @@ export { PASS, trains, plans } from './fixtures/data';
 import { PASS, trains, plans } from './fixtures/data';
 import { defaultTrain, newAccount, newPassenger, verifiedLogin, type Account, type BookingAccount, type Passenger } from './fixtures/data';
 import { afterTest, travelDate } from './fixtures/test';
-import { button, link, navigationEntries, field, region, row, heading, dialog, tab as categoryTab, selectedTab, guidePanel, loginFields, selectChoice, expectChoice } from './ui';
+import { button, link, navigationEntries, field, region, row, heading, dialog, tab as categoryTab, selectedTab, guidePanel, loginFields, selectChoice, expectChoice, picture } from './ui';
 export * from './ui';
 type Surface = Page | Locator;
 export const AGREEMENT = 'I have read and agree to abide by Terms of Service and Privacy Policy of 12306.cn.';
 const registrationForm = (page: Page) => page.locator('form, [role=form]').filter({ has: field(page, 'Username') });
 const escapeText = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const exactText = (...labels: string[]) => new RegExp(`^\\s*(?:${labels.map(escapeText).join('|')})\\s*$`, 'i');
-export const registerEntry = /^(?:No account yet\?\s*)?Register now[.!]?$/i;
 export const recoveryEntry = /^Forgot (?:your )?password\??$/i;
 export const bookingLoginTitle = /^(?:.*\b12306\b.*)?Login$/;
 export const moreEntry = /^More(?:\s*[>›»→])*$/;
-export const registerSubmit = (page: Page) => {
-    const name = /^(Register|Next step)$/i;
-    const form = registrationForm(page);
-    return button(form, name).or(button(page, name).and(
-        page.locator('main button, main [role=button], input[type=submit], button[type=submit]'),
-    ));
-};
+
+export async function openRegistrationFromLogin(surface: Surface) {
+    const prompt = /\bNo account yet\b/i;
+    const action = /\bRegister now\b/i;
+    await expect(surface.getByText(prompt).filter({ visible: true }).first()).toBeVisible();
+    await expect(surface.getByText(action).filter({ visible: true }).first()).toBeVisible();
+    await link(surface, action).click();
+}
+
+function closestContent(scopes: Locator) {
+    return scopes.filter({ visible: true, hasNot: scopes });
+}
+
+function registrationControl(page: Page, control: Locator) {
+    const sections = page.locator(':not(html, body)')
+        .filter({ has: field(page, 'Username') })
+        .filter({ has: field(page, 'Passport number') })
+        .filter({ has: field(page, 'Confirm Password') })
+        .filter({ has: control });
+    return control.and(closestContent(sections).locator('*'));
+}
+
+export function registerSubmit(page: Page) {
+    const actions = link(page, 'Next step')
+        .and(page.locator(':not(header *, nav *, [role=banner] *, [role=navigation] *)'));
+    return registrationControl(page, actions);
+}
 export async function openAgreement(page: Page, name: string) {
     const registration = registrationForm(page);
     const inForm = link(registration, name);
@@ -38,8 +57,18 @@ export async function openAgreement(page: Page, name: string) {
     await candidates.click();
 }
 export async function text(page: Page, value: string, exact = true) { await expect(page.getByText(value, { exact })).toBeVisible(); }
+export function routeSummary(page: Page) {
+    const names = /\bShanghai\s*\(上海\)\s*[-–—→>]?\s*Beijing\s*\(北京\)/;
+    return page.getByText(names).filter({ visible: true });
+}
 export async function entry(page: Page) { await page.goto('/'); }
-export async function home(page: Page) { await link(page.getByRole('navigation').filter({ has: link(page, 'Home') }), 'Home').click(); }
+export async function home(page: Page) {
+    const brand = /^(?:12306(?:\s+(?:logo|China Railway|home)\b.*)?|(?:中国铁路|China Railway)\s*12306\b.*)$/i;
+    const image = picture(page, /\b12306\b|中国铁路|China Railway/i);
+    const logo = link(page, brand).or(navigationEntries(page).filter({ has: image }));
+    await logo.click();
+    await text(page, 'Quick Guide');
+}
 export async function login(page: Page, user = verifiedLogin.username, password: string = PASS, success = true) {
     await link(page, 'Login').click();
     const form = loginFields(page);
@@ -51,16 +80,17 @@ export async function login(page: Page, user = verifiedLogin.username, password:
 }
 
 export function registrationConsent(page: Page) {
-    const form = registrationForm(page);
-    const fullLabel = form.getByRole('checkbox', { name: AGREEMENT, exact: true });
+    const fullLabel = page.getByRole('checkbox', { name: AGREEMENT, exact: true });
     const agreementText = /\b(?:I have read and agree(?: to abide by)?|I agree to (?:the )?terms)\b/i;
     const splitText = /^(?:I have read and agree(?: to abide by)?|I agree to (?:the )?terms)[.!:]?$/i;
-    const agreement = form.locator('fieldset, [role=group], label, p, div')
+    const checkbox = page.getByRole('checkbox', { name: splitText });
+    const agreement = page.locator(':not(html, body, footer, footer *, [role=contentinfo], [role=contentinfo] *)')
         .filter({ hasText: agreementText })
-        .filter({ has: link(page, 'Terms of Service') })
-        .filter({ has: link(page, 'Privacy Policy') });
-    return fullLabel.or(agreement.getByRole('checkbox', { name: splitText }))
-        .filter({ visible: true });
+        .filter({ has: link(page, 'Terms of Service').and(page.locator(':not(footer *, [role=contentinfo] *)')) })
+        .filter({ has: link(page, 'Privacy Policy').and(page.locator(':not(footer *, [role=contentinfo] *)')) })
+        .filter({ has: checkbox });
+    const splitLabel = checkbox.and(closestContent(agreement).locator('*'));
+    return registrationControl(page, fullLabel.or(splitLabel).filter({ visible: true }));
 }
 
 export async function register(page: Page, account: Account) {
@@ -81,7 +111,7 @@ export async function register(page: Page, account: Account) {
 }
 
 export async function signOutIfSignedIn(page: Page) {
-    await home(page);
+    await entry(page);
     const signOut = link(page, 'Sign Out');
     if (await signOut.isVisible()) await signOut.click();
     await expect(link(page, 'Login')).toBeVisible();
@@ -145,6 +175,10 @@ export async function guideDropdown(page: Page) {
         guideCategories.map(name => guideCategoryLabel(page, name)).concat(link(page, moreEntry)));
 }
 
+export function quickGuide(page: Page) {
+    return page.getByRole('region', { name: 'Quick Guide', exact: true }).filter({ visible: true });
+}
+
 export function guideCategory(page: Page, dropdown: Locator, name: string) {
     const blocks = guideCategories.filter(category => category !== name)
         .reduce((scope, category) => scope.filter({ hasNot: guideCategoryLabel(page, category) }),
@@ -191,19 +225,24 @@ export async function chooseDepartureDate(page: Page, date: string) {
         await input.fill(date);
     } else {
         await input.click();
+        const picker = dialog(page, /^Date picker$/i);
+        const calendar = await picker.isVisible() ? picker : page;
         const local = new Date(`${date}T00:00:00Z`);
         const monthNames = (['long', 'short'] as const).map(month =>
             new Intl.DateTimeFormat('en-US', { month, year: 'numeric', timeZone: 'UTC' }).format(local));
         const title = page.getByText(exactText(...monthNames));
-        const panels = page.locator('section, fieldset, table, [role=group], [role=grid]')
-            .filter({ has: title }).filter({ visible: true });
+        const dayNumber = exactText(String(local.getUTCDate()));
+        const day = navigationEntries(page).filter({ hasText: dayNumber });
+        const byDate = dateChoice(page, date);
+        const panels = calendar.locator('section, fieldset, table, [role=group], [role=grid]')
+            .filter({ has: title }).filter({ has: byDate.or(day), visible: true });
         const month = panels.filter({ hasNot: panels });
         if (await month.isVisible()) {
             const identified = dateChoice(month, date);
-            const day = navigationEntries(month).filter({ hasText: exactText(String(local.getUTCDate())) });
-            await (await identified.count() ? identified : day).click();
+            const numberedDay = navigationEntries(month).filter({ hasText: dayNumber });
+            await (await identified.count() ? identified : numberedDay).click();
         } else {
-            await dateChoice(page, date).click();
+            await dateChoice(calendar, date).click();
         }
     }
     await expect(input).toHaveValue(date);
@@ -338,9 +377,32 @@ export async function sortPlans(page: Page, label: string, key: 'departure' | 't
     await expect.poll(() => planIds(page)).toEqual([...ordered].reverse());
 }
 export async function passengerPage(page: Page) { await section(page, 'Information management', 'My Passengers'); }
+export function passengerRow(page: Page, name: string) {
+    const idHeader = page.getByRole('columnheader', { name: 'ID number', exact: true });
+    return row(page.getByRole('table').filter({ has: idHeader }), name);
+}
+
+export async function expectMaskedPassenger(page: Page, passenger: Pick<Passenger, 'name' | 'passport'>) {
+    const { name, passport } = passenger;
+    const masked = passport.length <= 4
+        ? '*'.repeat(passport.length)
+        : passport.slice(0, 2) + '*'.repeat(passport.length - 4) + passport.slice(-2);
+    const record = passengerRow(page, name);
+    await expect(record).toHaveCount(1);
+    await expect(record.getByRole('cell', { name: masked, exact: true })).toBeVisible();
+    await expect(record).not.toContainText(passport, { useInnerText: true });
+    return record;
+}
+
 const passengerAction = /^(?:[+＋]\s*)?Add new passengers$/i;
-export const addPassengerEntry = (page: Page) => link(page.getByRole('main'), passengerAction)
-    .or(link(region(page, 'My Passengers'), passengerAction));
+export function addPassengerEntry(page: Page) {
+    const action = link(page, passengerAction).and(page.locator(':not(footer *, [role=contentinfo] *)'));
+    const passengerList = page.getByRole('columnheader', { name: 'ID type', exact: true });
+    const passengerSearch = field(page, 'Please enter passenger name', 'Passenger name');
+    const nearby = page.locator(':not(html, body)').filter({ has: passengerList.or(passengerSearch) });
+    const scopes = region(page, 'My Passengers').or(page.getByRole('main')).or(nearby).filter({ has: action });
+    return action.and(closestContent(scopes).locator('*'));
+}
 
 export function passengerForm(page: Page) {
     const forms = dialog(page, 'Add new passengers').or(region(page, 'Add new passengers'))
@@ -360,10 +422,11 @@ export async function addPassenger(page: Page, passenger: Passenger, success = t
         await field(form, label).fill(value);
     await form.getByRole('radio', { name: passenger.gender, exact: true }).check();
     await selectChoice(field(form, 'Passenger type'), 'Adult');
-    await button(form, /^(Determine|Confirm)$/).click();
+    await button(form, 'Confirm').click();
     if (success) {
-        await expect(form).not.toBeVisible();
-        await expect(row(page, passenger.passport)).toContainText(passenger.name);
+        await text(page, 'Passenger added successfully.');
+        if (await form.isVisible()) await link(form, /^(Cancel|Close)$/i).click();
+        await expect(passengerRow(page, passenger.name)).toBeVisible();
     }
 }
 
@@ -383,6 +446,13 @@ export function orderRow(page: Page, journey: Journey) {
     return row(page, journey.train).filter({ has: page.getByText(journey.passenger.name, { exact: true }) });
 }
 
+export async function availableBookAction(trainRow: Locator) {
+    await expect(trainRow).toHaveCount(1);
+    const enabled = trainRow.locator(':not(:disabled, [aria-disabled="true"], [aria-disabled="true"] *)');
+    // These flows accept any available seat class for the identified train.
+    return link(trainRow, 'Book').and(enabled).first();
+}
+
 export async function booking(page: Page, user: BookingAccount, date = travelDate(page, 1), train: string = trains[0].number, existing?: Journey) {
     const journey: Journey = existing ?? { train, date, passenger: newPassenger(), state: 'booking' };
     if (!existing) {
@@ -392,7 +462,7 @@ export async function booking(page: Page, user: BookingAccount, date = travelDat
     }
     await home(page);
     await search(page, 'Shanghai', 'Beijing', journey.date);
-    await button(row(page, journey.train), 'Book').click();
+    await (await availableBookAction(row(page, journey.train))).click();
     await expect(heading(page, /^Train Information:?$/i)).toBeVisible();
     return journey;
 }
@@ -485,13 +555,16 @@ export async function recover(page: Page, email: string, passport: string, succe
 }
 export async function security(page: Page, kind: 'password' | 'mailbox') {
     await section(page, 'Personal', 'Account security');
-    const password = link(page, 'Login password');
-    const passwordEdit = link(region(page, 'Login password'), 'Edit');
-    await expect(password.or(passwordEdit)).toBeVisible();
-    await expect(region(page, 'Security mailbox')).toBeVisible();
-    await expect(region(page, 'Mobile number')).toBeVisible();
-    if (kind === 'password')
-        await password.or(passwordEdit).click();
-    else
-        await link(region(page, 'Security mailbox'), 'Edit').click();
+    const passwordEntry = link(page, 'Login password');
+    const passwordLabel = page.getByText('Login password', { exact: true }).filter({ visible: true });
+    await expect(passwordEntry.or(passwordLabel).first()).toBeVisible();
+    const mailbox = region(page, 'Security mailbox');
+    await expect(mailbox).toBeVisible();
+    const mobileEntry = link(page, 'Verify mobile number');
+    await expect(region(page, 'Mobile number').or(mobileEntry).first()).toBeVisible();
+    if (kind === 'mailbox') {
+        await link(mailbox, 'Edit').click();
+        return;
+    }
+    await passwordEntry.click();
 }
