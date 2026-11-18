@@ -1,9 +1,20 @@
 // requirement: REQ-7.10
 import { test, expect } from '@playwright/test';
-import { home, nav, action, region, card, count, tabTo, men, openProduct, slideIdentity, expectMoney, listingPrices, cartRow, success, addProduct, cartSetup, login, loginEmail, account, createAddress, fillAddress, addressesStep, checkoutSetup, shippingStep, paymentStep, placeOrder, confirmDeletion, history, historyRow, wishlistPage, createWishlist, wishlist, wishlistProduct, DETAIL, CART, STEP, WHITE, BLACK, HISTORY_PRODUCT, WISH_PRODUCT } from './helpers';
+import { home, action, loginCustomer, createAddress, addressRecord, confirmDeletion } from './helpers';
+import { addressInput } from './fixtures/data';
 
 test("REQ-7.10: Delete only the selected address", async ({ page }) => {
-  await home(page); await login(page, 'address_delete_user'); await createAddress(page, 'Home'); await createAddress(page, 'Office');
-  await confirmDeletion(page, action(page.getByRole('article', { name: 'Home', exact: true }), 'Delete')); await expect(page.getByRole('article', { name: 'Home', exact: true })).toHaveCount(0);
-  const office = page.getByRole('article', { name: 'Office', exact: true }); await expect(office).toHaveCount(1); await expect(office).toBeVisible(); await expect(office).toContainText('1 Commerce Road'); await expect(office).toContainText('13800000020');
+  await home(page);
+  const customer = await loginCustomer(page);
+  const target = addressInput(customer, 'Primary');
+  const other = addressInput(customer, 'Secondary');
+  await createAddress(page, target);
+  await createAddress(page, other);
+  const removed = addressRecord(page, target.alias);
+  await confirmDeletion(page, action(removed, 'Delete'));
+  await expect(removed).toHaveCount(0);
+  const remaining = addressRecord(page, other.alias);
+  await expect(remaining).toHaveCount(1);
+  await expect(remaining).toBeVisible();
+  for (const value of [other.Address, other.Phone]) await expect(remaining).toContainText(value);
 });

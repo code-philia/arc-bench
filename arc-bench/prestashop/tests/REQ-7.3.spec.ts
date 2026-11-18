@@ -1,15 +1,34 @@
 // requirement: REQ-7.3
 import { test, expect } from '@playwright/test';
-import { home, nav, action, region, card, count, tabTo, men, openProduct, slideIdentity, expectMoney, listingPrices, cartRow, success, addProduct, cartSetup, login, loginEmail, account, createAddress, fillAddress, addressesStep, checkoutSetup, shippingStep, paymentStep, placeOrder, confirmDeletion, history, historyRow, wishlistPage, createWishlist, wishlist, wishlistProduct, DETAIL, CART, STEP, WHITE, BLACK, HISTORY_PRODUCT, WISH_PRODUCT } from './helpers';
+import { home, action, region, loginCustomer, account, createAddress, fillAddress, addressRecord } from './helpers';
+import { addressInput } from './fixtures/data';
 
 test("REQ-7.3: View Home address", async ({ page }) => {
-  await home(page); await login(page, 'address_view_user'); await createAddress(page, 'Home'); await account(page); await action(region(page, 'Account overview'), 'Addresses').click();
-  await expect(page.getByRole('article', { name: 'Home', exact: true })).toBeVisible(); await expect(page.getByRole('article', { name: 'Home', exact: true })).toContainText('1 Commerce Road');
+  await home(page);
+  const customer = await loginCustomer(page);
+  const address = addressInput(customer);
+  await createAddress(page, address);
+  await account(page);
+  await action(region(page, 'Account overview'), 'Addresses').click();
+  const record = addressRecord(page, address.alias);
+  await expect(record).toBeVisible();
+  await expect(record).toContainText(address.Address);
+  for (const command of ['Update', 'Delete']) await expect(action(record, command)).toBeVisible();
 });
 
 test("REQ-7.3: Create Office address", async ({ page }) => {
-  await home(page); await login(page, 'address_create_user'); await account(page); await action(region(page, 'Account overview'), 'Addresses').click();
-  await expect(page.getByRole('article')).toHaveCount(0); await action(page, 'Create new address').click(); await fillAddress(page, 'Office'); await action(page, 'Save').click();
-  const office = page.getByRole('article', { name: 'Office', exact: true }); await expect(office).toHaveCount(1); await expect(office).toBeVisible();
-  for (const text of ['Store', 'User', '1 Commerce Road', '200000', 'Shanghai', 'China', '13800000020']) await expect(office).toContainText(text);
+  await home(page);
+  const customer = await loginCustomer(page);
+  await account(page);
+  await action(region(page, 'Account overview'), 'Addresses').click();
+  await expect(action(page, 'Update')).toHaveCount(0);
+  await action(page, 'Create new address').click();
+  const address = addressInput(customer, 'Workplace');
+  const form = await fillAddress(page, address);
+  await action(form, 'Save').click();
+  const record = addressRecord(page, address.alias);
+  await expect(record).toHaveCount(1);
+  await expect(record).toBeVisible();
+  for (const value of Object.values(address)) await expect(record).toContainText(value);
+  for (const command of ['Update', 'Delete']) await expect(action(record, command)).toBeVisible();
 });
