@@ -659,13 +659,13 @@ export async function checkPythonWatchPreference(page:Page) {
     await expect(action(region(page,'Python tag'),'Unwatch tag')).toBeVisible();
     await openQuestions(page);await expectCurrent(action(mainNav(page),'Questions'));await page.reload();
     await openQuestions(page);await expectCurrent(action(mainNav(page),'Questions'));
-    const watched=action(region(page,'Watched tags'),'python');
+    const watched=action(region(page,'Watched Tags'),'python');
     await expect(watched).toHaveCount(1);await expect(watched).toBeVisible();
     await watched.click();
     await action(region(page,'Python tag'),'Unwatch tag').click();
     await expect(action(region(page,'Python tag'),'Watch tag')).toBeVisible();
     await openQuestions(page);await expectCurrent(action(mainNav(page),'Questions'));
-    await expect(action(region(page,'Watched tags'),'python')).toHaveCount(0);
+    await expect(action(region(page,'Watched Tags'),'python')).toHaveCount(0);
   });
 }
 export async function checkPythonWatchIsolation(watcher: Page, other: Page) {
@@ -676,7 +676,7 @@ export async function checkPythonWatchIsolation(watcher: Page, other: Page) {
     await expect(action(region(watcher,'Python tag'),'Unwatch tag')).toBeVisible();
     await action(mainNav(other),'Questions').click();
     await expectCurrent(action(mainNav(other),'Questions'));
-    await expect(action(region(other,'Watched tags'),'python')).toHaveCount(0);
+    await expect(action(region(other,'Watched Tags'),'python')).toHaveCount(0);
     await openPythonTag(other);
     await expect(action(region(other,'Python tag'),'Watch tag')).toBeVisible();
     await expect(action(region(other,'Python tag'),'Unwatch tag')).toHaveCount(0);
@@ -758,7 +758,7 @@ export async function prepareReadingQuestion(browser: Browser, info: TestInfo) {
     await verifySavedQuestion(owner,title,body,'node.js,http,retry');
   });
   await asUser(browser,'badge_user',async owner=>{
-    await openQuestion(owner,title);await action(post(owner),'Edit question').click();
+    await openQuestion(owner,title);await action(post(owner),'Edit').click();
     await field(owner,'Edit Summary').fill('Clarified retry safety.');
     modified.start=Date.now();await action(owner,'Save edits').click();
     await expectBody(post(owner),body);modified.end=Date.now();

@@ -16,7 +16,7 @@ const modules = new WeakSet<Locator>();
 const tagPages = new WeakSet<Locator>();
 const records = new WeakSet<Locator>();
 const feedScopes = new WeakMap<Locator,Locator>();
-const feedControls = new Set(['Ask Question','Newest','Active','Next page','Filter']);
+const feedControls = new Set(['Ask Question','Newest','Active','Next','Filter']);
 const credentialScopes = new WeakMap<Locator, { controls: Locator; page: Page; formId: string; submitName: string }>();
 // Treat nested semantic content sections as separate boundaries. Keep this CSS
 // free of :has(): Playwright 1.57 evaluates nested :scope/:has differently from
@@ -242,10 +242,12 @@ export function region(scope: Scope, name: string): Locator {
   scope=feedScopes.get(scope as Locator)||scope;
   const page=pageOf(scope);
   const literal = JSON.stringify(name);
+  const names = name === 'Watched Tags' ? ['Watched Tags', 'Watched tags'] : [name];
+  const identity = names.length > 1 ? new RegExp('^(?:' + names.map(escaped).join('|') + ')$') : name;
   const native = scope.locator(`section, article, form, fieldset, aside, nav, li[aria-label], div[aria-label]`)
-    .and(scope.getByLabel(name, { exact: true }));
-  const headed = scope.locator(`:is(section,article,form,fieldset,aside,nav):has(> :is(h1,h2,h3,h4,h5,h6,legend):text-is(${literal}))`);
-  const declared=scope.getByRole('region', {name, exact:true}).or(native).or(headed);
+    .and(scope.getByLabel(identity, { exact: true }));
+  const headed = scope.locator(names.map(label => `:is(section,article,form,fieldset,aside,nav):has(> :is(h1,h2,h3,h4,h5,h6,legend):text-is(${JSON.stringify(label)}))`).join(','));
+  const declared=scope.getByRole('region', {name:identity, exact:true}).or(native).or(headed);
   let result=declared;
   if(name==='Question feed') {
     // A single public feed and its sibling toolbar/pagination share a module.
@@ -303,7 +305,8 @@ export async function catalogPagination(page:Page,name:'Tags'|'Users') {
   const unique=catalog.locator(`xpath=self::*[not(ancestor::main[count(.//*[@aria-label=${JSON.stringify(name)}])>1])]`);
   const main=unique.and(page.locator(`[aria-label=${JSON.stringify(name)}]`)).locator(`xpath=ancestor::main[1][count(.//*[@aria-label=${JSON.stringify(name)}])=1][count(.//h1)=1]`).filter({has:page.getByRole('heading',{name,exact:true,level:1})});
   const bounded=(s:Locator)=>s.locator(':scope *:not(:scope article *,:scope li *,:scope [aria-label^="Tag "] *,:scope aside *,:scope nav *)');
-  return action(unique,'Next page').and(bounded(unique)).or(main.getByRole('button',{name:'Next page',exact:true}).or(main.getByRole('link',{name:'Next page',exact:true})).and(bounded(main))).filter({visible:true});
+  const nextName=name==='Tags'?'Next':'Next page';
+  return action(unique,nextName).and(bounded(unique)).or(main.getByRole('button',{name:nextName,exact:true}).or(main.getByRole('link',{name:nextName,exact:true})).and(bounded(main))).filter({visible:true});
 }
 export function reputationContribution(scope:Locator,reason:string,change:number,parentTitle:string) {
   const signed=(change>0?'+':'')+change;
@@ -332,6 +335,8 @@ function rawAction(scope: Scope, name: string): Locator {
     // A post's comment/reply actions cannot stand in for its own actions.
     // The Comments container itself may contain the post's Add a comment entry.
     result = result.and(scope.locator(`:scope :is(button,a,[role="button"],[role="link"],input):not(:scope ${child} *)`));
+    if(name==='Edit' && !commentRows.has(scope as Locator))
+      result=result.and(scope.locator(':scope *:not(:scope [aria-label="Comments"] *,:scope [aria-label^="Comment "] *)'));
   }
   let bounded=own(scope,result);
   if(['Add Reply','Add comment','Save edits'].includes(name)&&owners.has(scope as Locator)) {
@@ -371,7 +376,25 @@ export function searchField(page:Page) {
   return field(pageBanner(page),'Search').and(page.locator('input:not([type]),input[type="text"],input[type="search"],[role="textbox"],[role="searchbox"],[contenteditable="true"]'));
 }
 export function acceptedAnswer(scope:Scope) {
-  return own(scope,scope.getByText(/^(?:✓\s*)?Accepted answer$/)).and(scope.locator('*:not(input,textarea,form,form *,nav *,aside *,[contenteditable]:not([contenteditable="false"]),[contenteditable]:not([contenteditable="false"]) *)')).filter({visible:true});
+  // A named state image/SVG or a checked acceptance control can communicate
+  // acceptance without adding visible English text to the reference's tick.
+  // An arbitrary green icon or an unselected Accept answer action is not proof.
+  const page=pageOf(scope);
+  const text=page.getByText(/^(?:✓\s*)?Accepted answer$/);
+  const images=page.getByRole('img',{name:'Accepted answer',exact:true})
+    .or(page.locator('svg[aria-label="Accepted answer"],svg[title="Accepted answer"]'))
+    .or(page.locator('svg').filter({has:pageOf(scope).locator('title').filter({hasText:/^Accepted answer$/})}));
+  const checks=page.locator('svg,img').or(page.getByText(/^[✓✔✅]$/));
+  const selected=page.getByRole('button',{name:'Accept answer',exact:true})
+    .and(page.locator('[aria-pressed="true"],[aria-checked="true"]')).filter({has:checks});
+  const markers=text.or(images).or(selected).filter({visible:true});
+  const bounded=own(scope,markers.and(scope.locator('*')).filter({hasNot:markers.and(page.locator('*'))})).and(scope.locator('*:not(input,textarea,form,form *,nav *,aside *,[aria-label="Comments"] *,[aria-label^="Comment "] *,[aria-label="Author"] *,[aria-label="Author information"] *,[aria-label="Preview"] *,[contenteditable]:not([contenteditable="false"]),[contenteditable]:not([contenteditable="false"]) *)'));
+  // Count accepted answers, not an icon and optional caption separately. These
+  // are the same record boundaries used by answer(); distinct answers remain
+  // distinct. Activity layouts without such a record retain their local marker.
+  const record='starts-with(@aria-label,"Answer by ") or (self::article and header and p)';
+  return bounded.locator(`xpath=ancestor::*[${record}][1]`)
+    .or(bounded.locator(`xpath=self::*[not(ancestor::*[${record}])]`));
 }
 export async function profileReputation(page:Page,name:string) {
   const view=profileView(page,name);await expect(view).toHaveCount(1);await expect(profileText(view,name)).toBeVisible();

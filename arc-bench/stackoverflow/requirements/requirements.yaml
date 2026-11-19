@@ -11,7 +11,7 @@ children:
   name: Discover the community
   description:
     text: |-
-      Anonymous and authenticated visitors discover populated public questions. Header, left navigation, main feed and right widgets follow the homepage reference. Right widgets expose The Overflow Blog, meta items, Hot Network Questions and personal custom filters and tag watchlists. Question summaries show titles, tags, votes, answers and views.
+      Anonymous and authenticated visitors discover populated public questions. Header, left navigation, main feed and right widgets follow the homepage reference for the authenticated layout. Anonymous account actions and feed ordering follow the descriptions below. Right widgets expose The Overflow Blog, meta items, Hot Network Questions and personal custom filters and tag watchlists. Question summaries show titles, tags, votes, answers and views.
     image:
     - id: IMG-HOMEPAGE
       reference: reference/homepage.jpeg
@@ -22,11 +22,7 @@ children:
     name: Open the populated community
     description:
       text: |-
-        Opening the application displays a banner with Stack Overflow identity, "Search", "Products", Log in, and Sign up. "Main navigation" provides Home, Questions, Tags, and Users. The question feed displays Ask Question, Newest and Active ordering controls, and summaries containing titles, tags, votes, answers, and views. Linked editorial and network content appears in "The Overflow Blog", "Featured on Meta" and "Hot Network Questions". Desktop appearance follows the reference.
-      image:
-      - id: IMG-HOMEPAGE
-        reference: reference/homepage.jpeg
-        page: home
+        Opening the application displays a banner with Stack Overflow identity, "Search", "Products", Log in, and Sign up. "Main navigation" provides Home, Questions, Tags, and Users. The question feed displays Ask Question, Newest and Active ordering controls, and summaries containing titles, tags, votes, answers, and views. Linked editorial and network content appears in "The Overflow Blog", "Featured on Meta" and "Hot Network Questions". Desktop arrangement follows the shared community layout; the homepage reference depicts a signed-in state, not this anonymous state.
     scenarios:
     - id: SCN-REQ-1.1-01
       name: Show the anonymous homepage
@@ -38,8 +34,6 @@ children:
           Open the application entry and inspect banner, Search, Products, Log in, Sign up, Main navigation, the question feed and its retry-question summary, then the three linked widgets.
         Then: |-
           Banner shows Stack Overflow and its account/search actions. Navigation exposes Home, Questions, Tags and Users; feed exposes Ask Question, Newest and Active. The retry summary has its exact title, node.js/http/retry tags and votes/answers/views metadata. The Overflow Blog, Featured on Meta and Hot Network Questions are visible with public links. The banner is above the question summaries, navigation is on their left and the linked widgets are on their right at desktop width.
-        references:
-        - \ref[image](IMG-HOMEPAGE)
     children: []
   - id: REQ-1.2
     name: Navigate community modules
@@ -48,7 +42,7 @@ children:
         selected section as current. Questions displays the question feed, while the other modules display
         "Tags" and "Users"; "Home" returns to the feed. The user catalog includes registered members and
         distinguishes their public identities without introducing user-management behavior. The question feed
-        offers "Next page", disabled when no next page exists, and summaries show numeric scores, answer
+        offers "Next", disabled when no next page exists, and summaries show numeric scores, answer
         counts and view counts.
       image:
       - id: IMG-HOMEPAGE
@@ -71,9 +65,9 @@ children:
         Given: |-
           Alice and Bob register separate accounts and set their public display names. Another registered member publishes a question. The tag catalog is available and a separate browser is anonymous.
         When: In Main navigation click Questions, Tags, Users and Home in turn, inspecting each selected action and
-          corresponding region; inspect Next page in the returned feed, then reopen Users.
+          corresponding region; inspect Next in the returned feed, then reopen Users.
         Then: Each selected action reports the current section and opens the question feed, Tags or Users as
-          appropriate. Feed offers Next page, and Users visibly includes the registered public identities of
+          appropriate. Feed offers Next, and Users visibly includes the registered public identities of
           Alice and Bob.
         references:
         - \ref[requirement](REQ-1.1)
@@ -127,7 +121,7 @@ children:
       An existing member, badge_user@example.com with Password123! and display name Stack User, has an earned Teacher badge and its unread award notification as described in REQ-7.2. This account and its earned badge and unread notification are available when the community opens because there is no award-granting workflow. Other authors, voters and activity owners register their own accounts; registration does not copy that award history. Questions read in REQ-3.2 are published through Ask Question rather than supplied as historical questions.
     image:
     - id: IMG-LOGIN
-      reference: reference/login.jpeg
+      reference: reference/login.png
       page: login
   scenarios: []
   children:
@@ -141,7 +135,7 @@ children:
         reference: reference/homepage.jpeg
         page: home
       - id: IMG-LOGIN
-        reference: reference/login.jpeg
+        reference: reference/login.png
         page: login
     scenarios:
     - id: SCN-REQ-2.1-01
@@ -233,7 +227,7 @@ children:
         reference: reference/homepage.jpeg
         page: home
       - id: IMG-SIGN-UP
-        reference: reference/sign-up.jpeg
+        reference: reference/sign-up.png
         page: signup
     scenarios:
     - id: SCN-REQ-2.2-01
@@ -307,7 +301,7 @@ children:
     name: Update public identity
     description:
       text: |-
-        A registered profile owner clicks "Edit profile" to open Edit your profile with "Display name", "Full name", "Location", "Title", "About me", "Website", "X", and "GitHub" prefilled from the current profile. "Save and copy changes to all public communities" saves the supplied values, updates the display name, location, title, and about text in "Public profile", and shows a success status. Examples www.example.dev and github.com/example are accepted; an added https:// prefix is allowed. Reopening confirms every submitted field, including full name and URLs. An available preview reflects pending changes.
+        A registered profile owner clicks "Edit profile" to open Edit your profile with "Display name", "Full name", "Location", "Title", "About me", "Website link", "X", and "GitHub" prefilled from the current profile. "Save and copy changes to all public communities" saves the supplied values, updates the display name, location, title, and about text in "Public profile", and shows a success status. Examples www.example.dev and github.com/example are accepted; an added https:// prefix is allowed. Reopening confirms every submitted field, including full name and URLs. An available preview reflects pending changes.
       image:
       - id: IMG-EDIT-PROFILE
         reference: reference/edit-profile.jpeg
@@ -321,11 +315,11 @@ children:
           Alice registers an account and uses Edit profile to save her current details: display name Alice, full name Existing User, location Beijing, title Developer, about Existing biography, website https://example.org, X https://x.com/example and GitHub https://github.com/existing. She returns to her profile.
         When: Click Edit profile and verify all eight prefilled fields. Set Display name to Alice Updated, Full name
           to Stack Overflow User, Location to Shanghai, Title to Backend Engineer, About me to I enjoy
-          building APIs and developer tooling for teams., Website to www.example.dev and GitHub to
+          building APIs and developer tooling for teams., Website link to www.example.dev and GitHub to
           github.com/example; leave X unchanged. Save and copy changes to all public communities, then reopen
           Edit profile.
         Then: A successful update status appears and Public profile displays the new display name, location, title and
-          biography. Reopened fields retain every submitted value, allowing https:// normalization on Website
+          biography. Reopened fields retain every submitted value, allowing https:// normalization on Website link
           and GitHub, while X remains unchanged.
         references:
         - \ref[requirement](REQ-2.3)
@@ -338,10 +332,10 @@ children:
         The anonymous user can move from "Log in" to "Sign up" through its Sign up entry and return through Log in. Each visible form provides correctly labeled "Email" and "Password", with "Create account" or "Sign in" as its matching submit action. Switching forms preserves anonymous status and adds no social login behavior.
       image:
       - id: IMG-LOGIN
-        reference: reference/login.jpeg
+        reference: reference/login.png
         page: login
       - id: IMG-SIGN-UP
-        reference: reference/sign-up.jpeg
+        reference: reference/sign-up.png
         page: signup
     scenarios:
     - id: SCN-REQ-2.5-01
@@ -366,10 +360,10 @@ children:
         A member who creates an account using Email, Password and Create account can sign in with the same credentials through Log in in a separate anonymous browser. Sign in opens the question feed and displays the registered email as the profile action when no display name has been set. Email verification is not required.
       image:
       - id: IMG-SIGN-UP
-        reference: reference/sign-up.jpeg
+        reference: reference/sign-up.png
         page: signup
       - id: IMG-LOGIN
-        reference: reference/login.jpeg
+        reference: reference/login.png
         page: login
       - id: IMG-HOMEPAGE
         reference: reference/homepage.jpeg
@@ -396,8 +390,7 @@ children:
   description:
     text: >-
       Visitors browse and read questions with titles, rendered bodies, tags, engagement metadata and author
-      attribution. Signed-in users publish questions and maintain their own eligible posts through Edit
-      question and Delete question. Editing preserves the same question and its relationships; saving retains
+      attribution. Signed-in users publish questions and maintain their own eligible posts through Edit and Delete question. Editing preserves the same question and its relationships; saving retains
       all submitted values, while cancelling preserves the original. Deleting a question removes it from
       public discovery. Active votes are visibly distinguishable from inactive votes.
 
@@ -440,7 +433,7 @@ children:
     name: Read question detail
     description:
       text: |-
-        Selecting a published question from the feed or Search results opens its title, rendered body, tags and author information. The detail offers Ask Question, Score, Up vote, Down vote, Save, Timeline, Share and Follow. Asked and Modified identify its creation and latest saved modification times in UTC; View count reflects actual visits and does not decrease on reload. The feed and detail agree on tags, score and answer count. Author information shows the actual author’s public identity, default avatar, reputation, earned badges and post time. An authenticated reader sees Comments and Add a comment. Edit question and Delete question are available only to the author when the question is eligible; a different ordinary member cannot use them.
+        Selecting a published question from the feed or Search results opens its title, rendered body, tags and author information. The detail offers Ask Question, Score, Up vote, Down vote, Save, Timeline, Share and Follow. Asked and Modified identify its creation and latest saved modification times in UTC; View count reflects actual visits and does not decrease on reload. The feed and detail agree on tags, score and answer count. Author information shows the actual author’s public identity, default avatar, reputation, earned badges and post time. An authenticated reader sees Comments and Add a comment. Edit and Delete question are available only to the author when the question is eligible; a different ordinary member cannot use them.
 
         For example, Stack User publishes the retry question from REQ-3 and later saves a revision. Seven different members upvote it, and readers visit it at least 42 times. Its score is 7, its UTC dates reflect those two operations rather than unrelated historical dates, and its author retains the Teacher badge already in that member’s history.
       image:
@@ -460,7 +453,7 @@ children:
         When: |-
           Find the published title through public Search and open its detail. Inspect the title, rendered body, tags, Score, Asked, Modified, View count, author information and Comments. Compare its summary in Questions with the detail, then reload the detail.
         Then: |-
-          The title, saved body and tags match the published question. Score is 7; Asked and Modified match the actual UTC publication and revision dates. View count is at least 42 and does not decrease after reload. The author is Stack User with an avatar, the reputation resulting from the seven upvotes, the existing Teacher badge and publication time. The reader can see Add a comment and the public post actions but cannot use Edit question or Delete question. Feed tags, score and answer count match the same detail.
+          The title, saved body and tags match the published question. Score is 7; Asked and Modified match the actual UTC publication and revision dates. View count is at least 42 and does not decrease after reload. The author is Stack User with an avatar, the reputation resulting from the seven upvotes, the existing Teacher badge and publication time. The reader can see Add a comment and the public post actions but cannot use Edit or Delete question. Feed tags, score and answer count match the same detail.
         references:
         - \ref[requirement](REQ-6.3)
         - \ref[requirement](REQ-2.1)
@@ -541,7 +534,7 @@ children:
     name: Revise a question
     description:
       text: |-
-        The owner clicks "Edit question" within question content to open "Title", "Body", and "Tags" prefilled from that question. The editor provides "Bold", "Italic", and "Code", live "Preview", "How to Edit" guidance, and "Rev" for selecting prior revisions. Users record their reason in "Edit Summary"; "Save edits" updates the question, shows edited metadata, and adds a revision with the reason available through "Timeline" in "Revision history". "Cancel" returns to the original view without applying a draft. Selecting a revision in Rev loads that revision into the editor for inspection; Cancel still leaves the latest saved question unchanged. Bold, Italic and Code apply Markdown to the selected body text and Preview renders that formatting.
+        The owner clicks "Edit" within question content to open "Title", "Body", and "Tags" prefilled from that question. The editor provides "Bold", "Italic", and "Code", live "Preview", "How to Edit" guidance, and "Rev" for selecting prior revisions. Users record their reason in "Edit Summary"; "Save edits" updates the question, shows edited metadata, and adds a revision with the reason available through "Timeline" in "Revision history". "Cancel" returns to the original view without applying a draft. Selecting a revision in Rev loads that revision into the editor for inspection; Cancel still leaves the latest saved question unchanged. Bold, Italic and Code apply Markdown to the selected body text and Preview renders that formatting.
       image:
       - id: IMG-QUESTION-PAGE
         reference: reference/question-page.jpeg
@@ -558,9 +551,9 @@ children:
       steps:
       - id: STEP-REQ-3.4-01-01
         Given: |-
-          A registered author has published a retry question with the example body in REQ-3 and node.js, http and retry tags, and opens its Edit question action.
+          A registered author has published a retry question with the example body in REQ-3 and node.js, http and retry tags, and opens its Edit action.
         When: |-
-          Verify the prefilled title, body and tags, exercise Bold, Italic and Code and inspect Preview. Change the draft title, body and tags, then Cancel and reload to read the unchanged question. Reopen Edit question, append clarified to Title and Include bounded retry budgets. to Body, set Tags to http,retry and Edit Summary to Fixed a typo in the second paragraph, then Save edits and open Timeline. Reopen the editor, select the original revision in Rev, then Cancel. The cancelled draft also contains an unsaved Edit Summary.
+          Verify the prefilled title, body and tags, exercise Bold, Italic and Code and inspect Preview. Change the draft title, body and tags, then Cancel and reload to read the unchanged question. Reopen Edit, append clarified to Title and Include bounded retry budgets. to Body, set Tags to http,retry and Edit Summary to Fixed a typo in the second paragraph, then Save edits and open Timeline. Reopen the editor, select the original revision in Rev, then Cancel. The cancelled draft also contains an unsaved Edit Summary.
         Then: |-
           The detail shows the replacement heading and body, edited metadata and only http/retry tags. Revision history contains the summary and both original and replacement body values. Searching the former title does not return a separate original copy. Cancelling either an unsaved edit or a revision inspection preserves the latest saved question after reload. The editor retains the saved fields on reopening; Rev can load the original body while reopening the editor shows the latest saved body, and the formatting controls produce rendered bold, italic and code text. Revision history does not record the discarded draft summary.
         references:
@@ -714,7 +707,7 @@ children:
       steps:
       - id: STEP-REQ-3.9-01-01
         Given: |-
-          A registered author has published a retry question using the example body in REQ-3 and node.js, http and retry tags, then opens Edit question. A different registered member can read the public question.
+          A registered author has published a retry question using the example body in REQ-3 and node.js, http and retry tags, then opens Edit. A different registered member can read the public question.
         When: Append clarified to Title and Use a bounded retry budget. to Body, set Tags to http,retry and Edit
           Summary to Documented bounded retry budget.; Save edits. Authenticate another member in an
           independent browser session, search the replacement title, reload the detail and open Timeline.
@@ -760,7 +753,7 @@ children:
   name: Answer and evaluate solutions
   description:
     text: |-
-      Authenticated users publish answers, vote, and maintain their own eligible answers through Edit answer and Delete answer. Each answer belongs to its question and retains author attribution. Only the question owner can accept an answer; at most one answer per question is accepted, shown with a green check and Accepted answer. Saving an edit retains its body and summary; cancelling preserves the original answer. Active votes are visibly distinguishable from inactive votes.
+      Authenticated users publish answers, vote, and maintain their own eligible answers through Edit and Delete answer. Each answer belongs to its question and retains author attribution. Only the question owner can accept an answer; at most one answer per question is accepted, shown with a green check indicating acceptance; the visible words "Accepted answer" are optional. Saving an edit retains its body and summary; cancelling preserves the original answer. Active votes are visibly distinguishable from inactive votes.
 
       For example, an answer can say: Use exponential backoff together with an idempotency key so duplicate requests can be safely retried without creating duplicate side effects in downstream services.
     image:
@@ -823,7 +816,7 @@ children:
     name: Accept a single answer
     description:
       text: |-
-        The question owner clicks "Accept answer" in a selected answer to mark it with a green check and "Accepted answer", persisting after reload. With two answers, accepting the other transfers the marker and leaves exactly one accepted answer. Non-owners have no usable Accept answer action.
+        The question owner clicks "Accept answer" in a selected answer to mark it with a green check indicating acceptance, persisting after reload. With two answers, accepting the other transfers the marker and leaves exactly one accepted answer. Non-owners have no usable Accept answer action.
       image:
       - id: IMG-QUESTION-PAGE
         reference: reference/question-page.jpeg
@@ -837,8 +830,8 @@ children:
           A registered question owner publishes a question. Alice and Bob register separate accounts and each post an answer; Bob writes "Use a bounded retry budget with diagnostics." The question owner signs in.
         When: |-
           Click Accept answer in Alice's answer, reload, then click Accept answer in Bob’s answer. Reload again after transferring acceptance.
-        Then: 'Alice''s Accepted answer remains after reload. Accepting Bob transfers the marker: Answers contains
-          exactly one Accepted answer, on Bob, with none remaining on Alice.'
+        Then: 'Alice''s accepted marker remains after reload. Accepting Bob transfers the marker: Answers contains
+          exactly one accepted marker, on Bob, with none remaining on Alice.'
         references:
         - \ref[requirement](REQ-4.1)
         - \ref[requirement](REQ-2.1)
@@ -850,7 +843,7 @@ children:
         Given: |-
           A registered question owner publishes a question and Alice posts an answer. A different ordinary member who does not own the question signs in.
         When: Open the question and inspect Accept answer in Alice's visible answer.
-        Then: Accept answer is absent or disabled and Answers has no Accepted answer marker.
+        Then: Accept answer is absent or disabled and Answers has no accepted marker.
         references:
         - \ref[requirement](REQ-4.1)
         - \ref[requirement](REQ-2.1)
@@ -860,7 +853,7 @@ children:
     name: Order answers by score
     description:
       text: |-
-        Answers can be sorted by Highest score, Trending or Date modified, alongside their numeric answer count. Date modified initially places the more recently modified answer first; choosing Highest score places the higher-scored answer first. For example, a newer answer with score 2 appears before an older answer with score 9 under Date modified, and their order reverses under Highest score.
+        Answers can be sorted by Highest score, Trending or Date modified, alongside their numeric answer count. The default ordering is Date modified, which places the more recently modified answer first; choosing Highest score places the higher-scored answer first. The default option may display a trailing "(default)" marker. For example, a newer answer with score 2 appears before an older answer with score 9 under the default Date modified ordering, and their order reverses under Highest score.
       image:
       - id: IMG-QUESTION-PAGE
         reference: reference/question-page.jpeg
@@ -872,8 +865,8 @@ children:
       - id: STEP-REQ-4.4-01-01
         Given: |-
           A question has two newly published answers: "Highest score answer: use bounded retries." by Alice receives an upvote, then Bob publishes "Recent answer: log each retry attempt." The older answer has score 1 and the newer score 0. An anonymous visitor opens their question.
-        When: Inspect Sorted by options, then select Highest score.
-        Then: Options are exactly Highest score, Trending and Date modified. Answer count is 2 and the Answers text
+        When: Inspect Sorted by options and the initial Date modified ordering, then select Highest score.
+        Then: Options are exactly Highest score, Trending and Date modified, with an optional trailing "(default)" marker on the default option. Initially the newer answer precedes the older higher-scored answer. Answer count is 2 and the Answers text
           places Highest score answer before Recent answer after selection.
         references:
         - \ref[requirement](REQ-3.2)
@@ -883,7 +876,7 @@ children:
     name: Revise your own answer
     description:
       text: |-
-        An answer owner clicks "Edit answer" to open prefilled "Body" and "Edit Summary". "Save edits" updates visible content, adds a revision available through "Timeline" in "Revision history", and shows edited metadata even if the submitted body is unchanged. An empty body shows Body cannot be empty and retains the editor and original answer. "Cancel" discards pending changes.
+        An answer owner clicks "Edit" to open prefilled "Body" and "Edit Summary". "Save edits" updates visible content, adds a revision available through "Timeline" in "Revision history", and shows edited metadata even if the submitted body is unchanged. An empty body shows Body cannot be empty and retains the editor and original answer. "Cancel" discards pending changes.
       image:
       - id: IMG-QUESTION-PAGE
         reference: reference/question-page.jpeg
@@ -894,7 +887,7 @@ children:
       steps:
       - id: STEP-REQ-4.5-01-01
         Given: |-
-          A registered member has posted the example answer in REQ-4 under another member’s question, and opens Edit answer on their own answer.
+          A registered member has posted the example answer in REQ-4 under another member’s question, and opens Edit on their own answer.
         When: Verify Body is prefilled with the standard example answer, keep that same Body, enter Clarified retry
           safety. in Edit Summary, click Save edits and open the answer's Timeline.
         Then: The unchanged body remains visible with edited metadata, and Revision history includes Clarified retry
@@ -907,7 +900,7 @@ children:
       steps:
       - id: STEP-REQ-4.5-02-01
         Given: |-
-          A registered member has posted the example answer in REQ-4 under another member’s question, and opens Edit answer on their own answer.
+          A registered member has posted the example answer in REQ-4 under another member’s question, and opens Edit on their own answer.
         When: Clear Body, click Save edits, then Cancel after inspecting the rejection.
         Then: Body cannot be empty appears and the editor remains available. Cancel restores the original visible
           answer body, showing the invalid draft did not replace it. Reload preserves this result.
@@ -919,7 +912,7 @@ children:
       steps:
       - id: STEP-REQ-4.5-03-01
         Given: |-
-          A registered member has posted the example answer in REQ-4 under another member’s question, and opens Edit answer on their own answer.
+          A registered member has posted the example answer in REQ-4 under another member’s question, and opens Edit on their own answer.
         When: |-
           Replace Body with Unsaved answer edit draft., enter Unsaved answer summary. in Edit Summary and choose Cancel. Reload and open the answer’s Timeline.
         Then: |-
@@ -980,7 +973,7 @@ children:
     name: Save changed answer content
     description:
       text: |-
-        The answer author clicks "Edit answer", replaces the nonempty "Body", records "Edit Summary", and clicks "Save edits". The public answer displays the replacement and edited metadata; "Timeline" reveals its saved summary in "Revision history". A separate visitor sees the replacement after reload. Saving an unchanged body still records the edit summary as specified in REQ-4.5.
+        The answer author clicks "Edit", replaces the nonempty "Body", records "Edit Summary", and clicks "Save edits". The public answer displays the replacement and edited metadata; "Timeline" reveals its saved summary in "Revision history". A separate visitor sees the replacement after reload. Saving an unchanged body still records the edit summary as specified in REQ-4.5.
       image:
       - id: IMG-QUESTION-PAGE
         reference: reference/question-page.jpeg
@@ -991,7 +984,7 @@ children:
       steps:
       - id: STEP-REQ-4.8-01-01
         Given: |-
-          A registered member has posted the example answer in REQ-4 under another member’s question, and opens Edit answer on their own answer. Another registered member can read the question.
+          A registered member has posted the example answer in REQ-4 under another member’s question, and opens Edit on their own answer. Another registered member can read the question.
         When: |-
           Replace Body with Use bounded exponential backoff, an idempotency key, and a deadline so retries remain safe and observable.; enter Added deadline guidance. in Edit Summary and Save edits. Open and reload the question as a different member in a separate browser, then open that answer's Timeline.
         Then: The public answer contains the replacement rather than the original body, shows edited metadata, and
@@ -1028,7 +1021,7 @@ children:
     name: Prevent deletion of an accepted own answer
     description:
       text: |-
-        Once the question owner clicks "Accept answer", the answer displays "Accepted answer" and its author has no usable "Delete answer". The accepted solution remains public because ordinary own-answer deletion applies only to unaccepted answers.
+        Once the question owner clicks "Accept answer", the answer displays its green accepted marker and its author has no usable "Delete answer". The accepted solution remains public because ordinary own-answer deletion applies only to unaccepted answers.
       image:
       - id: IMG-QUESTION-PAGE
         reference: reference/question-page.jpeg
@@ -1040,9 +1033,9 @@ children:
       - id: STEP-REQ-4.10-01-01
         Given: |-
           A registered question owner publishes a question. A different registered member posts the example answer in REQ-4, and the question owner accepts it through Accept answer.
-        When: Authenticate the answer author, open the question and inspect Accepted answer and Delete answer within
+        When: Authenticate the answer author, open the question and inspect the accepted marker and Delete answer within
           its own answer.
-        Then: Accepted answer and the original body remain visible, but Delete answer is absent or disabled even for
+        Then: The accepted marker and the original body remain visible, but Delete answer is absent or disabled even for
           the answer author.
         references:
         - \ref[requirement](REQ-4.3)
@@ -1067,10 +1060,6 @@ children:
     description:
       text: |-
         Visitors can open a public question, read its comment thread and see the Add a comment entry without signing in. Posting a comment requires signing in, as described in REQ-5.2.
-      image:
-      - id: IMG-ADD-COMMENT
-        reference: reference/add-comment.jpeg
-        page: question
     scenarios:
     - id: SCN-REQ-5.1-01
       name: Open a question comment thread
@@ -1082,7 +1071,6 @@ children:
         Then: The question content exposes its Comments region and Add a comment.
         references:
         - \ref[requirement](REQ-3.2)
-        - \ref[image](IMG-ADD-COMMENT)
     children: []
   - id: REQ-5.2
     name: Comment on a question
@@ -1328,7 +1316,7 @@ children:
     name: Browse tags and tagged questions
     description:
       text: |-
-        Tags displays entries ordered by current popularity, each with its description and numeric Question count. Published questions update the corresponding counts, and descriptions stay attached to the same tag. Selecting python opens Python tag with its description, Related tags and a feed containing only python-tagged questions, with tag identity visible in each summary. Next page provides pagination and is disabled when no further page exists. For example, Alice publishes two Python questions and one node.js question; the corresponding counts increase by two and one, and Bob answers one Python question.
+        Tags displays entries ordered by current popularity, each with its description and numeric Question count. Published questions update the corresponding counts, and descriptions stay attached to the same tag. Selecting python opens Python tag with its description, Related tags and a feed containing only python-tagged questions, with tag identity visible in each summary. Next provides pagination and is disabled when no further page exists. For example, Alice publishes two Python questions and one node.js question; the corresponding counts increase by two and one, and Bob answers one Python question.
       image:
       - id: IMG-TAGS-PAGE
         reference: reference/tags-page.jpeg
@@ -1344,7 +1332,7 @@ children:
         Given: |-
           The public tag catalog includes python, javascript, node.js, http and retry with their descriptions and current counts. Alice and Bob have registered separate accounts.
         When: |-
-          Record the tag descriptions and counts. Alice publishes two python-tagged questions and one node.js question, and Bob answers one of the Python questions. Reload Tags, compare the counts, inspect popularity order and Next page, then select python and inspect its question feed. Next, Alice changes the answered question's tag from python to javascript and saves it; reopen or reload Tags. Finally, Alice deletes the remaining unanswered Python question and revisits Tags.
+          Record the tag descriptions and counts. Alice publishes two python-tagged questions and one node.js question, and Bob answers one of the Python questions. Reload Tags, compare the counts, inspect popularity order and Next, then select python and inspect its question feed. Next, Alice changes the answered question's tag from python to javascript and saves it; reopen or reload Tags. Finally, Alice deletes the remaining unanswered Python question and revisits Tags.
         Then: |-
           After publication and before retagging, the python count is two higher and the node.js count is one higher than the recorded values; other observed tag counts are unchanged. Tags are ordered by descending question count. At this stage, Python tag retains its description and Related tags; its feed includes both newly published Python titles, excludes the node.js question, and shows python in every summary. After retagging, the python count decreases by one and the javascript count increases by one; other tag counts are unchanged. After deletion, the python count decreases by one more. Throughout these operations, the recorded descriptions remain attached to the same tags.
         references:
@@ -1356,7 +1344,7 @@ children:
     name: Watch and unwatch a tag
     description:
       text: |-
-        A signed-in member can watch a tag through Watch tag. It becomes Unwatch tag and the tag appears in that member’s Watched tags. Unwatch tag removes it and restores Watch tag. The preference survives navigation and reload; for example, a member can watch and later unwatch python.
+        A signed-in member can watch a tag through Watch tag. It becomes Unwatch tag and the tag appears in that member’s Watched Tags. Unwatch tag removes it and restores Watch tag. The Questions sidebar is titled "Watched Tags"; the authenticated Home reference uses "Watched tags" for the same personal list. The preference survives navigation and reload; for example, a member can watch and later unwatch python.
       image:
       - id: IMG-TAGS-PAGE
         reference: reference/tags-page.jpeg
@@ -1371,9 +1359,9 @@ children:
       - id: STEP-REQ-6.2-01-01
         Given: |-
           A registered member who does not watch python signs in, opens Tags and chooses python.
-        When: Click Watch tag, navigate to Questions and reload, reopen python through Watched tags, then click
+        When: Click Watch tag, navigate to Questions and reload, reopen python through Watched Tags, then click
           Unwatch tag and return to Questions.
-        Then: Watch tag changes to Unwatch tag and the personal Watched tags list retains python after reload. Unwatch
+        Then: Watch tag changes to Unwatch tag and the personal Watched Tags list retains python after reload. Unwatch
           restores Watch tag and removes python from that list.
         references:
         - \ref[requirement](REQ-6.1)
@@ -1436,7 +1424,7 @@ children:
     name: Save and reuse a custom filter
     description:
       text: |-
-        A signed-in member opens Filter and chooses Unanswered, Sort and Tags in Filter panel. Save custom filter opens a dialog with Filter title; Save filter stores the named criteria and displays matching public questions in the selected order. Selecting its Saved filters entry after navigation or reload restores both results and visible criteria. For example, an Unanswered python filter sorted by Newest includes unanswered python questions, excludes answered and non-Python questions, and puts newer matching questions first.
+        A signed-in member opens Filter and chooses No answers, Sort and Tags in Filter panel. Save custom filter opens a dialog with Filter title; Save filter stores the named criteria and displays matching public questions in the selected order. Selecting its Custom Filters entry after navigation or reload restores both results and visible criteria. For example, a python filter sorted by Newest with No answers selected includes unanswered python questions, excludes answered and non-Python questions, and puts newer matching questions first.
       image:
       - id: IMG-QUESTIONS-PAGE
         reference: reference/questions-page.jpeg
@@ -1448,11 +1436,11 @@ children:
       - id: STEP-REQ-6.5-01-01
         Given: |-
           Alice registers and publishes two unanswered Python questions in sequence, another Python question that Bob answers, and a non-Python question. A different registered member opens Questions with a new filter name.
-        When: Open Filter, check Unanswered in Filter panel, select Newest in Sort and enter python in Tags. Verify
+        When: Open Filter, check No answers in Filter panel, select Newest in Sort and enter python in Tags. Verify
           selections, click Save custom filter, enter the Filter title in the dialog and Save filter. Return
-          Home, reload, select that entry from Saved filters and reopen Filter.
+          Home, reload, select that entry from Custom Filters and reopen Filter.
         Then: |-
-          The saved filter includes the newly published unanswered Python question and excludes the answered Python and non-Python questions. Every result shows python and Answer count 0. Returning Home, reloading and reopening the saved filter restores the results and the visible Unanswered, python and Newest criteria. Both unanswered Python questions appear, with the newer one before the older one, including after restoring the saved filter.
+          The saved filter includes the newly published unanswered Python question and excludes the answered Python and non-Python questions. Every result shows python and Answer count 0. Returning Home, reloading and reopening the saved filter restores the results and the visible No answers, python and Newest criteria. Both unanswered Python questions appear, with the newer one before the older one, including after restoring the saved filter.
         references:
         - \ref[requirement](REQ-6.4)
         - \ref[requirement](REQ-2.1)
@@ -1495,7 +1483,7 @@ children:
     name: Keep saved custom filters personal
     description:
       text: |-
-        An authenticated creator clicks "Filter", configures criteria in "Filter panel", chooses "Save custom filter", enters "Filter title", and clicks "Save filter". Only that creator's "Saved filters" exposes the resulting configuration and allows reopening it; another account’s saved-filter list does not expose it.
+        An authenticated creator clicks "Filter", configures criteria in "Filter panel", chooses "Save custom filter", enters "Filter title", and clicks "Save filter". Only that creator's "Custom Filters" exposes the resulting configuration and allows reopening it; another account’s saved-filter list does not expose it.
       image:
       - id: IMG-QUESTIONS-PAGE
         reference: reference/questions-page.jpeg
@@ -1508,9 +1496,8 @@ children:
         Given: |-
           Two members register separate accounts. The first opens Questions and proposes a filter name that neither account has saved.
         When: |-
-          Open Filter, check Unanswered, choose Newest, enter python and save the title through Save custom filter and Save filter. Inspect Saved filters as a different member in a separate browser, then reload the creator's view and reopen its saved entry.
-        Then: The creator sees its saved action and can reopen it after reload; the independent account's Saved
-          filters does not expose that title or configuration.
+          Open Filter, check No answers, choose Newest, enter python and save the title through Save custom filter and Save filter. Inspect Custom Filters as a different member in a separate browser, then reload the creator's view and reopen its saved entry.
+        Then: The creator sees its saved action and can reopen it after reload; the independent account's Custom Filters does not expose that title or configuration.
         references:
         - \ref[requirement](REQ-6.5)
         - \ref[image](IMG-QUESTIONS-PAGE)
@@ -1519,7 +1506,7 @@ children:
     name: Keep tag watches personal
     description:
       text: |-
-        Clicking "Watch tag" for python changes only the signed-in watcher's preference in "Watched tags" and exposes "Unwatch tag". Another account without a python watch still sees Watch tag and no python entry in its own list. The creator can unwatch to remove the preference.
+        Clicking "Watch tag" for python changes only the signed-in watcher's preference in "Watched Tags" and exposes "Unwatch tag". Another account without a python watch still sees Watch tag and no python entry in its own list. The creator can unwatch to remove the preference.
       image:
       - id: IMG-TAGS-PAGE
         reference: reference/tags-page.jpeg
@@ -1535,9 +1522,9 @@ children:
         Given: |-
           Two members register separate accounts and neither watches python. The first opens the Python tag.
         When: |-
-          Open python and Watch tag as the creator. As another member in a separate browser session, inspect Questions/Watched tags and reopen python. Reload the creator's application, reopen python and click Unwatch tag.
+          Open python and Watch tag as the creator. As another member in a separate browser session, inspect Questions/Watched Tags and reopen python. Reload the creator's application, reopen python and click Unwatch tag.
         Then: |-
-          Only the first member sees Unwatch tag and python in Watched tags. The other member still sees Watch tag and no python entry. Unwatching restores Watch tag for the first member.
+          Only the first member sees Unwatch tag and python in Watched Tags. The other member still sees Watch tag and no python entry. Unwatching restores Watch tag for the first member.
         references:
         - \ref[requirement](REQ-6.2)
         - \ref[image](IMG-TAGS-PAGE)

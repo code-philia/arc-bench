@@ -46,9 +46,6 @@ children:
       text: Opening / from the shelves list returns to the homepage, which exposes "Login", "Shelves",
         and "Books".
       image:
-      - id: IMG-SHELVES
-        reference: reference/shelves.png
-        page: shelves
       - id: IMG-INDEX
         reference: reference/index.png
         page: home
@@ -63,7 +60,6 @@ children:
         Then: The homepage returns with its Books link visible.
         references:
         - \ref[requirement](REQ-4.1)
-        - \ref[image](IMG-SHELVES)
         - \ref[image](IMG-INDEX)
     children: []
 - id: REQ-2
@@ -140,7 +136,7 @@ children:
     name: View authenticated dashboard
     description:
       text: |-
-        Successful login displays an authenticated dashboard with "My Recent Drafts", "My Recently Viewed", "My Most Viewed Favorites", and "Recently Updated Pages", each containing its corresponding personal or content list. Recent activity shows changes to library content.
+        Successful login displays an authenticated dashboard with "My Recent Drafts", "My Recently Viewed", "My Most Viewed Favourites", and "Recently Updated Pages", each containing its corresponding personal or content list. Recent activity shows changes to library content.
 
         "Toggle Details" hides or reveals supplementary descriptions and metadata in dashboard entries while keeping their names and opening actions available. "Dark Mode" switches between light and dark appearance without changing the content or personal lists. These display preferences persist across navigation and reload. Layout and appearance follow the visual reference.
 
@@ -160,7 +156,7 @@ children:
           The verified account exists and a fresh anonymous browser is at the application entry.
         When: Open Login, fill Email with admin@example.com and Password with password, check Remember
           Me, and choose Sign in to submit the form.
-        Then: The authenticated homepage displays My Recent Drafts, My Recently Viewed, My Most Viewed Favorites
+        Then: The authenticated homepage displays My Recent Drafts, My Recently Viewed, My Most Viewed Favourites
           and Recently Updated Pages in clearly identified sections.
         references:
         - \ref[requirement](REQ-2.2)
@@ -189,9 +185,6 @@ children:
       - id: IMG-INDEX
         reference: reference/index.png
         page: home
-      - id: IMG-SHELVES
-        reference: reference/shelves.png
-        page: shelves
     scenarios:
     - id: SCN-REQ-4.1-01
       name: Show a uniquely identified item
@@ -205,7 +198,6 @@ children:
         references:
         - \ref[requirement](REQ-4.3)
         - \ref[image](IMG-INDEX)
-        - \ref[image](IMG-SHELVES)
     children: []
   - id: REQ-4.2
     name: Open shelf details
@@ -216,7 +208,7 @@ children:
       image:
       - id: IMG-SHELVES
         reference: reference/shelves.png
-        page: shelves
+        page: shelf
       - id: IMG-SHELF
         reference: reference/shelf.png
         page: shelf
@@ -242,9 +234,6 @@ children:
         While logged out, users open Shelves and click "New Shelf" on Shelf list to enter "Name", "Description", and "Tags". "Save Shelf" creates exactly one shelf with that metadata and returns to Shelf list; the metadata persists across navigation and reload. "Cancel" instead returns to Shelves without creating the entered object.
 
       image:
-      - id: IMG-SHELVES
-        reference: reference/shelves.png
-        page: shelves
       - id: IMG-SHELF
         reference: reference/shelf.png
         page: shelf
@@ -264,7 +253,6 @@ children:
           remain in the reopened metadata form after reload, demonstrating persistence of the entered metadata.
         references:
         - \ref[requirement](REQ-1.1)
-        - \ref[image](IMG-SHELVES)
         - \ref[image](IMG-SHELF)
         - \ref[image](IMG-CREATE-SHELF)
     - id: SCN-REQ-4.3-02
@@ -278,14 +266,13 @@ children:
         Then: Shelves list returns, with no entry for the unsaved name; none of the entered metadata creates a shelf.
         references:
         - \ref[requirement](REQ-1.1)
-        - \ref[image](IMG-SHELVES)
         - \ref[image](IMG-SHELF)
         - \ref[image](IMG-CREATE-SHELF)
     children: []
   - id: REQ-4.4
     name: Delete or retain shelf
     description:
-      text: Choosing "Delete Shelf" on a selected shelf opens confirmation for that shelf. "Confirm Delete"
+      text: Choosing "Delete" on a selected shelf opens confirmation for that shelf. "Confirm"
         removes that shelf and returns to Shelves, where its entry is absent from the shelf list; the
         deletion remains effective across navigation. "Cancel" keeps the shelf and preserves its original
         heading and description.
@@ -293,9 +280,6 @@ children:
       - id: IMG-DELETE-SHELVES
         reference: reference/delete_shelves.png
         page: shelf
-      - id: IMG-SHELVES
-        reference: reference/shelves.png
-        page: shelves
     scenarios:
     - id: SCN-REQ-4.4-01
       name: Confirm deletion
@@ -303,26 +287,24 @@ children:
       - id: STEP-REQ-4.4-01-01
         Given: |-
           An anonymous visitor has created "Shelf 4.4.1" through New Shelf, with description "Guides for maintaining shared documentation.", and is viewing that shelf's details.
-        When: Choose Delete Shelf, inspect confirmation with Confirm Delete and Cancel, then click Confirm Delete; reopen
+        When: Choose Delete, inspect confirmation with Confirm and Cancel, then click Confirm; reopen
           Shelves after reload.
         Then: Shelves list returns and contains no entry for the deleted shelf before or after reload.
         references:
         - \ref[requirement](REQ-4.2)
         - \ref[image](IMG-DELETE-SHELVES)
-        - \ref[image](IMG-SHELVES)
     - id: SCN-REQ-4.4-02
       name: Cancel deletion
       steps:
       - id: STEP-REQ-4.4-02-01
         Given: |-
           An anonymous visitor has created "Shelf 4.4.2" through New Shelf, with description "Guides for maintaining shared documentation.", and is viewing that shelf's details.
-        When: Choose Delete Shelf and then Cancel in the confirmation.
+        When: Choose Delete and then Cancel in the confirmation.
         Then: |-
           The same shelf details remain, with the original heading and description "Guides for maintaining shared documentation."; the shelf is not deleted.
         references:
         - \ref[requirement](REQ-4.2)
         - \ref[image](IMG-DELETE-SHELVES)
-        - \ref[image](IMG-SHELVES)
     children: []
   - id: REQ-4.5
     name: Edit or abandon shelf metadata
@@ -540,7 +522,7 @@ children:
   - id: REQ-5.5
     name: Delete or retain book
     description:
-      text: Choosing "Delete Book" among the selected book's own actions opens confirmation for that book. "Confirm Delete"
+      text: Choosing "Delete" among the selected book's own actions opens confirmation for that book. "Confirm"
         removes that book and returns to Books, with its entry absent from the book list across subsequent
         navigation. "Cancel" keeps the book's original heading and description unchanged.
       image:
@@ -557,7 +539,7 @@ children:
       - id: STEP-REQ-5.5-01-01
         Given: |-
           An anonymous visitor has created "Book 5.5.1" through the book creation form and Save Book, with description "Manuals for day-to-day operations."; that book's details are open.
-        When: Choose Delete Book for the current book, verify the confirmation identifies that book and offers Confirm Delete and Cancel, click Confirm Delete, then reload and reopen Books.
+        When: Choose Delete for the current book, verify the confirmation identifies that book and offers Confirm and Cancel, click Confirm, then reload and reopen Books.
         Then: Books list contains no entry for the selected book both immediately and after reload.
         references:
         - \ref[requirement](REQ-5.2)
@@ -569,7 +551,7 @@ children:
       - id: STEP-REQ-5.5-02-01
         Given: |-
           An anonymous visitor has created "Book 5.5.2" through the book creation form and Save Book, with description "Manuals for day-to-day operations."; that book's details are open.
-        When: Choose Delete Book for the current book, verify the confirmation identifies that book, and choose Cancel in confirmation.
+        When: Choose Delete for the current book, verify the confirmation identifies that book, and choose Cancel in confirmation.
         Then: |-
           The original book heading and description "Manuals for day-to-day operations." remain visible; no deletion is committed.
         references:
@@ -671,7 +653,7 @@ children:
     name: Delete an owned draft
     description:
       text: Opening an owned draft while logged in offers "Delete Draft". Clicking it opens confirmation
-        with "Confirm Delete"; confirming returns to the parent book and removes that draft from "Page
+        with "Confirm"; confirming returns to the parent book and removes that draft from "Page
         list".
       image:
       - id: IMG-BOOKS
@@ -690,7 +672,7 @@ children:
       - id: STEP-REQ-6.2-01-01
         Given: |-
           Admin is signed in and has created "Book 6.1.3" through the book creation form and Save Book, then saved an owned draft titled "Draft 6.1.3" with body "Draft notes for the onboarding guide." through that book's New Page and Save Draft actions.
-        When: Open Books, select the parent, select the draft in Page list, click Delete Draft and Confirm Delete, and reload the parent book.
+        When: Open Books, select the parent, select the draft in Page list, click Delete Draft and Confirm, and reload the parent book.
         Then: The parent book's heading returns and Page list contains no entry for that draft before or after reload.
         references:
         - \ref[requirement](REQ-6.1)
@@ -800,7 +782,7 @@ children:
       image:
       - id: IMG-SHELVES
         reference: reference/shelves.png
-        page: shelves
+        page: shelf
       - id: IMG-SHELF
         reference: reference/shelf.png
         page: shelf
@@ -862,7 +844,7 @@ children:
   name: Personal favorites
   description:
     text: |-
-      Authenticated users can favorite and unfavorite shelves, books, chapters and pages. My Most Viewed Favorites displays up to four favorites ranked by that user's views; equally viewed items have no fixed order. Its "View All" entry opens a dedicated favorites page containing the user's complete collection.
+      Authenticated users can favorite and unfavorite shelves, books, chapters and pages. My Most Viewed Favourites displays up to four favorites ranked by that user's views; equally viewed items have no fixed order. Its "View All" entry opens a dedicated favorites page containing the user's complete collection.
 
   scenarios: []
   children:
@@ -870,7 +852,7 @@ children:
     name: Favorite and unfavorite content
     description:
       text: |-
-        On an authenticated shelf, book, chapter, or page details view, "Favorite" adds the selected item to the user's favorites and changes to "Unfavorite". Choosing "Unfavorite" removes it from favorites and restores "Favorite". The visible favorite state persists after reload and follows the same behavior for all four content types.
+        On an authenticated shelf, book, chapter, or page details view, "Favourite" adds the selected item to the user's favorites and changes to "Unfavorite". Choosing "Unfavorite" removes it from favorites and restores "Favourite". The visible favorite state persists after reload and follows the same behavior for all four content types.
 
         Favorites and unfavorites are scoped to the authenticated user; another account does not acquire the same personal preference. Saved preferences remain consistent across navigation as well as reload.
       image:
@@ -890,7 +872,7 @@ children:
       - id: STEP-REQ-8.1-01-01
         Given: |-
           Admin is signed in and has created "Book 8.1" through the book creation form and Save Book. The book's details are open, and it has not yet been favorited.
-        When: Click Favorite on that book's details.
+        When: Click Favourite on that book's details.
         Then: The action changes to Unfavorite, indicating that the book is now a favorite.
         references:
         - \ref[requirement](REQ-2.2)
@@ -904,9 +886,9 @@ children:
       - id: STEP-REQ-8.1-02-01
         Given: |-
           Admin is signed in and has created "Book Unfavorite" through the book creation form and Save Book; it has not yet been favorited.
-        When: Click Favorite, reload, click Unfavorite, reload again, and open / to return home.
-        Then: After the first reload Unfavorite is still available; after removal Favorite is available
-          before and after reload. My Most Viewed Favorites has no entry for the removed book.
+        When: Click Favourite, reload, click Unfavorite, reload again, and open / to return home.
+        Then: After the first reload Unfavorite is still available; after removal Favourite is available
+          before and after reload. My Most Viewed Favourites has no entry for the removed book.
         references:
         - \ref[requirement](REQ-2.2)
         - \ref[requirement](REQ-5.3)
@@ -918,7 +900,7 @@ children:
     name: Open a homepage favorite
     description:
       text: |-
-        The authenticated homepage's "My Most Viewed Favorites" displays a shortlist of up to four favorites. Selecting a displayed entry opens the corresponding item. Favorites outside that shortlist remain accessible from the complete favorites page through "View All"; adding a favorite does not guarantee that it appears in the homepage shortlist.
+        The authenticated homepage's "My Most Viewed Favourites" displays a shortlist of up to four favorites. Selecting a displayed entry opens the corresponding item. Favorites outside that shortlist remain accessible from the complete favorites page through "View All"; adding a favorite does not guarantee that it appears in the homepage shortlist.
       image:
       - id: IMG-INDEX-AFTER-LOGIN
         reference: reference/index_after_login.png
@@ -937,7 +919,7 @@ children:
         Given: |-
           The verified account is authenticated and has created and favorited five books through the application, including Book 8.2, observing Unfavorite for each.
         When: |-
-          Open /, inspect My Most Viewed Favorites, choose a favorite currently displayed in the shortlist, and activate its exact entry. The selected favorite may predate the five new books.
+          Open /, inspect My Most Viewed Favourites, choose a favorite currently displayed in the shortlist, and activate its exact entry. The selected favorite may predate the five new books.
         Then: The favorite entry appears once in a list of no more than four items and opens that selected item's heading.
         references:
         - \ref[requirement](REQ-8.1)

@@ -3,6 +3,9 @@ type Scope=Page|Locator;
 const pageOf=(scope:Scope):Page=>'page' in scope?scope.page():scope;
 const escape=(value:string)=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 const openedChoices=new WeakMap<Page,{control:ElementHandle;popup:ElementHandle}>();
+// Answer ordering may annotate its default option without changing its identity.
+const choiceLabel=(name:string,label:string)=>name==='Sorted by'?label.trim().replace(/\s+\(default\)$/,''):label.trim();
+const choicePattern=(name:string,label:string)=>new RegExp('^\\s*'+escape(label)+(name==='Sorted by'?'(?:\\s+\\(default\\))?':'')+'\\s*$');
 
 /** Read an explicit state; absence alone is not evidence of an inactive vote. */
 export async function activeState(control:Locator):Promise<boolean|null>{
@@ -66,31 +69,32 @@ async function choices(scope:Scope,name:string,control:Locator){
 export async function expectChoice(scope:Scope,name:string,label:string){
  const control=choice(scope,name);await expect(control).toHaveCount(1);
  await expect.poll(async()=>{
-  if(await control.evaluate(el=>el instanceof HTMLSelectElement))return control.locator('option:checked').allTextContents();
+  if(await control.evaluate(el=>el instanceof HTMLSelectElement))return (await control.locator('option:checked').allTextContents()).map(value=>choiceLabel(name,value));
   const explicit=await control.getAttribute('aria-valuetext');
-  if(explicit!==null)return [explicit];
+  if(explicit!==null)return [choiceLabel(name,explicit)];
   const text=(await control.innerText()).trim().replace(new RegExp('^'+escape(name)+'\\s*:?\\s*'),'');
-  return [text];
+  return [choiceLabel(name,text)];
  }).toEqual([label]);
 }
 export async function selectChoice(scope:Scope,name:string,label:string){
  const control=choice(scope,name);await expect(control).toHaveCount(1);
  if(await control.evaluate(el=>el instanceof HTMLSelectElement)){
-  await expect(control.getByRole('option',{name:label,exact:true}),'One choice must have this label').toHaveCount(1);
-  await control.selectOption({label});
+  const selected=control.locator('option').filter({hasText:choicePattern(name,label)});
+  await expect(selected,'One choice must have this label').toHaveCount(1);
+  await control.selectOption({index:await selected.evaluate(el=>(el as HTMLOptionElement).index)});
  }
- else{const options=await choices(scope,name,control);const selected=options.filter({hasText:new RegExp('^'+escape(label)+'$')});await expect(selected).toHaveCount(1);await selected.click()}
+ else{const options=await choices(scope,name,control);const selected=options.filter({hasText:choicePattern(name,label)});await expect(selected).toHaveCount(1);await selected.click()}
  await expectChoice(scope,name,label);
 }
 export async function expectChoiceOptions(scope:Scope,name:string,labels:string[]){
  const control=choice(scope,name);await expect(control).toHaveCount(1);
  const options=await control.evaluate(el=>el instanceof HTMLSelectElement)?control.locator('option'):await choices(scope,name,control);
- await expect.poll(async()=>(await options.allTextContents()).map(x=>x.trim()).sort()).toEqual([...labels].sort());
+ await expect.poll(async()=>(await options.allTextContents()).map(x=>choiceLabel(name,x)).sort()).toEqual([...labels].sort());
 }
 export async function choiceLabels(scope:Scope,name:string){
  const control=choice(scope,name);await expect(control).toHaveCount(1);
  const options=await control.evaluate(el=>el instanceof HTMLSelectElement)?control.locator('option:not(:disabled)'):await choices(scope,name,control);
- const labels=(await options.allTextContents()).map(x=>x.trim());
+ const labels=(await options.allTextContents()).map(x=>choiceLabel(name,x));
  if(!labels.length||labels.some(x=>!x)||new Set(labels).size!==labels.length)throw new Error('Choice labels must identify enabled alternatives uniquely');
  return labels;
 }

@@ -9,7 +9,7 @@ test('REQ-6.4: Switch newest and active ordering', async ({ page, browser }, inf
   const newer=await createQuestion(browser,info,'question_creator','A newer unanswered Python question','python');
   const other=await createQuestion(browser,info,'question_creator','An unrelated Node.js question','node.js');
   await asUser(browser,'question_creator',async author=>{
-   await openQuestion(author,older);await action(post(author),'Edit question').click();
+   await openQuestion(author,older);await action(post(author),'Edit').click();
    await field(author,'Body').fill(body+' This revision adds a retry deadline.');
    await field(author,'Edit Summary').fill('Added a retry deadline.');
    await action(author,'Save edits').click();

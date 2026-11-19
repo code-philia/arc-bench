@@ -8,7 +8,7 @@ test('REQ-3.2: Read a published question',async({page,browser},info)=>{
   await expectBody(post(page),body);
   for(const name of ['node.js','http','retry'])await expectDisplayedTag(post(page),name);
   for(const name of ['Up vote','Down vote','Save','Timeline','Share','Follow'])await expect(action(post(page),name)).toBeVisible();
-  await noUsableAction(post(page),'Edit question');await noUsableAction(post(page),'Delete question');
+  await noUsableAction(post(page),'Edit');await noUsableAction(post(page),'Delete question');
   await expectNumeric(post(page),'Score',7);
   await expect(output(page,'Asked')).toContainText(utcDatePattern(data.asked.start,data.asked.end));
   await expect(output(page,'Modified')).toContainText(utcDatePattern(data.modified.start,data.modified.end));

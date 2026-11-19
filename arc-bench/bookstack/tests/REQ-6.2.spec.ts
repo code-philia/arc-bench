@@ -13,7 +13,7 @@ test("REQ-6.2: Confirm draft deletion", async ({ page }) => {
   await openBook(page, book);
   await collection(page, 'Page list', { owner: book }).item(draft).open();
   await action(page, 'Delete Draft').activate();
-  await action(page, 'Confirm Delete').activate();
+  await action(page, 'Confirm').activate();
   await heading(page, book);
   await collection(page, 'Page list', { owner: book }).item(draft).expectCount(0);
   await page.reload();

@@ -40,7 +40,7 @@ test('REQ-6.1: Browse popular tags and python questions', async ({ page, browser
   expect(await summaries.count()).toBeGreaterThan(0);
   for (const summary of await summaries.all()) await expectDisplayedTag(summary,'python');
   await asUser(browser,'question_creator',async owner=>{
-    await openQuestion(owner,answered);await action(post(owner),'Edit question').click();
+    await openQuestion(owner,answered);await action(post(owner),'Edit').click();
     await field(owner,'Tags').fill('javascript');await field(owner,'Edit Summary').fill('Corrected the language tag.');
     await action(owner,'Save edits').click();await verifySavedQuestion(owner,answered,body,'javascript');
   });

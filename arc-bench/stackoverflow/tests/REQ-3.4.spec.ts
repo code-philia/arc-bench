@@ -8,7 +8,7 @@ test('REQ-3.4: Save revision and summary', async ({ page, browser }, info) => {
   const title = await createQuestion(browser,info,'question_editor','SO Question Edit Save');
   await login(page,'question_editor');
   await openQuestion(page,title);
-  await action(post(page),'Edit question').click();
+  await action(post(page),'Edit').click();
   for(const [name,value]of [['Title',title],['Body',body],['Tags','node.js,http,retry']])if(name==='Tags')await expectTagField(field(page,name),value);else await expectField(field(page,name),value);
   for(const name of ['Bold','Italic','Code'])await expect(action(page,name)).toBeVisible();
   await expect(region(page,'Preview')).toBeVisible();await expect(editGuidance(page)).toHaveCount(1);
@@ -21,7 +21,7 @@ test('REQ-3.4: Save revision and summary', async ({ page, browser }, info) => {
   await field(page,'Title').fill(title+' unsaved');await field(page,'Body').fill(body+' Unsaved draft.');await field(page,'Tags').fill('python');
   await field(page,'Edit Summary').fill('Unsaved retry draft.');
   await action(page,'Cancel').click();await verifySavedQuestion(page,title,body,'node.js,http,retry');
-  await action(post(page),'Edit question').click();
+  await action(post(page),'Edit').click();
   const newTitle = `${title} clarified`, newBody = `${body} Include bounded retry budgets.`;
   await field(page,'Title').fill(newTitle);
   await field(page,'Body').fill(newBody);
@@ -43,7 +43,7 @@ test('REQ-3.4: Save revision and summary', async ({ page, browser }, info) => {
   await openQuestion(page,newTitle);
   await page.reload();
   await expectBody(post(page),newBody);
-  await action(post(page),'Edit question').click();
+  await action(post(page),'Edit').click();
   for(const [name,value]of [['Title',newTitle],['Body',newBody],['Tags','http,retry']])if(name==='Tags')await expectTagField(field(page,name),value);else await expectField(field(page,name),value);
   await inspectOriginalRevision(page,body);
   await action(page,'Cancel').click();await verifySavedQuestion(page,newTitle,newBody,'http,retry');

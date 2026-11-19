@@ -12,10 +12,10 @@ test('REQ-1.2: Open major community sections', async ({ page, browser }, info) =
     await expectCurrent(action(mainNav(page), name));
     await expect(region(page, content)).toBeVisible();
   }
-  await expect(action(region(page,'Question feed'),'Next page')).toBeVisible();
+  await expect(action(region(page,'Question feed'),'Next')).toBeVisible();
   await action(mainNav(page), 'Users').click();
   await expect(await publicUserAction(page,actor('helpful_user'))).toBeVisible();
   await action(mainNav(page),'Users').click();
   await expect(await publicUserAction(page,actor('stack_user'))).toBeVisible();
-  await action(mainNav(page),'Home').click();await expectPaginationEnd(region(page,'Question feed'));
+  await action(mainNav(page),'Home').click();await expectPaginationEnd(region(page,'Question feed'),action(region(page,'Question feed'),'Next'));
 });

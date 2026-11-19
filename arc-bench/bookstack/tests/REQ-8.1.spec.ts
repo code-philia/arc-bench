@@ -11,7 +11,7 @@ test("REQ-8.1: Favorite a book", async ({ page }) => {
     const book = await createBook(page, bookData);
     track(book);
     await favorite(page).expectState(false);
-    await action(page, 'Favorite').activate();
+    await action(page, 'Favourite').activate();
     await favorite(page).expectState(true);
   });
 });
@@ -23,7 +23,7 @@ test("REQ-8.1: Persist removal of a favorite", async ({ page }) => {
     const bookData = generateBookData({ prefix: 'Book Unfavorite' });
     const book = await createBook(page, bookData);
     track(book);
-    await action(page, 'Favorite').activate();
+    await action(page, 'Favourite').activate();
     await favorite(page).expectState(true);
     await page.reload();
     await favorite(page).expectState(true);
@@ -32,6 +32,6 @@ test("REQ-8.1: Persist removal of a favorite", async ({ page }) => {
     await page.reload();
     await favorite(page).expectState(false);
     await home(page);
-    await collection(page, 'My Most Viewed Favorites').item(book).expectCount(0);
+    await collection(page, 'My Most Viewed Favourites').item(book).expectCount(0);
   });
 });

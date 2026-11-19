@@ -8,8 +8,8 @@ test("REQ-4.4: Confirm deletion", async ({ page }) => {
   const shelfData = generateShelfData({ prefix: 'Shelf 4.4.1' });
   const name = await createShelf(page, shelfData);
   await openShelf(page, name);
-  await action(page, 'Delete Shelf').activate();
-  await action(page, 'Confirm Delete').activate();
+  await action(page, 'Delete').activate();
+  await action(page, 'Confirm').activate();
   await heading(page, 'Shelves');
   await page.reload();
   await go(page, 'Shelves');
@@ -21,7 +21,7 @@ test("REQ-4.4: Cancel deletion", async ({ page }) => {
   const shelfData = generateShelfData({ prefix: 'Shelf 4.4.2' });
   const name = await createShelf(page, shelfData);
   await openShelf(page, name);
-  await action(page, 'Delete Shelf').activate();
+  await action(page, 'Delete').activate();
   await action(page, 'Cancel').activate();
   await heading(page, name);
   await text(page, shelfData.description, name);

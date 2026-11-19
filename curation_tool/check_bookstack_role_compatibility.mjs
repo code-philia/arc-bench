@@ -37,6 +37,27 @@ const browser = await pw.chromium.launch({ headless: true });
 try {
   const page = await browser.newPage();
   const check = async (name, body) => { await body(); checks.push({ name, result: 'passed' }); };
+  await check('reference copy: old confirmation label rejected and current owner preserved', async () => {
+    await page.setContent('<section><p>Delete Own book?</p><button>Confirm Delete</button><button>Cancel</button></section>');
+    await assert.rejects(() => ui.deletionConfirmation(page, 'Own book').action('Confirm').activate());
+    await page.setContent('<section><p>Delete Other book?</p><button>Confirm</button><button>Cancel</button></section>');
+    await assert.rejects(() => ui.deletionConfirmation(page, 'Own book').action('Confirm').activate());
+    await page.setContent('<section><p>Delete Own book?</p><button>Confirm</button><button>Confirm</button><button>Cancel</button></section>');
+    await assert.rejects(() => ui.deletionConfirmation(page, 'Own book').action('Confirm').activate());
+  });
+  await check('reference copy: obsolete favorite label is not an alias', async () => {
+    await page.setContent('<button>Favorite</button>');
+    await assert.rejects(() => ui.favorite(page).read());
+    await page.setContent('<button>Favourite</button><button>Unfavorite</button>');
+    await assert.rejects(() => ui.favorite(page).read());
+  });
+  await check('reference copy: favourite actions do not count as homepage entries', async () => {
+    await page.setContent('<section aria-label="My Most Viewed Favourites"><button>Own book</button><button>Favourite</button><button>Unfavorite</button></section>');
+    assert.deepEqual(await ui.collection(page, 'My Most Viewed Favourites').displayedNames(), ['Own book']);
+    await ui.collection(page, 'My Most Viewed Favourites').expectMaxItems(1);
+    await page.setContent('<section aria-label="My Most Viewed Favorites"><button>Own book</button></section>');
+    await assert.rejects(() => ui.collection(page, 'My Most Viewed Favourites').expectMaxItems(4));
+  });
   await check('business action names distinguish Login navigation from Sign in submission', async () => {
     await page.setContent('<header><a href="#">Login</a></header><form><label>Email<input></label><label>Password<input></label><button type="button" onclick="window.signedIn=true">Sign in</button></form>');
     await page.evaluate(() => { window.signedIn = false; });
@@ -47,28 +68,34 @@ try {
     await page.setContent('<form><label>Email<input></label><label>Password<input></label><button>Sign in</button><button>Sign in</button></form>');
     await assert.rejects(() => ui.loginSubmit(page).activate());
   });
-  await check('typed deletion labels coexist but generic labels cannot substitute for them', async () => {
-    await page.setContent('<div><h1>Own book</h1><button onclick="window.deleted=\'shelf\'">Delete Shelf</button><button onclick="window.deleted=\'book\'">Delete Book</button><button>Delete Draft</button></div>');
-    await ui.action(page, 'Delete Shelf').activate();
-    assert.equal(await page.evaluate(() => window.deleted), 'shelf');
-    await ui.bookActions(page, 'Own book').action('Delete Book').activate();
-    assert.equal(await page.evaluate(() => window.deleted), 'book');
-    await page.setContent('<div><h1>Own book</h1><button>Delete</button></div>');
-    await assert.rejects(() => ui.action(page, 'Delete Shelf').activate());
-    await assert.rejects(() => ui.bookActions(page, 'Own book').action('Delete Book').activate());
+  await check('detail deletion uses Delete and rejects duplicate or obsolete entry labels', async () => {
+    await page.setContent('<div><h1>Own book</h1><button onclick="window.deleted=true">Delete</button></div>');
+    await ui.bookActions(page, 'Own book').action('Delete').activate();
+    assert.equal(await page.evaluate(() => window.deleted), true);
+    await page.setContent('<div><h1>Own shelf</h1><button onclick="window.shelfDeleted=true">Delete</button></div>');
+    await ui.action(page, 'Delete').activate();
+    assert.equal(await page.evaluate(() => window.shelfDeleted), true);
+    await page.setContent('<div><h1>Own book</h1><button>Delete</button><button>Delete</button></div>');
+    await assert.rejects(() => ui.bookActions(page, 'Own book').action('Delete').activate());
+    await assert.rejects(() => ui.action(page, 'Delete').activate());
+    for (const label of ['Delete Book', 'Delete Shelf']) {
+      await page.setContent('<div><h1>Own book</h1><button>' + label + '</button></div>');
+      await assert.rejects(() => ui.bookActions(page, 'Own book').action('Delete').activate());
+      await assert.rejects(() => ui.action(page, 'Delete').activate());
+    }
   });
-  await check('Delete Book wording does not override a child object owner', async () => {
-    await page.setContent('<main><h1>Own book</h1><section><h2>Child page</h2><div aria-label="Actions"><button onclick="window.wrongTyped=true">Delete Book</button></div></section></main>');
+  await check('Delete wording does not override a child object owner', async () => {
+    await page.setContent('<main><h1>Own book</h1><section><h2>Child page</h2><div aria-label="Actions"><button onclick="window.wrongTyped=true">Delete</button></div></section></main>');
     await page.evaluate(() => { window.wrongTyped = false; });
-    await assert.rejects(() => ui.bookActions(page, 'Own book').action('Delete Book').activate());
+    await assert.rejects(() => ui.bookActions(page, 'Own book').action('Delete').activate());
     assert.equal(await page.evaluate(() => window.wrongTyped), false);
   });
   await check('favorite tie selection uses exact current-test identities and rejects duplicates', async () => {
-    await page.setContent('<section aria-label="My Most Viewed Favorites"><button>Historical</button><button>Own B</button><button>Own A</button></section>');
-    assert.deepEqual(await ui.collection(page, 'My Most Viewed Favorites').visibleNames(['Own A', 'Own B', 'Missing']), ['Own A', 'Own B']);
-    assert.deepEqual(await ui.collection(page, 'My Most Viewed Favorites').visibleNames(['Missing']), []);
+    await page.setContent('<section aria-label="My Most Viewed Favourites"><button>Historical</button><button>Own B</button><button>Own A</button></section>');
+    assert.deepEqual(await ui.collection(page, 'My Most Viewed Favourites').visibleNames(['Own A', 'Own B', 'Missing']), ['Own A', 'Own B']);
+    assert.deepEqual(await ui.collection(page, 'My Most Viewed Favourites').visibleNames(['Missing']), []);
     await page.locator('section').evaluate(node => node.insertAdjacentHTML('beforeend', '<button>Own A</button>'));
-    await assert.rejects(() => ui.collection(page, 'My Most Viewed Favorites').visibleNames(['Own A']));
+    await assert.rejects(() => ui.collection(page, 'My Most Viewed Favourites').visibleNames(['Own A']));
   });
   await check('A1 child Actions never supplies the book Delete, even as the only target', async () => {
     for (const caption of ['<h2>Child page</h2>', '<span>Child page</span>']) {
@@ -237,13 +264,13 @@ try {
     await ui.title(page, 'Own book').expectVisible();
   });
   await check('confirmation identifies its target, not the unchanged detail behind it', async () => {
-    const prompt = name => `<section><h2>Delete Book</h2><p>Delete '${name}'?</p><div><button onclick="window.confirmed=true">Confirm Delete</button><button>Cancel</button></div></section>`;
+    const prompt = name => `<section><h2>Delete Book</h2><p>Delete '${name}'?</p><div><button onclick="window.confirmed=true">Confirm</button><button>Cancel</button></div></section>`;
     await page.setContent('<main><h1>Own book</h1><p>Original description</p>' + prompt('Other book') + '</main>');
     await page.evaluate(() => { window.confirmed = false; });
-    await assert.rejects(() => ui.deletionConfirmation(page, 'Own book').action('Confirm Delete').activate());
+    await assert.rejects(() => ui.deletionConfirmation(page, 'Own book').action('Confirm').activate());
     assert.equal(await page.evaluate(() => window.confirmed), false);
     await page.setContent(prompt('Own book'));
-    await ui.deletionConfirmation(page, 'Own book').action('Confirm Delete').activate();
+    await ui.deletionConfirmation(page, 'Own book').action('Confirm').activate();
     assert.equal(await page.evaluate(() => window.confirmed), true);
   });
   await check('plain div login needs no form, ARIA container or password type', async () => {
@@ -446,9 +473,9 @@ try {
     await assert.rejects(() => ui.expectToggleState(page, 'Remember Me', false));
   });
   await check('favorite state works without aria-pressed', async () => {
-    await page.setContent('<a href="#" onclick="event.preventDefault();this.textContent=this.textContent===\'Favorite\'?\'Unfavorite\':\'Favorite\'">Favorite</a>');
+    await page.setContent('<a href="#" onclick="event.preventDefault();this.textContent=this.textContent===\'Favourite\'?\'Unfavorite\':\'Favourite\'">Favourite</a>');
     await ui.expectFavoriteState(page, false);
-    await ui.entry(page, 'Favorite').click();
+    await ui.entry(page, 'Favourite').click();
     await ui.expectFavoriteState(page, true);
     await ui.entry(page, 'Unfavorite').click();
     await ui.expectFavoriteState(page, false);
@@ -523,7 +550,7 @@ try {
     await assert.rejects(() => chapters.item('Own chapter').open());
   });
   await check('semantic toggle and favorite support read and idempotent set', async () => {
-    await page.setContent('<label>Remember Me<input type="checkbox"></label><button onclick="this.textContent=this.textContent===\'Favorite\'?\'Unfavorite\':\'Favorite\'">Favorite</button>');
+    await page.setContent('<label>Remember Me<input type="checkbox"></label><button onclick="this.textContent=this.textContent===\'Favourite\'?\'Unfavorite\':\'Favourite\'">Favourite</button>');
     const remember = ui.toggle(page, 'Remember Me');
     assert.equal(await remember.read(), false);
     await remember.set(true); await remember.set(true); await remember.expectState(true);
@@ -673,7 +700,7 @@ try {
     }
   });
   await check('collection capacity counts actual records and rejects one above every limit', async () => {
-    for (const [name, limit] of [['My Recently Viewed', 10], ['My Most Viewed Favorites', 4], ['Recently Updated Pages', 5]]) {
+    for (const [name, limit] of [['My Recently Viewed', 10], ['My Most Viewed Favourites', 4], ['Recently Updated Pages', 5]]) {
       const rows = count => Array.from({ length: count }, (_, i) => `<li><a href="#${i}">Item ${i}</a></li>`).join('');
       await page.setContent(`<section aria-label="${name}"><a href="#all">View All</a><ul>${rows(limit)}</ul></section>`);
       await ui.collection(page, name).expectMaxItems(limit);
@@ -696,7 +723,7 @@ try {
           document.querySelector('main').innerHTML = '<h1>Own</h1><button id="favorite">Unfavorite</button>';
           document.querySelector('#favorite').onclick = () => {
             window.qualityFavorites.Own = false;
-            document.querySelector('#favorite').textContent = 'Favorite';
+            document.querySelector('#favorite').textContent = 'Favourite';
           };
         };
       };

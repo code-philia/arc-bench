@@ -13,10 +13,10 @@ test('REQ-6.5: Save and reapply python unanswered criteria', async ({ page, brow
   await login(page,'filter_user'); await action(mainNav(page),'Questions').click();
   await action(page,'Filter').click();
   const panel=region(page,'Filter panel');
-  await setSwitch(panel,'Unanswered',true);
+  await setSwitch(panel,'No answers',true);
   await selectChoice(panel,'Sort','Newest');
   await field(panel,'Tags').fill('python');
-  await expectSwitch(panel,'Unanswered',true);
+  await expectSwitch(panel,'No answers',true);
   await expectChoice(panel,'Sort','Newest');
   await expectField(field(panel,'Tags'),'python');
   await action(panel,'Save custom filter').click();
@@ -38,10 +38,10 @@ test('REQ-6.5: Save and reapply python unanswered criteria', async ({ page, brow
   };
   await assertResults();
   await action(mainNav(page),'Home').click(); await page.reload();
-  await action(region(page,'Saved filters'),name).click();
+  await action(region(page,'Custom Filters'),name).click();
   await assertResults();
   await action(page,'Filter').click();
-  await expectSwitch(panel,'Unanswered',true);
+  await expectSwitch(panel,'No answers',true);
   await expectField(field(panel,'Tags'),'python');
   await expectChoice(panel,'Sort','Newest');
 });

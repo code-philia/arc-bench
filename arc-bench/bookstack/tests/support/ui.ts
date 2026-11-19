@@ -63,7 +63,7 @@ export async function navigationEntry(page: Page, name: string): Promise<Locator
 
 const COLLECTION_NAMES = [
   ...Object.values(COLLECTION_ALIASES).flat(),
-  'My Recent Drafts', 'My Recently Viewed', 'My Most Viewed Favorites', 'Recently Updated Pages',
+  'My Recent Drafts', 'My Recently Viewed', 'My Most Viewed Favourites', 'Recently Updated Pages',
 ];
 
 /** Exclude subtrees identified as a different business object. A generic
@@ -263,8 +263,8 @@ export async function setToggle(page: Page, name: string, selected: boolean): Pr
 
 /** The product communicates favorite state via its available action label. */
 export async function expectFavoriteState(page: Page, favorited: boolean): Promise<void> {
-  await expect(entry(page, favorited ? 'Unfavorite' : 'Favorite')).toBeVisible();
-  await expect(entry(page, favorited ? 'Favorite' : 'Unfavorite')).toHaveCount(0);
+  await expect(entry(page, favorited ? 'Unfavorite' : 'Favourite')).toBeVisible();
+  await expect(entry(page, favorited ? 'Favourite' : 'Unfavorite')).toHaveCount(0);
 }
 
 // Semantic interfaces deliberately do not expose Locator or inputValue().
@@ -340,11 +340,11 @@ export function deletionConfirmation(page: Page, ownerName: string) {
       .and(page.locator(':not(a,button,input,textarea,h1,h2,h3,h4,h5,h6,[role="heading"],nav *,header *,a *,button *)')).filter({ visible: true });
     const message = page.getByText(/\S/).and(page.locator(':not(a,button,input,textarea,h1,h2,h3,h4,h5,h6,[role="heading"],nav *,header *,a *,button *)')).filter({ visible: true });
     const scopes = page.locator('section,article,form,div,[role="dialog"],[role="alertdialog"]')
-      .filter({ has: message }).filter({ has: entry(page, 'Confirm Delete') }).filter({ has: entry(page, 'Cancel') })
+      .filter({ has: message }).filter({ has: entry(page, 'Confirm') }).filter({ has: entry(page, 'Cancel') })
       .filter({ visible: true });
     return resolveUnique([smallestContainers(scopes).filter({ has: identity })], `deletion confirmation for ${ownerName}`);
   };
-  return { ...observable(target), action(name: 'Confirm Delete' | 'Cancel') { return actionable(async () => entry(page, name).and((await target()).locator('*'))); } };
+  return { ...observable(target), action(name: 'Confirm' | 'Cancel') { return actionable(async () => entry(page, name).and((await target()).locator('*'))); } };
 }
 
 export function navigationAction(page: Page, name: string) {
@@ -406,7 +406,7 @@ export function collection(page: Page, name: string, options: { owner?: string }
         const result:string[]=[];
         for(const control of controls){
           const text=(control.textContent||'').trim();
-          if(/^(?:View All|See All|Edit|Delete|Favorite|Unfavorite)$/i.test(text))continue;
+          if(/^(?:View All|See All|Edit|Delete|Favourite|Unfavorite)$/i.test(text))continue;
           const row=control.closest('li,article,tr,[role="listitem"]');
           const headings=[...(row||control).querySelectorAll('h1,h2,h3,h4,h5,h6')].filter(shown);
           if(headings.length>1)throw new Error('Favorite row contains ambiguous captions');
@@ -450,7 +450,7 @@ export function collection(page: Page, name: string, options: { owner?: string }
             return !ancestor || ancestor === root || !root.contains(ancestor);
           });
           const controls = [...root.querySelectorAll('a, button, [role="link"], [role="button"]')]
-            .filter(node => visible(node) && !/^(?:view all|see all|edit|delete|favorite|unfavorite)$/i.test(node.textContent?.trim() ?? ''));
+            .filter(node => visible(node) && !/^(?:view all|see all|edit|delete|favourite|unfavorite)$/i.test(node.textContent?.trim() ?? ''));
           const extra = controls.filter(node => !records.some(record => record.contains(node)))
             .filter(node => !controls.some(other => other !== node && other.contains(node)));
           if (records.length || extra.length) return records.length + extra.length;
@@ -532,12 +532,12 @@ export function favorite(page: Page) {
     async expectState(selected: boolean) { await expectFavoriteState(page, selected); },
     async read() {
       const selected = entry(page, 'Unfavorite');
-      const unselected = entry(page, 'Favorite');
+      const unselected = entry(page, 'Favourite');
       await expect(selected.or(unselected)).toHaveCount(1);
       return await selected.count() === 1;
     },
     async set(selected: boolean) {
-      if (await this.read() !== selected) await action(page, selected ? 'Favorite' : 'Unfavorite').activate();
+      if (await this.read() !== selected) await action(page, selected ? 'Favourite' : 'Unfavorite').activate();
       await this.expectState(selected);
     },
   };

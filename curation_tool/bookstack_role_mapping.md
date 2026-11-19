@@ -12,7 +12,7 @@
 | 文本字段 | textField、editableControl、pageEditor | label/placeholder关联input/textarea/contenteditable，填写/读取/清空/回填成套处理 |
 | 复合元数据 | metadata、fillTags、expectMetadata | 整组标签或Tag Name行；行式标签的产品交互仍须遵循书架需求，不为适配任意流程而放宽 |
 | 标题/正文 | title、heading、detailContent | 排除记录内部标题及其他对象子树，允许具名集合自身的页面标题；detailContent排除导航/侧栏/编辑回显；content仅是精确可见文字接口 |
-| 状态 | toggle、favorite | 原生checked或可读自定义状态；收藏按明确Favorite/Unfavorite文案观测，幂等设置，未知状态拒绝 |
+| 状态 | toggle、favorite | 原生checked或可读自定义状态；收藏按明确Favourite/Unfavorite文案观测，幂等设置，未知状态拒绝 |
 
 评分REQ通过公共语义接口表达业务动作，原始定位留在适配器/复合helper。openWithKeyboard实际触发键盘，仍需随后核对目标详情。字段支持不意味着所有自定义编辑器都支持。
 
@@ -30,7 +30,7 @@
 
 - 只有React事件、无可观察交互语义的节点，不能因tabindex而自动识别为动作。
 - iframe、select/组合框及未覆盖自定义编辑器需按类别扩展，不统一当textbox。
-- 收藏仅图标/固定文案状态未由当前Favorite/Unfavorite策略覆盖；未知状态不能吞掉。
+- 收藏仅图标/固定文案状态未由当前Favourite/Unfavorite策略覆盖；未知状态不能吞掉。
 - 普通标题文字的回退与owner识别不保证任意布局；不能扩大为整页搜索掩盖失败。
 - 准备helper的参数拒绝不等于相关产品能力已实现，具体限制见项目适配说明。
 

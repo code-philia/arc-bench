@@ -8,8 +8,8 @@ test("REQ-5.5: Confirm deletion", async ({ page }) => {
   const bookData = generateBookData({ prefix: 'Book 5.5.1' });
   const name = await createBook(page, bookData);
   await openBook(page, name);
-  await bookActions(page, name).action('Delete Book').activate();
-  await deletionConfirmation(page, name).action('Confirm Delete').activate();
+  await bookActions(page, name).action('Delete').activate();
+  await deletionConfirmation(page, name).action('Confirm').activate();
   await heading(page, 'Books');
   await page.reload();
   await go(page, 'Books');
@@ -21,7 +21,7 @@ test("REQ-5.5: Cancel deletion", async ({ page }) => {
   const bookData = generateBookData({ prefix: 'Book 5.5.2' });
   const name = await createBook(page, bookData);
   await openBook(page, name);
-  await bookActions(page, name).action('Delete Book').activate();
+  await bookActions(page, name).action('Delete').activate();
   await deletionConfirmation(page, name).action('Cancel').activate();
   await heading(page, name);
   await text(page, bookData.description, name);

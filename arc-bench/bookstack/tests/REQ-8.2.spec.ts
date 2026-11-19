@@ -13,11 +13,11 @@ test("REQ-8.2: Open favorited book", async ({ page }) => {
       const bookData = generateBookData({ prefix: 'Book 8.2' });
       book = await createBook(page, bookData);
       track(book);
-      await action(page, 'Favorite').activate();
+      await action(page, 'Favourite').activate();
       await favorite(page).expectState(true);
     }
     await home(page);
-    const favorites = collection(page, 'My Most Viewed Favorites');
+    const favorites = collection(page, 'My Most Viewed Favourites');
     let visible: string[] = [];
     await expect.poll(async () => {
       visible = await favorites.displayedNames();
@@ -26,9 +26,9 @@ test("REQ-8.2: Open favorited book", async ({ page }) => {
     // Verify an actual shortlist entry; historical favorites may outrank every
     // new object. Selecting one is not an instruction to mutate its preference.
     book = visible.sort()[0];
-    await collection(page, 'My Most Viewed Favorites').item(book).expectCount(1);
-    await collection(page, 'My Most Viewed Favorites').expectMaxItems(4);
-    await collection(page, 'My Most Viewed Favorites').item(book).open();
+    await collection(page, 'My Most Viewed Favourites').item(book).expectCount(1);
+    await collection(page, 'My Most Viewed Favourites').expectMaxItems(4);
+    await collection(page, 'My Most Viewed Favourites').item(book).open();
     await heading(page, book);
   });
 });

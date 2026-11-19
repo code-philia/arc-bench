@@ -7,7 +7,7 @@ test('REQ-4.8: Publish an actual answer correction', async ({ page, browser }, i
   const title=await createQuestion(browser,info,'question_creator','SO Changed Answer Revision');
   await createAnswer(browser,title,'answer_edit_user');
   await login(page,'answer_edit_user'); await openQuestion(page,title);
-  await action(answer(page,actorName('answer_edit_user')),'Edit answer').click();
+  await action(answer(page,actorName('answer_edit_user')),'Edit').click();
   const revised='Use bounded exponential backoff, an idempotency key, and a deadline so retries remain safe and observable.';
   await field(page,'Body').fill(revised); await field(page,'Edit Summary').fill('Added deadline guidance.');
   await action(page,'Save edits').click();

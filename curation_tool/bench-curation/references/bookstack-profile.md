@@ -14,7 +14,8 @@
 
 - 预置Admin：`admin@example.com / password`；没有账号创建验收，不能随机造账号。业务对象逐test生成并经UI创建。
 - 最近访问上限10、首页收藏上限4、最近更新上限5；属于需求规则，不能照搬到其他目标。
-- 业务动作命名：导航使用Login，凭据提交使用Sign in；删除书架/书籍分别为Delete Shelf/Delete Book，草稿为Delete Draft。确认仍用Confirm Delete并识别具体对象。此为当前明确文案，不以旧Login提交或笼统Delete作别名；图例中的旧文案不覆盖这些文字规定，归属和结果检查仍保留。
+- 业务动作命名：导航使用Login，凭据提交使用Sign in；书架及书籍详情删除入口均为Delete，草稿为Delete Draft。确认使用Confirm并识别具体对象。此为当前明确文案，不以旧Login提交作别名；仅导航/提交的既有命名差异仍保留，归属和结果检查仍保留。
+- 收藏动作使用Favourite，取消收藏仍为Unfavorite（图例未展示反向状态）；首页标题使用My Most Viewed Favourites。shelves.png实际为单个书架详情，仅用于详情场景，不作为全局书架列表图例。
 - 书架允许从列表创建。行式书架标签允许现有行为空时先添加多行再填写，统一随Save Shelf保存；这是已明确的产品交互，不自动推广到书籍或其他项目，也不把helper支持的整组输入改为禁止。
 - 页面编辑标签按用途识别；未规定的界面文案可忽略大小写完整匹配，明确文案及用户值仍精确。BookStack已有有限别名New Book/Create New Book、集合名称等，见[当前接口映射](../../bookstack_role_mapping.md)，不是通用别名词典。
 - 当前createPage明确拒绝chapterName，未实现章节页面准备；跨用户/跨类型等覆盖不能由现有评分通过推导。支持边界以当前源码及反例为准，不继承旧“已完成”结论。
