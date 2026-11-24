@@ -12,7 +12,7 @@ test('REQ-3.8: Open and close enlarged product image', async ({ page }) => {
   await expect.poll(() => main.getAttribute('src')).not.toBe(front);
   const selected = await main.getAttribute('src');
   await action(images, 'Zoom').click();
-  const zoom = page.getByRole('dialog', { name: 'Product image', exact: true });
+  const zoom = region(page, 'Product image');
   await expect(zoom).toBeVisible();
   const enlarged = zoom.getByRole('img', { name: DETAIL, exact: true });
   await expect(enlarged).toHaveCount(1); await expect(enlarged).toBeVisible();

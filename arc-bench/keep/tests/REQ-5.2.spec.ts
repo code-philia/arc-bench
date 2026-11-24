@@ -1,13 +1,14 @@
 // requirement: REQ-5.2
 import { test, expect, action, note, section, bounds, openHome, createNote, expectNote } from './helpers';
-import { identity } from './fixtures/data';
+import { noteInput } from './fixtures/data';
 
-test('REQ-5.2: Switch grid to list and back', async ({ page }, info) => {
+test('REQ-5.2: Switch grid to list and back', async ({ page }) => {
+  const input = noteInput();
   await openHome(page);
   await expect(action(page, 'List view')).toBeVisible();
   await expect(section(page, 'Notes')).toHaveAccessibleDescription(/Grid view/i);
-  const titles = ['View alpha', 'View beta', 'View gamma'].map(example => identity(info, example));
-  for (const title of titles) await createNote(page, title, 'Layout content');
+  const titles = ['View alpha', 'View beta', 'View gamma'].map(example => input.name(example));
+  for (const title of titles) await createNote(page, title, input.body('Layout content'));
   await action(page, 'List view').click();
   await expect(action(page, 'Grid view')).toBeVisible();
   await expect(section(page, 'Notes')).toHaveAccessibleDescription(/List view/i);
@@ -20,9 +21,13 @@ test('REQ-5.2: Switch grid to list and back', async ({ page }, info) => {
       expect(boxes[i].y + boxes[i].height <= boxes[j].y + 3 || boxes[j].y + boxes[j].height <= boxes[i].y + 3).toBe(true);
     }
   }).toPass({ timeout: 10_000 });
-  for (const title of titles) await expectNote(page, title, 'Layout content');
+  for (const title of titles) await expectNote(page, title, input.body('Layout content'));
   await action(page, 'Grid view').click();
   await expect(action(page, 'List view')).toBeVisible();
   await expect(section(page, 'Notes')).toHaveAccessibleDescription(/Grid view/i);
-  for (const title of titles) await expectNote(page, title, 'Layout content');
+  await expect.poll(async () => {
+    const boxes = await Promise.all(titles.map(title => bounds(note(page, title))));
+    return Math.max(...boxes.map(box => box.x)) - Math.min(...boxes.map(box => box.x));
+  }).toBeGreaterThan(20);
+  for (const title of titles) await expectNote(page, title, input.body('Layout content'));
 });
